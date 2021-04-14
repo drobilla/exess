@@ -33,6 +33,7 @@ if get_option('strict')
   if cc.get_id() == 'clang'
     c_suppressions = [
       '-Wno-bad-function-cast',
+      '-Wno-c11-extensions',
       '-Wno-nullability-extension',
       '-Wno-padded',
     ]
