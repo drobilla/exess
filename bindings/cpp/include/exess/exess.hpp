@@ -314,7 +314,6 @@ to_string(const T& value)
 // }
 
 /// @copydoc exess_datatype_uri
-EXESS_CONST_API
 inline const char* EXESS_NULLABLE
 datatype_uri(const Datatype datatype)
 {
@@ -322,7 +321,6 @@ datatype_uri(const Datatype datatype)
 }
 
 /// @copydoc exess_datatype_from_uri
-EXESS_PURE_API
 inline Datatype
 datatype_from_uri(const char* const EXESS_NONNULL uri)
 {
@@ -330,7 +328,6 @@ datatype_from_uri(const char* const EXESS_NONNULL uri)
 }
 
 /// @copydoc exess_datatype_is_bounded
-EXESS_CONST_API
 inline bool
 datatype_is_bounded(const Datatype datatype)
 {
@@ -338,7 +335,6 @@ datatype_is_bounded(const Datatype datatype)
 }
 
 /// @copydoc exess_max_length
-EXESS_CONST_API
 inline size_t
 max_length(const Datatype datatype)
 {
@@ -600,7 +596,6 @@ public:
     value.as_date = v;
   }
 };
-
 
 /**
    @defgroup exesspp_variant_construction Construction
