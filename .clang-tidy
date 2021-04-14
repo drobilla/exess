@@ -1,0 +1,7 @@
+Checks: >
+  *,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -llvmlibc-*,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file

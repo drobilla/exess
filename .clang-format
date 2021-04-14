@@ -1,0 +1,30 @@
+---
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlinesLeft: true
+BasedOnStyle: Mozilla
+BraceWrapping:
+  AfterNamespace: false
+  AfterClass: true
+  AfterEnum: false
+  AfterExternBlock: false
+  AfterFunction: true
+  AfterStruct: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Custom
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+IndentCaseLabels: false
+IndentPPDirectives: AfterHash
+KeepEmptyLinesAtTheStartOfBlocks: false
+SpacesInContainerLiterals: false
+StatementMacros:
+  - EXESS_API
+  - EXESS_CONST_FUNC
+  - EXESS_PURE_FUNC
+  - _Generic
+  - _Pragma
+...

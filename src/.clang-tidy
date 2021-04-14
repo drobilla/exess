@@ -1,0 +1,12 @@
+Checks: >
+  *,
+  -*-magic-numbers,
+  -*-uppercase-literal-suffix,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -hicpp-multiway-paths-covered,
+  -llvm-header-guard,
+  -llvmlibc-*,
+  -misc-no-recursion,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file

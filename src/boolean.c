@@ -1,0 +1,69 @@
+/*
+  Copyright 2019-2021 David Robillard <d@drobilla.net>
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THIS SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+
+#include "read_utils.h"
+#include "write_utils.h"
+
+#include "exess/exess.h"
+
+#include <stdbool.h>
+#include <string.h>
+
+ExessResult
+exess_read_boolean(bool* const out, const char* const str)
+{
+  size_t      i = skip_whitespace(str);
+  ExessResult r = {EXESS_EXPECTED_BOOLEAN, i};
+
+  *out = false;
+
+  switch (str[i]) {
+  case '0':
+    return end_read(EXESS_SUCCESS, str, ++i);
+
+  case '1':
+    *out = true;
+    return end_read(EXESS_SUCCESS, str, ++i);
+
+  case 't':
+    if (!strncmp(str + i, "true", 4)) {
+      *out = true;
+      return end_read(EXESS_SUCCESS, str, i + 4u);
+    }
+    break;
+
+  case 'f':
+    if (!strncmp(str + i, "false", 5)) {
+      return end_read(EXESS_SUCCESS, str, i + 5u);
+    }
+    break;
+
+  default:
+    break;
+  }
+
+  return end_read(r.status, str, r.count);
+}
+
+ExessResult
+exess_write_boolean(const bool value, const size_t buf_size, char* const buf)
+{
+  return end_write(EXESS_SUCCESS,
+                   buf_size,
+                   buf,
+                   value ? write_string(4, "true", buf_size, buf, 0)
+                         : write_string(5, "false", buf_size, buf, 0));
+}

@@ -1,0 +1,110 @@
+# Project information
+
+project = "Exess"
+copyright = "2021, David Robillard"
+author = "David Robillard"
+release = "@EXESS_VERSION@"
+
+# General configuration
+
+exclude_patterns = ["xml"]
+language = "en"
+nitpicky = True
+pygments_style = "friendly"
+
+# Ignore everything opaque or external for nitpicky mode
+_opaque = [
+    "int16_t",
+    "int32_t",
+    "int64_t",
+    "int8_t",
+    "size_t",
+    "uint16_t",
+    "uint32_t",
+    "uint64_t",
+    "uint8_t",
+]
+
+nitpick_ignore = list(map(lambda x: ("c:identifier", x), _opaque))
+
+# HTML output
+
+html_copy_source = False
+html_short_title = "Exess"
+html_theme = "sphinx_lv2_theme"
+
+if tags.has("singlehtml"):
+    html_sidebars = {
+        "**": [
+            "globaltoc.html",
+        ]
+    }
+
+    html_theme_options = {
+        "body_max_width": "48em",
+        "body_min_width": "48em",
+        "description": "A library for reading and writing XSD datatypes",
+        "show_footer_version": True,
+        "show_logo_version": False,
+        "logo_name": True,
+        "logo_width": "8em",
+        "nosidebar": False,
+        "page_width": "80em",
+        "sidebar_width": "18em",
+        "globaltoc_maxdepth": 3,
+        "globaltoc_collapse": False,
+    }
+
+else:
+    html_theme_options = {
+        "body_max_width": "60em",
+        "body_min_width": "40em",
+        "description": "A library for reading and writing XSD datatypes",
+        "show_footer_version": True,
+        "show_logo_version": False,
+        "logo_name": True,
+        "logo_width": "8em",
+        "nosidebar": True,
+        "page_width": "60em",
+        "sidebar_width": "14em",
+        "globaltoc_maxdepth": 1,
+        "globaltoc_collapse": True,
+    }
+
+# Man page output
+
+groups = {
+    "status": "Status",
+    # "numbers": "",
+    "decimal": "Decimal Strings",
+    "double": "Double Strings",
+    "float": "Float Strings",
+    "boolean": "Boolean Strings",
+    "long": "Long Strings",
+    "int": "Int Strings",
+    "short": "Short Strings",
+    "byte": "Byte Strings",
+    "ulong": "Unsigned Long Strings",
+    "uint": "Unsigned Int Strings",
+    "ushort": "Unsigned Short Strings",
+    "ubyte": "Unsigned Byte Strings",
+    # 'time_and_date': "",
+    "duration": "Duration Strings",
+    "datetime": "Datetime Strings",
+    "timezone": "Time zone strings",
+    "date": "Date strings",
+    "time": "Time strings",
+    "binary": "",
+    "hex": "Hex Binary Strings",
+    "base64": "Base64 Binary Strings",
+    "datatypes": "Datatypes",
+    "variant": "Value Variant",
+    # 'generics': "",
+    "coercion": "Value Type Coercion",
+}
+
+author = "David Robillard <d@drobilla.net>"
+man_pages = []
+for group, title in groups.items():
+    name = "exess_" + group
+    man_pages += [("api/" + name, name, title, author, 3)]
