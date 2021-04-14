@@ -1,0 +1,39 @@
+PROJECT_NAME           = Exess
+PROJECT_BRIEF          = "A library for reading and writing XSD datatypes"
+
+QUIET                  = YES
+WARN_AS_ERROR          = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_NO_PARAMDOC       = NO
+
+JAVADOC_AUTOBRIEF      = YES
+
+FULL_PATH_NAMES        = NO
+CASE_SENSE_NAMES       = YES
+HIDE_IN_BODY_DOCS      = YES
+REFERENCES_LINK_SOURCE = NO
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_PROGRAMLISTING     = NO
+SHOW_FILES             = NO
+
+ENABLE_PREPROCESSING = YES
+SKIP_FUNCTION_MACROS = NO
+
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = EXESS_API \
+                         EXESS_CONST_API \
+                         EXESS_CONST_FUNC= \
+                         EXESS_NONNULL= \
+                         EXESS_NULLABLE= \
+                         EXESS_PURE_API \
+                         EXESS_PURE_FUNC= \
+
+RECURSIVE              = YES
+STRIP_FROM_PATH        = @EXESS_SRCDIR@
+INPUT                  = @EXESS_SRCDIR@/include
+
+OUTPUT_DIRECTORY       = @DOX_OUTPUT@

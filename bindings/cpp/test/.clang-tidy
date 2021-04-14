@@ -1,0 +1,17 @@
+Checks: >
+  *,
+  -*-magic-numbers,
+  -*-uppercase-literal-suffix,
+  -clang-analyzer-nullability.NullableDereferenced,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -fuchsia-default-arguments-calls,
+  -fuchsia-overloaded-operator,
+  -hicpp-no-array-decay,
+  -llvmlibc-*,
+  -misc-non-private-member-variables-in-classes,
+  -modernize-unary-static-assert,
+  -modernize-use-trailing-return-type,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file
