@@ -465,7 +465,7 @@ class Variant : public ExessVariant
 public:
   /// Construct a variant from an ExessVariant C structure
   explicit Variant(ExessVariant v)
-    : ExessVariant{std::move(v)}
+    : ExessVariant{v}
   {}
 
   /// Construct a nothing variant with a status code
