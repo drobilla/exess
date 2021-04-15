@@ -12,6 +12,7 @@ Checks: >
   -misc-non-private-member-variables-in-classes,
   -modernize-unary-static-assert,
   -modernize-use-trailing-return-type,
+  -readability-implicit-bool-conversion,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
