@@ -125,7 +125,6 @@ endforeach
 m_dep = cc.find_library('m', required: false)
 
 # Determine library type and the flags needed to build it
-library_name = versioned_name
 if get_option('default_library') == 'both'
   if host_machine.system() == 'windows'
     error('default_library=both is not supported on Windows')
@@ -135,11 +134,6 @@ if get_option('default_library') == 'both'
   library_args = ['-DEXESS_INTERNAL']
   prog_args = []
 elif get_option('default_library') == 'shared'
-  if host_machine.system() == 'windows'
-    # Meson annoyingly adds its own suffix, so remove this one
-    library_name = 'exess'
-  endif
-
   library_type = 'shared_library'
   library_args = ['-DEXESS_INTERNAL']
   prog_args = []
@@ -190,7 +184,7 @@ sources = files(
 
 # Build shared and/or static library/libraries
 libexess = build_target(
-  library_name,
+  versioned_name,
   sources,
   c_args: exess_c_args + library_args,
   dependencies: [m_dep],
@@ -235,3 +229,4 @@ if not meson.is_subproject() and meson.version().version_compare('>=0.53.0')
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))
 endif
+
