@@ -60,7 +60,6 @@ if get_option('strict')
       '/wd4028',  # formal parameter different from declaration
       '/wd4204',  # nonstandard extension: non-constant aggregate initializer
       '/wd4221',  # initialized using address of automatic variable
-      '/wd4706',  # assignment within conditional expression
       '/wd4710',  # function not inlined
       '/wd4711',  # function selected for automatic inline expansion
       '/wd4738',  # storing 32-bit float result in memory
@@ -74,6 +73,13 @@ else
       '-Wno-nullability-extension',
     ]
   endif
+endif
+
+if cc.get_id() == 'msvc'
+  c_suppressions += [
+    '/wd4706',  # assignment within conditional expression
+    '/wd4996',  # POSIX name for this item is deprecated
+  ]
 endif
 
 exess_c_args = cc.get_supported_arguments(c_suppressions)
