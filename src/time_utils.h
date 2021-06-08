@@ -17,6 +17,8 @@
 #ifndef EXESS_TIME_UTILS_H
 #define EXESS_TIME_UTILS_H
 
+#include "exess/exess.h"
+
 #include <stddef.h>
 #include <stdint.h>
 

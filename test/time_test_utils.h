@@ -18,6 +18,7 @@
 
 #include "exess/exess.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #define INIT_ZONE(hour, minute) \

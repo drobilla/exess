@@ -18,7 +18,6 @@
 #define EXESS_IEEE_FLOAT_H
 
 #include <float.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
