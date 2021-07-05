@@ -19,8 +19,11 @@ versioned_name = 'exess' + version_suffix
 # Load build tools
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
-add_languages(['cpp'])
-cpp = meson.get_compiler('cpp')
+
+if not get_option('bindings_cpp').disabled()
+  add_languages(['cpp'])
+  cpp = meson.get_compiler('cpp')
+endif
 
 # Set ultra strict warnings for developers, if requested
 c_warnings = []
