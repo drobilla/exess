@@ -61,41 +61,49 @@ quotient(const int32_t a, const int32_t low, const int32_t high)
   return (a - low) / (high - low);
 }
 
+static int
+exess_datetime_compare_determinate(const ExessDateTime lhs,
+                                   const ExessDateTime rhs)
+{
+  if (lhs.year != rhs.year) {
+    return lhs.year < rhs.year ? -1 : 1;
+  }
+
+  if (lhs.month != rhs.month) {
+    return lhs.month < rhs.month ? -1 : 1;
+  }
+
+  if (lhs.day != rhs.day) {
+    return lhs.day < rhs.day ? -1 : 1;
+  }
+
+  if (lhs.hour != rhs.hour) {
+    return lhs.hour < rhs.hour ? -1 : 1;
+  }
+
+  if (lhs.minute != rhs.minute) {
+    return lhs.minute < rhs.minute ? -1 : 1;
+  }
+
+  if (lhs.second != rhs.second) {
+    return lhs.second < rhs.second ? -1 : 1;
+  }
+
+  if (lhs.nanosecond != rhs.nanosecond) {
+    return lhs.nanosecond < rhs.nanosecond ? -1 : 1;
+  }
+
+  return 0;
+}
+
 int
 exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
 
   if (lhs.is_utc == rhs.is_utc) {
-    if (lhs.year != rhs.year) {
-      return lhs.year < rhs.year ? -1 : 1;
-    }
-
-    if (lhs.month != rhs.month) {
-      return lhs.month < rhs.month ? -1 : 1;
-    }
-
-    if (lhs.day != rhs.day) {
-      return lhs.day < rhs.day ? -1 : 1;
-    }
-
-    if (lhs.hour != rhs.hour) {
-      return lhs.hour < rhs.hour ? -1 : 1;
-    }
-
-    if (lhs.minute != rhs.minute) {
-      return lhs.minute < rhs.minute ? -1 : 1;
-    }
-
-    if (lhs.second != rhs.second) {
-      return lhs.second < rhs.second ? -1 : 1;
-    }
-
-    if (lhs.nanosecond != rhs.nanosecond) {
-      return lhs.nanosecond < rhs.nanosecond ? -1 : 1;
-    }
-
-    return 0;
+    // Simple case, both are either UTC or local
+    return exess_datetime_compare_determinate(lhs, rhs);
   }
 
   static const ExessDuration plus_14h  = {0u, 14 * 60 * 60, 0};
