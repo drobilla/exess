@@ -359,17 +359,7 @@ exess_compare(const ExessVariant lhs, const ExessVariant rhs)
                                                      : 0;
 
   case EXESS_DURATION:
-    return lhs.value.as_duration.months < rhs.value.as_duration.months     ? -1
-           : lhs.value.as_duration.months > rhs.value.as_duration.months   ? 1
-           : lhs.value.as_duration.seconds < rhs.value.as_duration.seconds ? -1
-           : lhs.value.as_duration.seconds > rhs.value.as_duration.seconds ? 1
-           : lhs.value.as_duration.nanoseconds <
-               rhs.value.as_duration.nanoseconds
-             ? -1
-           : lhs.value.as_duration.nanoseconds >
-               rhs.value.as_duration.nanoseconds
-             ? 1
-             : 0;
+    return exess_duration_compare(lhs.value.as_duration, rhs.value.as_duration);
 
   case EXESS_DATETIME:
     return exess_datetime_compare(lhs.value.as_datetime, rhs.value.as_datetime);

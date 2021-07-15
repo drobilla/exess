@@ -726,6 +726,23 @@ typedef struct {
 } ExessDuration;
 
 /**
+   Compare two durations.
+
+   Note that xsd:duration literals are not totally ordered in general, since
+   they can include all fields of a date, and the relation between those is not
+   always constant (such as the number of days in a month).  The ExessDuration
+   representation, however, is normalised in a way that avoids this problem.
+
+   A duration is less than another if it is a shorter duration of time.
+
+   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
+   respectively.
+*/
+EXESS_CONST_API
+int
+exess_duration_compare(ExessDuration lhs, ExessDuration rhs);
+
+/**
    Read an xsd:duration string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
