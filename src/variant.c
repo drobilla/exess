@@ -289,74 +289,53 @@ exess_compare(const ExessVariant lhs, const ExessVariant rhs)
                                : strcmp(lhs_datatype_uri, rhs_datatype_uri);
   }
 
+#define EXESS_VALUE_CMP(lhs, rhs) \
+  ((lhs) < (rhs)) ? (-1) : ((lhs) > (rhs)) ? 1 : 0
+
   switch (lhs.datatype) {
   case EXESS_NOTHING:
     break;
 
   case EXESS_BOOLEAN:
-    return lhs.value.as_bool < rhs.value.as_bool   ? -1
-           : lhs.value.as_bool > rhs.value.as_bool ? 1
-                                                   : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_bool, rhs.value.as_bool);
 
   case EXESS_DECIMAL:
   case EXESS_DOUBLE:
-    return lhs.value.as_double < rhs.value.as_double   ? -1
-           : lhs.value.as_double > rhs.value.as_double ? 1
-                                                       : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_double, rhs.value.as_double);
 
   case EXESS_FLOAT:
-    return lhs.value.as_float < rhs.value.as_float   ? -1
-           : lhs.value.as_float > rhs.value.as_float ? 1
-                                                     : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_float, rhs.value.as_float);
 
   case EXESS_INTEGER:
   case EXESS_NON_POSITIVE_INTEGER:
   case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
-    return lhs.value.as_long < rhs.value.as_long   ? -1
-           : lhs.value.as_long > rhs.value.as_long ? 1
-                                                   : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_long, rhs.value.as_long);
 
   case EXESS_INT:
-    return lhs.value.as_int < rhs.value.as_int   ? -1
-           : lhs.value.as_int > rhs.value.as_int ? 1
-                                                 : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_int, rhs.value.as_int);
 
   case EXESS_SHORT:
-    return lhs.value.as_short < rhs.value.as_short   ? -1
-           : lhs.value.as_short > rhs.value.as_short ? 1
-                                                     : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_short, rhs.value.as_short);
 
   case EXESS_BYTE:
-    return lhs.value.as_byte < rhs.value.as_byte   ? -1
-           : lhs.value.as_byte > rhs.value.as_byte ? 1
-                                                   : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_byte, rhs.value.as_byte);
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
-    return lhs.value.as_ulong < rhs.value.as_ulong   ? -1
-           : lhs.value.as_ulong > rhs.value.as_ulong ? 1
-                                                     : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_ulong, rhs.value.as_ulong);
 
   case EXESS_UINT:
-    return lhs.value.as_uint < rhs.value.as_uint   ? -1
-           : lhs.value.as_uint > rhs.value.as_uint ? 1
-                                                   : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_uint, rhs.value.as_uint);
 
   case EXESS_USHORT:
-    return lhs.value.as_ushort < rhs.value.as_ushort   ? -1
-           : lhs.value.as_ushort > rhs.value.as_ushort ? 1
-                                                       : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_ushort, rhs.value.as_ushort);
 
   case EXESS_UBYTE:
-    return lhs.value.as_ubyte < rhs.value.as_ubyte   ? -1
-           : lhs.value.as_ubyte > rhs.value.as_ubyte ? 1
-                                                     : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_ubyte, rhs.value.as_ubyte);
 
   case EXESS_POSITIVE_INTEGER:
-    return lhs.value.as_ulong < rhs.value.as_ulong   ? -1
-           : lhs.value.as_ulong > rhs.value.as_ulong ? 1
-                                                     : 0;
+    return EXESS_VALUE_CMP(lhs.value.as_ulong, rhs.value.as_ulong);
 
   case EXESS_DURATION:
     return exess_duration_compare(lhs.value.as_duration, rhs.value.as_duration);
@@ -385,6 +364,8 @@ exess_compare(const ExessVariant lhs, const ExessVariant rhs)
     return memcmp(
       lhs.value.as_blob.data, rhs.value.as_blob.data, lhs.value.as_blob.size);
   }
+
+#undef EXESS_VALUE_CMP
 
   return 0;
 }
