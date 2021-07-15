@@ -178,6 +178,18 @@ read_time(ExessDuration* const out, const Field field, const char* const str)
   return result(next.status, i + 1 + next.count);
 }
 
+int
+exess_duration_compare(const ExessDuration lhs, const ExessDuration rhs)
+{
+  return lhs.months < rhs.months             ? -1
+         : lhs.months > rhs.months           ? 1
+         : lhs.seconds < rhs.seconds         ? -1
+         : lhs.seconds > rhs.seconds         ? 1
+         : lhs.nanoseconds < rhs.nanoseconds ? -1
+         : lhs.nanoseconds > rhs.nanoseconds ? 1
+                                             : 0;
+}
+
 ExessResult
 exess_read_duration(ExessDuration* const out, const char* const str)
 {
