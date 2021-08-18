@@ -1,3 +1,6 @@
+# Copyright 2021 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 # Run Sphinx to generate group man pages
 
 make_man_link = find_program('../../../scripts/make_man_link.py')
