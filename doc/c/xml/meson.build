@@ -1,3 +1,6 @@
+# Copyright 2021 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 config = configuration_data()
 config.set('EXESS_SRCDIR', exess_src_root)
 config.set('DOX_OUTPUT', meson.current_build_dir() / '..')

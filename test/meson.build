@@ -1,4 +1,8 @@
+# Copyright 2021 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 autoship = find_program('autoship', required: false)
+reuse = find_program('reuse', required: false)
 
 # Add extra warning suppressions for test code
 test_args = []
@@ -22,6 +26,11 @@ endif
 # Check project metadata
 if autoship.found()
   test('autoship', autoship, args: ['test', exess_src_root], suite: 'data')
+endif
+
+# Check licensing metadata
+if reuse.found()
+  test('REUSE', reuse, args: ['lint'], suite: 'data')
 endif
 
 # Public API tests

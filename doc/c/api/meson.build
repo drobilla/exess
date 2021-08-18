@@ -1,3 +1,6 @@
+# Copyright 2021 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 c_exess_rst = custom_target(
   'Exess C API Sphinx Input',
   command: [dox_to_sphinx, '-f', '@INPUT0@', meson.current_build_dir()],
