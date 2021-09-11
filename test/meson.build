@@ -30,7 +30,7 @@ endif
 
 # Check licensing metadata
 if reuse.found()
-  test('REUSE', reuse, args: ['lint'], suite: 'data')
+  test('REUSE', reuse, args: ['--root', exess_src_root], suite: 'data')
 endif
 
 # Public API tests
