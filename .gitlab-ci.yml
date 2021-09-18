@@ -1,20 +1,10 @@
-stages:
-  - build
-  - deploy
-
-.build_template: &build_definition
-  stage: build
-
-
 arm32_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-arm32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 arm32_rel:
-  <<: *build_definition
   image: lv2plugin/debian-arm32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -22,14 +12,12 @@ arm32_rel:
 
 
 arm64_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-arm64
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 arm64_rel:
-  <<: *build_definition
   image: lv2plugin/debian-arm64
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -37,14 +25,12 @@ arm64_rel:
 
 
 x32_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-x32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 x32_rel:
-  <<: *build_definition
   image: lv2plugin/debian-x32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -52,7 +38,6 @@ x32_rel:
 
 
 x64_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-x64
   script:
     - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Db_coverage=true
@@ -64,7 +49,6 @@ x64_dbg:
       - build/meson-logs/coveragereport
 
 x64_rel:
-  <<: *build_definition
   image: lv2plugin/debian-x64
   script:
     - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -72,7 +56,6 @@ x64_rel:
 
 
 x64_static:
-  <<: *build_definition
   image: lv2plugin/debian-x64
   script:
     - meson setup build -Ddefault_library=static -Dstrict=true -Dwerror=true
@@ -80,7 +63,6 @@ x64_static:
 
 
 x64_sanitize:
-  <<: *build_definition
   image: lv2plugin/debian-x64-clang
   script:
     - meson setup build -Db_lundef=false -Dbuildtype=plain -Dstrict=true -Dwerror=true
@@ -97,14 +79,12 @@ x64_sanitize:
 
 
 mingw32_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-mingw32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 mingw32_rel:
-  <<: *build_definition
   image: lv2plugin/debian-mingw32
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -112,14 +92,12 @@ mingw32_rel:
 
 
 mingw64_dbg:
-  <<: *build_definition
   image: lv2plugin/debian-mingw64
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 mingw64_rel:
-  <<: *build_definition
   image: lv2plugin/debian-mingw64
   script:
     - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -127,14 +105,12 @@ mingw64_rel:
 
 
 mac_dbg:
-  <<: *build_definition
   tags: [macos]
   script:
     - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 mac_rel:
-  <<: *build_definition
   tags: [macos]
   script:
     - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -142,14 +118,12 @@ mac_rel:
 
 
 win_dbg:
-  <<: *build_definition
   tags: [windows,meson]
   script:
     - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true
     - ninja -C build test
 
 win_rel:
-  <<: *build_definition
   tags: [windows,meson]
   script:
     - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true
@@ -165,7 +139,7 @@ pages:
     - mv build/doc/c/singlehtml .public/c/singlehtml
     - mv build/doc/c/html .public/c/html
     - mv .public public
-  dependencies:
+  needs:
     - x64_dbg
   artifacts:
     paths:
