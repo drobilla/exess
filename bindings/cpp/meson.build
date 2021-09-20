@@ -7,7 +7,7 @@ cpp = meson.get_compiler('cpp')
 # Set ultra strict warnings for developers, if requested
 cpp_suppressions = []
 if get_option('strict')
-  if cpp.get_id() == 'clang'
+  if cpp.get_id() in ['clang', 'emscripten']
     cpp_suppressions = [
       '-Wno-c++98-compat',
       '-Wno-c++98-compat-pedantic',
@@ -37,7 +37,7 @@ if get_option('strict')
     ]
   endif
 else
-  if cpp.get_id() == 'clang'
+  if cpp.get_id() in ['clang', 'emscripten']
     cpp_suppressions = [
       '-Wno-nullability-extension',
     ]

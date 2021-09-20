@@ -39,8 +39,14 @@ if get_option('strict')
     add_project_arguments(all_c_warnings, language: ['c'])
   endif
 
-  if cc.get_id() == 'clang'
-    c_suppressions = [
+  if cc.get_id() == 'emscripten'
+    c_suppressions += [
+      '-Wno-disabled-macro-expansion',
+    ]
+  endif
+
+  if cc.get_id() in ['clang', 'emscripten']
+    c_suppressions += [
       '-Wno-bad-function-cast',
       '-Wno-c11-extensions',
       '-Wno-nullability-extension',
@@ -54,7 +60,7 @@ if get_option('strict')
     endif
 
   elif cc.get_id() == 'gcc'
-    c_suppressions = [
+    c_suppressions += [
       '-Wno-aggregate-return',
       '-Wno-inline',
       '-Wno-padded',
@@ -65,7 +71,7 @@ if get_option('strict')
     ]
 
   elif cc.get_id() == 'msvc'
-    c_suppressions = [
+    c_suppressions += [
       '/wd4028',  # formal parameter different from declaration
       '/wd4204',  # nonstandard extension: non-constant aggregate initializer
       '/wd4221',  # initialized using address of automatic variable
@@ -77,8 +83,8 @@ if get_option('strict')
     ]
   endif
 else
-  if cc.get_id() == 'clang'
-    c_suppressions = [
+  if cc.get_id() in ['clang', 'emscripten']
+    c_suppressions += [
       '-Wno-nullability-extension',
     ]
   endif

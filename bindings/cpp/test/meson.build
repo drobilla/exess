@@ -1,10 +1,18 @@
 # Copyright 2021 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
+test_args = []
+test_link_args = []
+if cpp.get_id() == 'emscripten'
+  test_args += ['-s', 'DISABLE_EXCEPTION_CATCHING=0']
+  test_link_args += ['-s', 'DISABLE_EXCEPTION_CATCHING=0']
+endif
+
 test('exess_hpp',
      executable('test_exess_hpp',
                 files('test_exess_hpp.cpp'),
-                cpp_args: exess_cpp_args + prog_args,
+                cpp_args: exess_cpp_args + prog_args + test_args,
+                link_args: test_link_args,
                 dependencies: [exess_hpp_dep],
                 include_directories: include_directories('../../../test',
                                                          '../../../src')),

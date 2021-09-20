@@ -113,7 +113,7 @@ gcc_c_warnings = [
 
 # Set all_c_warnings for the current C compiler
 if is_variable('cc') and not is_variable('all_c_warnings')
-  if cc.get_id() == 'clang'
+  if cc.get_id() in ['clang', 'emscripten']
     all_c_warnings = ['-Weverything']
   elif cc.get_id() == 'gcc'
     all_c_warnings = gcc_common_warnings + [
@@ -143,7 +143,7 @@ endif
 
 # Set all_cpp_warnings for the current C++ compiler
 if is_variable('cpp') and not is_variable('all_cpp_warnings')
-  if cpp.get_id() == 'clang'
+  if cpp.get_id() in ['clang', 'emscripten']
     all_cpp_warnings = [
       '-Weverything',
       '-Wno-c++98-compat',
