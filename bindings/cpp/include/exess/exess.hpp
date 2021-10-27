@@ -451,7 +451,7 @@ class Variant : public ExessVariant
 {
 public:
   /// Construct a variant from an ExessVariant C structure
-  explicit Variant(ExessVariant v)
+  explicit Variant(const ExessVariant& v)
     : ExessVariant{v}
   {}
 
