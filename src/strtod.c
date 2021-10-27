@@ -67,13 +67,11 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
   }
 
   // Read significant digits of the mantissa into a 64-bit integer
-  uint64_t frac     = 0; // Fraction value (ignoring decimal point)
-  int      n_before = 0; // Number of digits before decimal point
-  int      n_after  = 0; // Number of digits after decimal point
+  uint64_t frac    = 0; // Fraction value (ignoring decimal point)
+  int      n_after = 0; // Number of digits after decimal point
   for (; out->n_digits < DBL_DECIMAL_DIG + 1; ++s) {
     if (is_digit(*s)) {
       frac = (frac * 10) + (unsigned)(*s - '0');
-      n_before += !after_point;
       n_after += after_point;
       out->digits[out->n_digits++] = *s;
     } else if (*s == '.' && !after_point) {
@@ -85,13 +83,11 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
 
   // Skip extra digits
   int n_extra_before = 0;
-  int n_extra_after  = 0;
   for (;; ++s) {
     if (*s == '.' && !after_point) {
       after_point = true;
     } else if (is_digit(*s)) {
       n_extra_before += !after_point;
-      n_extra_after += after_point;
     } else {
       break;
     }
