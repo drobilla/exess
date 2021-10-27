@@ -96,7 +96,7 @@ ExessSoftFloat
 soft_float_multiply(const ExessSoftFloat lhs, const ExessSoftFloat rhs)
 {
   static const uint64_t mask  = 0xFFFFFFFF;
-  static const uint64_t round = 1u << 31u;
+  static const uint64_t round = 1ul << 31u;
 
   const uint64_t l0   = lhs.f >> 32u;
   const uint64_t l1   = lhs.f & mask;
