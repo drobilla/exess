@@ -418,7 +418,7 @@ exess_read_variant(ExessVariant* const out,
 
   case EXESS_POSITIVE_INTEGER:
     if (!(r = exess_read_ulong(&out->value.as_ulong, str)).status) {
-      if (out->value.as_ulong <= 0) {
+      if (out->value.as_ulong == 0) {
         return result(EXESS_OUT_OF_RANGE, r.count);
       }
     }
