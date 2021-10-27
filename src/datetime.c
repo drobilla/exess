@@ -16,24 +16,24 @@
 static inline ExessDateTime
 infinite_future(const bool is_utc)
 {
-  const ExessDateTime result = {INT16_MAX,
-                                UINT8_MAX,
-                                UINT8_MAX,
-                                is_utc,
-                                UINT8_MAX,
-                                UINT8_MAX,
-                                UINT8_MAX,
-                                UINT32_MAX};
+  const ExessDateTime r = {INT16_MAX,
+                           UINT8_MAX,
+                           UINT8_MAX,
+                           is_utc,
+                           UINT8_MAX,
+                           UINT8_MAX,
+                           UINT8_MAX,
+                           UINT32_MAX};
 
-  return result;
+  return r;
 }
 
 static inline ExessDateTime
 infinite_past(const bool is_utc)
 {
-  const ExessDateTime result = {INT16_MIN, 0, 0, is_utc, 0, 0, 0, 0};
+  const ExessDateTime r = {INT16_MIN, 0, 0, is_utc, 0, 0, 0, 0};
 
-  return result;
+  return r;
 }
 
 static int32_t
