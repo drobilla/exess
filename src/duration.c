@@ -32,19 +32,19 @@ set_field(ExessDuration* const out,
 
   switch (field) {
   case YEAR:
-    out->months = (int32_t)(12 * lrint(value));
+    out->months = (int32_t)(12l * lrint(value));
     break;
   case MONTH:
     out->months = (int32_t)(out->months + lrint(value));
     break;
   case DAY:
-    out->seconds = (int32_t)(24 * 60 * 60 * lrint(value));
+    out->seconds = (int32_t)(24l * 60l * 60l * lrint(value));
     break;
   case HOUR:
-    out->seconds = (int32_t)(out->seconds + 60 * 60 * lrint(value));
+    out->seconds = (int32_t)(out->seconds + 60l * 60l * lrint(value));
     break;
   case MINUTE:
-    out->seconds = (int32_t)(out->seconds + 60 * lrint(value));
+    out->seconds = (int32_t)(out->seconds + 60l * lrint(value));
     break;
   case SECOND:
     out->seconds = (int32_t)(out->seconds + lrint(value));
