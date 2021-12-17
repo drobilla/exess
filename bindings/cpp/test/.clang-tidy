@@ -2,7 +2,7 @@ Checks: >
   *,
   -*-magic-numbers,
   -*-uppercase-literal-suffix,
-  -altera-struct-pack-align,
+  -altera-*,
   -clang-analyzer-nullability.NullableDereferenced,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-type-reinterpret-cast,
