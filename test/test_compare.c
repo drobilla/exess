@@ -33,8 +33,8 @@ check_comparison(const ExessDatatype lhs_datatype,
                  const char* const   rhs_string,
                  bool (*pred)(int))
 {
-  ExessValue lhs = {EXESS_SUCCESS};
-  ExessValue rhs = {EXESS_SUCCESS};
+  ExessValue lhs = {false};
+  ExessValue rhs = {false};
 
   const ExessVariableResult l =
     exess_read_value(lhs_datatype, sizeof(lhs), &lhs, lhs_string);

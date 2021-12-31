@@ -98,7 +98,7 @@ groups = {
     "hex": "Hex Binary Strings",
     "base64": "Base64 Binary Strings",
     "datatypes": "Datatypes",
-    "variant": "Value Variant",
+    "value": "Generic Values",
     # 'generics': "",
     "coercion": "Value Type Coercion",
 }

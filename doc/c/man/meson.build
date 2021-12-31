@@ -30,7 +30,7 @@ man_pages = [
   'exess_uint.3',
   'exess_ulong.3',
   'exess_ushort.3',
-  'exess_variant.3',
+  'exess_value.3',
 ]
 
 # Run Sphinx to generate man pages
@@ -91,14 +91,10 @@ man_links = [
   ['ExessBlob.3', 'exess_binary.3'],
   ['ExessDatatype.3', 'exess_datatypes.3'],
   ['exess_write_canonical.3', 'exess_canon.3'],
-  ['ExessValue.3', 'exess_variant.3'],
-  ['ExessVariant.3', 'exess_variant.3'],
-  ['exess_read_variant.3', 'exess_variant.3'],
-  ['exess_write_variant.3', 'exess_variant.3'],
-  ['ExessCoercionFlag.3', 'exess_variant.3'],
-  ['ExessCoercionFlags.3', 'exess_variant.3'],
-  ['exess_coerce.3', 'exess_variant.3'],
-  ['exess_coerce_value.3', 'exess_variant.3'],
+  ['ExessValue.3', 'exess_value.3'],
+  ['ExessCoercionFlag.3', 'exess_value.3'],
+  ['ExessCoercionFlags.3', 'exess_value.3'],
+  ['exess_coerce_value.3', 'exess_value.3'],
 ]
 
 # Make a trivial alias man page for each link
