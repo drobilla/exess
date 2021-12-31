@@ -103,23 +103,11 @@ exess_read_value(const ExessDatatype datatype,
     return simple_read(exess_read_date((ExessDate*)out, str),
                        sizeof(ExessDate));
 
-  case EXESS_HEX: {
-    ExessBlob blob = {out_size, out};
-    if (!(r = simple_read(exess_read_hex(&blob, str), 0u)).status) {
-      r.write_count = blob.size;
-    }
+  case EXESS_HEX:
+    return exess_read_hex(out_size, out, str);
 
-    break;
-  }
-
-  case EXESS_BASE64: {
-    ExessBlob blob = {out_size, out};
-    if (!(r = simple_read(exess_read_base64(&blob, str), 0u)).status) {
-      r.write_count = blob.size;
-    }
-
-    break;
-  }
+  case EXESS_BASE64:
+    return exess_read_base64(out_size, out, str);
   }
 
   return r;

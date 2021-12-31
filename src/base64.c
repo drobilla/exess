@@ -56,10 +56,10 @@ exess_base64_decoded_size(const size_t length)
   return (length * 3) / 4 + 2;
 }
 
-ExessResult
-exess_read_base64(ExessBlob* const out, const char* const str)
+ExessVariableResult
+exess_read_base64(const size_t out_size, void* const out, const char* const str)
 {
-  uint8_t* const       uout = (uint8_t*)out->data;
+  uint8_t* const       uout = (uint8_t*)out;
   const uint8_t* const ustr = (const uint8_t*)str;
   size_t               i    = 0u;
   size_t               o    = 0u;
@@ -76,19 +76,19 @@ exess_read_base64(ExessBlob* const out, const char* const str)
     for (size_t j = 0; j < 4; ++j) {
       const char c = next_char(str, &i);
       if (!is_base64(c)) {
-        return result(EXESS_EXPECTED_BASE64, i);
+        return vresult(EXESS_EXPECTED_BASE64, i, o);
       }
 
       in[j] = ustr[i++];
     }
 
     if (in[0] == '=' || in[1] == '=' || (in[2] == '=' && in[3] != '=')) {
-      return result(EXESS_BAD_VALUE, i);
+      return vresult(EXESS_BAD_VALUE, i, o);
     }
 
     const size_t n_bytes = 1u + (in[2] != '=') + (in[3] != '=');
-    if (o + n_bytes > out->size) {
-      return result(EXESS_NO_SPACE, i);
+    if (o + n_bytes > out_size) {
+      return vresult(EXESS_NO_SPACE, i, o);
     }
 
     const uint8_t a1 = (uint8_t)(unmap(in[0]) << 2u);
@@ -111,8 +111,7 @@ exess_read_base64(ExessBlob* const out, const char* const str)
     }
   }
 
-  out->size = o;
-  return result(EXESS_SUCCESS, i);
+  return vresult(EXESS_SUCCESS, i, o);
 }
 
 ExessResult

@@ -1033,11 +1033,6 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
    @{
 */
 
-typedef struct {
-  size_t               size;
-  void* EXESS_NULLABLE data;
-} ExessBlob;
-
 /**
    @defgroup exess_base64 Base64
    An xsd:base64Binary is arbitrary binary data in base64 encoding.
@@ -1075,13 +1070,18 @@ exess_base64_decoded_size(size_t length);
    initial available size.  Only these first bytes are written, the rest of the
    buffer is not modified.
 
+   @param out_size The size of `out` in bytes.
    @param out The blob to set to the decoded binary data.
    @param str String to parse.
-   @return The `count` of characters read, and a `status` code.
+
+   @return The `read_count` of characters read, `write_count` of bytes written,
+   and a `status` code.
 */
 EXESS_API
-ExessResult
-exess_read_base64(ExessBlob* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+ExessVariableResult
+exess_read_base64(size_t                    out_size,
+                  void* EXESS_NONNULL       out,
+                  const char* EXESS_NONNULL str);
 
 /**
    Write a canonical xsd:base64Binary string.
@@ -1142,13 +1142,18 @@ exess_hex_decoded_size(size_t length);
    initial available size.  Only these first bytes are written, the rest of the
    buffer is not modified.
 
+   @param out_size The size of `out` in bytes.
    @param out The blob to set to the decoded binary data.
    @param str String to parse.
-   @return The `count` of characters read, and a `status` code.
+
+   @return The `read_count` of characters read, `write_count` of bytes written,
+   and a `status` code.
 */
 EXESS_API
-ExessResult
-exess_read_hex(ExessBlob* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+ExessVariableResult
+exess_read_hex(size_t                    out_size,
+               void* EXESS_NONNULL       out,
+               const char* EXESS_NONNULL str);
 
 /**
    Write a canonical xsd:hexBinary string.

@@ -19,16 +19,15 @@ check_read(const char* const string,
            const size_t      expected_value_size,
            const size_t      expected_count)
 {
-  char      buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  ExessBlob blob   = {9, buf};
+  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  ExessResult r = exess_read_base64(&blob, string);
+  ExessVariableResult r = exess_read_base64(sizeof(buf), buf, string);
   assert(r.status == expected_status);
-  assert(r.count == expected_count);
-  assert(r.status || blob.size == expected_value_size);
+  assert(r.read_count == expected_count);
+  assert(r.status || r.write_count == expected_value_size);
   if (expected_value_length > 0) {
     assert(!strncmp(buf, expected_value, expected_value_length));
-    assert(blob.size <= exess_base64_decoded_size(strlen(string)));
+    assert(r.write_count <= exess_base64_decoded_size(strlen(string)));
   }
 }
 
@@ -94,31 +93,29 @@ test_syntax_errors(void)
 static void
 test_read_overflow(void)
 {
-  char      buf[3] = {0, 0, 0};
-  ExessBlob blob0  = {0, buf};
-  ExessBlob blob1  = {1, buf};
-  ExessBlob blob2  = {2, buf};
-  ExessBlob blob3  = {3, buf};
+  char buf[3] = {0, 0, 0};
 
-  ExessResult r = exess_read_base64(&blob0, "Zm9v");
+  ExessVariableResult r = exess_read_base64(0u, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 4);
-  assert(blob0.size == 0);
+  assert(r.read_count == 4);
+  assert(r.write_count == 0);
 
-  r = exess_read_base64(&blob1, "Zm9v");
+  r = exess_read_base64(1u, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 4);
+  assert(r.read_count == 4u);
+  assert(r.write_count == 0u);
   assert(!buf[0]);
 
-  r = exess_read_base64(&blob2, "Zm9v");
+  r = exess_read_base64(2u, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 4);
+  assert(r.read_count == 4u);
+  assert(r.write_count == 0u);
   assert(!buf[0]);
 
-  r = exess_read_base64(&blob3, "Zm9v");
+  r = exess_read_base64(3u, buf, "Zm9v");
   assert(r.status == EXESS_SUCCESS);
-  assert(r.count == 4);
-  assert(blob3.size == 3);
+  assert(r.read_count == 4u);
+  assert(r.write_count == 3u);
   assert(!strncmp(buf, "foo", 3));
 }
 
@@ -155,12 +152,13 @@ test_round_trip(void)
     assert(str_len % 4 == 0);
 
     // Allocate buffer for decoded data with the same size as the input
-    uint8_t* const decoded      = (uint8_t*)malloc(size);
-    ExessBlob      decoded_blob = {size, decoded};
+    uint8_t* const decoded = (uint8_t*)malloc(size);
 
     // Decode and check that data matches the original input
-    assert(!exess_read_base64(&decoded_blob, str).status);
-    assert(decoded_blob.size == size);
+    const ExessVariableResult r = exess_read_base64(size, decoded, str);
+    assert(!r.status);
+    assert(r.read_count == str_len);
+    assert(r.write_count == size);
     assert(!memcmp(decoded, data, size));
 
     free(decoded);
