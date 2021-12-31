@@ -46,10 +46,10 @@ exess_hex_decoded_size(const size_t length)
   return length / 2;
 }
 
-ExessResult
-exess_read_hex(ExessBlob* const out, const char* const str)
+ExessVariableResult
+exess_read_hex(const size_t out_size, void* const out, const char* const str)
 {
-  uint8_t* const uout = (uint8_t*)out->data;
+  uint8_t* const uout = (uint8_t*)out;
   size_t         i    = 0u;
   size_t         o    = 0u;
 
@@ -63,30 +63,29 @@ exess_read_hex(ExessBlob* const out, const char* const str)
 
     const uint8_t hi = decode_nibble(hi_char);
     if (hi == UINT8_MAX) {
-      return result(EXESS_EXPECTED_HEX, i);
+      return vresult(EXESS_EXPECTED_HEX, i, o);
     }
 
     const char lo_char = next_char(str, &i);
     if (!lo_char) {
-      return result(EXESS_EXPECTED_HEX, i);
+      return vresult(EXESS_EXPECTED_HEX, i, o);
     }
 
     ++i;
 
     const uint8_t lo = decode_nibble(lo_char);
     if (lo == UINT8_MAX) {
-      return result(EXESS_EXPECTED_HEX, i);
+      return vresult(EXESS_EXPECTED_HEX, i, o);
     }
 
-    if (o >= out->size) {
-      return result(EXESS_NO_SPACE, i);
+    if (o >= out_size) {
+      return vresult(EXESS_NO_SPACE, i, o);
     }
 
     uout[o++] = (uint8_t)(((unsigned)hi << 4u) | lo);
   }
 
-  out->size = o;
-  return result(EXESS_SUCCESS, i);
+  return vresult(EXESS_SUCCESS, i, o);
 }
 
 ExessResult

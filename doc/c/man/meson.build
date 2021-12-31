@@ -88,7 +88,6 @@ man_links = [
   ['ExessTime.3', 'exess_time.3'],
   ['exess_read_time.3', 'exess_time.3'],
   ['exess_write_time.3', 'exess_time.3'],
-  ['ExessBlob.3', 'exess_binary.3'],
   ['ExessDatatype.3', 'exess_datatypes.3'],
   ['exess_write_canonical.3', 'exess_canon.3'],
   ['ExessValue.3', 'exess_value.3'],

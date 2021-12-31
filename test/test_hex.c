@@ -19,36 +19,34 @@ check_read(const char* const string,
            const size_t      expected_value_size,
            const size_t      expected_count)
 {
-  char      buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  ExessBlob blob   = {sizeof(buf), buf};
+  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  ExessResult r = exess_read_hex(&blob, string);
+  ExessVariableResult r = exess_read_hex(sizeof(buf), buf, string);
   assert(r.status == expected_status);
-  assert(r.count == expected_count);
-  assert(r.status || blob.size == expected_value_size);
+  assert(r.read_count == expected_count);
+  assert(r.status || r.write_count == expected_value_size);
   if (expected_value_length > 0) {
     assert(!strncmp(buf, expected_value, expected_value_length));
-    assert(blob.size <= exess_hex_decoded_size(strlen(string)));
+    assert(r.write_count <= exess_hex_decoded_size(strlen(string)));
   }
 }
 
 static void
 test_lowercase(void)
 {
-  char      buf[6] = {0, 0, 0, 0, 0, 0};
-  ExessBlob blob   = {sizeof(buf), buf};
+  char buf[6] = {0, 0, 0, 0, 0, 0};
 
-  ExessResult r = exess_read_hex(&blob, "6A6B6C6D6E6F");
+  ExessVariableResult r = exess_read_hex(sizeof(buf), buf, "6A6B6C6D6E6F");
   assert(r.status == EXESS_SUCCESS);
-  assert(r.count == 12);
-  assert(blob.size == 6);
-  assert(!strncmp((const char*)blob.data, "jklmno", 6));
+  assert(r.read_count == 12);
+  assert(r.write_count == 6);
+  assert(!strncmp(buf, "jklmno", 6));
 
-  r = exess_read_hex(&blob, "6a6b6c6d6e6f");
+  r = exess_read_hex(sizeof(buf), buf, "6a6b6c6d6e6f");
   assert(r.status == EXESS_SUCCESS);
-  assert(r.count == 12);
-  assert(blob.size == 6);
-  assert(!strncmp((const char*)blob.data, "jklmno", 6));
+  assert(r.read_count == 12);
+  assert(r.write_count == 6);
+  assert(!strncmp(buf, "jklmno", 6));
 }
 
 static void
@@ -83,25 +81,22 @@ test_syntax_errors(void)
 static void
 test_read_overflow(void)
 {
-  char      buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  ExessBlob blob0  = {0, buf};
-  ExessBlob blob1  = {1, buf};
-  ExessBlob blob2  = {2, buf};
+  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  ExessResult r = exess_read_hex(&blob0, "666F6F");
+  ExessVariableResult r = exess_read_hex(0u, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 2);
-  assert(blob0.size == 0);
+  assert(r.read_count == 2u);
+  assert(r.write_count == 0u);
 
-  r = exess_read_hex(&blob1, "666F6F");
+  r = exess_read_hex(1u, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 4);
-  assert(blob1.size == 1);
+  assert(r.read_count == 4u);
+  assert(r.write_count == 1u);
 
-  r = exess_read_hex(&blob2, "666F6F");
+  r = exess_read_hex(2u, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 6);
-  assert(blob2.size == 2);
+  assert(r.read_count == 6u);
+  assert(r.write_count == 2u);
 }
 
 static void
@@ -139,12 +134,13 @@ test_round_trip(void)
     assert(str_len % 2 == 0);
 
     // Allocate buffer for decoded data with the same size as the input
-    uint8_t* const decoded      = (uint8_t*)malloc(size);
-    ExessBlob      decoded_blob = {size, decoded};
+    uint8_t* const decoded = (uint8_t*)malloc(size);
 
     // Decode and check that data matches the original input
-    assert(!exess_read_hex(&decoded_blob, str).status);
-    assert(decoded_blob.size == size);
+    const ExessVariableResult r = exess_read_hex(size, decoded, str);
+    assert(!r.status);
+    assert(r.read_count == str_len);
+    assert(r.write_count == size);
     assert(!memcmp(decoded, data, size));
 
     free(decoded);

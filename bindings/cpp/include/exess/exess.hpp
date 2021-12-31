@@ -23,7 +23,6 @@ namespace exess {
 constexpr const char* EXESS_NONNULL const xsd_uri =
   "http://www.w3.org/2001/XMLSchema#";
 
-using Blob          = ExessBlob;
 using CoercionFlags = ExessCoercionFlags;
 using Datatype      = ExessDatatype;
 using Date          = ExessDate;
