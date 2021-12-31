@@ -1245,6 +1245,20 @@ size_t
 exess_max_length(ExessDatatype datatype);
 
 /**
+   Return the size of a value with the given datatype.
+
+   Note that this is the size of the binary representation, not a string
+   length.  For hex and base64Binary, this returns 0, since such values can be
+   arbitrarily large.
+
+   @return The size in bytes required by a value, or zero if there is no such
+   limit.
+*/
+EXESS_CONST_API
+size_t
+exess_value_size(ExessDatatype datatype);
+
+/**
    @}
    @defgroup exess_canon Canonical Form
    Rewriting generic strings in canonical form.
