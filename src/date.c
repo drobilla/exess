@@ -3,6 +3,7 @@
 
 #include "date_utils.h"
 #include "read_utils.h"
+#include "result.h"
 #include "timezone.h"
 #include "write_utils.h"
 
