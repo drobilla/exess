@@ -4,6 +4,7 @@
 #ifndef EXESS_READ_UTILS_H
 #define EXESS_READ_UTILS_H
 
+#include "result.h"
 #include "string_utils.h"
 
 #include "exess/exess.h"
@@ -40,13 +41,6 @@ is_end(const char c)
   }
 
   return false;
-}
-
-static inline ExessResult
-result(const ExessStatus status, const size_t count)
-{
-  const ExessResult r = {status, count};
-  return r;
 }
 
 ExessResult

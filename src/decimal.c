@@ -4,6 +4,7 @@
 #include "decimal.h"
 #include "digits.h"
 #include "read_utils.h"
+#include "result.h"
 #include "string_utils.h"
 #include "strtod.h"
 #include "warnings.h"

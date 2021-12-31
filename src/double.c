@@ -3,6 +3,7 @@
 
 #include "decimal.h"
 #include "read_utils.h"
+#include "result.h"
 #include "scientific.h"
 #include "strtod.h"
 #include "write_utils.h"
