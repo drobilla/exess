@@ -165,6 +165,7 @@ sources = files(
   'src/byte.c',
   'src/canonical.c',
   'src/coerce.c',
+  'src/compare.c',
   'src/datatype.c',
   'src/date.c',
   'src/datetime.c',
