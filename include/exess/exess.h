@@ -1676,9 +1676,9 @@ exess_write_variant(ExessVariant         value,
 /**
   @defgroup exess_coercion Datatype Coercion
 
-  Values can be converted between some datatypes using exess_coerce().  This is
-  particularly useful for reducing the number of datatypes that the application
-  needs to explicitly handle.
+  Values can be converted between some datatypes using exess_coerce_value().
+  This is particularly useful for reducing the number of datatypes that the
+  application needs to explicitly handle.
 
   @{
 */
@@ -1687,7 +1687,7 @@ exess_write_variant(ExessVariant         value,
    Coercion flags.
 
    These values are ORed together to enable different kinds of lossy conversion
-   in exess_coerce().
+   in exess_coerce_value().
 */
 typedef enum {
   /**
@@ -1758,11 +1758,39 @@ exess_coerce(ExessVariant       value,
              ExessCoercionFlags coercions);
 
 /**
-   @}
-   @}
+   Coerce a value to another datatype if possible.
+
+   @param coercions Enabled coercion flags.  If this is #EXESS_LOSSLESS (zero),
+   then #EXESS_SUCCESS is only returned if the resulting value can be coerced
+   back to the original type without any loss of data.  Otherwise, the lossy
+   coercions enabled by the set bits will be attempted.
+
+   @param in_datatype The datatype of `in`.
+   @param in_size The size of `in` in bytes.
+   @param in Input value to coerce.
+   @param out_datatype Datatype to convert to.
+   @param out_size Size of `out` in bytes.
+   @param out Set to the coerced value on success.
+
+   @return #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
+   value is outside the range of the target type,
+   #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
+   if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
+   between the types is not supported at all.
 */
+EXESS_API
+ExessResult
+exess_coerce_value(ExessCoercionFlags        coercions,
+                   ExessDatatype             in_datatype,
+                   size_t                    in_size,
+                   const void* EXESS_NONNULL in,
+                   ExessDatatype             out_datatype,
+                   size_t                    out_size,
+                   void* EXESS_NONNULL       out);
 
 /**
+   @}
+   @}
    @}
 */
 

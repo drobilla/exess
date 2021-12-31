@@ -98,6 +98,7 @@ man_links = [
   ['ExessCoercionFlag.3', 'exess_variant.3'],
   ['ExessCoercionFlags.3', 'exess_variant.3'],
   ['exess_coerce.3', 'exess_variant.3'],
+  ['exess_coerce_value.3', 'exess_variant.3'],
 ]
 
 # Make a trivial alias man page for each link
