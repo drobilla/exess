@@ -1612,6 +1612,28 @@ int
 exess_compare(ExessVariant lhs, ExessVariant rhs);
 
 /**
+   Compare two values.
+
+   @param lhs_datatype The datatype of `lhs_value`.
+   @param lhs_size The size of `lhs_value` in bytes.
+   @param lhs_value The left-hand value to compare.
+   @param rhs_datatype The datatype of `rhs_value`.
+   @param rhs_size The size of `rhs_value` in bytes.
+   @param rhs_value The right-hand value to compare.
+
+   @return Less than, equal to, or greater than zero if `lhs_value` is less
+   than, equal to, or greater than `rhs_value`, respectively (like `strcmp`).
+*/
+EXESS_PURE_API
+int
+exess_compare_values(ExessDatatype             lhs_datatype,
+                     size_t                    lhs_size,
+                     const void* EXESS_NONNULL lhs_value,
+                     ExessDatatype             rhs_datatype,
+                     size_t                    rhs_size,
+                     const void* EXESS_NONNULL rhs_value);
+
+/**
    @}
 */
 
