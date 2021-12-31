@@ -1,11 +1,11 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "result.h"
 #include "write_utils.h"
 
 #include "exess/exess.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -361,83 +361,31 @@ exess_compare(const ExessVariant lhs, const ExessVariant rhs)
 
 ExessResult
 exess_read_variant(ExessVariant* const out,
-                   ExessDatatype       datatype,
+                   const ExessDatatype datatype,
                    const char* const   str)
 {
   ExessResult r = {EXESS_UNSUPPORTED, 0};
 
   out->datatype = datatype;
 
-  switch (datatype) {
-  case EXESS_NOTHING:
-    break;
-  case EXESS_BOOLEAN:
-    return exess_read_boolean(&out->value.as_bool, str);
-  case EXESS_DECIMAL:
-    return exess_read_decimal(&out->value.as_double, str);
-  case EXESS_DOUBLE:
-    return exess_read_double(&out->value.as_double, str);
-  case EXESS_FLOAT:
-    return exess_read_float(&out->value.as_float, str);
-  case EXESS_INTEGER:
-    return exess_read_long(&out->value.as_long, str);
+  if (datatype == EXESS_HEX || datatype == EXESS_BASE64) {
+    const ExessVariableResult vr = exess_read_value(
+      datatype, out->value.as_blob.size, (void*)out->value.as_blob.data, str);
 
-  case EXESS_NON_POSITIVE_INTEGER:
-    if (!(r = exess_read_long(&out->value.as_long, str)).status) {
-      if (out->value.as_long > 0) {
-        return result(EXESS_OUT_OF_RANGE, r.count);
-      }
-    }
-    break;
+    r.status                = vr.status;
+    r.count                 = vr.read_count;
+    out->value.as_blob.size = vr.write_count;
 
-  case EXESS_NEGATIVE_INTEGER:
-    if (!(r = exess_read_long(&out->value.as_long, str)).status) {
-      if (out->value.as_long >= 0) {
-        return result(EXESS_OUT_OF_RANGE, r.count);
-      }
-    }
-    break;
-
-  case EXESS_LONG:
-    return exess_read_long(&out->value.as_long, str);
-  case EXESS_INT:
-    return exess_read_int(&out->value.as_int, str);
-  case EXESS_SHORT:
-    return exess_read_short(&out->value.as_short, str);
-  case EXESS_BYTE:
-    return exess_read_byte(&out->value.as_byte, str);
-  case EXESS_NON_NEGATIVE_INTEGER:
-  case EXESS_ULONG:
-    return exess_read_ulong(&out->value.as_ulong, str);
-  case EXESS_UINT:
-    return exess_read_uint(&out->value.as_uint, str);
-  case EXESS_USHORT:
-    return exess_read_ushort(&out->value.as_ushort, str);
-  case EXESS_UBYTE:
-    return exess_read_ubyte(&out->value.as_ubyte, str);
-
-  case EXESS_POSITIVE_INTEGER:
-    if (!(r = exess_read_ulong(&out->value.as_ulong, str)).status) {
-      if (out->value.as_ulong == 0) {
-        return result(EXESS_OUT_OF_RANGE, r.count);
-      }
-    }
-    break;
-
-  case EXESS_DURATION:
-    return exess_read_duration(&out->value.as_duration, str);
-  case EXESS_DATETIME:
-    return exess_read_datetime(&out->value.as_datetime, str);
-  case EXESS_TIME:
-    return exess_read_time(&out->value.as_time, str);
-  case EXESS_DATE:
-    return exess_read_date(&out->value.as_date, str);
-  case EXESS_HEX:
-    return exess_read_hex(&out->value.as_blob, str);
-  case EXESS_BASE64:
-    return exess_read_base64(&out->value.as_blob, str);
+    return r;
   }
 
+  assert(exess_value_size(datatype) <= sizeof(ExessVariant));
+
+  const ExessVariableResult vr =
+    exess_read_value(datatype, exess_value_size(datatype), &out->value, str);
+
+  r.status = vr.status;
+  r.count  = vr.read_count;
   return r;
 }
 
@@ -446,68 +394,18 @@ exess_write_variant(const ExessVariant variant,
                     const size_t       buf_size,
                     char* const        buf)
 {
-  if (buf_size > 0) {
-    buf[0] = '\0';
-  }
+  if (variant.datatype == EXESS_HEX || variant.datatype == EXESS_BASE64) {
+    if (!buf_size || !variant.value.as_blob.data) {
+      return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
+    }
 
-  switch (variant.datatype) {
-  case EXESS_NOTHING:
-    break;
-  case EXESS_BOOLEAN:
-    return exess_write_boolean(variant.value.as_bool, buf_size, buf);
-  case EXESS_DECIMAL:
-    return exess_write_decimal(variant.value.as_double, buf_size, buf);
-  case EXESS_DOUBLE:
-    return exess_write_double(variant.value.as_double, buf_size, buf);
-  case EXESS_FLOAT:
-    return exess_write_float(variant.value.as_float, buf_size, buf);
-  case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
-  case EXESS_LONG:
-    return exess_write_long(variant.value.as_long, buf_size, buf);
-  case EXESS_INT:
-    return exess_write_int(variant.value.as_int, buf_size, buf);
-  case EXESS_SHORT:
-    return exess_write_short(variant.value.as_short, buf_size, buf);
-  case EXESS_BYTE:
-    return exess_write_byte(variant.value.as_byte, buf_size, buf);
-  case EXESS_NON_NEGATIVE_INTEGER:
-  case EXESS_ULONG:
-    return exess_write_ulong(variant.value.as_ulong, buf_size, buf);
-  case EXESS_UINT:
-    return exess_write_uint(variant.value.as_uint, buf_size, buf);
-  case EXESS_USHORT:
-    return exess_write_ushort(variant.value.as_ushort, buf_size, buf);
-  case EXESS_UBYTE:
-    return exess_write_ubyte(variant.value.as_ubyte, buf_size, buf);
-  case EXESS_POSITIVE_INTEGER:
-    return exess_write_ulong(variant.value.as_ulong, buf_size, buf);
-  case EXESS_DURATION:
-    return exess_write_duration(variant.value.as_duration, buf_size, buf);
-  case EXESS_DATETIME:
-    return exess_write_datetime(variant.value.as_datetime, buf_size, buf);
-  case EXESS_TIME:
-    return exess_write_time(variant.value.as_time, buf_size, buf);
-  case EXESS_DATE:
-    return exess_write_date(variant.value.as_date, buf_size, buf);
-  case EXESS_HEX:
-    if (variant.value.as_blob.data) {
-      return exess_write_hex(variant.value.as_blob.size,
-                             (void*)variant.value.as_blob.data,
+    return exess_write_value(variant.datatype,
+                             variant.value.as_blob.size,
+                             (const void*)variant.value.as_blob.data,
                              buf_size,
                              buf);
-    }
-    break;
-  case EXESS_BASE64:
-    if (variant.value.as_blob.data) {
-      return exess_write_base64(variant.value.as_blob.size,
-                                (void*)variant.value.as_blob.data,
-                                buf_size,
-                                buf);
-    }
-    break;
   }
 
-  return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
+  return exess_write_value(
+    variant.datatype, sizeof(ExessVariant), &variant.value, buf_size, buf);
 }

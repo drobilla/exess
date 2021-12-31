@@ -108,6 +108,20 @@ typedef struct {
 } ExessResult;
 
 /**
+   Result returned from a read function for variably-sized values.
+
+   This is like #ExessResult but includes separate read and write counts.
+   This allows the caller to know both how many bytes were read from the input
+   (for advancing an input cursor), and how many bytes were written to the
+   output (to know how large the value is).
+*/
+typedef struct {
+  ExessStatus status;      ///< Status code
+  size_t      read_count;  ///< Number of bytes read
+  size_t      write_count; ///< Number of bytes written, excluding null
+} ExessVariableResult;
+
+/**
    Return a string describing a status code in plain English.
 
    The returned string is always one sentence, with an uppercase first
@@ -1286,8 +1300,8 @@ exess_write_canonical(const char* EXESS_NONNULL value,
 
 /**
    @}
-   @defgroup exess_variant Variant
-   An ExessVariant is a tagged union that can hold any supported datatype.
+   @defgroup exess_value Value
+   A generic interface for reading and writing binary values.
    @{
 */
 
@@ -1310,6 +1324,51 @@ typedef union {
   ExessTime     as_time;
   ExessDate     as_date;
 } ExessValue;
+
+/**
+   Read any supported datatype from a string.
+
+   @param datatype The datatype to read the string as.
+   @param out_size The size of `out` in bytes.
+   @param out Set to the parsed value on success.
+   @param str String input.
+
+   @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
+   and a `status` code.
+*/
+EXESS_API
+ExessVariableResult
+exess_read_value(ExessDatatype             datatype,
+                 size_t                    out_size,
+                 void* EXESS_NONNULL       out,
+                 const char* EXESS_NONNULL str);
+
+/**
+   Write any supported datatype to a canonical string.
+
+   @param datatype The datatype of `value`.
+   @param value_size The size of `value` in bytes.
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and `status`
+   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+*/
+EXESS_API
+ExessResult
+exess_write_value(ExessDatatype             datatype,
+                  size_t                    value_size,
+                  const void* EXESS_NONNULL value,
+                  size_t                    buf_size,
+                  char* EXESS_NULLABLE      buf);
+
+/**
+   @}
+   @defgroup exess_variant Variant
+   An ExessVariant is a tagged union that can hold any supported datatype.
+   @{
+*/
 
 /**
    Any supported value.

@@ -183,6 +183,7 @@ sources = files(
   'src/uint.c',
   'src/ulong.c',
   'src/ushort.c',
+  'src/value.c',
   'src/variant.c',
   'src/write_utils.c',
   'src/year.c',
