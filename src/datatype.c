@@ -4,6 +4,7 @@
 #include "exess/exess.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 #define N_DATATYPES 24
@@ -64,6 +65,34 @@ static const size_t exess_max_lengths[] = {
   0, // base64Binary
 };
 
+/// The size of the binary value representation of datatypes
+static const size_t exess_value_sizes[] = {
+  0, // Unknown
+  sizeof(bool),
+  sizeof(double),
+  sizeof(double),
+  sizeof(float),
+  sizeof(int64_t),
+  sizeof(int64_t),
+  sizeof(int64_t),
+  sizeof(int64_t),
+  sizeof(int32_t),
+  sizeof(int16_t),
+  sizeof(int8_t),
+  sizeof(uint64_t),
+  sizeof(uint64_t),
+  sizeof(uint32_t),
+  sizeof(uint16_t),
+  sizeof(uint8_t),
+  sizeof(uint64_t),
+  sizeof(ExessDuration),
+  sizeof(ExessDateTime),
+  sizeof(ExessTime),
+  sizeof(ExessDate),
+  0, // hexBinary
+  0, // base64Binary
+};
+
 const char*
 exess_datatype_uri(const ExessDatatype datatype)
 {
@@ -98,4 +127,10 @@ size_t
 exess_max_length(const ExessDatatype datatype)
 {
   return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0u;
+}
+
+size_t
+exess_value_size(const ExessDatatype datatype)
+{
+  return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0u;
 }

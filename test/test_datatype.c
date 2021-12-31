@@ -6,6 +6,8 @@
 #include "exess/exess.h"
 
 #include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 static void
 test_datatype_uris(void)
@@ -56,6 +58,37 @@ test_datatype_is_bounded(void)
   assert(!exess_datatype_is_bounded(EXESS_BASE64));
 }
 
+static void
+test_value_size(void)
+{
+  assert(exess_value_size((ExessDatatype)-1) == 0u);
+
+  assert(exess_value_size(EXESS_NOTHING) == 0u);
+  assert(exess_value_size(EXESS_BOOLEAN) == sizeof(bool));
+  assert(exess_value_size(EXESS_DECIMAL) == sizeof(double));
+  assert(exess_value_size(EXESS_DOUBLE) == sizeof(double));
+  assert(exess_value_size(EXESS_FLOAT) == sizeof(float));
+  assert(exess_value_size(EXESS_INTEGER) == sizeof(int64_t));
+  assert(exess_value_size(EXESS_NON_POSITIVE_INTEGER) == sizeof(int64_t));
+  assert(exess_value_size(EXESS_NEGATIVE_INTEGER) == sizeof(int64_t));
+  assert(exess_value_size(EXESS_LONG) == sizeof(int64_t));
+  assert(exess_value_size(EXESS_INT) == sizeof(int32_t));
+  assert(exess_value_size(EXESS_SHORT) == sizeof(int16_t));
+  assert(exess_value_size(EXESS_BYTE) == sizeof(int8_t));
+  assert(exess_value_size(EXESS_NON_NEGATIVE_INTEGER) == sizeof(uint64_t));
+  assert(exess_value_size(EXESS_ULONG) == sizeof(uint64_t));
+  assert(exess_value_size(EXESS_UINT) == sizeof(uint32_t));
+  assert(exess_value_size(EXESS_USHORT) == sizeof(uint16_t));
+  assert(exess_value_size(EXESS_UBYTE) == sizeof(uint8_t));
+  assert(exess_value_size(EXESS_POSITIVE_INTEGER) == sizeof(uint64_t));
+  assert(exess_value_size(EXESS_DURATION) == sizeof(ExessDuration));
+  assert(exess_value_size(EXESS_DATETIME) == sizeof(ExessDateTime));
+  assert(exess_value_size(EXESS_TIME) == sizeof(ExessTime));
+  assert(exess_value_size(EXESS_DATE) == sizeof(ExessDate));
+  assert(exess_value_size(EXESS_HEX) == 0u);
+  assert(exess_value_size(EXESS_BASE64) == 0u);
+}
+
 int
 main(int argc, char** argv)
 {
@@ -63,6 +96,7 @@ main(int argc, char** argv)
 
   test_datatype_uris();
   test_datatype_is_bounded();
+  test_value_size();
 
   return argc == 1 ? 0 : 1;
 }
