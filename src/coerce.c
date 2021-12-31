@@ -537,26 +537,3 @@ exess_coerce_value(const ExessCoercionFlags coercions,
 
   return result(st, 0u);
 }
-
-ExessVariant
-exess_coerce(const ExessVariant       value,
-             const ExessDatatype      datatype,
-             const ExessCoercionFlags coercions)
-{
-  ExessVariant result = value;
-
-  const ExessResult r = exess_coerce_value(coercions,
-                                           value.datatype,
-                                           exess_value_size(value.datatype),
-                                           &value.value,
-                                           datatype,
-                                           exess_value_size(datatype),
-                                           &result.value);
-
-  if (r.status) {
-    return exess_make_nothing(r.status);
-  }
-
-  result.datatype = datatype;
-  return result;
-}

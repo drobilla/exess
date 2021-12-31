@@ -15,9 +15,12 @@ example, writing a `float` number to a string then reading it back will yield
 the exact same `float` as the original value.
 
 The API consists mainly of simple read and write functions for each datatype.
-A variant type is also included which allows generic code to work with values
-of any type.  For flexibility, allocation is handled by the caller, making it
-possible to work on the stack, or read and write values to fields in some
+There are also utility functions for rewriting strings in canonical form,
+reading/writing binary values to/from opaque buffers,
+and coercing values between datatypes.
+
+For flexibility, allocation is handled by the caller, making it possible to
+work on the stack, or to read/write values directly from/to fields in a
 structure.  Syntax errors are reported with a descriptive error code and
 character offset, allowing friendly error messages to be produced.
 

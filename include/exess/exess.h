@@ -1306,8 +1306,6 @@ exess_write_canonical(const char* EXESS_NONNULL value,
 */
 
 typedef union {
-  ExessStatus   as_status;
-  ExessBlob     as_blob;
   bool          as_bool;
   double        as_double;
   float         as_float;
@@ -1365,264 +1363,16 @@ exess_write_value(ExessDatatype             datatype,
 
 /**
    @}
-   @defgroup exess_variant Variant
-   An ExessVariant is a tagged union that can hold any supported datatype.
+   @defgroup exess_value_comparison Comparison
    @{
 */
-
-/**
-   Any supported value.
-
-   A variant is either nothing, or a value of a specific supported type.  The
-   nothing variant has datatype #EXESS_NOTHING.
-
-   The value fields (everything other than datatype) are stored in an anonymous
-   union, only the field corresponding to the datatype is active.  This should
-   not be used for type punning, use exess_coerce() for that instead.
-*/
-typedef struct {
-  ExessDatatype datatype;
-  ExessValue    value;
-} ExessVariant;
-
-/**
-   @defgroup exess_variant_constructors Constructors
-   @{
-*/
-
-/// Return a nothing (null) variant, with a status code to signal errors
-EXESS_CONST_API
-ExessVariant
-exess_make_nothing(ExessStatus status);
-
-/// Return a boolean variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_boolean(bool value);
-
-/// Return a decimal variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_decimal(double value);
-
-/// Return a double variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_double(double value);
-
-/// Return a float variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_float(float value);
-
-/// Return a long variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_long(int64_t value);
-
-/// Return an int variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_int(int32_t value);
-
-/// Return a short variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_short(int16_t value);
-
-/// Return a byte variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_byte(int8_t value);
-
-/// Return a ulong variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_ulong(uint64_t value);
-
-/// Return a uint variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_uint(uint32_t value);
-
-/// Return a ushort variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_ushort(uint16_t value);
-
-/// Return a ubyte variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_ubyte(uint8_t value);
-
-/// Return a duration variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_duration(ExessDuration value);
-
-/// Return a datetime variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_datetime(ExessDateTime value);
-
-/// Return a time variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_time(ExessTime value);
-
-/// Return a date variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_date(ExessDate value);
-
-/// Return a hex binary variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_hex(ExessBlob value);
-
-/// Return a base64 binary variant with the given value
-EXESS_CONST_API
-ExessVariant
-exess_make_base64(ExessBlob value);
-
-/**
-   @}
-   @defgroup exess_variant_accessors Accessors
-   @{
-*/
-
-/**
-   Return the status of a variant.
-
-   This returns #EXESS_SUCCESS for any valid value, or the stored status for a
-   #EXESS_NOTHING variant.
-*/
-EXESS_PURE_API
-ExessStatus
-exess_get_status(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a boolean, otherwise null
-EXESS_PURE_API
-const bool* EXESS_NULLABLE
-exess_get_boolean(const ExessVariant* EXESS_NONNULL variant);
-
-/**
-   Return a pointer to the value if `variant` is a double, otherwise null.
-
-   This will also access the value for #EXESS_DECIMAL.
-*/
-EXESS_PURE_API
-const double* EXESS_NULLABLE
-exess_get_double(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a float, otherwise null
-EXESS_PURE_API
-const float* EXESS_NULLABLE
-exess_get_float(const ExessVariant* EXESS_NONNULL variant);
-
-/**
-   Return a pointer to the value if `variant` is a long, otherwise null.
-
-   This will also access the value for #EXESS_INTEGER,
-   #EXESS_NON_POSITIVE_INTEGER, and #EXESS_NEGATIVE_INTEGER.
-*/
-EXESS_PURE_API
-const int64_t* EXESS_NULLABLE
-exess_get_long(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is an int, otherwise null
-EXESS_PURE_API
-const int32_t* EXESS_NULLABLE
-exess_get_int(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a short, otherwise null
-EXESS_PURE_API
-const int16_t* EXESS_NULLABLE
-exess_get_short(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a byte, otherwise null
-EXESS_PURE_API
-const int8_t* EXESS_NULLABLE
-exess_get_byte(const ExessVariant* EXESS_NONNULL variant);
-
-/**
-   Return a pointer to the value if `variant` is a ulong, otherwise null.
-
-   This will also access the value for #EXESS_NON_NEGATIVE_INTEGER and
-   #EXESS_POSITIVE_INTEGER.
-*/
-EXESS_PURE_API
-const uint64_t* EXESS_NULLABLE
-exess_get_ulong(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a uint, otherwise null
-EXESS_PURE_API
-const uint32_t* EXESS_NULLABLE
-exess_get_uint(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a ushort, otherwise null
-EXESS_PURE_API
-const uint16_t* EXESS_NULLABLE
-exess_get_ushort(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a ubyte, otherwise null
-EXESS_PURE_API
-const uint8_t* EXESS_NULLABLE
-exess_get_ubyte(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a date, otherwise null
-EXESS_PURE_API
-const ExessBlob* EXESS_NULLABLE
-exess_get_blob(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a duration, otherwise null
-EXESS_PURE_API
-const ExessDuration* EXESS_NULLABLE
-exess_get_duration(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a datetime, otherwise null
-EXESS_PURE_API
-const ExessDateTime* EXESS_NULLABLE
-exess_get_datetime(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a time, otherwise null
-EXESS_PURE_API
-const ExessTime* EXESS_NULLABLE
-exess_get_time(const ExessVariant* EXESS_NONNULL variant);
-
-/// Return a pointer to the value if `variant` is a date, otherwise null
-EXESS_PURE_API
-const ExessDate* EXESS_NULLABLE
-exess_get_date(const ExessVariant* EXESS_NONNULL variant);
-
-/**
-   @}
-   @defgroup exess_variant_comparison Comparison
-   @{
-*/
-
-/**
-   Compare two variants.
-
-   @return Less than, equal to, or greater than zero if `lhs` is less than,
-   equal to, or greater than `rhs`, respectively (like `strcmp`).
-*/
-EXESS_PURE_API
-int
-exess_compare(ExessVariant lhs, ExessVariant rhs);
 
 /**
    Compare two values.
 
-   @param lhs_datatype The datatype of `lhs_value`.
-   @param lhs_size The size of `lhs_value` in bytes.
-   @param lhs_value The left-hand value to compare.
-   @param rhs_datatype The datatype of `rhs_value`.
-   @param rhs_size The size of `rhs_value` in bytes.
-   @param rhs_value The right-hand value to compare.
-
-   @return Less than, equal to, or greater than zero if `lhs_value` is less
-   than, equal to, or greater than `rhs_value`, respectively (like `strcmp`).
+   @return Less than, equal to, or greater than zero if the left-hand value is
+   less than, equal to, or greater than the right-hand value, respectively
+   (like `strcmp`).
 */
 EXESS_PURE_API
 int
@@ -1636,42 +1386,6 @@ exess_compare_values(ExessDatatype             lhs_datatype,
 /**
    @}
 */
-
-/**
-   Read any supported datatype from a string.
-
-   For reading binary blobs from base64 or hex, the `as_blob` field of `out`
-   must have the size of the available buffer in bytes, and a pointer to the
-   buffer.  On return, the size will be set to the exact size of the decoded
-   data, which may be smaller than the initial available size.  Only these
-   first bytes are written, the rest of the buffer is not modified.
-
-   @param out Set to the parsed value, or nothing on error.
-   @param datatype The datatype to read the string as.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
-*/
-EXESS_API
-ExessResult
-exess_read_variant(ExessVariant* EXESS_NONNULL out,
-                   ExessDatatype               datatype,
-                   const char* EXESS_NONNULL   str);
-
-/**
-   Write any supported xsd datatype to a canonical string.
-
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
-*/
-EXESS_API
-ExessResult
-exess_write_variant(ExessVariant         value,
-                    size_t               buf_size,
-                    char* EXESS_NULLABLE buf);
 
 /**
   @defgroup exess_coercion Datatype Coercion
@@ -1736,30 +1450,6 @@ typedef uint32_t ExessCoercionFlags;
 /**
    Coerce a value to another datatype if possible.
 
-   @param value Value to coerce.
-
-   @param datatype Datatype to convert to.
-
-   @param coercions Enabled coercion flags.  If this is #EXESS_LOSSLESS (zero),
-   then #EXESS_SUCCESS is only returned if the resulting value can be coerced
-   back to the original type without any loss of data.  Otherwise, the lossy
-   coercions enabled by the set bits will be attempted.
-
-   @return #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
-   value is outside the range of the target type,
-   #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
-   if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
-   between the types is not supported at all.
-*/
-EXESS_API
-ExessVariant
-exess_coerce(ExessVariant       value,
-             ExessDatatype      datatype,
-             ExessCoercionFlags coercions);
-
-/**
-   Coerce a value to another datatype if possible.
-
    @param coercions Enabled coercion flags.  If this is #EXESS_LOSSLESS (zero),
    then #EXESS_SUCCESS is only returned if the resulting value can be coerced
    back to the original type without any loss of data.  Otherwise, the lossy
@@ -1789,7 +1479,6 @@ exess_coerce_value(ExessCoercionFlags        coercions,
                    void* EXESS_NONNULL       out);
 
 /**
-   @}
    @}
    @}
 */

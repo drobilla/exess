@@ -8,14 +8,10 @@
 #include "exess/exess.h"
 #include "exess/exess.hpp"
 
-#include <array>
 #include <cassert>
 #include <cstdint>
-#include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
 namespace exess {
@@ -115,100 +111,6 @@ test_max_length()
   static_assert(max_length<Time>() == EXESS_MAX_TIME_LENGTH, "");
 }
 
-template<class T>
-void
-check_get_throws(const Variant& variant)
-{
-  bool caught = false;
-
-  try {
-    get<T>(variant);
-  } catch (const std::runtime_error&) {
-    caught = true;
-  }
-
-  assert(caught);
-}
-
-void
-test_variant()
-{
-  std::array<char, 4> blob_value{'b', 'l', 'o', 'b'};
-
-  const auto a_nothing              = Variant{Status::success};
-  const auto a_bool                 = Variant{true};
-  const auto a_decimal              = make_decimal(1.2);
-  const auto a_double               = Variant{3.4};
-  const auto a_float                = Variant{5.6f};
-  const auto a_integer              = make_integer(7);
-  const auto a_non_positive_integer = make_non_positive_integer(-8);
-  const auto a_negative_integer     = make_negative_integer(-9);
-  const auto a_long                 = Variant{int64_t(10)};
-  const auto a_int                  = Variant{int32_t(11)};
-  const auto a_short                = Variant{int16_t(12)};
-  const auto a_byte                 = Variant{int8_t(13)};
-  const auto a_non_negative_integer = make_non_negative_integer(14u);
-  const auto a_ulong                = Variant{uint64_t(15u)};
-  const auto a_uint                 = Variant{uint32_t(16u)};
-  const auto a_ushort               = Variant{uint16_t(17u)};
-  const auto a_ubyte                = Variant{uint8_t(18u)};
-  const auto a_positive_integer     = make_positive_integer(19u);
-
-  const auto a_hex    = make_hex(blob_value.size(), blob_value.data());
-  const auto a_base64 = make_base64(blob_value.size(), blob_value.data());
-
-  try {
-    assert(get<Status>(a_nothing) == Status::success);
-    assert(get<bool>(a_bool) == true);
-    assert(double_matches(get<double>(a_decimal), 1.2));
-    assert(double_matches(get<double>(a_double), 3.4));
-    assert(float_matches(get<float>(a_float), 5.6f));
-    assert(get<int64_t>(a_integer) == 7);
-    assert(get<int64_t>(a_non_positive_integer) == -8);
-    assert(get<int64_t>(a_negative_integer) == -9);
-    assert(get<int64_t>(a_long) == 10);
-    assert(get<int32_t>(a_int) == 11);
-    assert(get<int16_t>(a_short) == 12);
-    assert(get<int8_t>(a_byte) == 13);
-    assert(get<uint64_t>(a_non_negative_integer) == 14u);
-    assert(get<uint64_t>(a_ulong) == 15u);
-    assert(get<uint32_t>(a_uint) == 16u);
-    assert(get<uint16_t>(a_ushort) == 17u);
-    assert(get<uint8_t>(a_ubyte) == 18u);
-    assert(get<uint64_t>(a_positive_integer) == 19u);
-    assert(get<Blob>(a_hex).size == sizeof(blob_value));
-    assert(
-      !memcmp(get<Blob>(a_hex).data, blob_value.data(), blob_value.size()));
-    assert(get<Blob>(a_base64).size == sizeof(blob_value));
-    assert(
-      !memcmp(get<Blob>(a_base64).data, blob_value.data(), blob_value.size()));
-  } catch (const std::runtime_error&) {
-    abort();
-  }
-
-  check_get_throws<int>(a_nothing);
-  check_get_throws<int>(a_bool);
-  check_get_throws<int>(a_double);
-  check_get_throws<int>(a_float);
-  check_get_throws<int>(a_integer);
-  check_get_throws<int>(a_non_positive_integer);
-  check_get_throws<int>(a_negative_integer);
-  check_get_throws<int>(a_long);
-  check_get_throws<bool>(a_int);
-  check_get_throws<int>(a_short);
-  check_get_throws<int>(a_byte);
-  check_get_throws<int>(a_non_negative_integer);
-  check_get_throws<int>(a_ulong);
-  check_get_throws<int>(a_uint);
-  check_get_throws<int>(a_ushort);
-  check_get_throws<int>(a_ubyte);
-  check_get_throws<int>(a_positive_integer);
-
-  auto variant = exess::Variant{0};
-  assert(!read_variant(&variant, EXESS_INT, "1234").status);
-  assert(exess::get<int32_t>(variant) == 1234);
-}
-
 } // namespace
 } // namespace exess
 
@@ -220,7 +122,6 @@ main()
     exess::test_read();
     exess::test_to_string();
     exess::test_max_length();
-    exess::test_variant();
   } catch (...) {
     return 1;
   }

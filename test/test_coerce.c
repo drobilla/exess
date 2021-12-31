@@ -22,8 +22,8 @@ check_conversions(const ExessDatatype      from_datatype,
                   const char* const        to_string,
                   const bool               round_trip)
 {
-  ExessValue value            = {EXESS_SUCCESS};
-  ExessValue coerced          = {EXESS_SUCCESS};
+  ExessValue value            = {false};
+  ExessValue coerced          = {false};
   char       coerced_str[328] = {42};
 
   // Read original value
@@ -52,7 +52,7 @@ check_conversions(const ExessDatatype      from_datatype,
   assert(!strcmp(coerced_str, to_string));
 
   if (round_trip) {
-    ExessValue tripped          = {EXESS_SUCCESS};
+    ExessValue tripped          = {false};
     char       tripped_str[328] = {42};
 
     // Coerce the value back to the original type
@@ -106,8 +106,8 @@ check_failure(const ExessDatatype from_datatype,
               const ExessDatatype to_datatype,
               const ExessStatus   expected_status)
 {
-  ExessValue value   = {EXESS_SUCCESS};
-  ExessValue coerced = {EXESS_SUCCESS};
+  ExessValue value   = {false};
+  ExessValue coerced = {false};
 
   // Read original value
   const ExessVariableResult vr =

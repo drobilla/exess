@@ -200,7 +200,7 @@ write_bounded(const char* const   str,
               const size_t        buf_size,
               char* const         buf)
 {
-  ExessValue value = {EXESS_SUCCESS};
+  ExessValue value = {false};
 
   const ExessVariableResult vr =
     exess_read_value(datatype, sizeof(value), &value, str);

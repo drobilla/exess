@@ -89,25 +89,27 @@ since the length is bounded and relatively small,
 it may be better to write immediately to a static buffer,
 then copy the result to the final destination.
 
-********
-Variants
-********
+**************
+Generic Values
+**************
 
 The fundamental read and write functions all have similar semantics,
 but different type signatures since they use different value types.
-:struct:`ExessVariant` is a tagged union that can hold any supported value,
-allowing generic code to work with values of any type.
+An alternative API that works with opaque buffers is also provided,
+which allows for reading and writing any supported datatype without explicitly handling each case.
 
-Any value can be read with :func:`exess_read_variant` and written with :func:`exess_write_variant`,
-which work similarly to the fundamental read and write functions,
-except the read function takes an additional ``datatype`` parameter.
-The expected datatype must be provided,
-attempting to infer a datatype from the string content is not supported.
+Any value can be read with :func:`exess_read_value` and written with :func:`exess_write_value`,
+which work similarly to their typed counterparts,
+except they take a datatype, size, and pointer to a buffer rather than a value.
+
+Note that the datatype must be given to read a string.
+Since a given string could be a valid representation of many datatypes,
+the expected type must be known from some application-specific context.
 
 Datatypes
 =========
 
-:enum:`ExessDatatype` enumerates all of the supported variant datatypes.
+:enum:`ExessDatatype` enumerates all of the supported datatypes.
 The special value :enumerator:`EXESS_NOTHING` is used as a sentinel for unknown datatypes or other errors.
 
 If you have a datatype URI, then :func:`exess_datatype_from_uri()` can be used
@@ -118,17 +120,17 @@ Unbounded Numeric Types
 
 There are 6 unbounded numeric types:
 decimal, integer, nonPositiveInteger, negativeInteger, nonNegativeInteger, and positiveInteger.
-:struct:`ExessVariant` supports reading and writing these types,
-but stores them in the largest corresponding native type:
+The generic functions support reading and writing these types,
+but store them in the largest corresponding native type:
 ``double``, ``int64_t``, or ``uint64_t``.
 If the value doesn't fit in this type,
-then :func:`exess_read_variant` will return an :enumerator:`EXESS_OUT_OF_RANGE` error.
+then :func:`exess_read_value` will return an :enumerator:`EXESS_OUT_OF_RANGE` error.
 
 Writing Canonical Form
 ======================
 
 Since values are always written in canonical form,
-:struct:`ExessVariant` can be used as a generic mechanism to convert any string to canonical form:
+the generic value interface can be used as a mechanism to convert any string to canonical form:
 simply read a value,
 then write it.
 If the value itself isn't required,
@@ -145,7 +147,7 @@ For example, this will print ``123``:
    }
 
 Note that it is better to use :func:`exess_write_canonical` if the value isn't required,
-since it supports transforming some values outside the range of :struct:`ExessVariant`.
+since it supports transforming some values outside the range of native data types.
 Specifically,
 decimal and integer strings will be transformed directly,
 avoiding conversion into values and the limits of the machine's numeric types.

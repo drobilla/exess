@@ -61,7 +61,6 @@ public_tests = [
   'ulong',
   'ushort',
   'value',
-  'variant',
 ]
 
 foreach unit : public_tests
