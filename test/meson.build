@@ -41,6 +41,7 @@ public_tests = [
   'byte',
   'canonical',
   'coerce',
+  'compare',
   'datatype',
   'date',
   'datetime',

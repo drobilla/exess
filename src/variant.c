@@ -265,6 +265,115 @@ exess_get_date(const ExessVariant* const variant)
 // Comparison
 
 int
+exess_compare_values(const ExessDatatype lhs_datatype,
+                     const size_t        lhs_size,
+                     const void* const   lhs_value,
+                     const ExessDatatype rhs_datatype,
+                     const size_t        rhs_size,
+                     const void* const   rhs_value)
+{
+  if (lhs_datatype != rhs_datatype) {
+    const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);
+    const char* const rhs_datatype_uri = exess_datatype_uri(rhs_datatype);
+
+    return !lhs_datatype_uri   ? -1
+           : !rhs_datatype_uri ? 1
+                               : strcmp(lhs_datatype_uri, rhs_datatype_uri);
+  }
+
+#define EXESS_VALUE_CMP(lhs, rhs) \
+  ((lhs) < (rhs)) ? (-1) : ((lhs) > (rhs)) ? 1 : 0
+
+  switch (lhs_datatype) {
+  case EXESS_NOTHING:
+    break;
+
+  case EXESS_BOOLEAN:
+    return EXESS_VALUE_CMP(*(const bool*)lhs_value, *(const bool*)rhs_value);
+
+  case EXESS_DECIMAL:
+  case EXESS_DOUBLE:
+    return EXESS_VALUE_CMP(*(const double*)lhs_value,
+                           *(const double*)rhs_value);
+
+  case EXESS_FLOAT:
+    return EXESS_VALUE_CMP(*(const float*)lhs_value, *(const float*)rhs_value);
+
+  case EXESS_INTEGER:
+  case EXESS_NON_POSITIVE_INTEGER:
+  case EXESS_NEGATIVE_INTEGER:
+  case EXESS_LONG:
+    return EXESS_VALUE_CMP(*(const int64_t*)lhs_value,
+                           *(const int64_t*)rhs_value);
+
+  case EXESS_INT:
+    return EXESS_VALUE_CMP(*(const int32_t*)lhs_value,
+                           *(const int32_t*)rhs_value);
+
+  case EXESS_SHORT:
+    return EXESS_VALUE_CMP(*(const int16_t*)lhs_value,
+                           *(const int16_t*)rhs_value);
+
+  case EXESS_BYTE:
+    return EXESS_VALUE_CMP(*(const int8_t*)lhs_value,
+                           *(const int8_t*)rhs_value);
+
+  case EXESS_NON_NEGATIVE_INTEGER:
+  case EXESS_ULONG:
+    return EXESS_VALUE_CMP(*(const uint64_t*)lhs_value,
+                           *(const uint64_t*)rhs_value);
+
+  case EXESS_UINT:
+    return EXESS_VALUE_CMP(*(const uint32_t*)lhs_value,
+                           *(const uint32_t*)rhs_value);
+
+  case EXESS_USHORT:
+    return EXESS_VALUE_CMP(*(const uint16_t*)lhs_value,
+                           *(const uint16_t*)rhs_value);
+
+  case EXESS_UBYTE:
+    return EXESS_VALUE_CMP(*(const uint8_t*)lhs_value,
+                           *(const uint8_t*)rhs_value);
+
+  case EXESS_POSITIVE_INTEGER:
+    return EXESS_VALUE_CMP(*(const uint64_t*)lhs_value,
+                           *(const uint64_t*)rhs_value);
+
+  case EXESS_DURATION:
+    return exess_duration_compare(*(const ExessDuration*)lhs_value,
+                                  *(const ExessDuration*)rhs_value);
+
+  case EXESS_DATETIME:
+    return exess_datetime_compare(*(const ExessDateTime*)lhs_value,
+                                  *(const ExessDateTime*)rhs_value);
+
+  case EXESS_TIME:
+    return exess_time_compare(*(const ExessTime*)lhs_value,
+                              *(const ExessTime*)rhs_value);
+
+  case EXESS_DATE:
+    return exess_date_compare(*(const ExessDate*)lhs_value,
+                              *(const ExessDate*)rhs_value);
+
+  case EXESS_HEX:
+  case EXESS_BASE64:
+    if (lhs_size != rhs_size) {
+      const bool shorter_lhs = lhs_size < rhs_size;
+      const int  cmp =
+        memcmp(lhs_value, rhs_value, shorter_lhs ? lhs_size : rhs_size);
+
+      return cmp < 0 ? -1 : cmp > 0 ? 1 : shorter_lhs ? -1 : 1;
+    }
+
+    return memcmp(lhs_value, rhs_value, lhs_size);
+  }
+
+#undef EXESS_VALUE_CMP
+
+  return 0;
+}
+
+int
 exess_compare(const ExessVariant lhs, const ExessVariant rhs)
 {
   if (lhs.datatype != rhs.datatype) {
@@ -276,85 +385,21 @@ exess_compare(const ExessVariant lhs, const ExessVariant rhs)
                                : strcmp(lhs_datatype_uri, rhs_datatype_uri);
   }
 
-#define EXESS_VALUE_CMP(lhs, rhs) \
-  ((lhs) < (rhs)) ? (-1) : ((lhs) > (rhs)) ? 1 : 0
-
-  switch (lhs.datatype) {
-  case EXESS_NOTHING:
-    break;
-
-  case EXESS_BOOLEAN:
-    return EXESS_VALUE_CMP(lhs.value.as_bool, rhs.value.as_bool);
-
-  case EXESS_DECIMAL:
-  case EXESS_DOUBLE:
-    return EXESS_VALUE_CMP(lhs.value.as_double, rhs.value.as_double);
-
-  case EXESS_FLOAT:
-    return EXESS_VALUE_CMP(lhs.value.as_float, rhs.value.as_float);
-
-  case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
-  case EXESS_LONG:
-    return EXESS_VALUE_CMP(lhs.value.as_long, rhs.value.as_long);
-
-  case EXESS_INT:
-    return EXESS_VALUE_CMP(lhs.value.as_int, rhs.value.as_int);
-
-  case EXESS_SHORT:
-    return EXESS_VALUE_CMP(lhs.value.as_short, rhs.value.as_short);
-
-  case EXESS_BYTE:
-    return EXESS_VALUE_CMP(lhs.value.as_byte, rhs.value.as_byte);
-
-  case EXESS_NON_NEGATIVE_INTEGER:
-  case EXESS_ULONG:
-    return EXESS_VALUE_CMP(lhs.value.as_ulong, rhs.value.as_ulong);
-
-  case EXESS_UINT:
-    return EXESS_VALUE_CMP(lhs.value.as_uint, rhs.value.as_uint);
-
-  case EXESS_USHORT:
-    return EXESS_VALUE_CMP(lhs.value.as_ushort, rhs.value.as_ushort);
-
-  case EXESS_UBYTE:
-    return EXESS_VALUE_CMP(lhs.value.as_ubyte, rhs.value.as_ubyte);
-
-  case EXESS_POSITIVE_INTEGER:
-    return EXESS_VALUE_CMP(lhs.value.as_ulong, rhs.value.as_ulong);
-
-  case EXESS_DURATION:
-    return exess_duration_compare(lhs.value.as_duration, rhs.value.as_duration);
-
-  case EXESS_DATETIME:
-    return exess_datetime_compare(lhs.value.as_datetime, rhs.value.as_datetime);
-
-  case EXESS_TIME:
-    return exess_time_compare(lhs.value.as_time, rhs.value.as_time);
-
-  case EXESS_DATE:
-    return exess_date_compare(lhs.value.as_date, rhs.value.as_date);
-
-  case EXESS_HEX:
-  case EXESS_BASE64:
-    if (lhs.value.as_blob.size != rhs.value.as_blob.size) {
-      const bool shorter_lhs = lhs.value.as_blob.size < rhs.value.as_blob.size;
-      const int  cmp =
-        memcmp(lhs.value.as_blob.data,
-               rhs.value.as_blob.data,
-               shorter_lhs ? lhs.value.as_blob.size : rhs.value.as_blob.size);
-
-      return cmp < 0 ? -1 : cmp > 0 ? 1 : shorter_lhs ? -1 : 1;
-    }
-
-    return memcmp(
-      lhs.value.as_blob.data, rhs.value.as_blob.data, lhs.value.as_blob.size);
+  if (lhs.datatype == EXESS_HEX || lhs.datatype == EXESS_BASE64) {
+    return exess_compare_values(lhs.datatype,
+                                lhs.value.as_blob.size,
+                                (const void*)lhs.value.as_blob.data,
+                                rhs.datatype,
+                                rhs.value.as_blob.size,
+                                (const void*)rhs.value.as_blob.data);
   }
 
-#undef EXESS_VALUE_CMP
-
-  return 0;
+  return exess_compare_values(lhs.datatype,
+                              exess_value_size(lhs.datatype),
+                              &lhs.value,
+                              rhs.datatype,
+                              exess_value_size(rhs.datatype),
+                              &rhs.value);
 }
 
 // Reading and Writing
