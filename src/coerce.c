@@ -1,10 +1,14 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
+#include "result.h"
+
 #include "exess/exess.h"
 
 #include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 /* Limits for the range of integers that can be exactly represented in floating
    point types.  Note that these limits are one less than the largest value,
@@ -16,98 +20,104 @@
 #define MAX_FLOAT_INT 16777215
 #define MAX_DOUBLE_INT 9007199254740991L
 
-static ExessVariant
-coerce_long_in_range(const ExessVariant variant,
-                     const int64_t      min,
-                     const int64_t      max)
+static ExessStatus
+coerce_to_long(int64_t* const           out,
+               const ExessDatatype      in_datatype,
+               const void* const        in,
+               const ExessCoercionFlags coercions)
 {
-  const ExessVariant result = exess_coerce(variant, EXESS_LONG, EXESS_LOSSLESS);
-  if (result.datatype == EXESS_LONG) {
-    if (result.value.as_long < min || result.value.as_long > max) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
-    }
-  }
-
-  return result;
-}
-
-static ExessVariant
-coerce_to_long(const ExessVariant variant, const ExessCoercionFlags coercions)
-{
-  switch (variant.datatype) {
+  switch (in_datatype) {
   case EXESS_NOTHING:
-    return variant;
+    break;
 
   case EXESS_BOOLEAN:
-    return exess_make_long(variant.value.as_bool);
+    *out = *(const bool*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_DECIMAL:
-  case EXESS_DOUBLE:
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
-        variant.value.as_double > trunc(variant.value.as_double)) {
-      return exess_make_nothing(EXESS_WOULD_ROUND);
+  case EXESS_DOUBLE: {
+    const double d = *(const double*)in;
+
+    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) && d > trunc(d)) {
+      return EXESS_WOULD_ROUND;
     }
 
-    if (variant.value.as_double < (double)-MAX_DOUBLE_INT ||
-        variant.value.as_double > (double)MAX_DOUBLE_INT) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (d < (double)-MAX_DOUBLE_INT || d > (double)MAX_DOUBLE_INT) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_long(llrint(variant.value.as_double));
+    *out = llrint(d);
+    return EXESS_SUCCESS;
+  }
 
-  case EXESS_FLOAT:
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
-        variant.value.as_float > truncf(variant.value.as_float)) {
-      return exess_make_nothing(EXESS_WOULD_ROUND);
+  case EXESS_FLOAT: {
+    const float f = *(const float*)in;
+
+    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) && f > truncf(f)) {
+      return EXESS_WOULD_ROUND;
     }
 
-    if (variant.value.as_float < (float)-MAX_FLOAT_INT ||
-        variant.value.as_float > (float)MAX_FLOAT_INT) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (f < (float)-MAX_FLOAT_INT || f > (float)MAX_FLOAT_INT) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_long(llrintf(variant.value.as_float));
+    *out = llrintf(f);
+    return EXESS_SUCCESS;
+  }
 
   case EXESS_INTEGER:
   case EXESS_NON_POSITIVE_INTEGER:
   case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
-    return exess_make_long(variant.value.as_long);
+    *out = *(const int64_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_INT:
-    return exess_make_long(variant.value.as_int);
+    *out = *(const int32_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_SHORT:
-    return exess_make_long(variant.value.as_short);
+    *out = *(const int16_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_BYTE:
-    return exess_make_long(variant.value.as_byte);
+    *out = (int64_t) * (const int8_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_NON_NEGATIVE_INTEGER:
-    return exess_make_long(variant.value.as_long);
+  case EXESS_ULONG: {
+    const uint64_t u = *(const uint64_t*)in;
 
-  case EXESS_ULONG:
-    if (variant.value.as_ulong > INT64_MAX) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (u > INT64_MAX) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_long((int64_t)variant.value.as_ulong);
+    *out = (int64_t)u;
+    return EXESS_SUCCESS;
+  }
 
   case EXESS_UINT:
-    return exess_make_long(variant.value.as_uint);
+    *out = *(const uint32_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_USHORT:
-    return exess_make_long(variant.value.as_ushort);
+    *out = *(const uint16_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_UBYTE:
-    return exess_make_long(variant.value.as_ubyte);
+    *out = *(const uint8_t*)in;
+    return EXESS_SUCCESS;
 
-  case EXESS_POSITIVE_INTEGER:
-    if (variant.value.as_ulong > INT64_MAX) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+  case EXESS_POSITIVE_INTEGER: {
+    const uint64_t u = *(const uint64_t*)in;
+
+    if (u > INT64_MAX) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_long((int64_t)variant.value.as_ulong);
+    *out = (int64_t)u;
+    return EXESS_SUCCESS;
+  }
 
   case EXESS_DURATION:
   case EXESS_DATETIME:
@@ -118,107 +128,120 @@ coerce_to_long(const ExessVariant variant, const ExessCoercionFlags coercions)
     break;
   }
 
-  return exess_make_nothing(EXESS_UNSUPPORTED);
+  return EXESS_UNSUPPORTED;
 }
 
-static ExessVariant
-coerce_ulong_in_range(const ExessVariant variant, const uint64_t max)
+static ExessStatus
+coerce_signed(int64_t* const      out,
+              const ExessDatatype in_datatype,
+              const void* const   in,
+              const int64_t       min,
+              const int64_t       max)
 {
-  const ExessVariant result =
-    exess_coerce(variant, EXESS_ULONG, EXESS_LOSSLESS);
+  const ExessStatus st = coerce_to_long(out, in_datatype, in, EXESS_LOSSLESS);
 
-  if (result.datatype == EXESS_ULONG) {
-    if (variant.value.as_ulong > max) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
-    }
-  }
-
-  return result;
+  return st                           ? st
+         : (*out < min || *out > max) ? EXESS_OUT_OF_RANGE
+                                      : EXESS_SUCCESS;
 }
 
-static ExessVariant
-coerce_to_ulong(const ExessVariant value, const ExessCoercionFlags coercions)
+static ExessStatus
+coerce_to_ulong(uint64_t* const          out,
+                const ExessDatatype      in_datatype,
+                const void* const        in,
+                const ExessCoercionFlags coercions)
 {
-  switch (value.datatype) {
+  switch (in_datatype) {
   case EXESS_NOTHING:
-    return value;
+    break;
 
   case EXESS_BOOLEAN:
-    return exess_make_ulong(value.value.as_bool);
+    *out = *(const bool*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_DECIMAL:
   case EXESS_DOUBLE:
     if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
-        value.value.as_double > trunc(value.value.as_double)) {
-      return exess_make_nothing(EXESS_WOULD_ROUND);
+        *(const double*)in > trunc(*(const double*)in)) {
+      return EXESS_WOULD_ROUND;
     }
 
-    if (value.value.as_double < 0.0 ||
-        value.value.as_double > (double)MAX_DOUBLE_INT) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const double*)in < 0.0 ||
+        *(const double*)in > (double)MAX_DOUBLE_INT) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)llrint(value.value.as_double));
+    *out = (uint64_t)llrint(*(const double*)in);
+    return EXESS_SUCCESS;
 
   case EXESS_FLOAT:
     if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
-        value.value.as_float > truncf(value.value.as_float)) {
-      return exess_make_nothing(EXESS_WOULD_ROUND);
+        *(const float*)in > truncf(*(const float*)in)) {
+      return EXESS_WOULD_ROUND;
     }
 
-    if (value.value.as_float < 0.0f ||
-        value.value.as_float > (float)MAX_FLOAT_INT) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const float*)in < 0.0f || *(const float*)in > (float)MAX_FLOAT_INT) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)llrintf(value.value.as_float));
+    *out = (uint64_t)llrintf(*(const float*)in);
+    return EXESS_SUCCESS;
 
   case EXESS_INTEGER:
   case EXESS_NON_POSITIVE_INTEGER:
   case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
-    if (value.value.as_long < 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const int64_t*)in < 0) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)value.value.as_long);
+    *out = (uint64_t) * (const int64_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_INT:
-    if (value.value.as_int < 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const int32_t*)in < 0) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)value.value.as_int);
+    *out = (uint64_t) * (const int*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_SHORT:
-    if (value.value.as_short < 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const int16_t*)in < 0) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)value.value.as_short);
+    *out = (uint64_t) * (const int16_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_BYTE:
-    if (value.value.as_byte < 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
+    if (*(const int8_t*)in < 0) {
+      return EXESS_OUT_OF_RANGE;
     }
 
-    return exess_make_ulong((uint64_t)value.value.as_byte);
+    *out = (uint64_t) * (const int8_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
-    return exess_make_ulong(value.value.as_ulong);
+    *out = *(const uint64_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_UINT:
-    return exess_make_ulong(value.value.as_uint);
+    *out = *(const uint32_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_USHORT:
-    return exess_make_ulong(value.value.as_ushort);
+    *out = *(const uint16_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_UBYTE:
-    return exess_make_ulong(value.value.as_ubyte);
+    *out = *(const uint8_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_POSITIVE_INTEGER:
-    return exess_make_ulong(value.value.as_ulong);
+    *out = *(const uint64_t*)in;
+    return EXESS_SUCCESS;
 
   case EXESS_DURATION:
   case EXESS_DATETIME:
@@ -229,7 +252,290 @@ coerce_to_ulong(const ExessVariant value, const ExessCoercionFlags coercions)
     break;
   }
 
-  return exess_make_nothing(EXESS_UNSUPPORTED);
+  return EXESS_UNSUPPORTED;
+}
+
+static ExessStatus
+coerce_unsigned(uint64_t* const     out,
+                const ExessDatatype in_datatype,
+                const void* const   in,
+                const uint64_t      max)
+{
+  const ExessStatus st = coerce_to_ulong(out, in_datatype, in, EXESS_LOSSLESS);
+
+  return st ? st : (*out > max) ? EXESS_OUT_OF_RANGE : EXESS_SUCCESS;
+}
+
+ExessResult
+exess_coerce_value(const ExessCoercionFlags coercions,
+                   const ExessDatatype      in_datatype,
+                   const size_t             in_size,
+                   const void* const        in,
+                   const ExessDatatype      out_datatype,
+                   const size_t             out_size,
+                   void* const              out)
+{
+  // Ensure the input is sufficiently large so we don't read out of bounds
+  if (in_size < exess_value_size(in_datatype)) {
+    return result(EXESS_BAD_VALUE, 0u);
+  }
+
+  // Copy value verbatim for trivial conversions
+  if ((out_datatype == in_datatype) ||
+      (out_datatype == EXESS_HEX && in_datatype == EXESS_BASE64) ||
+      (out_datatype == EXESS_BASE64 && in_datatype == EXESS_HEX)) {
+    if (out_size < in_size) {
+      return result(EXESS_NO_SPACE, 0u);
+    }
+
+    memcpy(out, in, in_size);
+    return result(EXESS_SUCCESS, in_size);
+  }
+
+  // Ensure the output is sufficiently large so we don't write out of bounds
+  if (out_size < exess_value_size(out_datatype)) {
+    return result(EXESS_NO_SPACE, 0u);
+  }
+
+  ExessStatus st    = EXESS_UNSUPPORTED;
+  int64_t     l_out = 0;
+  uint64_t    u_out = 0u;
+
+  switch (out_datatype) {
+  case EXESS_NOTHING:
+    break;
+
+  case EXESS_BOOLEAN:
+    if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+      const bool truncate = (coercions & (ExessCoercionFlags)EXESS_TRUNCATE);
+      if (!truncate && l_out != 0 && l_out != 1) {
+        return result(EXESS_WOULD_TRUNCATE, 0u);
+      }
+
+      *(bool*)out = (l_out != 0);
+      return result(EXESS_SUCCESS, sizeof(bool));
+    }
+
+    break;
+
+  case EXESS_DECIMAL:
+    if (in_datatype == EXESS_DOUBLE) {
+      *(double*)out = *(const double*)in;
+      return result(EXESS_SUCCESS, sizeof(double));
+    }
+
+    if (in_datatype == EXESS_FLOAT) {
+      *(double*)out = (double)*(const float*)in;
+      return result(EXESS_SUCCESS, sizeof(double));
+    }
+
+    if (!(st = coerce_signed(
+            &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+      *(double*)out = (double)l_out;
+      return result(EXESS_SUCCESS, sizeof(double));
+    }
+
+    break;
+
+  case EXESS_DOUBLE:
+    switch (in_datatype) {
+    case EXESS_DECIMAL:
+      *(double*)out = *(const double*)in;
+      return result(EXESS_SUCCESS, sizeof(double));
+
+    case EXESS_FLOAT:
+      *(double*)out = (double)*(const float*)in;
+      return result(EXESS_SUCCESS, sizeof(double));
+
+    default:
+      if (!(st = coerce_signed(
+              &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+        *(double*)out = (double)l_out;
+        return result(EXESS_SUCCESS, sizeof(double));
+      }
+    }
+
+    break;
+
+  case EXESS_FLOAT:
+    switch (in_datatype) {
+    case EXESS_DECIMAL:
+    case EXESS_DOUBLE:
+      if (!(coercions & (ExessCoercionFlags)EXESS_REDUCE_PRECISION)) {
+        return result(EXESS_WOULD_REDUCE_PRECISION, 0u);
+      }
+
+      *(float*)out = (float)*(const double*)in;
+      return result(EXESS_SUCCESS, sizeof(float));
+
+    default:
+      if (!(st = coerce_signed(
+              &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT))) {
+        *(float*)out = (float)l_out;
+        return result(EXESS_SUCCESS, sizeof(float));
+      }
+    }
+
+    break;
+
+  case EXESS_INTEGER:
+    if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+      *(int64_t*)out = l_out;
+      return result(EXESS_SUCCESS, sizeof(int64_t));
+    }
+
+    break;
+
+  case EXESS_NON_POSITIVE_INTEGER:
+    if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+      if (l_out > 0) {
+        return result(EXESS_OUT_OF_RANGE, 0u);
+      }
+
+      *(int64_t*)out = l_out;
+      return result(EXESS_SUCCESS, sizeof(int64_t));
+    }
+
+    break;
+
+  case EXESS_NEGATIVE_INTEGER:
+    if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+      if (l_out >= 0) {
+        return result(EXESS_OUT_OF_RANGE, 0u);
+      }
+
+      *(int64_t*)out = l_out;
+      return result(EXESS_SUCCESS, sizeof(int64_t));
+    }
+
+    break;
+
+  case EXESS_LONG:
+    if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+      *(int64_t*)out = l_out;
+      return result(EXESS_SUCCESS, sizeof(int64_t));
+    }
+
+    break;
+
+  case EXESS_INT:
+    if (!(st = coerce_signed(&l_out, in_datatype, in, INT32_MIN, INT32_MAX))) {
+      *(int32_t*)out = (int32_t)l_out;
+      return result(EXESS_SUCCESS, sizeof(int32_t));
+    }
+
+    break;
+
+  case EXESS_SHORT:
+    if (!(st = coerce_signed(&l_out, in_datatype, in, INT16_MIN, INT16_MAX))) {
+      *(int16_t*)out = (int16_t)l_out;
+      return result(EXESS_SUCCESS, sizeof(int16_t));
+    }
+
+    break;
+
+  case EXESS_BYTE:
+    if (!(st = coerce_signed(&l_out, in_datatype, in, INT8_MIN, INT8_MAX))) {
+      *(int8_t*)out = (int8_t)l_out;
+      return result(EXESS_SUCCESS, sizeof(int8_t));
+    }
+
+    break;
+
+  case EXESS_NON_NEGATIVE_INTEGER:
+  case EXESS_ULONG:
+    if (!(st = coerce_to_ulong(&u_out, in_datatype, in, coercions))) {
+      *(uint64_t*)out = u_out;
+      return result(EXESS_SUCCESS, sizeof(uint64_t));
+    }
+
+    break;
+
+  case EXESS_UINT:
+    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT32_MAX))) {
+      *(uint32_t*)out = (uint32_t)u_out;
+      return result(EXESS_SUCCESS, sizeof(uint32_t));
+    }
+
+    break;
+
+  case EXESS_USHORT:
+    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT16_MAX))) {
+      *(uint16_t*)out = (uint16_t)u_out;
+      return result(EXESS_SUCCESS, sizeof(uint16_t));
+    }
+
+    break;
+
+  case EXESS_UBYTE:
+    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT8_MAX))) {
+      *(uint8_t*)out = (uint8_t)u_out;
+      return result(EXESS_SUCCESS, sizeof(uint8_t));
+    }
+
+    break;
+
+  case EXESS_POSITIVE_INTEGER:
+    if (!(st = coerce_to_ulong(&u_out, in_datatype, in, coercions))) {
+      if (u_out == 0u) {
+        return result(EXESS_OUT_OF_RANGE, 0u);
+      }
+
+      *(uint64_t*)out = u_out;
+      return result(EXESS_SUCCESS, sizeof(uint64_t));
+    }
+
+    break;
+
+  case EXESS_DURATION:
+  case EXESS_DATETIME:
+    break;
+
+  case EXESS_TIME:
+    if (in_datatype != EXESS_DATETIME) {
+      return result(EXESS_UNSUPPORTED, 0u);
+    }
+
+    if ((coercions & (ExessCoercionFlags)EXESS_TRUNCATE)) {
+      const ExessDateTime datetime = *(const ExessDateTime*)in;
+
+      const ExessTime time = {{datetime.is_utc ? 0 : EXESS_LOCAL},
+                              datetime.hour,
+                              datetime.minute,
+                              datetime.second,
+                              datetime.nanosecond};
+
+      *(ExessTime*)out = time;
+      return result(EXESS_SUCCESS, sizeof(ExessTime));
+    }
+
+    return result(EXESS_WOULD_TRUNCATE, 0u);
+
+  case EXESS_DATE:
+    if (in_datatype != EXESS_DATETIME) {
+      return result(EXESS_UNSUPPORTED, 0u);
+    }
+
+    if (coercions & (ExessCoercionFlags)EXESS_TRUNCATE) {
+      const ExessDateTime datetime = *(const ExessDateTime*)in;
+
+      const ExessDate date = {datetime.year,
+                              datetime.month,
+                              datetime.day,
+                              {datetime.is_utc ? 0 : EXESS_LOCAL}};
+
+      *(ExessDate*)out = date;
+      return result(EXESS_SUCCESS, sizeof(ExessDate));
+    }
+
+    return result(EXESS_WOULD_TRUNCATE, 0u);
+
+  case EXESS_HEX:
+  case EXESS_BASE64:
+    break;
+  }
+
+  return result(st, 0u);
 }
 
 ExessVariant
@@ -237,186 +543,20 @@ exess_coerce(const ExessVariant       value,
              const ExessDatatype      datatype,
              const ExessCoercionFlags coercions)
 {
-  if (datatype == value.datatype) {
-    return value;
-  }
-
   ExessVariant result = value;
 
-  switch (datatype) {
-  case EXESS_NOTHING:
-    break;
+  const ExessResult r = exess_coerce_value(coercions,
+                                           value.datatype,
+                                           exess_value_size(value.datatype),
+                                           &value.value,
+                                           datatype,
+                                           exess_value_size(datatype),
+                                           &result.value);
 
-  case EXESS_BOOLEAN:
-    result = exess_coerce(value, EXESS_LONG, coercions);
-    if (result.datatype == EXESS_LONG) {
-      if (!(coercions & (ExessCoercionFlags)EXESS_TRUNCATE) &&
-          result.value.as_long != 0 && result.value.as_long != 1) {
-        return exess_make_nothing(EXESS_WOULD_TRUNCATE);
-      }
-
-      return exess_make_boolean(result.value.as_long != 0);
-    }
-    break;
-
-  case EXESS_DECIMAL:
-    if (value.datatype == EXESS_DOUBLE) {
-      return exess_make_decimal(value.value.as_double);
-    }
-
-    if (value.datatype == EXESS_FLOAT) {
-      return exess_make_decimal((double)value.value.as_float);
-    }
-
-    result = coerce_long_in_range(value, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
-    if (result.datatype == EXESS_LONG) {
-      return exess_make_decimal((double)result.value.as_long);
-    }
-
-    break;
-
-  case EXESS_DOUBLE:
-    if (value.datatype == EXESS_DECIMAL) {
-      return exess_make_double(value.value.as_double);
-    }
-
-    if (value.datatype == EXESS_FLOAT) {
-      return exess_make_double((double)value.value.as_float);
-    }
-
-    result = coerce_long_in_range(value, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
-    if (result.datatype == EXESS_LONG) {
-      return exess_make_double((double)result.value.as_long);
-    }
-
-    break;
-
-  case EXESS_FLOAT:
-    if (value.datatype == EXESS_DECIMAL || value.datatype == EXESS_DOUBLE) {
-      if (!(coercions & (ExessCoercionFlags)EXESS_REDUCE_PRECISION)) {
-        return exess_make_nothing(EXESS_WOULD_REDUCE_PRECISION);
-      }
-
-      return exess_make_float((float)result.value.as_double);
-    } else {
-      result = coerce_long_in_range(value, -MAX_FLOAT_INT, MAX_FLOAT_INT);
-      if (result.datatype == EXESS_LONG) {
-        return exess_make_float((float)result.value.as_long);
-      }
-    }
-
-    break;
-
-  case EXESS_INTEGER:
-    result = coerce_to_long(value, coercions);
-    break;
-
-  case EXESS_NON_POSITIVE_INTEGER:
-    result = coerce_to_long(value, coercions);
-    if (result.datatype == EXESS_LONG && result.value.as_long > 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
-    }
-
-    break;
-
-  case EXESS_NEGATIVE_INTEGER:
-    result = coerce_to_long(value, coercions);
-    if (result.datatype == EXESS_LONG && result.value.as_long >= 0) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
-    }
-    break;
-
-  case EXESS_LONG:
-    return coerce_to_long(value, coercions);
-
-  case EXESS_INT:
-    result = coerce_long_in_range(value, INT32_MIN, INT32_MAX);
-    break;
-
-  case EXESS_SHORT:
-    result = coerce_long_in_range(value, INT16_MIN, INT16_MAX);
-    break;
-
-  case EXESS_BYTE:
-    result = coerce_long_in_range(value, INT8_MIN, INT8_MAX);
-    break;
-
-  case EXESS_NON_NEGATIVE_INTEGER:
-  case EXESS_ULONG:
-    result = coerce_to_ulong(value, coercions);
-    break;
-
-  case EXESS_UINT:
-    result = coerce_ulong_in_range(value, UINT32_MAX);
-    break;
-
-  case EXESS_USHORT:
-    result = coerce_ulong_in_range(value, UINT16_MAX);
-    break;
-
-  case EXESS_UBYTE:
-    result = coerce_ulong_in_range(value, UINT8_MAX);
-    break;
-
-  case EXESS_POSITIVE_INTEGER:
-    result = coerce_to_ulong(value, coercions);
-    if (result.datatype == EXESS_ULONG && result.value.as_ulong == 0u) {
-      return exess_make_nothing(EXESS_OUT_OF_RANGE);
-    }
-    break;
-
-  case EXESS_DURATION:
-  case EXESS_DATETIME:
-    return exess_make_nothing(EXESS_UNSUPPORTED);
-
-  case EXESS_TIME:
-    if (value.datatype != EXESS_DATETIME) {
-      return exess_make_nothing(EXESS_UNSUPPORTED);
-    }
-
-    if (coercions & (ExessCoercionFlags)EXESS_TRUNCATE) {
-      const ExessTime time = {
-        {value.value.as_datetime.is_utc ? 0 : EXESS_LOCAL},
-        value.value.as_datetime.hour,
-        value.value.as_datetime.minute,
-        value.value.as_datetime.second,
-        value.value.as_datetime.nanosecond};
-
-      return exess_make_time(time);
-    }
-
-    return exess_make_nothing(EXESS_WOULD_TRUNCATE);
-
-  case EXESS_DATE:
-    if (value.datatype != EXESS_DATETIME) {
-      return exess_make_nothing(EXESS_UNSUPPORTED);
-    }
-
-    if (coercions & (ExessCoercionFlags)EXESS_TRUNCATE) {
-      const ExessDate date = {
-        value.value.as_datetime.year,
-        value.value.as_datetime.month,
-        value.value.as_datetime.day,
-        {value.value.as_datetime.is_utc ? 0 : EXESS_LOCAL}};
-      return exess_make_date(date);
-    }
-
-    return exess_make_nothing(EXESS_WOULD_TRUNCATE);
-
-  case EXESS_HEX:
-    return (value.datatype == EXESS_BASE64)
-             ? exess_make_hex(value.value.as_blob)
-             : exess_make_nothing(EXESS_UNSUPPORTED);
-
-  case EXESS_BASE64:
-    return (value.datatype == EXESS_HEX)
-             ? exess_make_base64(value.value.as_blob)
-             : exess_make_nothing(EXESS_UNSUPPORTED);
+  if (r.status) {
+    return exess_make_nothing(r.status);
   }
 
-  if (result.datatype != EXESS_NOTHING) {
-    result.datatype = datatype;
-  }
-
+  result.datatype = datatype;
   return result;
 }

@@ -51,6 +51,7 @@ if get_option('strict')
       '-Wno-c11-extensions',
       '-Wno-nullability-extension',
       '-Wno-padded',
+      '-Wno-switch-enum',
     ]
 
     if host_machine.system() == 'windows'
@@ -66,6 +67,7 @@ if get_option('strict')
       '-Wno-padded',
       '-Wno-strict-overflow',
       '-Wno-switch-default',
+      '-Wno-switch-enum',
       '-Wno-unsuffixed-float-constants',
       '-Wno-unused-const-variable',
     ]

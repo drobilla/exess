@@ -6,6 +6,8 @@
 #include "exess/exess.h"
 
 #include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 static const char* const min_long_str  = "-9223372036854775808";
@@ -13,34 +15,78 @@ static const char* const max_long_str  = "9223372036854775807";
 static const char* const max_ulong_str = "18446744073709551615";
 
 static void
+check_conversions(const ExessDatatype      from_datatype,
+                  const char* const        from_string,
+                  const ExessCoercionFlags coercions,
+                  const ExessDatatype      to_datatype,
+                  const char* const        to_string,
+                  const bool               round_trip)
+{
+  ExessValue value            = {EXESS_SUCCESS};
+  ExessValue coerced          = {EXESS_SUCCESS};
+  char       coerced_str[328] = {42};
+
+  // Read original value
+  const ExessVariableResult vr =
+    exess_read_value(from_datatype, sizeof(value), &value, from_string);
+
+  assert(!vr.status);
+
+  // Coerce to target datatype
+  const ExessResult coerced_r = exess_coerce_value(coercions,
+                                                   from_datatype,
+                                                   vr.write_count,
+                                                   &value,
+                                                   to_datatype,
+                                                   sizeof(coerced),
+                                                   &coerced);
+
+  assert(!coerced_r.status);
+  assert(coerced_r.count >= exess_value_size(to_datatype));
+
+  // Write coerced value and check string against expectation
+  const ExessResult coerced_str_r = exess_write_value(
+    to_datatype, vr.write_count, &coerced, sizeof(coerced_str), coerced_str);
+
+  assert(!coerced_str_r.status);
+  assert(!strcmp(coerced_str, to_string));
+
+  if (round_trip) {
+    ExessValue tripped          = {EXESS_SUCCESS};
+    char       tripped_str[328] = {42};
+
+    // Coerce the value back to the original type
+    const ExessResult tripped_r = exess_coerce_value(coercions,
+                                                     to_datatype,
+                                                     coerced_r.count,
+                                                     &coerced,
+                                                     from_datatype,
+                                                     sizeof(tripped),
+                                                     &tripped);
+
+    assert(!tripped_r.status);
+    assert(tripped_r.count >= exess_value_size(from_datatype));
+
+    // Write round-tripped value and check string against the original
+    const ExessResult tr = exess_write_value(from_datatype,
+                                             tripped_r.count,
+                                             &tripped,
+                                             sizeof(tripped_str),
+                                             tripped_str);
+
+    assert(!tr.status);
+    assert(!strcmp(tripped_str, from_string));
+  }
+}
+
+static void
 check_from_to(const ExessDatatype from_datatype,
               const char* const   from_string,
               const ExessDatatype to_datatype,
               const char* const   to_string)
 {
-  char value_buf[4] = {0, 0, 0, 0};
-  char buf[328]     = {42};
-
-  // Read original value
-  ExessVariant value = {EXESS_HEX, {.as_blob = {sizeof(value_buf), value_buf}}};
-  assert(!exess_read_variant(&value, from_datatype, from_string).status);
-
-  // Coerce to target datatype
-  const ExessVariant coerced = exess_coerce(value, to_datatype, EXESS_LOSSLESS);
-  assert(coerced.datatype == to_datatype);
-
-  // Write coerced value and check string against expectation
-  assert(!exess_write_variant(coerced, sizeof(buf), buf).status);
-  assert(!strcmp(buf, to_string));
-
-  // Coerce the value back to the original type
-  const ExessVariant tripped =
-    exess_coerce(coerced, from_datatype, EXESS_LOSSLESS);
-  assert(tripped.datatype == from_datatype);
-
-  // Write round-tripped value and check string against the original
-  assert(!exess_write_variant(tripped, sizeof(buf), buf).status);
-  assert(!strcmp(buf, from_string));
+  check_conversions(
+    from_datatype, from_string, EXESS_LOSSLESS, to_datatype, to_string, true);
 }
 
 static void
@@ -50,19 +96,8 @@ check_one_way(const ExessDatatype      from_datatype,
               const ExessDatatype      to_datatype,
               const char* const        to_string)
 {
-  char buf[328] = {42};
-
-  // Read original value
-  ExessVariant value = {EXESS_NOTHING, {EXESS_SUCCESS}};
-  assert(!exess_read_variant(&value, from_datatype, from_string).status);
-
-  // Coerce to target datatype
-  ExessVariant coerced = exess_coerce(value, to_datatype, coercions);
-  assert(coerced.datatype == to_datatype);
-
-  // Write coerced value and check string against expectation
-  assert(!exess_write_variant(coerced, sizeof(buf), buf).status);
-  assert(!strcmp(buf, to_string));
+  check_conversions(
+    from_datatype, from_string, coercions, to_datatype, to_string, false);
 }
 
 static void
@@ -71,34 +106,96 @@ check_failure(const ExessDatatype from_datatype,
               const ExessDatatype to_datatype,
               const ExessStatus   expected_status)
 {
+  ExessValue value   = {EXESS_SUCCESS};
+  ExessValue coerced = {EXESS_SUCCESS};
+
   // Read original value
-  ExessVariant value = {EXESS_NOTHING, {EXESS_SUCCESS}};
-  assert(!exess_read_variant(&value, from_datatype, from_string).status);
+  const ExessVariableResult vr =
+    exess_read_value(from_datatype, sizeof(value), &value, from_string);
+
+  assert(!vr.status);
 
   // Try to coerce to target datatype
-  const ExessVariant coerced = exess_coerce(value, to_datatype, EXESS_LOSSLESS);
-  assert(coerced.datatype == EXESS_NOTHING);
-  assert(exess_get_status(&coerced) == expected_status);
+  const ExessResult coerced_r = exess_coerce_value(EXESS_LOSSLESS,
+                                                   from_datatype,
+                                                   vr.write_count,
+                                                   &value,
+                                                   to_datatype,
+                                                   sizeof(coerced),
+                                                   &coerced);
+
+  assert(coerced_r.status == expected_status);
+}
+
+static void
+test_overflow(void)
+{
+  const uint32_t v = 4294967295u;
+  uint16_t       o = 42u;
+
+  ExessResult r = exess_coerce_value(
+    EXESS_LOSSLESS, EXESS_SHORT, 1u, &v, EXESS_LONG, sizeof(o), &o);
+
+  assert(r.status == EXESS_BAD_VALUE);
+  assert(o == 42u);
+
+  r = exess_coerce_value(
+    EXESS_LOSSLESS, EXESS_SHORT, sizeof(v), &v, EXESS_LONG, sizeof(o), &o);
+
+  assert(r.status == EXESS_NO_SPACE);
+  assert(o == 42u);
+
+  r = exess_coerce_value(
+    EXESS_LOSSLESS, EXESS_HEX, sizeof(v), &v, EXESS_BASE64, sizeof(o), &o);
+
+  assert(r.status == EXESS_NO_SPACE);
+  assert(o == 42u);
 }
 
 static void
 test_unknown(void)
 {
-  ExessVariant long_value    = exess_make_long(1);
-  ExessVariant ulong_value   = exess_make_ulong(1u);
-  ExessVariant unknown_value = exess_make_nothing(EXESS_SUCCESS);
+  const int64_t  long_value  = 1;
+  const uint64_t ulong_value = 1u;
 
-  assert(exess_coerce(unknown_value, EXESS_LONG, EXESS_LOSSLESS).datatype ==
-         EXESS_NOTHING);
+  uint8_t in[32]  = {0u};
+  uint8_t out[32] = {0u};
 
-  assert(exess_coerce(unknown_value, EXESS_ULONG, EXESS_LOSSLESS).datatype ==
-         EXESS_NOTHING);
+  assert(exess_coerce_value(EXESS_LOSSLESS,
+                            EXESS_NOTHING,
+                            sizeof(in),
+                            in,
+                            EXESS_LONG,
+                            sizeof(out),
+                            out)
+           .status);
 
-  assert(exess_coerce(long_value, EXESS_NOTHING, EXESS_LOSSLESS).datatype ==
-         EXESS_NOTHING);
+  assert(exess_coerce_value(EXESS_LOSSLESS,
+                            EXESS_NOTHING,
+                            sizeof(in),
+                            in,
+                            EXESS_ULONG,
+                            sizeof(out),
+                            out)
+           .status);
 
-  assert(exess_coerce(ulong_value, EXESS_NOTHING, EXESS_LOSSLESS).datatype ==
-         EXESS_NOTHING);
+  assert(exess_coerce_value(EXESS_LOSSLESS,
+                            EXESS_LONG,
+                            sizeof(long_value),
+                            &long_value,
+                            EXESS_NOTHING,
+                            sizeof(out),
+                            out)
+           .status);
+
+  assert(exess_coerce_value(EXESS_LOSSLESS,
+                            EXESS_ULONG,
+                            sizeof(ulong_value),
+                            &ulong_value,
+                            EXESS_NOTHING,
+                            sizeof(out),
+                            out)
+           .status);
 }
 
 static void
@@ -246,11 +343,6 @@ test_long(void)
 static void
 test_ulong(void)
 {
-  ExessVariant unknown = {EXESS_NOTHING, {EXESS_SUCCESS}};
-
-  assert(exess_coerce(unknown, EXESS_ULONG, EXESS_LOSSLESS).datatype ==
-         EXESS_NOTHING);
-
   // Truncating boolean conversion
   check_one_way(EXESS_ULONG, "42", EXESS_TRUNCATE, EXESS_BOOLEAN, "true");
 
@@ -500,6 +592,7 @@ test_binary(void)
 int
 main(void)
 {
+  test_overflow();
   test_unknown();
   test_boolean();
   test_decimal();
