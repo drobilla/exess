@@ -1246,6 +1246,32 @@ exess_max_length(ExessDatatype datatype);
 
 /**
    @}
+   @defgroup exess_canon Canonical Form
+   Rewriting generic strings in canonical form.
+   @{
+*/
+
+/**
+   Rewrite a supported xsd datatype in canonical form.
+
+   @param value Input value string.
+   @param datatype Datatype of value.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and a `status` code.  The
+   status may be an error from reading or writing, but the `count` always
+   refers to the number of characters written.
+*/
+EXESS_API
+ExessResult
+exess_write_canonical(const char* EXESS_NONNULL value,
+                      ExessDatatype             datatype,
+                      size_t                    buf_size,
+                      char* EXESS_NULLABLE      buf);
+
+/**
+   @}
    @defgroup exess_variant Variant
    An ExessVariant is a tagged union that can hold any supported datatype.
    @{
@@ -1551,25 +1577,6 @@ ExessResult
 exess_write_variant(ExessVariant         value,
                     size_t               buf_size,
                     char* EXESS_NULLABLE buf);
-
-/**
-   Rewrite a supported xsd datatype in canonical form.
-
-   @param value Input value string.
-   @param datatype Datatype of value.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and a `status` code.  The
-   status may be an error from reading or writing, but the `count` always
-   refers to the number of characters written.
-*/
-EXESS_API
-ExessResult
-exess_write_canonical(const char* EXESS_NONNULL value,
-                      ExessDatatype             datatype,
-                      size_t                    buf_size,
-                      char* EXESS_NULLABLE      buf);
 
 /**
   @defgroup exess_coercion Datatype Coercion
