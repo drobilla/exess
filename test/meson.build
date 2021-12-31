@@ -59,6 +59,7 @@ public_tests = [
   'uint',
   'ulong',
   'ushort',
+  'value',
   'variant',
 ]
 

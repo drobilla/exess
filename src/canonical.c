@@ -200,10 +200,14 @@ write_bounded(const char* const   str,
               const size_t        buf_size,
               char* const         buf)
 {
-  ExessVariant      variant = {EXESS_NOTHING, {EXESS_SUCCESS}};
-  const ExessResult r       = exess_read_variant(&variant, datatype, str);
+  ExessValue value = {EXESS_SUCCESS};
 
-  return r.status ? r : exess_write_variant(variant, buf_size, buf);
+  const ExessVariableResult vr =
+    exess_read_value(datatype, sizeof(value), &value, str);
+
+  return vr.status
+           ? result(vr.status, 0u)
+           : exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
 }
 
 ExessResult

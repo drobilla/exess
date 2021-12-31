@@ -15,4 +15,13 @@ result(const ExessStatus status, const size_t count)
   return r;
 }
 
+static inline ExessVariableResult
+vresult(const ExessStatus status,
+        const size_t      read_count,
+        const size_t      write_count)
+{
+  const ExessVariableResult r = {status, read_count, write_count};
+  return r;
+}
+
 #endif // EXESS_RESULT_H
