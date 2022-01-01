@@ -21,8 +21,8 @@ static const ExessDuration duration = {14,
                                        0};
 
 static const ExessDateTime datetime = {2001, 2, 3, false, 4, 5, 6, 0};
-static const ExessTime     time     = {{0}, 1, 2, 3, 0};
-static const ExessDate     date     = {2001, 2, 3, {0}};
+static const ExessTime     time     = {EXESS_UTC, 1, 2, 3, 0};
+static const ExessDate     date     = {2001, 2, 3, EXESS_UTC};
 
 static void
 test_size(void)

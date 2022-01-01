@@ -14,8 +14,8 @@
 #include <stdint.h>
 #include <string.h>
 
-static const ExessTime nozone   = {{EXESS_LOCAL}, 0, 0, 0, 0};
-static const ExessTime utc      = {{0}, 12, 15, 1, 250000000};
+static const ExessTime nozone   = {EXESS_LOCAL, 0, 0, 0, 0};
+static const ExessTime utc      = {EXESS_UTC, 12, 15, 1, 250000000};
 static const ExessTime zoned    = {INIT_ZONE(11, 30), 23, 59, 59, 1000000};
 static const ExessTime high     = {INIT_ZONE(11, 30), 24, 0, 0, 0};
 static const ExessTime garbage1 = {INIT_ZONE(11, 30), 0, 0, 0, 1000000000};
@@ -38,7 +38,7 @@ check_read(const char* const string,
            const bool        expected_tz_is_present,
            const size_t      expected_count)
 {
-  ExessTime value = {{0}, 0, 0, 0, 0};
+  ExessTime value = {EXESS_LOCAL, 0, 0, 0, 0};
 
   const ExessResult r = exess_read_time(&value, string);
   assert(r.status == expected_status);
@@ -47,9 +47,8 @@ check_read(const char* const string,
   assert(value.minute == expected_minute);
   assert(value.second == expected_second);
   assert(value.nanosecond == expected_nanosecond);
-  assert((!expected_tz_is_present && value.zone.quarter_hours == EXESS_LOCAL) ||
-         value.zone.quarter_hours ==
-           4 * expected_tz_hour + expected_tz_minute / 15);
+  assert((!expected_tz_is_present && value.zone == EXESS_LOCAL) ||
+         value.zone == 4 * expected_tz_hour + expected_tz_minute / 15);
 }
 
 static void
@@ -160,7 +159,7 @@ test_write_time(void)
 static void
 check_round_trip(const ExessTime value)
 {
-  ExessTime parsed_value                   = {{0}, 0, 0, 0, 0};
+  ExessTime parsed_value                   = {EXESS_LOCAL, 0, 0, 0, 0};
   char      buf[EXESS_MAX_TIME_LENGTH + 1] = {0};
 
   assert(!exess_write_time(value, sizeof(buf), buf).status);
@@ -168,7 +167,7 @@ check_round_trip(const ExessTime value)
   assert(parsed_value.hour == value.hour);
   assert(parsed_value.minute == value.minute);
   assert(double_matches(parsed_value.second, value.second));
-  assert(parsed_value.zone.quarter_hours == value.zone.quarter_hours);
+  assert(parsed_value.zone == value.zone);
 }
 
 static void
@@ -184,7 +183,7 @@ test_round_trip(void)
       rng = lcg32(rng);
 
       const uint8_t   s            = (uint8_t)(rng % 60u);
-      const ExessTime no_zone      = {{EXESS_LOCAL}, h, m, s, ns};
+      const ExessTime no_zone      = {EXESS_LOCAL, h, m, s, ns};
       const ExessTime lowest_zone  = {INIT_ZONE(-14, 0), h, m, s, ns};
       const ExessTime highest_zone = {INIT_ZONE(14, 0), h, m, s, ns};
 

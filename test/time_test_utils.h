@@ -8,10 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INIT_ZONE(hour, minute) \
-  {                             \
-    4 * (hour) + (minute) / 15  \
-  }
+#define INIT_ZONE(hour, minute) (4 * (hour) + (minute) / 15)
 
 static inline ExessTimezone
 random_timezone(uint32_t* rng)
@@ -35,6 +32,6 @@ timezone_matches(const ExessTimezone zone,
                  const bool          expected_is_present)
 
 {
-  return (!expected_is_present && zone.quarter_hours == EXESS_LOCAL) ||
-         zone.quarter_hours == 4 * expected_hour + expected_minute / 15;
+  return (!expected_is_present && zone == EXESS_LOCAL) ||
+         zone == 4 * expected_hour + expected_minute / 15;
 }

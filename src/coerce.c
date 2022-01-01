@@ -499,7 +499,7 @@ exess_value_coerce(const ExessCoercions coercions,
     if ((coercions & (ExessCoercions)EXESS_TRUNCATE)) {
       const ExessDateTime datetime = *(const ExessDateTime*)in;
 
-      const ExessTime time = {{datetime.is_utc ? 0 : EXESS_LOCAL},
+      const ExessTime time = {datetime.is_utc ? EXESS_UTC : EXESS_LOCAL,
                               datetime.hour,
                               datetime.minute,
                               datetime.second,
@@ -522,7 +522,7 @@ exess_value_coerce(const ExessCoercions coercions,
       const ExessDate date = {datetime.year,
                               datetime.month,
                               datetime.day,
-                              {datetime.is_utc ? 0 : EXESS_LOCAL}};
+                              datetime.is_utc ? EXESS_UTC : EXESS_LOCAL};
 
       *(ExessDate*)out = date;
       return result(EXESS_SUCCESS, sizeof(ExessDate));
