@@ -21,10 +21,10 @@
 #define MAX_DOUBLE_INT 9007199254740991L
 
 static ExessStatus
-coerce_to_long(int64_t* const           out,
-               const ExessDatatype      in_datatype,
-               const void* const        in,
-               const ExessCoercionFlags coercions)
+coerce_to_long(int64_t* const       out,
+               const ExessDatatype  in_datatype,
+               const void* const    in,
+               const ExessCoercions coercions)
 {
   switch (in_datatype) {
   case EXESS_NOTHING:
@@ -38,7 +38,7 @@ coerce_to_long(int64_t* const           out,
   case EXESS_DOUBLE: {
     const double d = *(const double*)in;
 
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) && d > trunc(d)) {
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) && d > trunc(d)) {
       return EXESS_WOULD_ROUND;
     }
 
@@ -53,7 +53,7 @@ coerce_to_long(int64_t* const           out,
   case EXESS_FLOAT: {
     const float f = *(const float*)in;
 
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) && f > truncf(f)) {
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) && f > truncf(f)) {
       return EXESS_WOULD_ROUND;
     }
 
@@ -146,10 +146,10 @@ coerce_signed(int64_t* const      out,
 }
 
 static ExessStatus
-coerce_to_ulong(uint64_t* const          out,
-                const ExessDatatype      in_datatype,
-                const void* const        in,
-                const ExessCoercionFlags coercions)
+coerce_to_ulong(uint64_t* const      out,
+                const ExessDatatype  in_datatype,
+                const void* const    in,
+                const ExessCoercions coercions)
 {
   switch (in_datatype) {
   case EXESS_NOTHING:
@@ -161,7 +161,7 @@ coerce_to_ulong(uint64_t* const          out,
 
   case EXESS_DECIMAL:
   case EXESS_DOUBLE:
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) &&
         *(const double*)in > trunc(*(const double*)in)) {
       return EXESS_WOULD_ROUND;
     }
@@ -175,7 +175,7 @@ coerce_to_ulong(uint64_t* const          out,
     return EXESS_SUCCESS;
 
   case EXESS_FLOAT:
-    if (!(coercions & (ExessCoercionFlags)EXESS_ROUND) &&
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) &&
         *(const float*)in > truncf(*(const float*)in)) {
       return EXESS_WOULD_ROUND;
     }
@@ -267,13 +267,13 @@ coerce_unsigned(uint64_t* const     out,
 }
 
 ExessResult
-exess_coerce_value(const ExessCoercionFlags coercions,
-                   const ExessDatatype      in_datatype,
-                   const size_t             in_size,
-                   const void* const        in,
-                   const ExessDatatype      out_datatype,
-                   const size_t             out_size,
-                   void* const              out)
+exess_value_coerce(const ExessCoercions coercions,
+                   const ExessDatatype  in_datatype,
+                   const size_t         in_size,
+                   const void* const    in,
+                   const ExessDatatype  out_datatype,
+                   const size_t         out_size,
+                   void* const          out)
 {
   // Ensure the input is sufficiently large so we don't read out of bounds
   if (in_size < exess_value_size(in_datatype)) {
@@ -307,7 +307,7 @@ exess_coerce_value(const ExessCoercionFlags coercions,
 
   case EXESS_BOOLEAN:
     if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
-      const bool truncate = (coercions & (ExessCoercionFlags)EXESS_TRUNCATE);
+      const bool truncate = (coercions & (ExessCoercions)EXESS_TRUNCATE);
       if (!truncate && l_out != 0 && l_out != 1) {
         return result(EXESS_WOULD_TRUNCATE, 0u);
       }
@@ -361,7 +361,7 @@ exess_coerce_value(const ExessCoercionFlags coercions,
     switch (in_datatype) {
     case EXESS_DECIMAL:
     case EXESS_DOUBLE:
-      if (!(coercions & (ExessCoercionFlags)EXESS_REDUCE_PRECISION)) {
+      if (!(coercions & (ExessCoercions)EXESS_REDUCE_PRECISION)) {
         return result(EXESS_WOULD_REDUCE_PRECISION, 0u);
       }
 
@@ -496,7 +496,7 @@ exess_coerce_value(const ExessCoercionFlags coercions,
       return result(EXESS_UNSUPPORTED, 0u);
     }
 
-    if ((coercions & (ExessCoercionFlags)EXESS_TRUNCATE)) {
+    if ((coercions & (ExessCoercions)EXESS_TRUNCATE)) {
       const ExessDateTime datetime = *(const ExessDateTime*)in;
 
       const ExessTime time = {{datetime.is_utc ? 0 : EXESS_LOCAL},
@@ -516,7 +516,7 @@ exess_coerce_value(const ExessCoercionFlags coercions,
       return result(EXESS_UNSUPPORTED, 0u);
     }
 
-    if (coercions & (ExessCoercionFlags)EXESS_TRUNCATE) {
+    if (coercions & (ExessCoercions)EXESS_TRUNCATE) {
       const ExessDateTime datetime = *(const ExessDateTime*)in;
 
       const ExessDate date = {datetime.year,

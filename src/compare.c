@@ -9,12 +9,12 @@
 #include <string.h>
 
 int
-exess_compare_values(const ExessDatatype lhs_datatype,
-                     const size_t        lhs_size,
-                     const void* const   lhs_value,
-                     const ExessDatatype rhs_datatype,
-                     const size_t        rhs_size,
-                     const void* const   rhs_value)
+exess_value_compare(const ExessDatatype lhs_datatype,
+                    const size_t        lhs_size,
+                    const void* const   lhs_value,
+                    const ExessDatatype rhs_datatype,
+                    const size_t        rhs_size,
+                    const void* const   rhs_value)
 {
   if (lhs_datatype != rhs_datatype) {
     const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);

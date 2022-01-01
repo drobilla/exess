@@ -1310,6 +1310,20 @@ exess_write_canonical(const char* EXESS_NONNULL value,
    @{
 */
 
+/**
+   The maximum size of a supported fixed-size value in bytes.
+
+   This is the size of #ExessValue, which is larger than the size of all the
+   supported numeric and time-based datatypes.
+*/
+#define EXESS_MAX_VALUE_SIZE 16u
+
+/**
+   A union that can hold any supported fixed-sized value.
+
+   This can be used as a convenience for allocating a suitable buffer for any
+   numeric or time-based value and casting it to the appropriate type.
+*/
 typedef union {
   bool          as_bool;
   double        as_double;
@@ -1326,10 +1340,112 @@ typedef union {
   ExessDateTime as_datetime;
   ExessTime     as_time;
   ExessDate     as_date;
+  uint8_t       as_blob[EXESS_MAX_VALUE_SIZE];
 } ExessValue;
 
 /**
+   Coercion flags.
+
+   These values are ORed together to enable different kinds of lossy
+   conversion.
+*/
+typedef enum {
+  /**
+     Allow coercions that reduce the precision of values.
+
+     This allows coercions that are lossy only in terms of precision, so the
+     resulting value is approximately equal to the original value.
+     Specifically, this allows coercing double to float.
+  */
+  EXESS_REDUCE_PRECISION = 1u << 0u,
+
+  /**
+     Allow coercions that round to the nearest integer.
+
+     This allows coercing floating point numbers to integers by rounding to the
+     nearest integer, with halfway cases rounding towards even (the default
+     IEEE-754 rounding order).
+  */
+  EXESS_ROUND = 1u << 1u,
+
+  /**
+     Allow coercions that truncate significant parts of values.
+
+     Specifically, this allows coercing any number to boolean, datetime to
+     date, and datetime to time.
+  */
+  EXESS_TRUNCATE = 1u << 2u,
+} ExessCoercion;
+
+/**
+   Bitwise OR of #ExessCoercion flags.
+
+   If this is zero, then only lossless coercions will be performed.  A lossless
+   coercion is when the value has been perfectly preserved in the target
+   datatype, and coercing it back will result in the same value.
+
+   For some datatype combinations this will always be the case, for example
+   from short to long.  For others it will depend on the value, for example
+   only the numbers 0 and 1 coerce to boolean without loss.
+*/
+typedef uint32_t ExessCoercions;
+
+/// Readability macro for using no lossy coercions (a zero #ExessCoercions)
+#define EXESS_LOSSLESS 0u
+
+/**
+   Compare two values.
+
+   @return Less than, equal to, or greater than zero if the left-hand value is
+   less than, equal to, or greater than the right-hand value, respectively
+   (like `strcmp`).
+*/
+EXESS_PURE_API
+int
+exess_value_compare(ExessDatatype             lhs_datatype,
+                    size_t                    lhs_size,
+                    const void* EXESS_NONNULL lhs_value,
+                    ExessDatatype             rhs_datatype,
+                    size_t                    rhs_size,
+                    const void* EXESS_NONNULL rhs_value);
+
+/**
+   Coerce a value to another datatype if possible.
+
+   @param coercions Enabled coercion flags.  If this is zero, then
+   #EXESS_SUCCESS is only returned if the resulting value can be coerced back
+   to the original type without any loss of data.  Otherwise, the lossy
+   coercions enabled by the set bits will be attempted.
+
+   @param in_datatype The datatype of `in`.
+   @param in_size The size of `in` in bytes.
+   @param in Input value to coerce.
+   @param out_datatype Datatype to convert to.
+   @param out_size Size of `out` in bytes.
+   @param out Set to the coerced value on success.
+
+   @return #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
+   value is outside the range of the target type,
+   #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
+   if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
+   between the types is not supported at all.
+*/
+EXESS_API
+ExessResult
+exess_value_coerce(ExessCoercions            coercions,
+                   ExessDatatype             in_datatype,
+                   size_t                    in_size,
+                   const void* EXESS_NONNULL in,
+                   ExessDatatype             out_datatype,
+                   size_t                    out_size,
+                   void* EXESS_NONNULL       out);
+
+/**
    Read any supported datatype from a string.
+
+   Note that `out` must be suitably aligned for the datatype being read, it
+   will be dereferenced directly as a pointer to the value type.  A buffer
+   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
 
    @param datatype The datatype to read the string as.
    @param out_size The size of `out` in bytes.
@@ -1349,6 +1465,10 @@ exess_read_value(ExessDatatype             datatype,
 /**
    Write any supported datatype to a canonical string.
 
+   Note that `value` must be suitably aligned for the datatype being written,
+   it will be dereferenced directly as a pointer to the value type.  A buffer
+   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
+
    @param datatype The datatype of `value`.
    @param value_size The size of `value` in bytes.
    @param value Value to write.
@@ -1365,123 +1485,6 @@ exess_write_value(ExessDatatype             datatype,
                   const void* EXESS_NONNULL value,
                   size_t                    buf_size,
                   char* EXESS_NULLABLE      buf);
-
-/**
-   @}
-   @defgroup exess_value_comparison Comparison
-   @{
-*/
-
-/**
-   Compare two values.
-
-   @return Less than, equal to, or greater than zero if the left-hand value is
-   less than, equal to, or greater than the right-hand value, respectively
-   (like `strcmp`).
-*/
-EXESS_PURE_API
-int
-exess_compare_values(ExessDatatype             lhs_datatype,
-                     size_t                    lhs_size,
-                     const void* EXESS_NONNULL lhs_value,
-                     ExessDatatype             rhs_datatype,
-                     size_t                    rhs_size,
-                     const void* EXESS_NONNULL rhs_value);
-
-/**
-   @}
-*/
-
-/**
-  @defgroup exess_coercion Datatype Coercion
-
-  Values can be converted between some datatypes using exess_coerce_value().
-  This is particularly useful for reducing the number of datatypes that the
-  application needs to explicitly handle.
-
-  @{
-*/
-
-/**
-   Coercion flags.
-
-   These values are ORed together to enable different kinds of lossy conversion
-   in exess_coerce_value().
-*/
-typedef enum {
-  /**
-     Only do lossless datatype coercions.
-
-     A lossless coercion is when the value has been perfectly preserved in the
-     target datatype, and coercing it back will result in the same value.
-
-     For some datatype combinations this will always be the case, for example
-     from short to long.  For others it will depend on the value, for example
-     only the numbers 0 and 1 coerce to boolean without loss.
-  */
-  EXESS_LOSSLESS = 0u,
-
-  /**
-     Allow datatype coercions that reduce the precision of values.
-
-     This allows coercions that are lossy only in terms of precision, so the
-     resulting value is approximately equal to the original value.
-     Specifically, this allows coercing double to float.
-  */
-  EXESS_REDUCE_PRECISION = 1u << 0u,
-
-  /**
-     Allow datatype coercions that round to the nearest integer.
-
-     This allows coercing floating point numbers to integers by rounding to the
-     nearest integer, with halfway cases rounding towards even (the default
-     IEEE-754 rounding order).
-  */
-  EXESS_ROUND = 1u << 1u,
-
-  /**
-     Allow datatype coercions that truncate significant parts of values.
-
-     This allows coercions that lose data beyond simple precision loss.
-     Specifically, this allows coercing any number to boolean, datetime to
-     date, and datetime to time.
-  */
-  EXESS_TRUNCATE = 1u << 2u,
-} ExessCoercionFlag;
-
-/// Bitwise OR of #ExessCoercionFlag values
-typedef uint32_t ExessCoercionFlags;
-
-/**
-   Coerce a value to another datatype if possible.
-
-   @param coercions Enabled coercion flags.  If this is #EXESS_LOSSLESS (zero),
-   then #EXESS_SUCCESS is only returned if the resulting value can be coerced
-   back to the original type without any loss of data.  Otherwise, the lossy
-   coercions enabled by the set bits will be attempted.
-
-   @param in_datatype The datatype of `in`.
-   @param in_size The size of `in` in bytes.
-   @param in Input value to coerce.
-   @param out_datatype Datatype to convert to.
-   @param out_size Size of `out` in bytes.
-   @param out Set to the coerced value on success.
-
-   @return #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
-   value is outside the range of the target type,
-   #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
-   if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
-   between the types is not supported at all.
-*/
-EXESS_API
-ExessResult
-exess_coerce_value(ExessCoercionFlags        coercions,
-                   ExessDatatype             in_datatype,
-                   size_t                    in_size,
-                   const void* EXESS_NONNULL in,
-                   ExessDatatype             out_datatype,
-                   size_t                    out_size,
-                   void* EXESS_NONNULL       out);
 
 /**
    @}

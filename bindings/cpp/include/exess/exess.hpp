@@ -23,13 +23,14 @@ namespace exess {
 constexpr const char* EXESS_NONNULL const xsd_uri =
   "http://www.w3.org/2001/XMLSchema#";
 
-using CoercionFlags = ExessCoercionFlags;
-using Datatype      = ExessDatatype;
-using Date          = ExessDate;
-using DateTime      = ExessDateTime;
-using Duration      = ExessDuration;
-using Result        = ExessResult;
-using Time          = ExessTime;
+using Coercion  = ExessCoercion;
+using Coercions = ExessCoercions;
+using Datatype  = ExessDatatype;
+using Date      = ExessDate;
+using DateTime  = ExessDateTime;
+using Duration  = ExessDuration;
+using Result    = ExessResult;
+using Time      = ExessTime;
 
 /**
    @defgroup exesspp_status Status

@@ -11,7 +11,6 @@ man_pages = [
   'exess_binary.3',
   'exess_boolean.3',
   'exess_byte.3',
-  'exess_coercion.3',
   'exess_datatypes.3',
   'exess_date.3',
   'exess_datetime.3',
@@ -91,9 +90,10 @@ man_links = [
   ['ExessDatatype.3', 'exess_datatypes.3'],
   ['exess_write_canonical.3', 'exess_canon.3'],
   ['ExessValue.3', 'exess_value.3'],
-  ['ExessCoercionFlag.3', 'exess_value.3'],
-  ['ExessCoercionFlags.3', 'exess_value.3'],
-  ['exess_coerce_value.3', 'exess_value.3'],
+  ['ExessCoercion.3', 'exess_value.3'],
+  ['ExessCoercions.3', 'exess_value.3'],
+  ['exess_value_compare.3', 'exess_value.3'],
+  ['exess_value_coerce.3', 'exess_value.3'],
 ]
 
 # Make a trivial alias man page for each link
