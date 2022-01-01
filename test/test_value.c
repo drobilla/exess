@@ -25,6 +25,17 @@ static const ExessTime     time     = {{0}, 1, 2, 3, 0};
 static const ExessDate     date     = {2001, 2, 3, {0}};
 
 static void
+test_size(void)
+{
+  assert(sizeof(ExessValue) == EXESS_MAX_VALUE_SIZE);
+
+  assert(sizeof(ExessDuration) <= EXESS_MAX_VALUE_SIZE);
+  assert(sizeof(ExessDateTime) <= EXESS_MAX_VALUE_SIZE);
+  assert(sizeof(ExessTime) <= EXESS_MAX_VALUE_SIZE);
+  assert(sizeof(ExessDate) <= EXESS_MAX_VALUE_SIZE);
+}
+
+static void
 check_read(void*               value,
            const ExessDatatype datatype,
            const char* const   string,
@@ -276,6 +287,7 @@ test_write_value(void)
 int
 main(void)
 {
+  test_size();
   test_read_value();
   test_write_value();
 

@@ -100,7 +100,6 @@ groups = {
     "datatypes": "Datatypes",
     "value": "Generic Values",
     # 'generics': "",
-    "coercion": "Value Type Coercion",
 }
 
 author = "David Robillard <d@drobilla.net>"

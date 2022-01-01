@@ -44,7 +44,7 @@ check_comparison(const ExessDatatype lhs_datatype,
 
   assert(lhs_datatype == EXESS_NOTHING || !l.status);
   assert(rhs_datatype == EXESS_NOTHING || !r.status);
-  assert(pred(exess_compare_values(
+  assert(pred(exess_value_compare(
     lhs_datatype, l.write_count, &lhs, rhs_datatype, r.write_count, &rhs)));
 }
 
