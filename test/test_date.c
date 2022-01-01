@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <string.h>
 
-static const ExessDate nozone   = {2001, 1, 2, {EXESS_LOCAL}};
-static const ExessDate utc      = {2002, 2, 3, {0}};
+static const ExessDate nozone   = {2001, 1, 2, EXESS_LOCAL};
+static const ExessDate utc      = {2002, 2, 3, EXESS_UTC};
 static const ExessDate zoned    = {2003, 3, 4, INIT_ZONE(11, 30)};
 static const ExessDate early    = {99, 3, 4, INIT_ZONE(11, 30)};
 static const ExessDate future   = {12345, 3, 4, INIT_ZONE(11, 30)};
@@ -40,7 +40,7 @@ check_read(const char* const string,
            const bool        expected_tz_is_present,
            const size_t      expected_count)
 {
-  ExessDate value = {0, 0, 0, {EXESS_LOCAL}};
+  ExessDate value = {0, 0, 0, EXESS_LOCAL};
 
   const ExessResult r = exess_read_date(&value, string);
   assert(r.status == expected_status);
@@ -48,9 +48,8 @@ check_read(const char* const string,
   assert(value.year == expected_year);
   assert(value.month == expected_month);
   assert(value.day == expected_day);
-  assert((!expected_tz_is_present && value.zone.quarter_hours == EXESS_LOCAL) ||
-         value.zone.quarter_hours ==
-           4 * expected_tz_hour + expected_tz_minute / 15);
+  assert((!expected_tz_is_present && value.zone == EXESS_LOCAL) ||
+         value.zone == 4 * expected_tz_hour + expected_tz_minute / 15);
 }
 
 static void
@@ -186,7 +185,7 @@ test_write_date(void)
 static void
 check_round_trip(const ExessDate value)
 {
-  ExessDate parsed_value                   = {0, 0, 0, {0}};
+  ExessDate parsed_value                   = {0, 0, 0, EXESS_LOCAL};
   char      buf[EXESS_MAX_DATE_LENGTH + 1] = {0};
 
   assert(!exess_write_date(value, sizeof(buf), buf).status);
@@ -194,7 +193,7 @@ check_round_trip(const ExessDate value)
   assert(parsed_value.year == value.year);
   assert(parsed_value.month == value.month);
   assert(parsed_value.day == value.day);
-  assert(parsed_value.zone.quarter_hours == value.zone.quarter_hours);
+  assert(parsed_value.zone == value.zone);
 }
 
 static void
@@ -211,9 +210,9 @@ test_round_trip(const ExessNumTestOptions opts)
     const int16_t year = (int16_t)(rng % UINT16_MAX);
     for (uint8_t month = 1; month < 13; ++month) {
       for (uint8_t day = 1; day <= days_in_month(year, month); ++day) {
-        const ExessDate no_zone      = {year, month, day, {EXESS_LOCAL}};
-        const ExessDate lowest_zone  = {year, month, day, {4 * -14 + 0}};
-        const ExessDate highest_zone = {year, month, day, {4 * 14}};
+        const ExessDate no_zone      = {year, month, day, EXESS_LOCAL};
+        const ExessDate lowest_zone  = {year, month, day, 4 * -14 + 0};
+        const ExessDate highest_zone = {year, month, day, 4 * 14};
 
         check_round_trip(no_zone);
         check_round_trip(lowest_zone);

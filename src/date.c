@@ -15,34 +15,20 @@
 int
 exess_date_compare(const ExessDate lhs, const ExessDate rhs)
 {
-  ExessDateTime lhs_datetime = {lhs.year,
-                                lhs.month,
-                                lhs.day,
-                                lhs.zone.quarter_hours != EXESS_LOCAL,
-                                0,
-                                0,
-                                0,
-                                0};
+  ExessDateTime lhs_datetime = {
+    lhs.year, lhs.month, lhs.day, lhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
 
-  ExessDateTime rhs_datetime = {rhs.year,
-                                rhs.month,
-                                rhs.day,
-                                rhs.zone.quarter_hours != EXESS_LOCAL,
-                                0,
-                                0,
-                                0,
-                                0};
+  ExessDateTime rhs_datetime = {
+    rhs.year, rhs.month, rhs.day, rhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
 
-  if (lhs.zone.quarter_hours != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {
-      0u, -lhs.zone.quarter_hours * 15 * 60, 0};
+  if (lhs.zone != EXESS_LOCAL) {
+    const ExessDuration lhs_tz_duration = {0u, -lhs.zone * 15 * 60, 0};
 
     lhs_datetime = exess_add_datetime_duration(lhs_datetime, lhs_tz_duration);
   }
 
-  if (rhs.zone.quarter_hours != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {
-      0u, -rhs.zone.quarter_hours * 15 * 60, 0};
+  if (rhs.zone != EXESS_LOCAL) {
+    const ExessDuration rhs_tz_duration = {0u, -rhs.zone * 15 * 60, 0};
 
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }
@@ -104,7 +90,7 @@ exess_read_date(ExessDate* const out, const char* const str)
 
   i += r.count;
   if (r.status || is_end(str[i])) {
-    out->zone.quarter_hours = EXESS_LOCAL;
+    out->zone = EXESS_LOCAL;
     return result(r.status, i);
   }
 

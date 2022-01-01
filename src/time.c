@@ -22,7 +22,7 @@ exess_time_compare(const ExessTime lhs, const ExessTime rhs)
   ExessDateTime lhs_datetime = {1970,
                                 1u,
                                 1u,
-                                lhs.zone.quarter_hours != EXESS_LOCAL,
+                                lhs.zone != EXESS_LOCAL,
                                 lhs.hour,
                                 lhs.minute,
                                 lhs.second,
@@ -31,22 +31,20 @@ exess_time_compare(const ExessTime lhs, const ExessTime rhs)
   ExessDateTime rhs_datetime = {1970,
                                 1u,
                                 1u,
-                                rhs.zone.quarter_hours != EXESS_LOCAL,
+                                rhs.zone != EXESS_LOCAL,
                                 rhs.hour,
                                 rhs.minute,
                                 rhs.second,
                                 rhs.nanosecond};
 
-  if (lhs.zone.quarter_hours != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {
-      0u, -lhs.zone.quarter_hours * 15 * 60, 0};
+  if (lhs.zone != EXESS_LOCAL) {
+    const ExessDuration lhs_tz_duration = {0u, -lhs.zone * 15 * 60, 0};
 
     lhs_datetime = exess_add_datetime_duration(lhs_datetime, lhs_tz_duration);
   }
 
-  if (rhs.zone.quarter_hours != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {
-      0u, -rhs.zone.quarter_hours * 15 * 60, 0};
+  if (rhs.zone != EXESS_LOCAL) {
+    const ExessDuration rhs_tz_duration = {0u, -rhs.zone * 15 * 60, 0};
 
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }
@@ -117,7 +115,7 @@ exess_read_time(ExessTime* const out, const char* const str)
     r = exess_read_timezone(&out->zone, str + i);
     i += r.count;
   } else {
-    out->zone.quarter_hours = EXESS_LOCAL;
+    out->zone = EXESS_LOCAL;
   }
 
   return end_read(r.status, str, i);

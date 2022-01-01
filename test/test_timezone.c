@@ -27,6 +27,46 @@ static const ExessTimezone garbage3 = INIT_ZONE(-15, 0);
 static const ExessTimezone garbage4 = INIT_ZONE(15, 0);
 
 static void
+test_construct(void)
+{
+  // Out of bounds
+  assert(exess_timezone(-15, 00) == EXESS_LOCAL);
+  assert(exess_timezone(15, 00) == EXESS_LOCAL);
+
+  // Extremes
+  assert(exess_timezone(-14, -45) == -59);
+  assert(exess_timezone(14, 45) == 59);
+
+  // Bad minutes
+  assert(exess_timezone(12, 20) == EXESS_LOCAL);
+  assert(exess_timezone(-12, -20) == EXESS_LOCAL);
+
+  // Bad signs
+  assert(exess_timezone(12, -30) == EXESS_LOCAL);
+  assert(exess_timezone(-12, 30) == EXESS_LOCAL);
+
+  // All valid negative cases
+  ExessTimezone z = -59;
+  for (int8_t h = -14; h < 1; ++h) {
+    for (int8_t m = -45; m < 15; m = (int8_t)(m + 15)) {
+      assert(exess_timezone(h, m) == z);
+      ++z;
+    }
+  }
+
+  assert(z == 1);
+
+  // All valid non-negative cases
+  z = 0;
+  for (int8_t h = 0; h < 15; ++h) {
+    for (int8_t m = 0; m < 60; m = (int8_t)(m + 15)) {
+      assert(exess_timezone(h, m) == z);
+      ++z;
+    }
+  }
+}
+
+static void
 check_read(const char* const string,
            const ExessStatus expected_status,
            const int8_t      expected_hour,
@@ -38,13 +78,13 @@ check_read(const char* const string,
   char time_string[] = "12:00:00XXXXXX";
   strncpy(time_string + 8, string, sizeof(time_string) - 9);
 
-  ExessTime         value = {{0}, 0, 0, 0, 0};
+  ExessTime         value = {EXESS_LOCAL, 0, 0, 0, 0};
   const ExessResult r     = exess_read_time(&value, time_string);
 
   assert(r.status == expected_status);
   assert(r.count == 8 + expected_count);
-  assert((!expected_is_present && value.zone.quarter_hours == EXESS_LOCAL) ||
-         value.zone.quarter_hours == 4 * expected_hour + expected_minute / 15);
+  assert((!expected_is_present && value.zone == EXESS_LOCAL) ||
+         value.zone == 4 * expected_hour + expected_minute / 15);
 }
 
 static void
@@ -129,7 +169,7 @@ test_write_timezone(void)
 static void
 check_round_trip(const ExessTimezone value)
 {
-  ExessTime parsed_time                    = {{0}, 0, 0, 0, 0};
+  ExessTime parsed_time                    = {EXESS_LOCAL, 0, 0, 0, 0};
   char      buf[EXESS_MAX_TIME_LENGTH + 1] = {42};
 
   const ExessTime time = {value, 12, 0, 0, 0};
@@ -157,6 +197,7 @@ test_round_trip(void)
 int
 main(void)
 {
+  test_construct();
   test_read_timezone();
   test_write_timezone();
   test_round_trip();

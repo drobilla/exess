@@ -895,13 +895,33 @@ exess_write_datetime(ExessDateTime        value,
    @{
 */
 
-/// A time zone offset for a date or time value
-typedef struct {
-  int8_t quarter_hours; ///< Offset in quarter hours: [-56, 56]
-} ExessTimezone;
+/**
+   A time zone offset in quarter hours.
 
-/// Sentinel value for local time, `INT8_MAX`
+   This is stored in a single byte for compactness in other structures.  Valid
+   values are from -56 to 56 inclusive.
+*/
+typedef int8_t ExessTimezone;
+
+/// Sentinel value for local time (127)
 #define EXESS_LOCAL INT8_MAX
+
+/// Sentinel value for UTC time (0)
+#define EXESS_UTC 0u
+
+/**
+   Construct a time zone offset from hours and minutes.
+
+   This is a convenience constructor that handles the conversion from hours and
+   minutes to the quarter-hour offset used in exess.  The sign of both values
+   must be the same.  Hours can be from -14 to 14 inclusive, and minutes can
+   only be -45, -30, -15, 0, 15, 30, or 45.
+
+   @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
+   parameters are invalid or not supported.
+*/
+EXESS_CONST_API ExessTimezone
+exess_timezone(int8_t hours, int8_t minutes);
 
 /**
    @}

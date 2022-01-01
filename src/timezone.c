@@ -11,17 +11,38 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+ExessTimezone
+exess_timezone(const int8_t hours, const int8_t minutes)
+{
+  if (hours < -14 || hours > 14 || (hours < 0 && minutes > 0) ||
+      (hours > 0 && minutes < 0)) {
+    return EXESS_LOCAL;
+  }
+
+  if (hours < 0) {
+    if (minutes != 0 && minutes != -15 && minutes != -30 && minutes != -45) {
+      return EXESS_LOCAL;
+    }
+  } else if (hours > 0) {
+    if (minutes != 0 && minutes != 15 && minutes != 30 && minutes != 45) {
+      return EXESS_LOCAL;
+    }
+  }
+
+  return (int8_t)(4 * hours + minutes / 15);
+}
+
 ExessResult
 exess_read_timezone(ExessTimezone* const out, const char* const str)
 {
-  out->quarter_hours = INT8_MAX;
+  *out = EXESS_LOCAL;
 
   // Start at the beginning (no whitespace skipping here)
   size_t i = 0;
 
   // Handle UTC special case
   if (str[i] == 'Z') {
-    out->quarter_hours = 0;
+    *out = 0;
     return result(EXESS_SUCCESS, i + 1);
   }
 
@@ -87,7 +108,7 @@ exess_read_timezone(ExessTimezone* const out, const char* const str)
     return result(EXESS_OUT_OF_RANGE, i);
   }
 
-  out->quarter_hours = quarters;
+  *out = quarters;
 
   return result(EXESS_SUCCESS, i);
 }
@@ -98,29 +119,29 @@ write_timezone(const ExessTimezone value,
                char* const         buf,
                size_t              o)
 {
-  if (value.quarter_hours == EXESS_LOCAL) {
+  if (value == EXESS_LOCAL) {
     return result(EXESS_SUCCESS, 0);
   }
 
-  if (value.quarter_hours < -56 || value.quarter_hours > 56) {
+  if (value < -56 || value > 56) {
     return result(EXESS_BAD_VALUE, 0);
   }
 
   if (!buf) {
-    return result(EXESS_SUCCESS, value.quarter_hours == 0 ? 1 : 6);
+    return result(EXESS_SUCCESS, value == 0 ? 1 : 6);
   }
 
-  if (value.quarter_hours == 0) {
+  if (value == 0) {
     write_char('Z', buf_size, buf, o);
     return result(EXESS_SUCCESS, 1);
   }
 
-  const uint8_t abs_quarters = (uint8_t)abs(value.quarter_hours);
+  const uint8_t abs_quarters = (uint8_t)abs(value);
   const uint8_t abs_hour     = abs_quarters / 4;
   const uint8_t abs_minute   = (uint8_t)(15u * (abs_quarters % 4u));
 
   size_t n = 0;
-  n += write_char(value.quarter_hours < 0 ? '-' : '+', buf_size, buf, o + n);
+  n += write_char(value < 0 ? '-' : '+', buf_size, buf, o + n);
   n += write_two_digit_number(abs_hour, buf_size, buf, o + n);
   n += write_char(':', buf_size, buf, o + n);
   n += write_two_digit_number(abs_minute, buf_size, buf, o + n);

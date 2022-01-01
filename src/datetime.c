@@ -257,7 +257,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   out->day   = 0;
 
   // Read date
-  ExessDate         date = {0, 0u, 0u, {EXESS_LOCAL}};
+  ExessDate         date = {0, 0u, 0u, EXESS_LOCAL};
   const ExessResult dr   = read_date_numbers(&date, str);
   if (dr.status) {
     return dr;
@@ -271,7 +271,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   ++i;
 
   // Read time
-  ExessTime         time = {{INT8_MAX}, 0u, 0u, 0u, 0u};
+  ExessTime         time = {EXESS_LOCAL, 0u, 0u, 0u, 0u};
   const ExessResult tr   = exess_read_time(&time, str + i);
   if (tr.status) {
     return result(tr.status, i + tr.count);
@@ -282,15 +282,14 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   const ExessDateTime datetime = {date.year,
                                   date.month,
                                   date.day,
-                                  time.zone.quarter_hours != EXESS_LOCAL,
+                                  time.zone != EXESS_LOCAL,
                                   time.hour,
                                   time.minute,
                                   time.second,
                                   time.nanosecond};
 
   if (datetime.is_utc) {
-    const ExessDuration tz_duration = {
-      0u, -time.zone.quarter_hours * 15 * 60, 0};
+    const ExessDuration tz_duration = {0u, -time.zone * 15 * 60, 0};
 
     *out = exess_add_datetime_duration(datetime, tz_duration);
   } else {
