@@ -66,6 +66,12 @@ if get_option('strict')
       '-Wno-unused-const-variable',
     ]
 
+    if host_machine.system() == 'windows'
+      c_suppressions += [
+        '-Wno-error=format', # MinGW
+      ]
+    endif
+
   elif cc.get_id() == 'msvc'
     c_suppressions += [
       '/wd4028',  # formal parameter different from declaration
