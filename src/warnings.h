@@ -13,7 +13,7 @@
 
 #  define EXESS_RESTORE_WARNINGS _Pragma("clang diagnostic pop")
 
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && __GNUC__ >= 10
 
 #  define EXESS_DISABLE_CONVERSION_WARNINGS                  \
     _Pragma("GCC diagnostic push")                           \
