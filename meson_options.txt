@@ -1,4 +1,4 @@
-option('bindings_cpp', type: 'feature', value: 'auto', yield: true,
+option('bindings_cpp', type: 'feature', value: 'disabled', yield: true,
        description: 'Build C++ bindings')
 
 option('checks', type: 'boolean', value: true, yield: true,
