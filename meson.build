@@ -75,6 +75,7 @@ if get_option('strict')
   elif cc.get_id() == 'msvc'
     c_suppressions += [
       '/wd4028',  # formal parameter different from declaration
+      '/wd4061',  # enumerator is not explicitly handled
       '/wd4204',  # nonstandard extension: non-constant aggregate initializer
       '/wd4221',  # initialized using address of automatic variable
       '/wd4710',  # function not inlined
