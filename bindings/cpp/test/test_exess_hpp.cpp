@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -25,6 +26,23 @@ test_status()
 
   std::cerr << ss.str();
   assert(ss.str() == "Insufficient space");
+}
+
+void
+test_datatype()
+{
+  assert(!strcmp(datatype_uri(Datatype::Boolean),
+                 "http://www.w3.org/2001/XMLSchema#boolean"));
+
+  assert(datatype_from_uri("http://www.w3.org/2001/XMLSchema#boolean") ==
+         Datatype::Boolean);
+
+  for (auto i = 1u; i <= unsigned(EXESS_BASE64); ++i) {
+    const auto        datatype = static_cast<Datatype>(i);
+    const char* const uri      = datatype_uri(datatype);
+
+    assert(uri && datatype_from_uri(uri) == datatype);
+  }
 }
 
 void
@@ -119,6 +137,7 @@ main()
 {
   try {
     exess::test_status();
+    exess::test_datatype();
     exess::test_read();
     exess::test_to_string();
     exess::test_max_length();

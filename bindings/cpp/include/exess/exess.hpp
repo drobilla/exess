@@ -25,7 +25,6 @@ constexpr const char* EXESS_NONNULL const xsd_uri =
 
 using Coercion  = ExessCoercion;
 using Coercions = ExessCoercions;
-using Datatype  = ExessDatatype;
 using Date      = ExessDate;
 using DateTime  = ExessDateTime;
 using Duration  = ExessDuration;
@@ -75,6 +74,68 @@ inline std::ostream&
 operator<<(std::ostream& stream, const Status status)
 {
   return stream << strerror(status);
+}
+
+/**
+   @}
+   @defgroup exesspp_datatypes Datatypes
+   Runtime integer tags for supported datatypes with conversion to/from URIs.
+   @{
+*/
+
+enum class Datatype {
+  Nothing,            ///< Sentinel for unknown datatypes or errors
+  Boolean,            ///< xsd:boolean (see @ref exess_boolean)
+  Decimal,            ///< xsd:decimal (see @ref exess_decimal)
+  Double,             ///< xsd:double (see @ref exess_double)
+  Float,              ///< xsd:float (see @ref exess_float)
+  Integer,            ///< xsd:integer (see @ref exess_long)
+  NonPositiveInteger, ///< xsd:nonPositiveInteger (see @ref exess_long)
+  NegativeInteger,    ///< xsd:negativeInteger (see @ref exess_long)
+  Long,               ///< xsd:long (see @ref exess_long)
+  Int,                ///< xsd:integer (see @ref exess_int)
+  Short,              ///< xsd:short (see @ref exess_short)
+  Byte,               ///< xsd:byte (see @ref exess_byte)
+  NonNegativeInteger, ///< xsd:nonNegativeInteger (see @ref exess_ulong)
+  UnsignedLong,       ///< xsd:unsignedLong (see @ref exess_ulong)
+  UnsignedInt,        ///< xsd:unsignedInt (see @ref exess_uint)
+  UnsignedShort,      ///< xsd:unsignedShort (see @ref exess_ushort)
+  UnsignedByte,       ///< xsd:unsignedByte (see @ref exess_ubyte)
+  PositiveInteger,    ///< xsd:positiveInteger (see @ref exess_ulong)
+  Duration,           ///< xsd:duration (see @ref exess_duration)
+  Datetime,           ///< xsd:dateTime (see @ref exess_datetime)
+  Time,               ///< xsd:time (see @ref exess_time)
+  Date,               ///< xsd:date (see @ref exess_date)
+  Hex,                ///< xsd:hexBinary (see @ref exess_hex)
+  Base64,             ///< xsd:base64Binary (see @ref exess_base64)
+};
+
+/// @copydoc exess_datatype_uri
+inline const char* EXESS_NULLABLE
+datatype_uri(const Datatype datatype)
+{
+  return exess_datatype_uri(static_cast<ExessDatatype>(datatype));
+}
+
+/// @copydoc exess_datatype_from_uri
+inline Datatype
+datatype_from_uri(const char* const EXESS_NONNULL uri)
+{
+  return static_cast<Datatype>(exess_datatype_from_uri(uri));
+}
+
+/// @copydoc exess_datatype_is_bounded
+inline bool
+datatype_is_bounded(const Datatype datatype)
+{
+  return exess_datatype_is_bounded(static_cast<ExessDatatype>(datatype));
+}
+
+/// @copydoc exess_max_length
+inline size_t
+max_length(const Datatype datatype)
+{
+  return exess_max_length(static_cast<ExessDatatype>(datatype));
 }
 
 /**
@@ -266,65 +327,9 @@ to_string(const T& value)
 
 /**
    @}
-   @defgroup exesspp_datatypes Datatypes
-   Runtime integer tags for supported datatypes with conversion to/from URIs.
+   @defgroup exesspp_utilities Utilities
    @{
 */
-
-// enum class Datatype {
-//   nothing,              ///< Sentinel for unknown datatypes or errors
-//   boolean,              ///< xsd:boolean (see @ref exess_boolean)
-//   decimal,              ///< xsd:decimal (see @ref exess_decimal)
-//   double,               ///< xsd:double (see @ref exess_double)
-//   float,                ///< xsd:float (see @ref exess_float)
-//   integer,              ///< xsd:integer (see @ref exess_long)
-//   non_positive_integer, ///< xsd:nonPositiveInteger (see @ref exess_long)
-//   negative_integer,     ///< xsd:negativeInteger (see @ref exess_long)
-//   long,                 ///< xsd:long (see @ref exess_long)
-//   int,                  ///< xsd:integer (see @ref exess_int)
-//   short,                ///< xsd:short (see @ref exess_short)
-//   byte,                 ///< xsd:byte (see @ref exess_byte)
-//   non_negative_integer, ///< xsd:nonNegativeInteger (see @ref exess_ulong)
-//   ulong,                ///< xsd:unsignedLong (see @ref exess_ulong)
-//   uint,                 ///< xsd:unsignedInt (see @ref exess_uint)
-//   ushort,               ///< xsd:unsignedShort (see @ref exess_ushort)
-//   ubyte,                ///< xsd:unsignedByte (see @ref exess_ubyte)
-//   positive_integer,     ///< xsd:positiveInteger (see @ref exess_ulong)
-//   duration,             ///< xsd:duration (see @ref exess_duration)
-//   datetime,             ///< xsd:dateTime (see @ref exess_datetime)
-//   time,                 ///< xsd:time (see @ref exess_time)
-//   date,                 ///< xsd:date (see @ref exess_date)
-//   hex,                  ///< xsd:hexBinary (see @ref exess_hex)
-//   base64,               ///< xsd:base64Binary (see @ref exess_base64)
-// }
-
-/// @copydoc exess_datatype_uri
-inline const char* EXESS_NULLABLE
-datatype_uri(const Datatype datatype)
-{
-  return exess_datatype_uri(datatype);
-}
-
-/// @copydoc exess_datatype_from_uri
-inline Datatype
-datatype_from_uri(const char* const EXESS_NONNULL uri)
-{
-  return exess_datatype_from_uri(uri);
-}
-
-/// @copydoc exess_datatype_is_bounded
-inline bool
-datatype_is_bounded(const Datatype datatype)
-{
-  return exess_datatype_is_bounded(datatype);
-}
-
-/// @copydoc exess_max_length
-inline size_t
-max_length(const Datatype datatype)
-{
-  return exess_max_length(datatype);
-}
 
 template<class T>
 constexpr size_t
