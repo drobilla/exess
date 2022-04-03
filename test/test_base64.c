@@ -138,6 +138,7 @@ test_round_trip(void)
   for (size_t size = 1; size < 256; ++size) {
     // Allocate and generate data
     uint8_t* const data = (uint8_t*)malloc(size);
+    assert(data);
     for (size_t i = 0; i < size; ++i) {
       data[i] = (uint8_t)((size + i) % 256);
     }
@@ -145,6 +146,7 @@ test_round_trip(void)
     // Allocate buffer for encoding with minimum required size
     const size_t str_len = exess_write_base64(size, data, 0, NULL).count;
     char* const  str     = (char*)malloc(str_len + 1);
+    assert(str);
 
     // Encode data to string buffer
     assert(!exess_write_base64(size, data, str_len + 1, str).status);
@@ -153,6 +155,7 @@ test_round_trip(void)
 
     // Allocate buffer for decoded data with the same size as the input
     uint8_t* const decoded = (uint8_t*)malloc(size);
+    assert(decoded);
 
     // Decode and check that data matches the original input
     const ExessVariableResult r = exess_read_base64(size, decoded, str);
