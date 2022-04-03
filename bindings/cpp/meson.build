@@ -12,7 +12,6 @@ if get_option('strict')
       '-Wno-c++98-compat',
       '-Wno-c++98-compat-pedantic',
       '-Wno-documentation-unknown-command',
-      '-Wno-nullability-extension',
       '-Wno-padded',
     ]
 
@@ -36,12 +35,12 @@ if get_option('strict')
       '/wd5045',  # will insert Spectre mitigation
     ]
   endif
-else
-  if cpp.get_id() in ['clang', 'emscripten']
-    cpp_suppressions = [
-      '-Wno-nullability-extension',
-    ]
-  endif
+endif
+
+if cpp.get_id() in ['clang', 'emscripten']
+  cpp_suppressions += [
+    '-Wno-nullability-extension',
+  ]
 endif
 
 exess_cpp_args = cpp.get_supported_arguments(cpp_suppressions)
