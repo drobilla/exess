@@ -106,8 +106,8 @@ Note that the datatype must be given to read a string.
 Since a given string could be a valid representation of many datatypes,
 the expected type must be known from some application-specific context.
 
-Datatypes
-=========
+Dynamic Datatypes
+=================
 
 :enum:`ExessDatatype` enumerates all of the supported datatypes.
 The special value :enumerator:`EXESS_NOTHING` is used as a sentinel for unknown datatypes or other errors.

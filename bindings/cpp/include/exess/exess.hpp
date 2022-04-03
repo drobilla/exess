@@ -18,7 +18,7 @@
 namespace exess {
 
 /**
-   @defgroup exesspp Exess C++ API
+   @defgroup exess_cpp Exess C++ API
    This is the C++ wrapper for the exess API.
    @{
 */

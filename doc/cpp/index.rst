@@ -7,5 +7,5 @@ Exess
 .. toctree::
 
    overview
-   api/exesspp
-   api/exess
+   api/exess_cpp
+   api/exess_c
