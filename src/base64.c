@@ -72,7 +72,7 @@ exess_read_base64(const size_t out_size, void* const out, const char* const str)
     }
 
     // Read next chunk of 4 input characters
-    uint8_t in[] = "====";
+    uint8_t in[] = {'=', '=', '=', '='};
     for (size_t j = 0; j < 4; ++j) {
       const char c = next_char(str, &i);
       if (!is_base64(c)) {
