@@ -7,6 +7,7 @@
 #include "int_test_data.h"
 #include "num_test_utils.h"
 #include "string_utils.h"
+#include "warnings.h"
 
 #include "exess/exess.h"
 
@@ -29,6 +30,9 @@ check_read(const char* const string,
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(float_matches(value, expected_value));
+
+  EXESS_DISABLE_CONVERSION_WARNINGS
+  assert(isnan(value) || !float_matches(value, NAN));
 }
 
 static void
@@ -214,14 +218,13 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
-  if (opts.error) {
-    return 1;
+
+  if (!opts.error) {
+    test_read_float();
+    test_float_string_length();
+    test_write_float();
+    test_round_trip(opts);
   }
 
-  test_read_float();
-  test_float_string_length();
-  test_write_float();
-  test_round_trip(opts);
-
-  return 0;
+  return (int)opts.error;
 }
