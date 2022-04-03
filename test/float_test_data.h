@@ -33,44 +33,36 @@ double_from_rep(const uint64_t rep)
 static EXESS_I_PURE_FUNC uint64_t
 double_ulp_distance(const double a, const double b)
 {
+  EXESS_DISABLE_CONVERSION_WARNINGS
+  assert(!isnan(a));
+  assert(!isnan(b));
+  EXESS_RESTORE_WARNINGS
+
   assert(a >= 0.0);
   assert(b >= 0.0);
 
   const uint64_t ia = double_to_rep(a);
   const uint64_t ib = double_to_rep(b);
-  if (ia == ib) {
-    return 0;
-  }
 
-  EXESS_DISABLE_CONVERSION_WARNINGS
-  if (isnan(a) || isnan(b) || isinf(a) || isinf(b)) {
-    return UINT64_MAX;
-  }
-  EXESS_RESTORE_WARNINGS
-
-  return ia > ib ? ia - ib : ib - ia;
+  return ia >= ib ? ia - ib : ib - ia;
 }
 
 /// Return the distance between two floats in ULPs
 static EXESS_I_PURE_FUNC uint32_t
 float_ulp_distance(const float a, const float b)
 {
+  EXESS_DISABLE_CONVERSION_WARNINGS
+  assert(!isnan(a));
+  assert(!isnan(b));
+  EXESS_RESTORE_WARNINGS
+
   assert(a >= 0.0f);
   assert(b >= 0.0f);
 
   const uint32_t ia = float_to_rep(a);
   const uint32_t ib = float_to_rep(b);
-  if (ia == ib) {
-    return 0;
-  }
 
-  EXESS_DISABLE_CONVERSION_WARNINGS
-  if (isnan(a) || isnan(b) || isinf(a) || isinf(b)) {
-    return UINT32_MAX;
-  }
-  EXESS_RESTORE_WARNINGS
-
-  return ia > ib ? ia - ib : ib - ia;
+  return ia >= ib ? ia - ib : ib - ia;
 }
 
 static inline bool

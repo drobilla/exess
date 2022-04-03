@@ -234,14 +234,13 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
-  if (opts.error) {
-    return 1;
+
+  if (!opts.error) {
+    test_read_decimal();
+    test_decimal_string_length();
+    test_write_decimal();
+    test_round_trip(opts);
   }
 
-  test_read_decimal();
-  test_decimal_string_length();
-  test_write_decimal();
-  test_round_trip(opts);
-
-  return 0;
+  return (int)opts.error;
 }

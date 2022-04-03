@@ -103,13 +103,12 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
-  if (opts.error) {
-    return 1;
+
+  if (!opts.error) {
+    test_read_short();
+    test_write_short();
+    test_round_trip(opts);
   }
 
-  test_read_short();
-  test_write_short();
-  test_round_trip(opts);
-
-  return 0;
+  return (int)opts.error;
 }
