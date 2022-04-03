@@ -1,46 +1,46 @@
 arm32_dbg:
   image: lv2plugin/debian-arm32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 arm32_rel:
   image: lv2plugin/debian-arm32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 arm64_dbg:
   image: lv2plugin/debian-arm64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 arm64_rel:
   image: lv2plugin/debian-arm64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 x32_dbg:
   image: lv2plugin/debian-x32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 x32_rel:
   image: lv2plugin/debian-x32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 x64_dbg:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Db_coverage=true -Ddocs=enabled
+    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Db_coverage=true -Ddocs=enabled
     - ninja -C build test
     - ninja -C build coverage-html
   artifacts:
@@ -51,21 +51,21 @@ x64_dbg:
 x64_rel:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 x64_static:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Ddefault_library=static -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Ddefault_library=static -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 x64_sanitize:
   image: lv2plugin/debian-x64-clang
   script:
-    - meson setup build -Db_lundef=false -Dbuildtype=plain -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Db_lundef=false -Dbuildtype=plain -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
   variables:
     # TODO: Figure out how to enable address and undefined sanitizers on CI.
@@ -81,20 +81,20 @@ x64_sanitize:
 freebsd_dbg:
   tags: [freebsd,meson]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 freebsd_rel:
   tags: [freebsd,meson]
   script:
-    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 mingw32_dbg:
   image: lv2plugin/debian-mingw32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
   variables:
     WINEPATH: "Z:\\usr\\lib\\gcc\\i686-w64-mingw32\\10-win32;Z:\\builds\\drobilla\\exess"
@@ -102,7 +102,7 @@ mingw32_dbg:
 mingw32_rel:
   image: lv2plugin/debian-mingw32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
   variables:
     WINEPATH: "Z:\\usr\\lib\\gcc\\i686-w64-mingw32\\10-win32;Z:\\builds\\drobilla\\exess\\build"
@@ -111,7 +111,7 @@ mingw32_rel:
 mingw64_dbg:
   image: lv2plugin/debian-mingw64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
   variables:
     WINEPATH: "Z:\\usr\\lib\\gcc\\x86_64-w64-mingw32\\10-win32;Z:\\builds\\drobilla\\exess\\build"
@@ -119,7 +119,7 @@ mingw64_dbg:
 mingw64_rel:
   image: lv2plugin/debian-mingw64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dcpp_args="-static-libgcc" -Dcpp_link_args="-static-libgcc" -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
   variables:
     WINEPATH: "Z:\\usr\\lib\\gcc\\x86_64-w64-mingw32\\10-win32;Z:\\builds\\drobilla\\exess\\build"
@@ -128,39 +128,39 @@ mingw64_rel:
 mac_dbg:
   tags: [macos]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 mac_rel:
   tags: [macos]
   script:
-    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 win_dbg:
   tags: [windows,meson]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 win_rel:
   tags: [windows,meson]
   script:
-    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=auto -Ddocs=disabled
     - ninja -C build test
 
 
 wasm_dbg:
   image: lv2plugin/debian-wasm
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dtests=true -Dbindings_cpp=disabled -Ddefault_library=static -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Dbindings_cpp=disabled -Ddefault_library=static -Ddocs=disabled
     - ninja -C build test
 
 wasm_rel:
   image: lv2plugin/debian-wasm
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Dtests=true -Dbindings_cpp=disabled -Ddefault_library=static -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=release -Dstrict=true -Dwerror=true -Dbindings_cpp=disabled -Ddefault_library=static -Ddocs=disabled
     - ninja -C build test
 
 
