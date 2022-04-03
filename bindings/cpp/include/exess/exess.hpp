@@ -10,7 +10,10 @@
 #include <cstring>
 #include <iostream>
 #include <string>
-#include <vector>
+
+#if __cplusplus < 201703L
+#  include <vector>
+#endif
 
 namespace exess {
 
