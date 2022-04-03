@@ -43,7 +43,6 @@ if get_option('strict')
     c_suppressions += [
       '-Wno-bad-function-cast',
       '-Wno-c11-extensions',
-      '-Wno-nullability-extension',
       '-Wno-padded',
       '-Wno-switch-enum',
     ]
@@ -86,11 +85,12 @@ if get_option('strict')
     ]
   endif
 else
-  if cc.get_id() in ['clang', 'emscripten']
-    c_suppressions += [
-      '-Wno-nullability-extension',
-    ]
-  endif
+endif
+
+if cc.get_id() in ['clang', 'emscripten']
+  c_suppressions += [
+    '-Wno-nullability-extension',
+  ]
 endif
 
 if cc.get_id() == 'msvc'
