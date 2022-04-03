@@ -19,11 +19,11 @@ exess_read_boolean(bool* const out, const char* const str)
 
   switch (str[i]) {
   case '0':
-    return end_read(EXESS_SUCCESS, str, ++i);
+    return end_read(EXESS_SUCCESS, str, i + 1);
 
   case '1':
     *out = true;
-    return end_read(EXESS_SUCCESS, str, ++i);
+    return end_read(EXESS_SUCCESS, str, i + 1);
 
   case 't':
     if (!strncmp(str + i, "true", 4)) {
