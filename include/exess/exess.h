@@ -49,7 +49,7 @@ extern "C" {
 #endif
 
 /**
-   @defgroup exess Exess C API
+   @defgroup exess_c Exess C API
    @{
 */
 

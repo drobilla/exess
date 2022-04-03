@@ -7,4 +7,4 @@ Exess
 .. toctree::
 
    overview
-   api/exess
+   api/exess_c
