@@ -1,4 +1,4 @@
-# Copyright 2021 David Robillard <d@drobilla.net>
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 config = configuration_data()
@@ -12,6 +12,6 @@ cpp_doxyfile = configure_file(configuration: config,
 cpp_index_xml = custom_target(
   'exess-cpp-index.xml',
   command: [doxygen, '@INPUT0@'],
-  input: [cpp_doxyfile] + c_header_files + cpp_header_files,
+  input: [cpp_doxyfile] + c_headers + cpp_headers,
   output: 'index.xml')
 
