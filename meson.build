@@ -1,16 +1,14 @@
-# Copyright 2021 David Robillard <d@drobilla.net>
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 project('exess', ['c'],
         version: '0.0.1',
         license: 'ISC',
-        meson_version: '>= 0.49.0',
+        meson_version: '>= 0.53.0',
         default_options: [
           'b_ndebug=if-release',
           'buildtype=release',
           'c_std=c99',
-          'default_library=shared',
-          'warning_level=3',
         ])
 
 exess_src_root = meson.current_source_dir()
@@ -18,99 +16,21 @@ major_version = meson.project_version().split('.')[0]
 version_suffix = '-@0@'.format(major_version)
 versioned_name = 'exess' + version_suffix
 
-# Load build tools
+#######################
+# Compilers and Flags #
+#######################
+
+# Required tools
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
-# Set ultra strict warnings for developers, if requested
-c_warnings = []
-c_suppressions = []
-if get_option('strict')
-  if meson.is_subproject()
-    c_warnings = []
-  else
-    subdir('meson')
-    add_project_arguments(all_c_warnings, language: ['c'])
-  endif
+# Set global warning flags
+subdir('meson/warnings')
+subdir('meson/suppressions')
 
-  if cc.get_id() == 'emscripten'
-    c_suppressions += [
-      '-Wno-disabled-macro-expansion',
-    ]
-  endif
-
-  if cc.get_id() in ['clang', 'emscripten']
-    c_suppressions += [
-      '-Wno-bad-function-cast',
-      '-Wno-c11-extensions',
-      '-Wno-padded',
-      '-Wno-switch-enum',
-    ]
-
-    if host_machine.system() == 'windows'
-      c_suppressions += [
-        '-Wno-deprecated-declarations',
-      ]
-    endif
-
-  elif cc.get_id() == 'gcc'
-    c_suppressions += [
-      '-Wno-aggregate-return',
-      '-Wno-inline',
-      '-Wno-padded',
-      '-Wno-strict-overflow',
-      '-Wno-switch-default',
-      '-Wno-switch-enum',
-      '-Wno-unsuffixed-float-constants',
-      '-Wno-unused-const-variable',
-    ]
-
-    if host_machine.system() == 'windows'
-      c_suppressions += [
-        '-Wno-error=format', # MinGW
-      ]
-    endif
-
-  elif cc.get_id() == 'msvc'
-    c_suppressions += [
-      '/wd4028',  # formal parameter different from declaration
-      '/wd4061',  # enumerator is not explicitly handled
-      '/wd4204',  # nonstandard extension: non-constant aggregate initializer
-      '/wd4221',  # initialized using address of automatic variable
-      '/wd4710',  # function not inlined
-      '/wd4711',  # function selected for automatic inline expansion
-      '/wd4738',  # storing 32-bit float result in memory
-      '/wd4820',  # padding added after data member
-      '/wd5045',  # will insert Spectre mitigation
-    ]
-  endif
-else
-endif
-
-if cc.get_id() in ['clang', 'emscripten']
-  c_suppressions += [
-    '-Wno-nullability-extension',
-  ]
-endif
-
-if cc.get_id() == 'msvc'
-  c_suppressions += [
-    '/wd4706',  # assignment within conditional expression
-    '/wd4996',  # POSIX name for this item is deprecated
-  ]
-endif
-
-exess_c_args = cc.get_supported_arguments(c_suppressions)
-
-if cc.get_id() == 'msvc'
-  # Suppress warnings in system headers
-  add_project_arguments(['/experimental:external',
-                         '/external:W0',
-                         '/external:anglebrackets'],
-                        language: ['c'])
-endif
-
-# Detect compiler features
+#####################
+# Compiler Features #
+#####################
 
 feature_checks = {
   'builtin_clz': 'return __builtin_clz(1);',
@@ -136,30 +56,18 @@ foreach name, fragment : feature_checks
   endif
 endforeach
 
-# System libraries
+################
+# Dependencies #
+################
+
 m_dep = cc.find_library('m', required: false)
 
-# Determine library type and the flags needed to build it
-if get_option('default_library') == 'both'
-  if host_machine.system() == 'windows'
-    error('default_library=both is not supported on Windows')
-  endif
+###########
+# Library #
+###########
 
-  library_type = 'both_libraries'
-  library_args = ['-DEXESS_INTERNAL']
-  prog_args = []
-elif get_option('default_library') == 'shared'
-  library_type = 'shared_library'
-  library_args = ['-DEXESS_INTERNAL']
-  prog_args = []
-else
-  library_type = 'static_library'
-  library_args = ['-DEXESS_INTERNAL', '-DEXESS_STATIC']
-  prog_args = ['-DEXESS_STATIC']
-endif
-
-c_headers = ['include/exess/exess.h']
-c_header_files = files(c_headers)
+include_dirs = include_directories(['include'])
+c_headers = files('include/exess/exess.h')
 
 sources = files(
   'src/base64.c',
@@ -198,19 +106,25 @@ sources = files(
   'src/year.c',
 )
 
-# Build shared and/or static library/libraries
+# Set appropriate arguments for building against the library type
+subdir('meson/library')
+if library_type == 'static_library'
+  add_project_arguments(['-DEXESS_STATIC'], language: ['c'])
+endif
+
+# Build shared and/or static library
 libexess = build_target(
-  versioned_name,
+  meson.project_name() + library_suffix,
   sources,
-  c_args: exess_c_args + library_args,
+  c_args: ['-DEXESS_INTERNAL'],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
-  include_directories: include_directories(['include']),
+  include_directories: include_dirs,
   install: true,
   target_type: library_type,
   version: meson.project_version())
 
-# Generage pkg-config file
+# Generage pkg-config file for external dependants
 pkg.generate(
   libexess,
   name: 'Exess',
@@ -219,12 +133,17 @@ pkg.generate(
   version: meson.project_version(),
   description: 'A simple and efficient regular expression implementation')
 
-# Install header to a versioned include directory
-install_headers(c_header_files, subdir: versioned_name / 'exess')
-
+# Declare dependency for internal meson dependants
 exess_dep = declare_dependency(
   link_with: libexess,
-  include_directories: include_directories(['include']))
+  include_directories: include_dirs)
+
+# Install header to a versioned include directory
+install_headers(c_headers, subdir: versioned_name / 'exess')
+
+#######################
+# Optional Components #
+#######################
 
 if not get_option('docs').disabled()
   subdir('doc')
@@ -234,9 +153,8 @@ if get_option('tests')
   subdir('test')
 endif
 
-if not meson.is_subproject() and meson.version().version_compare('>=0.53.0')
+if not meson.is_subproject()
   summary('Tests', get_option('tests'), bool_yn: true)
-
   summary('Install prefix', get_option('prefix'))
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))

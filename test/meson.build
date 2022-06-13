@@ -1,4 +1,4 @@
-# Copyright 2021 David Robillard <d@drobilla.net>
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 autoship = find_program('autoship', required: false)
@@ -67,7 +67,7 @@ foreach unit : public_tests
   test(unit,
        executable('test_@0@'.format(unit),
                   files('test_@0@.c'.format(unit)),
-                  c_args: exess_c_args + prog_args + test_args,
+                  c_args: test_args,
                   dependencies: [m_dep, exess_dep],
                   include_directories: include_directories('../src')),
        suite: 'public')
@@ -76,7 +76,7 @@ endforeach
 # Build test_uint as above, but keep the target to test options
 test_short = executable('test_short',
                        files('test_short.c'),
-                       c_args: exess_c_args + prog_args + test_args,
+                       c_args: test_args,
                        dependencies: [m_dep, exess_dep],
                        include_directories: include_directories('../src'))
 
@@ -116,10 +116,10 @@ if library_type == 'both_libraries'
   libexess_static = libexess.get_static_lib()
 elif library_type == 'shared_library'
   libexess_static = static_library(
-    versioned_name,
+    meson.project_name() + library_suffix,
     sources,
     include_directories: include_directories(['../include', '../src']),
-    c_args: exess_c_args + library_args,
+    c_args: ['-DEXESS_INTERNAL'],
     dependencies: [m_dep],
     gnu_symbol_visibility: 'default')
 else
@@ -135,7 +135,7 @@ foreach unit : private_tests
   test(unit,
        executable('test_@0@'.format(unit),
                   files('test_@0@.c'.format(unit)),
-                  c_args: exess_c_args + prog_args + test_args,
+                  c_args: test_args,
                   dependencies: exess_static_dep,
                   include_directories: include_directories('../src')),
        suite: 'private')
