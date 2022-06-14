@@ -12,15 +12,17 @@
 #####
 
 if is_variable('cc')
+  c_suppressions = []
+
   if get_option('strict')
     if cc.get_id() == 'emscripten'
-      c_warnings += [
+      c_suppressions += [
         '-Wno-disabled-macro-expansion',
       ]
     endif
 
     if cc.get_id() in ['clang', 'emscripten']
-      c_warnings += [
+      c_suppressions += [
         '-Wno-bad-function-cast',
         '-Wno-c11-extensions',
         '-Wno-padded',
@@ -28,17 +30,17 @@ if is_variable('cc')
       ]
 
       if host_machine.system() == 'darwin'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-poison-system-directories',
         ]
       elif host_machine.system() == 'windows'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-deprecated-declarations',
         ]
       endif
 
     elif cc.get_id() == 'gcc'
-      c_warnings += [
+      c_suppressions += [
         '-Wno-inline',
         '-Wno-padded',
         '-Wno-strict-overflow',
@@ -49,13 +51,13 @@ if is_variable('cc')
       ]
 
       if host_machine.system() == 'windows'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-error=format', # MinGW
         ]
       endif
 
     elif cc.get_id() == 'msvc'
-      c_warnings += [
+      c_suppressions += [
         '/wd4028', # formal parameter different from declaration
         '/wd4061', # enumerator is not explicitly handled
         '/wd4204', # nonstandard extension: non-constant aggregate initializer
@@ -70,21 +72,17 @@ if is_variable('cc')
   endif
 
   if cc.get_id() in ['clang', 'emscripten']
-    c_warnings += [
+    c_suppressions += [
       '-Wno-nullability-extension',
     ]
   endif
 
   if cc.get_id() == 'msvc'
-    c_warnings += [
+    c_suppressions += [
       '/wd4706', # assignment within conditional expression
       '/wd4996', # POSIX name for this item is deprecated
     ]
   endif
 
-  add_project_arguments(cc.get_supported_arguments(c_warnings),
-                        language: ['c'])
+  c_suppressions = cc.get_supported_arguments(c_suppressions)
 endif
-
-add_project_arguments(cc.get_supported_arguments(c_warnings),
-                      language: ['c'])

@@ -117,14 +117,14 @@ gcc_common_warnings = [
 # C #
 #####
 
-# Set c_warnings for the current C compiler
-c_warnings = []
 if is_variable('cc')
+  all_c_warnings = []
+
   if get_option('strict')
     if cc.get_id() == 'clang'
-      c_warnings += ['-Weverything']
+      all_c_warnings += ['-Weverything']
     elif cc.get_id() == 'gcc'
-      c_warnings += gcc_common_warnings + [
+      all_c_warnings += gcc_common_warnings + [
         '-Wabsolute-value',
         '-Wbad-function-cast',
         '-Wc++-compat',
@@ -141,7 +141,7 @@ if is_variable('cc')
         '-Wunsuffixed-float-constants',
       ]
     elif cc.get_id() == 'msvc'
-      c_warnings += [
+      all_c_warnings += [
         '/Wall',
         '/experimental:external',
         '/external:W0',
@@ -149,4 +149,6 @@ if is_variable('cc')
       ]
     endif
   endif
+
+  all_c_warnings = cc.get_supported_arguments(all_c_warnings)
 endif
