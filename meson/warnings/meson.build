@@ -126,14 +126,14 @@ gcc_common_warnings = [
 # C #
 #####
 
-# Set c_warnings for the current C compiler
-c_warnings = []
 if is_variable('cc')
+  all_c_warnings = []
+
   if get_option('strict')
     if cc.get_id() == 'clang'
-      c_warnings += ['-Weverything']
+      all_c_warnings += ['-Weverything']
     elif cc.get_id() == 'gcc'
-      c_warnings += gcc_common_warnings + [
+      all_c_warnings += gcc_common_warnings + [
         '-Wabsolute-value',
         '-Wbad-function-cast',
         '-Wc++-compat',
@@ -150,7 +150,7 @@ if is_variable('cc')
         '-Wunsuffixed-float-constants',
       ]
     elif cc.get_id() == 'msvc'
-      c_warnings += [
+      all_c_warnings += [
         '/Wall',
         '/experimental:external',
         '/external:W0',
@@ -158,6 +158,8 @@ if is_variable('cc')
       ]
     endif
   endif
+
+  all_c_warnings = cc.get_supported_arguments(all_c_warnings)
 endif
 
 #######
@@ -165,17 +167,18 @@ endif
 #######
 
 # Set cpp_warnings for the current C++ compiler
-cpp_warnings = []
 if is_variable('cpp')
+  all_cpp_warnings = []
+
   if get_option('strict')
     if cpp.get_id() == 'clang'
-      cpp_warnings += [
+      all_cpp_warnings += [
         '-Weverything',
         '-Wno-c++98-compat',
         '-Wno-c++98-compat-pedantic',
       ]
     elif cpp.get_id() == 'gcc'
-      cpp_warnings += gcc_common_warnings + [
+      all_cpp_warnings += gcc_common_warnings + [
         '-Wabi-tag',
         '-Waligned-new=all',
         '-Wcatch-value=3',
@@ -217,7 +220,7 @@ if is_variable('cpp')
         '-Wzero-as-null-pointer-constant',
       ]
     elif cpp.get_id() == 'msvc'
-      cpp_warnings += [
+      all_cpp_warnings += [
         '/Wall',
         '/experimental:external',
         '/external:W0',
@@ -225,4 +228,6 @@ if is_variable('cpp')
       ]
     endif
   endif
+
+  all_cpp_warnings = cpp.get_supported_arguments(all_cpp_warnings)
 endif

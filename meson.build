@@ -32,7 +32,13 @@ if not get_option('bindings_cpp').disabled()
 endif
 
 # Set global warning flags
-subdir('meson/warnings')
+if get_option('strict') and not meson.is_subproject()
+  subdir('meson/warnings')
+  add_project_arguments(all_c_warnings, language: ['c'])
+  if not get_option('bindings_cpp').disabled()
+    add_project_arguments(all_cpp_warnings, language: ['cpp'])
+  endif
+endif
 subdir('meson/suppressions')
 
 #####################
@@ -122,7 +128,7 @@ endif
 libexess = library(
   meson.project_name() + library_suffix,
   sources,
-  c_args: ['-DEXESS_INTERNAL'],
+  c_args: c_suppressions + ['-DEXESS_INTERNAL'],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,

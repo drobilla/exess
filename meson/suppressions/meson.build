@@ -12,15 +12,17 @@
 #####
 
 if is_variable('cc')
+  c_suppressions = []
+
   if get_option('strict')
     if cc.get_id() == 'emscripten'
-      c_warnings += [
+      c_suppressions += [
         '-Wno-disabled-macro-expansion',
       ]
     endif
 
     if cc.get_id() in ['clang', 'emscripten']
-      c_warnings += [
+      c_suppressions += [
         '-Wno-bad-function-cast',
         '-Wno-c11-extensions',
         '-Wno-padded',
@@ -28,17 +30,17 @@ if is_variable('cc')
       ]
 
       if host_machine.system() == 'darwin'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-poison-system-directories',
         ]
       elif host_machine.system() == 'windows'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-deprecated-declarations',
         ]
       endif
 
     elif cc.get_id() == 'gcc'
-      c_warnings += [
+      c_suppressions += [
         '-Wno-inline',
         '-Wno-padded',
         '-Wno-strict-overflow',
@@ -49,13 +51,13 @@ if is_variable('cc')
       ]
 
       if host_machine.system() == 'windows'
-        c_warnings += [
+        c_suppressions += [
           '-Wno-error=format', # MinGW
         ]
       endif
 
     elif cc.get_id() == 'msvc'
-      c_warnings += [
+      c_suppressions += [
         '/wd4028', # formal parameter different from declaration
         '/wd4061', # enumerator is not explicitly handled
         '/wd4204', # nonstandard extension: non-constant aggregate initializer
@@ -70,20 +72,19 @@ if is_variable('cc')
   endif
 
   if cc.get_id() in ['clang', 'emscripten']
-    c_warnings += [
+    c_suppressions += [
       '-Wno-nullability-extension',
     ]
   endif
 
   if cc.get_id() == 'msvc'
-    c_warnings += [
+    c_suppressions += [
       '/wd4706', # assignment within conditional expression
       '/wd4996', # POSIX name for this item is deprecated
     ]
   endif
 
-  add_project_arguments(cc.get_supported_arguments(c_warnings),
-                        language: ['c'])
+  c_suppressions = cc.get_supported_arguments(c_suppressions)
 endif
 
 #######
@@ -91,9 +92,11 @@ endif
 #######
 
 if is_variable('cpp')
+  cpp_suppressions = []
+
   if get_option('strict')
     if cpp.get_id() in ['clang', 'emscripten']
-      cpp_warnings = [
+      cpp_suppressions = [
         '-Wno-c++98-compat',
         '-Wno-c++98-compat-pedantic',
         '-Wno-documentation-unknown-command',
@@ -101,13 +104,13 @@ if is_variable('cpp')
       ]
 
       if host_machine.system() == 'darwin'
-        cpp_warnings += [
+        cpp_suppressions += [
           '-Wno-poison-system-directories',
         ]
       endif
 
     elif cpp.get_id() == 'gcc'
-      cpp_warnings = [
+      cpp_suppressions = [
         '-Wno-inline',
         '-Wno-padded',
         '-Wno-switch-default',
@@ -116,7 +119,7 @@ if is_variable('cpp')
       ]
 
     elif cpp.get_id() == 'msvc'
-      cpp_warnings = [
+      cpp_suppressions = [
         '/wd4028', # formal parameter different from declaration
         '/wd4204', # nonstandard extension: non-constant aggregate initializer
         '/wd4706', # assignment within conditional expression
@@ -129,11 +132,10 @@ if is_variable('cpp')
   endif
 
   if cpp.get_id() in ['clang', 'emscripten']
-    cpp_warnings += [
+    cpp_suppressions += [
       '-Wno-nullability-extension',
     ]
   endif
 
-  add_project_arguments(cpp.get_supported_arguments(cpp_warnings),
-                        language: ['cpp'])
+  cpp_suppressions = cpp.get_supported_arguments(cpp_suppressions)
 endif

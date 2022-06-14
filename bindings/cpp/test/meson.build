@@ -11,7 +11,7 @@ endif
 test('exess_hpp',
      executable('test_exess_hpp',
                 files('test_exess_hpp.cpp'),
-                cpp_args: test_args,
+                cpp_args: cpp_suppressions + test_args,
                 link_args: test_link_args,
                 dependencies: [exess_hpp_dep],
                 include_directories: include_directories('../../../test',

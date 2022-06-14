@@ -67,7 +67,7 @@ foreach unit : public_tests
   test(unit,
        executable('test_@0@'.format(unit),
                   files('test_@0@.c'.format(unit)),
-                  c_args: test_args,
+                  c_args: c_suppressions + test_args,
                   dependencies: [m_dep, exess_dep],
                   include_directories: include_directories('../src')),
        suite: 'public')
@@ -76,11 +76,15 @@ endforeach
 # Build test_uint as above, but keep the target to test options
 test_short = executable('test_short',
                        files('test_short.c'),
-                       c_args: test_args,
+                       c_args: c_suppressions + test_args,
                        dependencies: [m_dep, exess_dep],
                        include_directories: include_directories('../src'))
 
 test('short', test_short, suite: 'public')
+
+##########################
+# Command-Line Arguments #
+##########################
 
 good_args = [
   ['-n', '1024'],
@@ -104,7 +108,9 @@ foreach args : bad_args
   test(name, test_short, args: args, should_fail: true, suite: ['test_args'])
 endforeach
 
-# Private unit tests
+######################
+# Private Unit Tests #
+######################
 
 private_tests = [
   'bigint',
@@ -119,7 +125,7 @@ elif get_option('default_library') == 'shared'
     meson.project_name() + library_suffix,
     sources,
     include_directories: include_directories(['../include', '../src']),
-    c_args: ['-DEXESS_INTERNAL'],
+    c_args: c_suppressions + ['-DEXESS_INTERNAL'],
     dependencies: [m_dep],
     gnu_symbol_visibility: 'default')
 else
@@ -135,9 +141,32 @@ foreach unit : private_tests
   test(unit,
        executable('test_@0@'.format(unit),
                   files('test_@0@.c'.format(unit)),
-                  c_args: test_args,
+                  c_args: c_suppressions + test_args,
                   dependencies: exess_static_dep,
                   include_directories: include_directories('../src')),
        suite: 'private')
 endforeach
 
+#######################
+# Header Warning Test #
+#######################
+
+header_c_args = []
+if cc.get_id() == 'clang'
+  header_c_args += [
+    '-Wno-nullability-extension',
+    '-Wno-padded',
+  ]
+elif cc.get_id() == 'gcc'
+  header_c_args += [
+    '-Wno-padded',
+  ]
+endif
+
+test('headers',
+     executable('test_headers',
+                files('headers/test_headers.c'),
+                c_args: header_c_args,
+                dependencies: exess_dep,
+                include_directories: include_dirs),
+    suite: 'public')

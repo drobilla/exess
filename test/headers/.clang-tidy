@@ -1,0 +1,6 @@
+Checks: >
+  *,
+  -altera-struct-pack-align,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file
