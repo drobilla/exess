@@ -206,7 +206,7 @@ write_bounded(const char* const   str,
     exess_read_value(datatype, sizeof(value), &value, str);
 
   return vr.status
-           ? result(vr.status, 0u)
+           ? result(vr.status, 0U)
            : exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
 }
 

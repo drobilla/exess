@@ -61,9 +61,9 @@ test_datatype_is_bounded(void)
 static void
 test_value_size(void)
 {
-  assert(exess_value_size((ExessDatatype)-1) == 0u);
+  assert(exess_value_size((ExessDatatype)-1) == 0U);
 
-  assert(exess_value_size(EXESS_NOTHING) == 0u);
+  assert(exess_value_size(EXESS_NOTHING) == 0U);
   assert(exess_value_size(EXESS_BOOLEAN) == sizeof(bool));
   assert(exess_value_size(EXESS_DECIMAL) == sizeof(double));
   assert(exess_value_size(EXESS_DOUBLE) == sizeof(double));
@@ -85,8 +85,8 @@ test_value_size(void)
   assert(exess_value_size(EXESS_DATETIME) == sizeof(ExessDateTime));
   assert(exess_value_size(EXESS_TIME) == sizeof(ExessTime));
   assert(exess_value_size(EXESS_DATE) == sizeof(ExessDate));
-  assert(exess_value_size(EXESS_HEX) == 0u);
-  assert(exess_value_size(EXESS_BASE64) == 0u);
+  assert(exess_value_size(EXESS_HEX) == 0U);
+  assert(exess_value_size(EXESS_BASE64) == 0U);
 }
 
 int

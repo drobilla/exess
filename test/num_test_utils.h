@@ -34,7 +34,7 @@ static ExessNumTestOptions
 parse_num_test_options(const int argc, char* const* const argv)
 {
   ExessNumTestOptions opts = {
-    16384u, (uint32_t)time(NULL) + (uint32_t)getpid(), false, false};
+    16384U, (uint32_t)time(NULL) + (uint32_t)getpid(), false, false};
 
   int a = 1;
   for (; a < argc && argv[a][0] == '-'; ++a) {

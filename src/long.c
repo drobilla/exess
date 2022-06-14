@@ -67,7 +67,7 @@ exess_long_string_length(const int64_t value)
   }
 
   if (value < 0) {
-    return 1u + exess_num_digits((uint64_t)-value);
+    return 1U + exess_num_digits((uint64_t)-value);
   }
 
   return exess_num_digits((uint64_t)value);

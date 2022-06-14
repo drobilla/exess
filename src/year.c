@@ -65,7 +65,7 @@ write_year_number(const int16_t value, const size_t buf_size, char* const buf)
   const bool     is_negative = value < 0;
 
   if (!buf) {
-    return result(EXESS_SUCCESS, is_negative + MAX(4u, n_digits));
+    return result(EXESS_SUCCESS, is_negative + MAX(4U, n_digits));
   }
 
   // Write sign

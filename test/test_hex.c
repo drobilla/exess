@@ -83,20 +83,20 @@ test_read_overflow(void)
 {
   char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  ExessVariableResult r = exess_read_hex(0u, buf, "666F6F");
+  ExessVariableResult r = exess_read_hex(0U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 2u);
-  assert(r.write_count == 0u);
+  assert(r.read_count == 2U);
+  assert(r.write_count == 0U);
 
-  r = exess_read_hex(1u, buf, "666F6F");
+  r = exess_read_hex(1U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4u);
-  assert(r.write_count == 1u);
+  assert(r.read_count == 4U);
+  assert(r.write_count == 1U);
 
-  r = exess_read_hex(2u, buf, "666F6F");
+  r = exess_read_hex(2U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 6u);
-  assert(r.write_count == 2u);
+  assert(r.read_count == 6U);
+  assert(r.write_count == 2U);
 }
 
 static void

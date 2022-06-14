@@ -13,7 +13,7 @@ static void
 test_clz32(void)
 {
   for (unsigned i = 0; i < 32; ++i) {
-    assert(exess_clz32(1u << i) == 32u - i - 1u);
+    assert(exess_clz32(1U << i) == 32U - i - 1U);
   }
 }
 
@@ -21,7 +21,7 @@ static void
 test_clz64(void)
 {
   for (unsigned i = 0; i < 64; ++i) {
-    assert(exess_clz64(1ull << i) == 64u - i - 1u);
+    assert(exess_clz64(1ULL << i) == 64U - i - 1U);
   }
 }
 
@@ -29,7 +29,7 @@ static void
 test_ilog2(void)
 {
   for (unsigned i = 0; i < 64; ++i) {
-    assert(exess_ilog2(1ull << i) == i);
+    assert(exess_ilog2(1ULL << i) == i);
   }
 }
 
@@ -49,25 +49,25 @@ test_num_digits(void)
   assert(1 == exess_num_digits(1));
   assert(1 == exess_num_digits(9));
   assert(2 == exess_num_digits(10));
-  assert(2 == exess_num_digits(99ull));
-  assert(3 == exess_num_digits(999ull));
-  assert(4 == exess_num_digits(9999ull));
-  assert(5 == exess_num_digits(99999ull));
-  assert(6 == exess_num_digits(999999ull));
-  assert(7 == exess_num_digits(9999999ull));
-  assert(8 == exess_num_digits(99999999ull));
-  assert(9 == exess_num_digits(999999999ull));
-  assert(10 == exess_num_digits(9999999999ull));
-  assert(11 == exess_num_digits(99999999999ull));
-  assert(12 == exess_num_digits(999999999999ull));
-  assert(13 == exess_num_digits(9999999999999ull));
-  assert(14 == exess_num_digits(99999999999999ull));
-  assert(15 == exess_num_digits(999999999999999ull));
-  assert(16 == exess_num_digits(9999999999999999ull));
-  assert(17 == exess_num_digits(99999999999999999ull));
-  assert(18 == exess_num_digits(999999999999999999ull));
-  assert(19 == exess_num_digits(9999999999999999999ull));
-  assert(20 == exess_num_digits(18446744073709551615ull));
+  assert(2 == exess_num_digits(99ULL));
+  assert(3 == exess_num_digits(999ULL));
+  assert(4 == exess_num_digits(9999ULL));
+  assert(5 == exess_num_digits(99999ULL));
+  assert(6 == exess_num_digits(999999ULL));
+  assert(7 == exess_num_digits(9999999ULL));
+  assert(8 == exess_num_digits(99999999ULL));
+  assert(9 == exess_num_digits(999999999ULL));
+  assert(10 == exess_num_digits(9999999999ULL));
+  assert(11 == exess_num_digits(99999999999ULL));
+  assert(12 == exess_num_digits(999999999999ULL));
+  assert(13 == exess_num_digits(9999999999999ULL));
+  assert(14 == exess_num_digits(99999999999999ULL));
+  assert(15 == exess_num_digits(999999999999999ULL));
+  assert(16 == exess_num_digits(9999999999999999ULL));
+  assert(17 == exess_num_digits(99999999999999999ULL));
+  assert(18 == exess_num_digits(999999999999999999ULL));
+  assert(19 == exess_num_digits(9999999999999999999ULL));
+  assert(20 == exess_num_digits(18446744073709551615ULL));
 }
 
 EXESS_I_PURE_FUNC

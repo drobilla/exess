@@ -138,7 +138,7 @@ write_timezone(const ExessTimezone value,
 
   const uint8_t abs_quarters = (uint8_t)abs(value);
   const uint8_t abs_hour     = abs_quarters / 4;
-  const uint8_t abs_minute   = (uint8_t)(15u * (abs_quarters % 4u));
+  const uint8_t abs_minute   = (uint8_t)(15U * (abs_quarters % 4U));
 
   size_t n = 0;
   n += write_char(value < 0 ? '-' : '+', buf_size, buf, o + n);

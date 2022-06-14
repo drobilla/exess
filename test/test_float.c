@@ -47,30 +47,30 @@ test_read_float(void)
   // Special values
   check_read("NaN", EXESS_SUCCESS, NAN, 3);
   check_read("-INF", EXESS_SUCCESS, -INFINITY, 4);
-  check_read("-0.0E0", EXESS_SUCCESS, -0.0f, 6);
-  check_read("0.0E0", EXESS_SUCCESS, 0.0f, 5);
-  check_read("+0.0E0", EXESS_SUCCESS, 0.0f, 6);
+  check_read("-0.0E0", EXESS_SUCCESS, -0.0F, 6);
+  check_read("0.0E0", EXESS_SUCCESS, 0.0F, 5);
+  check_read("+0.0E0", EXESS_SUCCESS, 0.0F, 6);
   check_read("INF", EXESS_SUCCESS, INFINITY, 3);
   check_read("+INF", EXESS_SUCCESS, INFINITY, 4);
 
   // Various normal cases
-  check_read("-1.0E0", EXESS_SUCCESS, -1.0f, 6);
-  check_read("1.0E0", EXESS_SUCCESS, +1.0f, 5);
-  check_read("5.0E0", EXESS_SUCCESS, 5.0f, 5);
-  check_read("5.0E1", EXESS_SUCCESS, 50.0f, 5);
-  check_read("5.0E9", EXESS_SUCCESS, 5000000000.0f, 5);
-  check_read("-5.0E-1", EXESS_SUCCESS, -0.5f, 7);
-  check_read("5.0E-1", EXESS_SUCCESS, 0.5f, 6);
-  check_read("6.25E-2", EXESS_SUCCESS, 0.0625f, 7);
-  check_read("7.8125E-3", EXESS_SUCCESS, 0.0078125f, 9);
+  check_read("-1.0E0", EXESS_SUCCESS, -1.0F, 6);
+  check_read("1.0E0", EXESS_SUCCESS, +1.0F, 5);
+  check_read("5.0E0", EXESS_SUCCESS, 5.0F, 5);
+  check_read("5.0E1", EXESS_SUCCESS, 50.0F, 5);
+  check_read("5.0E9", EXESS_SUCCESS, 5000000000.0F, 5);
+  check_read("-5.0E-1", EXESS_SUCCESS, -0.5F, 7);
+  check_read("5.0E-1", EXESS_SUCCESS, 0.5F, 6);
+  check_read("6.25E-2", EXESS_SUCCESS, 0.0625F, 7);
+  check_read("7.8125E-3", EXESS_SUCCESS, 0.0078125F, 9);
 
   // No exponent
-  check_read("1", EXESS_SUCCESS, 1.0f, 1);
-  check_read("2.3", EXESS_SUCCESS, 2.3f, 3);
-  check_read("-4.5", EXESS_SUCCESS, -4.5f, 4);
+  check_read("1", EXESS_SUCCESS, 1.0F, 1);
+  check_read("2.3", EXESS_SUCCESS, 2.3F, 3);
+  check_read("-4.5", EXESS_SUCCESS, -4.5F, 4);
 
   // Trailing garbage
-  check_read("1.2.", EXESS_SUCCESS, 1.2f, 3);
+  check_read("1.2.", EXESS_SUCCESS, 1.2F, 3);
 
   // Garbage
   check_read("true", EXESS_EXPECTED_DIGIT, NAN, 0);
@@ -89,10 +89,10 @@ test_float_string_length(void)
 
   // Special values
   assert(exess_write_float((float)NAN, 0, NULL).count == 3);
-  assert(exess_write_float(-1.0f, 0, NULL).count == 6);
-  assert(exess_write_float(-0.0f, 0, NULL).count == 6);
-  assert(exess_write_float(0.0f, 0, NULL).count == 5);
-  assert(exess_write_float(1.0f, 0, NULL).count == 5);
+  assert(exess_write_float(-1.0F, 0, NULL).count == 6);
+  assert(exess_write_float(-0.0F, 0, NULL).count == 6);
+  assert(exess_write_float(0.0F, 0, NULL).count == 5);
+  assert(exess_write_float(1.0F, 0, NULL).count == 5);
   assert(exess_write_float((float)INFINITY, 0, NULL).count == 3);
   assert(exess_write_float((float)-INFINITY, 0, NULL).count == 4);
 }
@@ -148,20 +148,20 @@ test_write_float(void)
   check_write(NAN, EXESS_SUCCESS, 4, "NaN");
   check_write(-INFINITY, EXESS_SUCCESS, 5, "-INF");
   check_write(FLT_MIN, EXESS_SUCCESS, 15, "1.17549435E-38");
-  check_write(-0.0f, EXESS_SUCCESS, 7, "-0.0E0");
-  check_write(0.0f, EXESS_SUCCESS, 6, "0.0E0");
-  check_write(100.25f, EXESS_SUCCESS, 9, "1.0025E2");
+  check_write(-0.0F, EXESS_SUCCESS, 7, "-0.0E0");
+  check_write(0.0F, EXESS_SUCCESS, 6, "0.0E0");
+  check_write(100.25F, EXESS_SUCCESS, 9, "1.0025E2");
   check_write(FLT_MAX, EXESS_SUCCESS, 14, "3.40282346E38");
   check_write(INFINITY, EXESS_SUCCESS, 4, "INF");
 
   check_write(NAN, EXESS_NO_SPACE, 3, NULL);
   check_write(-INFINITY, EXESS_NO_SPACE, 4, NULL);
   check_write(FLT_MIN, EXESS_NO_SPACE, 13, NULL);
-  check_write(-1.0f, EXESS_NO_SPACE, 2, NULL);
-  check_write(-0.0f, EXESS_NO_SPACE, 6, NULL);
-  check_write(0.0f, EXESS_NO_SPACE, 5, NULL);
-  check_write(100.25f, EXESS_NO_SPACE, 5, NULL);
-  check_write(100.25f, EXESS_NO_SPACE, 8, NULL);
+  check_write(-1.0F, EXESS_NO_SPACE, 2, NULL);
+  check_write(-0.0F, EXESS_NO_SPACE, 6, NULL);
+  check_write(0.0F, EXESS_NO_SPACE, 5, NULL);
+  check_write(100.25F, EXESS_NO_SPACE, 5, NULL);
+  check_write(100.25F, EXESS_NO_SPACE, 8, NULL);
   check_write(FLT_MAX, EXESS_NO_SPACE, 13, NULL);
   check_write(INFINITY, EXESS_NO_SPACE, 3, NULL);
 }
@@ -169,7 +169,7 @@ test_write_float(void)
 static void
 check_round_trip(const float value)
 {
-  float parsed_value                    = 0.0f;
+  float parsed_value                    = 0.0F;
   char  buf[EXESS_MAX_FLOAT_LENGTH + 1] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
@@ -183,8 +183,8 @@ test_round_trip(const ExessNumTestOptions opts)
 {
   check_round_trip(NAN);
   check_round_trip(FLT_MIN);
-  check_round_trip(-0.0f);
-  check_round_trip(0.0f);
+  check_round_trip(-0.0F);
+  check_round_trip(0.0F);
   check_round_trip(FLT_MAX);
 
   if (opts.exhaustive) {

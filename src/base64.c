@@ -39,7 +39,7 @@ unmap(const uint8_t in)
     "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
     "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 
-  return (uint8_t)(b64_unmap[in] - 47u);
+  return (uint8_t)(b64_unmap[in] - 47U);
 }
 
 static char
@@ -61,8 +61,8 @@ exess_read_base64(const size_t out_size, void* const out, const char* const str)
 {
   uint8_t* const       uout = (uint8_t*)out;
   const uint8_t* const ustr = (const uint8_t*)str;
-  size_t               i    = 0u;
-  size_t               o    = 0u;
+  size_t               i    = 0U;
+  size_t               o    = 0U;
 
   while (str[i]) {
     // Skip leading whitespace
@@ -86,25 +86,25 @@ exess_read_base64(const size_t out_size, void* const out, const char* const str)
       return vresult(EXESS_BAD_VALUE, i, o);
     }
 
-    const size_t n_bytes = 1u + (in[2] != '=') + (in[3] != '=');
+    const size_t n_bytes = 1U + (in[2] != '=') + (in[3] != '=');
     if (o + n_bytes > out_size) {
       return vresult(EXESS_NO_SPACE, i, o);
     }
 
-    const uint8_t a1 = (uint8_t)(unmap(in[0]) << 2u);
-    const uint8_t a2 = unmap(in[1]) >> 4u;
+    const uint8_t a1 = (uint8_t)(unmap(in[0]) << 2U);
+    const uint8_t a2 = unmap(in[1]) >> 4U;
 
     uout[o++] = a1 | a2;
 
     if (in[2] != '=') {
-      const uint8_t b1 = (uint8_t)(((unsigned)unmap(in[1]) << 4u) & 0xF0u);
-      const uint8_t b2 = unmap(in[2]) >> 2u;
+      const uint8_t b1 = (uint8_t)(((unsigned)unmap(in[1]) << 4U) & 0xF0U);
+      const uint8_t b2 = unmap(in[2]) >> 2U;
 
       uout[o++] = b1 | b2;
     }
 
     if (in[3] != '=') {
-      const uint8_t c1 = (uint8_t)(((unsigned)unmap(in[2]) << 6u) & 0xC0u);
+      const uint8_t c1 = (uint8_t)(((unsigned)unmap(in[2]) << 6U) & 0xC0U);
       const uint8_t c2 = unmap(in[3]);
 
       uout[o++] = c1 | c2;
@@ -137,13 +137,13 @@ exess_write_base64(const size_t      data_size,
     const size_t n_in  = MIN(3, data_size - i);
     memcpy(in, (const uint8_t*)data + i, n_in);
 
-    out[o]     = map(in[0] >> 2u);
-    out[o + 1] = map(((in[0] & 0x03u) << 4u) | ((in[1] & 0xF0u) >> 4u));
+    out[o]     = map(in[0] >> 2U);
+    out[o + 1] = map(((in[0] & 0x03U) << 4U) | ((in[1] & 0xF0U) >> 4U));
     out[o + 2] =
-      ((n_in > 1u) ? map(((in[1] & 0x0Fu) << 2u) | ((in[2] & 0xC0u) >> 6u))
+      ((n_in > 1U) ? map(((in[1] & 0x0FU) << 2U) | ((in[2] & 0xC0U) >> 6U))
                    : '=');
 
-    out[o + 3] = ((n_in > 2u) ? map(in[2] & 0x3Fu) : '=');
+    out[o + 3] = ((n_in > 2U) ? map(in[2] & 0x3FU) : '=');
   }
 
   return end_write(EXESS_SUCCESS, buf_size, buf, o);

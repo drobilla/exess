@@ -180,7 +180,7 @@ coerce_to_ulong(uint64_t* const      out,
       return EXESS_WOULD_ROUND;
     }
 
-    if (*(const float*)in < 0.0f || *(const float*)in > (float)MAX_FLOAT_INT) {
+    if (*(const float*)in < 0.0F || *(const float*)in > (float)MAX_FLOAT_INT) {
       return EXESS_OUT_OF_RANGE;
     }
 
@@ -277,7 +277,7 @@ exess_value_coerce(const ExessCoercions coercions,
 {
   // Ensure the input is sufficiently large so we don't read out of bounds
   if (in_size < exess_value_size(in_datatype)) {
-    return result(EXESS_BAD_VALUE, 0u);
+    return result(EXESS_BAD_VALUE, 0U);
   }
 
   // Copy value verbatim for trivial conversions
@@ -285,7 +285,7 @@ exess_value_coerce(const ExessCoercions coercions,
       (out_datatype == EXESS_HEX && in_datatype == EXESS_BASE64) ||
       (out_datatype == EXESS_BASE64 && in_datatype == EXESS_HEX)) {
     if (out_size < in_size) {
-      return result(EXESS_NO_SPACE, 0u);
+      return result(EXESS_NO_SPACE, 0U);
     }
 
     memcpy(out, in, in_size);
@@ -294,12 +294,12 @@ exess_value_coerce(const ExessCoercions coercions,
 
   // Ensure the output is sufficiently large so we don't write out of bounds
   if (out_size < exess_value_size(out_datatype)) {
-    return result(EXESS_NO_SPACE, 0u);
+    return result(EXESS_NO_SPACE, 0U);
   }
 
   ExessStatus st    = EXESS_UNSUPPORTED;
   int64_t     l_out = 0;
-  uint64_t    u_out = 0u;
+  uint64_t    u_out = 0U;
 
   switch (out_datatype) {
   case EXESS_NOTHING:
@@ -309,7 +309,7 @@ exess_value_coerce(const ExessCoercions coercions,
     if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
       const bool truncate = (coercions & (ExessCoercions)EXESS_TRUNCATE);
       if (!truncate && l_out != 0 && l_out != 1) {
-        return result(EXESS_WOULD_TRUNCATE, 0u);
+        return result(EXESS_WOULD_TRUNCATE, 0U);
       }
 
       *(bool*)out = (l_out != 0);
@@ -362,7 +362,7 @@ exess_value_coerce(const ExessCoercions coercions,
     case EXESS_DECIMAL:
     case EXESS_DOUBLE:
       if (!(coercions & (ExessCoercions)EXESS_REDUCE_PRECISION)) {
-        return result(EXESS_WOULD_REDUCE_PRECISION, 0u);
+        return result(EXESS_WOULD_REDUCE_PRECISION, 0U);
       }
 
       *(float*)out = (float)*(const double*)in;
@@ -389,7 +389,7 @@ exess_value_coerce(const ExessCoercions coercions,
   case EXESS_NON_POSITIVE_INTEGER:
     if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
       if (l_out > 0) {
-        return result(EXESS_OUT_OF_RANGE, 0u);
+        return result(EXESS_OUT_OF_RANGE, 0U);
       }
 
       *(int64_t*)out = l_out;
@@ -401,7 +401,7 @@ exess_value_coerce(const ExessCoercions coercions,
   case EXESS_NEGATIVE_INTEGER:
     if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
       if (l_out >= 0) {
-        return result(EXESS_OUT_OF_RANGE, 0u);
+        return result(EXESS_OUT_OF_RANGE, 0U);
       }
 
       *(int64_t*)out = l_out;
@@ -477,8 +477,8 @@ exess_value_coerce(const ExessCoercions coercions,
 
   case EXESS_POSITIVE_INTEGER:
     if (!(st = coerce_to_ulong(&u_out, in_datatype, in, coercions))) {
-      if (u_out == 0u) {
-        return result(EXESS_OUT_OF_RANGE, 0u);
+      if (u_out == 0U) {
+        return result(EXESS_OUT_OF_RANGE, 0U);
       }
 
       *(uint64_t*)out = u_out;
@@ -493,7 +493,7 @@ exess_value_coerce(const ExessCoercions coercions,
 
   case EXESS_TIME:
     if (in_datatype != EXESS_DATETIME) {
-      return result(EXESS_UNSUPPORTED, 0u);
+      return result(EXESS_UNSUPPORTED, 0U);
     }
 
     if ((coercions & (ExessCoercions)EXESS_TRUNCATE)) {
@@ -509,11 +509,11 @@ exess_value_coerce(const ExessCoercions coercions,
       return result(EXESS_SUCCESS, sizeof(ExessTime));
     }
 
-    return result(EXESS_WOULD_TRUNCATE, 0u);
+    return result(EXESS_WOULD_TRUNCATE, 0U);
 
   case EXESS_DATE:
     if (in_datatype != EXESS_DATETIME) {
-      return result(EXESS_UNSUPPORTED, 0u);
+      return result(EXESS_UNSUPPORTED, 0U);
     }
 
     if (coercions & (ExessCoercions)EXESS_TRUNCATE) {
@@ -528,12 +528,12 @@ exess_value_coerce(const ExessCoercions coercions,
       return result(EXESS_SUCCESS, sizeof(ExessDate));
     }
 
-    return result(EXESS_WOULD_TRUNCATE, 0u);
+    return result(EXESS_WOULD_TRUNCATE, 0U);
 
   case EXESS_HEX:
   case EXESS_BASE64:
     break;
   }
 
-  return result(st, 0u);
+  return result(st, 0U);
 }

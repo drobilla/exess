@@ -178,11 +178,11 @@ test_round_trip(void)
     for (uint8_t m = 0; m < 60; ++m) {
       rng = lcg32(rng);
 
-      const uint32_t ns = rng % 1000000000u;
+      const uint32_t ns = rng % 1000000000U;
 
       rng = lcg32(rng);
 
-      const uint8_t   s            = (uint8_t)(rng % 60u);
+      const uint8_t   s            = (uint8_t)(rng % 60U);
       const ExessTime no_zone      = {EXESS_LOCAL, h, m, s, ns};
       const ExessTime lowest_zone  = {INIT_ZONE(-14, 0), h, m, s, ns};
       const ExessTime highest_zone = {INIT_ZONE(14, 0), h, m, s, ns};

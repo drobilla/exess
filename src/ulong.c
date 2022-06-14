@@ -31,7 +31,7 @@ exess_read_ulong(uint64_t* const out, const char* const str)
 
   // Read digits
   for (; is_digit(str[i]); ++i) {
-    const uint64_t next = (*out * 10u) + (uint64_t)(str[i] - '0');
+    const uint64_t next = (*out * 10U) + (uint64_t)(str[i] - '0');
     if (next < *out) {
       *out = 0;
       return result(EXESS_OUT_OF_RANGE, i);
@@ -59,7 +59,7 @@ write_digits(const uint64_t value,
   }
 
   // Point s to the end
-  char* s = buf + i + n_digits - 1u;
+  char* s = buf + i + n_digits - 1U;
 
   // Write integer part (right to left)
   uint64_t remaining = value;

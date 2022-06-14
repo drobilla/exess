@@ -20,8 +20,8 @@ int
 exess_time_compare(const ExessTime lhs, const ExessTime rhs)
 {
   ExessDateTime lhs_datetime = {1970,
-                                1u,
-                                1u,
+                                1U,
+                                1U,
                                 lhs.zone != EXESS_LOCAL,
                                 lhs.hour,
                                 lhs.minute,
@@ -29,8 +29,8 @@ exess_time_compare(const ExessTime lhs, const ExessTime rhs)
                                 lhs.nanosecond};
 
   ExessDateTime rhs_datetime = {1970,
-                                1u,
-                                1u,
+                                1U,
+                                1U,
                                 rhs.zone != EXESS_LOCAL,
                                 rhs.hour,
                                 rhs.minute,
@@ -38,13 +38,13 @@ exess_time_compare(const ExessTime lhs, const ExessTime rhs)
                                 rhs.nanosecond};
 
   if (lhs.zone != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {0u, -lhs.zone * 15 * 60, 0};
+    const ExessDuration lhs_tz_duration = {0U, -lhs.zone * 15 * 60, 0};
 
     lhs_datetime = exess_add_datetime_duration(lhs_datetime, lhs_tz_duration);
   }
 
   if (rhs.zone != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {0u, -rhs.zone * 15 * 60, 0};
+    const ExessDuration rhs_tz_duration = {0U, -rhs.zone * 15 * 60, 0};
 
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }
@@ -57,7 +57,7 @@ read_nanoseconds(uint32_t* const out, const char* const str)
 {
   size_t i               = 0;
   char   frac_digits[10] = {'0', '0', '0', '0', '0', '0', '0', '0', '0', 0};
-  for (unsigned j = 0u; j < 9u && is_digit(str[i]); ++j) {
+  for (unsigned j = 0U; j < 9U && is_digit(str[i]); ++j) {
     frac_digits[j] = str[i++];
   }
 

@@ -13,7 +13,7 @@
 static inline ExessVariableResult
 simple_read(const ExessResult result, const size_t write_count)
 {
-  return vresult(result.status, result.count, result.status ? 0u : write_count);
+  return vresult(result.status, result.count, result.status ? 0U : write_count);
 }
 
 ExessVariableResult
@@ -47,7 +47,7 @@ exess_read_value(const ExessDatatype datatype,
     if (!(r = simple_read(exess_read_long((int64_t*)out, str), sizeof(int64_t)))
            .status) {
       if (*(const int64_t*)out > 0) {
-        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0u);
+        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U);
       }
     }
     break;
@@ -56,7 +56,7 @@ exess_read_value(const ExessDatatype datatype,
     if (!(r = simple_read(exess_read_long((int64_t*)out, str), sizeof(int64_t)))
            .status) {
       if (*(const int64_t*)out >= 0) {
-        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0u);
+        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U);
       }
     }
     break;
@@ -85,7 +85,7 @@ exess_read_value(const ExessDatatype datatype,
                           sizeof(uint64_t)))
            .status) {
       if (*(const uint64_t*)out == 0) {
-        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0u);
+        return vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U);
       }
     }
     break;

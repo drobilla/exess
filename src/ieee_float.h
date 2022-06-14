@@ -8,10 +8,10 @@
 #include <stdint.h>
 #include <string.h>
 
-static const unsigned dbl_physical_mant_dig = DBL_MANT_DIG - 1u;
-static const uint64_t dbl_mant_mask         = 0x000FFFFFFFFFFFFFull;
-static const uint64_t dbl_expt_mask         = 0x7FF0000000000000ul;
-static const uint64_t dbl_hidden_bit        = 0x0010000000000000ul;
+static const unsigned dbl_physical_mant_dig = DBL_MANT_DIG - 1U;
+static const uint64_t dbl_mant_mask         = 0x000FFFFFFFFFFFFFULL;
+static const uint64_t dbl_expt_mask         = 0x7FF0000000000000UL;
+static const uint64_t dbl_hidden_bit        = 0x0010000000000000UL;
 static const int      dbl_expt_bias         = 0x3FF + DBL_MANT_DIG - 1;
 static const int      dbl_subnormal_expt    = -0x3FF - DBL_MANT_DIG + 2;
 

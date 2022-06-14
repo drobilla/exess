@@ -19,7 +19,7 @@ exess_read_double(double* const out, const char* const str)
   *out = (double)NAN;
 
   const size_t       i  = skip_whitespace(str);
-  ExessDecimalDouble in = {EXESS_NAN, 0u, 0, {0}};
+  ExessDecimalDouble in = {EXESS_NAN, 0U, 0, {0}};
   const ExessResult  r  = parse_double(&in, str + i);
 
   if (!r.status) {
