@@ -37,7 +37,6 @@ feature_checks = {
   'builtin_clzll': 'return __builtin_clzll(1);',
 }
 
-checks = get_option('checks')
 foreach name, fragment : feature_checks
   opt = get_option('use_@0@'.format(name))
   code = 'int main(void) { @0@ }'.format(fragment)
@@ -47,7 +46,7 @@ foreach name, fragment : feature_checks
     add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
   elif opt.disabled()
     add_project_arguments(['-D@0@=0'.format(define_name)], language: ['c'])
-  elif checks
+  elif get_option('checks')
     if cc.links(code, name: name)
       add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
     else

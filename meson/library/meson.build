@@ -3,8 +3,8 @@
 
 # General code to determine the library type to build.
 #
-# Unfortunately, meson's default_library option does not handle real-world
-# situations out of the box.  In particular, it is usually necessary to specify
+# Unfortunately, meson's default_library option doesn't support shared and
+# static builds very well.  In particular, it is usually necessary to specify
 # different flags for static and shared builds of C libraries so that symbols
 # can be exported.  To work around this, we do not support default_library=both
 # on Windows.  On other platforms with GCC-like compilers, we can support both
