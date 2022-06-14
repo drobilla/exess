@@ -90,15 +90,15 @@ check_write(const uint64_t    value,
 static void
 test_write_ulong(void)
 {
-  check_write(0u, EXESS_SUCCESS, 2, "0");
-  check_write(1u, EXESS_SUCCESS, 2, "1");
+  check_write(0U, EXESS_SUCCESS, 2, "0");
+  check_write(1U, EXESS_SUCCESS, 2, "1");
   check_write(UINT64_MAX, EXESS_SUCCESS, 21, "18446744073709551615");
 
-  check_write(1234u, EXESS_NO_SPACE, 4, "");
+  check_write(1234U, EXESS_NO_SPACE, 4, "");
 
   // Check that nothing is written when there isn't enough space
   char              c = 42;
-  const ExessResult r = exess_write_ulong(1234u, 0, &c);
+  const ExessResult r = exess_write_ulong(1234U, 0, &c);
   assert(c == 42);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.count == 0);

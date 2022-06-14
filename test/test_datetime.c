@@ -34,8 +34,8 @@ check_add(const char* const datetime_string,
           const char* const duration_string,
           const char* const result_string)
 {
-  ExessDateTime datetime = {0, 0u, 0u, false, 0u, 0u, 0u, 0u};
-  ExessDuration duration = {0u, 0u, 0u};
+  ExessDateTime datetime = {0, 0U, 0U, false, 0U, 0U, 0U, 0U};
+  ExessDuration duration = {0U, 0U, 0U};
 
   ExessResult r = exess_read_datetime(&datetime, datetime_string);
   assert(!r.status);

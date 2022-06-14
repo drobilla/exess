@@ -130,36 +130,36 @@ check_failure(const ExessDatatype from_datatype,
 static void
 test_overflow(void)
 {
-  const uint32_t v = 4294967295u;
-  uint16_t       o = 42u;
+  const uint32_t v = 4294967295U;
+  uint16_t       o = 42U;
 
   ExessResult r = exess_value_coerce(
-    EXESS_LOSSLESS, EXESS_SHORT, 1u, &v, EXESS_LONG, sizeof(o), &o);
+    EXESS_LOSSLESS, EXESS_SHORT, 1U, &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_BAD_VALUE);
-  assert(o == 42u);
+  assert(o == 42U);
 
   r = exess_value_coerce(
     EXESS_LOSSLESS, EXESS_SHORT, sizeof(v), &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
-  assert(o == 42u);
+  assert(o == 42U);
 
   r = exess_value_coerce(
     EXESS_LOSSLESS, EXESS_HEX, sizeof(v), &v, EXESS_BASE64, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
-  assert(o == 42u);
+  assert(o == 42U);
 }
 
 static void
 test_unknown(void)
 {
   const int64_t  long_value  = 1;
-  const uint64_t ulong_value = 1u;
+  const uint64_t ulong_value = 1U;
 
-  uint8_t in[32]  = {0u};
-  uint8_t out[32] = {0u};
+  uint8_t in[32]  = {0U};
+  uint8_t out[32] = {0U};
 
   assert(exess_value_coerce(EXESS_LOSSLESS,
                             EXESS_NOTHING,

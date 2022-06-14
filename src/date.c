@@ -22,13 +22,13 @@ exess_date_compare(const ExessDate lhs, const ExessDate rhs)
     rhs.year, rhs.month, rhs.day, rhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
 
   if (lhs.zone != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {0u, -lhs.zone * 15 * 60, 0};
+    const ExessDuration lhs_tz_duration = {0U, -lhs.zone * 15 * 60, 0};
 
     lhs_datetime = exess_add_datetime_duration(lhs_datetime, lhs_tz_duration);
   }
 
   if (rhs.zone != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {0u, -rhs.zone * 15 * 60, 0};
+    const ExessDuration rhs_tz_duration = {0U, -rhs.zone * 15 * 60, 0};
 
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }

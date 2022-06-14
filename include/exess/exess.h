@@ -907,7 +907,7 @@ typedef int8_t ExessTimezone;
 #define EXESS_LOCAL INT8_MAX
 
 /// Sentinel value for UTC time (0)
-#define EXESS_UTC 0u
+#define EXESS_UTC 0U
 
 /**
    Construct a time zone offset from hours and minutes.
@@ -1336,7 +1336,7 @@ exess_write_canonical(const char* EXESS_NONNULL value,
    This is the size of #ExessValue, which is larger than the size of all the
    supported numeric and time-based datatypes.
 */
-#define EXESS_MAX_VALUE_SIZE 16u
+#define EXESS_MAX_VALUE_SIZE 16U
 
 /**
    A union that can hold any supported fixed-sized value.
@@ -1377,7 +1377,7 @@ typedef enum {
      resulting value is approximately equal to the original value.
      Specifically, this allows coercing double to float.
   */
-  EXESS_REDUCE_PRECISION = 1u << 0u,
+  EXESS_REDUCE_PRECISION = 1U << 0U,
 
   /**
      Allow coercions that round to the nearest integer.
@@ -1386,7 +1386,7 @@ typedef enum {
      nearest integer, with halfway cases rounding towards even (the default
      IEEE-754 rounding order).
   */
-  EXESS_ROUND = 1u << 1u,
+  EXESS_ROUND = 1U << 1U,
 
   /**
      Allow coercions that truncate significant parts of values.
@@ -1394,7 +1394,7 @@ typedef enum {
      Specifically, this allows coercing any number to boolean, datetime to
      date, and datetime to time.
   */
-  EXESS_TRUNCATE = 1u << 2u,
+  EXESS_TRUNCATE = 1U << 1U,
 } ExessCoercion;
 
 /**
@@ -1411,7 +1411,7 @@ typedef enum {
 typedef uint32_t ExessCoercions;
 
 /// Readability macro for using no lossy coercions (a zero #ExessCoercions)
-#define EXESS_LOSSLESS 0u
+#define EXESS_LOSSLESS 0U
 
 /**
    Compare two values.

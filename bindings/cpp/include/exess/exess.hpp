@@ -338,7 +338,7 @@ template<class T>
 constexpr size_t
 max_length()
 {
-  return 0u;
+  return 0U;
 }
 
 template<>

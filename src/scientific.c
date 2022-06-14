@@ -90,7 +90,7 @@ exess_write_scientific(const ExessDecimalDouble value,
 
   const unsigned n_expt_digits = exess_num_digits((unsigned)abs(value.expt));
 
-  if (n - i <= 1u + (value.expt < 0) + n_expt_digits) {
+  if (n - i <= 1U + (value.expt < 0) + n_expt_digits) {
     buf[0] = '\0';
     return result(EXESS_NO_SPACE, 0);
   }

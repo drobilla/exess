@@ -93,8 +93,8 @@ exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
     return exess_datetime_compare_determinate(lhs, rhs);
   }
 
-  static const ExessDuration plus_14h  = {0u, 14 * 60 * 60, 0};
-  static const ExessDuration minus_14h = {0u, -14 * 60 * 60, 0};
+  static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
+  static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
 
   if (lhs.is_utc) {
     ExessDateTime r_minus = exess_add_datetime_duration(rhs, minus_14h);
@@ -145,7 +145,7 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
   const int32_t d_second     = d.seconds % 60;
   const int32_t d_nanosecond = d.nanoseconds;
 
-  ExessDateTime e     = {0, 0u, 0u, s.is_utc, 0u, 0u, 0u, 0u};
+  ExessDateTime e     = {0, 0U, 0U, s.is_utc, 0U, 0U, 0U, 0U};
   int32_t       temp  = 0;
   int32_t       carry = 0;
 
@@ -257,7 +257,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   out->day   = 0;
 
   // Read date
-  ExessDate         date = {0, 0u, 0u, EXESS_LOCAL};
+  ExessDate         date = {0, 0U, 0U, EXESS_LOCAL};
   const ExessResult dr   = read_date_numbers(&date, str);
   if (dr.status) {
     return dr;
@@ -271,7 +271,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   ++i;
 
   // Read time
-  ExessTime         time = {EXESS_LOCAL, 0u, 0u, 0u, 0u};
+  ExessTime         time = {EXESS_LOCAL, 0U, 0U, 0U, 0U};
   const ExessResult tr   = exess_read_time(&time, str + i);
   if (tr.status) {
     return result(tr.status, i + tr.count);
@@ -289,7 +289,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
                                   time.nanosecond};
 
   if (datetime.is_utc) {
-    const ExessDuration tz_duration = {0u, -time.zone * 15 * 60, 0};
+    const ExessDuration tz_duration = {0U, -time.zone * 15 * 60, 0};
 
     *out = exess_add_datetime_duration(datetime, tz_duration);
   } else {

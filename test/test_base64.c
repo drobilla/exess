@@ -95,27 +95,27 @@ test_read_overflow(void)
 {
   char buf[3] = {0, 0, 0};
 
-  ExessVariableResult r = exess_read_base64(0u, buf, "Zm9v");
+  ExessVariableResult r = exess_read_base64(0U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4);
   assert(r.write_count == 0);
 
-  r = exess_read_base64(1u, buf, "Zm9v");
+  r = exess_read_base64(1U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4u);
-  assert(r.write_count == 0u);
+  assert(r.read_count == 4U);
+  assert(r.write_count == 0U);
   assert(!buf[0]);
 
-  r = exess_read_base64(2u, buf, "Zm9v");
+  r = exess_read_base64(2U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4u);
-  assert(r.write_count == 0u);
+  assert(r.read_count == 4U);
+  assert(r.write_count == 0U);
   assert(!buf[0]);
 
-  r = exess_read_base64(3u, buf, "Zm9v");
+  r = exess_read_base64(3U, buf, "Zm9v");
   assert(r.status == EXESS_SUCCESS);
-  assert(r.read_count == 4u);
-  assert(r.write_count == 3u);
+  assert(r.read_count == 4U);
+  assert(r.write_count == 3U);
   assert(!strncmp(buf, "foo", 3));
 }
 

@@ -18,8 +18,8 @@ typedef uint32_t Bigit;
    is decimal.  These are only used on the stack so it doesn't hurt too much.
 */
 
-#define BIGINT_MAX_SIGNIFICANT_BITS 1280u
-#define BIGINT_BIGIT_BITS 32u
+#define BIGINT_MAX_SIGNIFICANT_BITS 1280U
+#define BIGINT_BIGIT_BITS 32U
 #define BIGINT_MAX_BIGITS (BIGINT_MAX_SIGNIFICANT_BITS / BIGINT_BIGIT_BITS)
 
 typedef struct {

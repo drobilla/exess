@@ -62,7 +62,7 @@ check_write(const uint32_t    value,
 static void
 test_write_uint(void)
 {
-  check_write(0u, EXESS_SUCCESS, 2, "0");
+  check_write(0U, EXESS_SUCCESS, 2, "0");
   check_write(UINT32_MAX, EXESS_SUCCESS, 11, "4294967295");
 }
 
@@ -75,7 +75,7 @@ test_round_trip(const ExessNumTestOptions opts)
   if (opts.exhaustive) {
     fprintf(stderr, "Testing xsd:unsignedInt exhaustively\n");
 
-    for (uint64_t i = 0u; i <= UINT32_MAX; ++i) {
+    for (uint64_t i = 0U; i <= UINT32_MAX; ++i) {
       assert(!exess_write_uint((uint32_t)i, sizeof(buf), buf).status);
       assert(!exess_read_uint(&parsed_value, buf).status);
       assert(parsed_value == i);

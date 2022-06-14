@@ -50,8 +50,8 @@ ExessVariableResult
 exess_read_hex(const size_t out_size, void* const out, const char* const str)
 {
   uint8_t* const uout = (uint8_t*)out;
-  size_t         i    = 0u;
-  size_t         o    = 0u;
+  size_t         i    = 0U;
+  size_t         o    = 0U;
 
   while (str[i]) {
     const char hi_char = next_char(str, &i);
@@ -82,7 +82,7 @@ exess_read_hex(const size_t out_size, void* const out, const char* const str)
       return vresult(EXESS_NO_SPACE, i, o);
     }
 
-    uout[o++] = (uint8_t)(((unsigned)hi << 4u) | lo);
+    uout[o++] = (uint8_t)(((unsigned)hi << 4U) | lo);
   }
 
   return vresult(EXESS_SUCCESS, i, o);
@@ -104,11 +104,11 @@ exess_write_hex(const size_t      data_size,
   }
 
   const uint8_t* const in = (const uint8_t*)data;
-  size_t               o  = 0u;
+  size_t               o  = 0U;
 
   for (size_t i = 0; i < data_size; ++i) {
-    const uint8_t hi = (in[i] & 0xF0u) >> 4u;
-    const uint8_t lo = (in[i] & 0x0Fu);
+    const uint8_t hi = (in[i] & 0xF0U) >> 4U;
+    const uint8_t lo = (in[i] & 0x0FU);
 
     buf[o++] = hex_map[hi];
     buf[o++] = hex_map[lo];

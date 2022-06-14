@@ -126,11 +126,11 @@ exess_datatype_is_bounded(const ExessDatatype datatype)
 size_t
 exess_max_length(const ExessDatatype datatype)
 {
-  return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0u;
+  return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0U;
 }
 
 size_t
 exess_value_size(const ExessDatatype datatype)
 {
-  return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0u;
+  return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0U;
 }

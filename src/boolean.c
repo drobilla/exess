@@ -28,13 +28,13 @@ exess_read_boolean(bool* const out, const char* const str)
   case 't':
     if (!strncmp(str + i, "true", 4)) {
       *out = true;
-      return end_read(EXESS_SUCCESS, str, i + 4u);
+      return end_read(EXESS_SUCCESS, str, i + 4U);
     }
     break;
 
   case 'f':
     if (!strncmp(str + i, "false", 5)) {
-      return end_read(EXESS_SUCCESS, str, i + 5u);
+      return end_read(EXESS_SUCCESS, str, i + 5U);
     }
     break;
 

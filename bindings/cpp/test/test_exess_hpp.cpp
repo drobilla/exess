@@ -37,7 +37,7 @@ test_datatype()
   assert(datatype_from_uri("http://www.w3.org/2001/XMLSchema#boolean") ==
          Datatype::Boolean);
 
-  for (auto i = 1u; i <= unsigned(EXESS_BASE64); ++i) {
+  for (auto i = 1U; i <= unsigned(EXESS_BASE64); ++i) {
     const auto        datatype = static_cast<Datatype>(i);
     const char* const uri      = datatype_uri(datatype);
 
@@ -76,19 +76,19 @@ test_read()
   assert(!read(&a_byte, "-42").status);
   assert(a_byte == -42);
 
-  uint64_t a_ulong = 0u;
+  uint64_t a_ulong = 0U;
   assert(!read(&a_ulong, "4200000000").status);
   assert(a_ulong == 4200000000);
 
-  uint32_t a_uint = 0u;
+  uint32_t a_uint = 0U;
   assert(!read(&a_uint, "42000").status);
   assert(a_uint == 42000);
 
-  uint16_t a_ushort = 0u;
+  uint16_t a_ushort = 0U;
   assert(!read(&a_ushort, "420").status);
   assert(a_ushort == 420);
 
-  uint8_t a_ubyte = 0u;
+  uint8_t a_ubyte = 0U;
   assert(!read(&a_ubyte, "42").status);
   assert(a_ubyte == 42);
 }
@@ -103,10 +103,10 @@ test_to_string()
   assert(to_string(int32_t(-42000)) == "-42000");
   assert(to_string(int16_t(-420)) == "-420");
   assert(to_string(int8_t(-42)) == "-42");
-  assert(to_string(uint64_t(4200000000u)) == "4200000000");
-  assert(to_string(uint32_t(42000u)) == "42000");
-  assert(to_string(uint16_t(420u)) == "420");
-  assert(to_string(uint8_t(42u)) == "42");
+  assert(to_string(uint64_t(4200000000U)) == "4200000000");
+  assert(to_string(uint32_t(42000U)) == "42000");
+  assert(to_string(uint16_t(420U)) == "420");
+  assert(to_string(uint8_t(42U)) == "42");
 }
 
 void

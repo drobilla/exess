@@ -36,15 +36,15 @@ decimal_metrics(const ExessDecimalDouble count)
   const int expt =
     count.expt >= 0 ? (count.expt - (int)count.n_digits + 1) : count.expt;
 
-  DecimalMetrics metrics = {EXESS_POINT_AFTER, 0u, 0u};
+  DecimalMetrics metrics = {EXESS_POINT_AFTER, 0U, 0U};
 
   if (count.expt >= (int)count.n_digits - 1) {
     metrics.point_loc      = EXESS_POINT_AFTER;
-    metrics.n_zeros_before = (unsigned)count.expt - (count.n_digits - 1u);
-    metrics.n_zeros_after  = 1u;
+    metrics.n_zeros_before = (unsigned)count.expt - (count.n_digits - 1U);
+    metrics.n_zeros_after  = 1U;
   } else if (count.expt < 0) {
     metrics.point_loc      = EXESS_POINT_BEFORE;
-    metrics.n_zeros_before = 1u;
+    metrics.n_zeros_before = 1U;
     metrics.n_zeros_after  = (unsigned)(-expt - 1);
   } else {
     metrics.point_loc = EXESS_POINT_BETWEEN;
@@ -164,7 +164,7 @@ read_decimal_number(double* const out, const char* const str)
   }
 
   const size_t       i  = skip_whitespace(str);
-  ExessDecimalDouble in = {EXESS_NAN, 0u, 0, {0}};
+  ExessDecimalDouble in = {EXESS_NAN, 0U, 0, {0}};
   const ExessResult  r  = parse_decimal(&in, str + i);
 
   if (!r.status) {
@@ -234,7 +234,7 @@ exess_write_decimal_double(const ExessDecimalDouble decimal,
     assert(metrics.point_loc == EXESS_POINT_BETWEEN);
     assert(decimal.expt >= -1);
 
-    const size_t n_before = (size_t)decimal.expt + 1u;
+    const size_t n_before = (size_t)decimal.expt + 1U;
     const size_t n_after  = decimal.n_digits - n_before;
 
     i += copy_digits(buf + i, decimal.digits, n_before);

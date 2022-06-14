@@ -113,22 +113,22 @@ parse_double(ExessDecimalDouble* const out, const char* const str)
 
   if (!strcmp(str, "NaN")) {
     out->kind = EXESS_NAN;
-    return result(EXESS_SUCCESS, 3u);
+    return result(EXESS_SUCCESS, 3U);
   }
 
   if (!strcmp(str, "-INF")) {
     out->kind = EXESS_NEGATIVE_INFINITY;
-    return result(EXESS_SUCCESS, 4u);
+    return result(EXESS_SUCCESS, 4U);
   }
 
   if (!strcmp(str, "INF")) {
     out->kind = EXESS_POSITIVE_INFINITY;
-    return result(EXESS_SUCCESS, 3u);
+    return result(EXESS_SUCCESS, 3U);
   }
 
   if (!strcmp(str, "+INF")) {
     out->kind = EXESS_POSITIVE_INFINITY;
-    return result(EXESS_SUCCESS, 4u);
+    return result(EXESS_SUCCESS, 4U);
   }
 
   // Read mantissa as a decimal
@@ -188,7 +188,7 @@ product_error(const uint64_t lerror,
               const uint64_t rerror,
               const uint64_t half_ulp)
 {
-  return lerror + rerror + ((lerror * rerror) >> 63u) + half_ulp;
+  return lerror + rerror + ((lerror * rerror) >> 63U) + half_ulp;
 }
 
 /**
@@ -219,8 +219,8 @@ sftod(const uint64_t        significand,
 
   // Use a common denominator of 2^3 to avoid fractions
   static const unsigned lg_denom = 3;
-  static const uint64_t denom    = 1u << 3u;
-  static const uint64_t half_ulp = 4u;
+  static const uint64_t denom    = 1U << 3U;
+  static const uint64_t half_ulp = 4U;
 
   // Start out with just the significand, and no error
   ExessSoftFloat input = {significand, 0};
@@ -251,23 +251,23 @@ sftod(const uint64_t        significand,
 
   // Calculate the number of "extra" bits of precision we have
   assert(n_significant_bits <= 64);
-  unsigned n_extra_bits = 64u - n_significant_bits;
-  if (n_extra_bits + lg_denom >= 64u) {
+  unsigned n_extra_bits = 64U - n_significant_bits;
+  if (n_extra_bits + lg_denom >= 64U) {
     // Very small subnormal where extra * denom does not fit in an integer
     // Shift right (and accumulate some more error) to compensate
     const unsigned amount = (n_extra_bits + lg_denom) - 63;
 
     input.f >>= amount;
     input.e += (int)amount;
-    error = product_error((error >> amount) + 1u, half_ulp, half_ulp);
+    error = product_error((error >> amount) + 1U, half_ulp, half_ulp);
     n_extra_bits -= amount;
   }
 
   // Calculate boundaries for the extra bits (with the common denominator)
   assert(n_extra_bits < 64);
-  const uint64_t extra_mask = (1ull << n_extra_bits) - 1u;
+  const uint64_t extra_mask = (1ULL << n_extra_bits) - 1U;
   const uint64_t extra_bits = (input.f & extra_mask) * denom;
-  const uint64_t middle     = (1ull << (n_extra_bits - 1u)) * denom;
+  const uint64_t middle     = (1ULL << (n_extra_bits - 1U)) * denom;
   const uint64_t low        = middle - error;
   const uint64_t high       = middle + error;
 
@@ -329,7 +329,7 @@ parsed_double_to_double(const ExessDecimalDouble in)
   }
 
   uint64_t frac = 0;
-  for (unsigned i = 0u; i < in.n_digits; ++i) {
+  for (unsigned i = 0U; i < in.n_digits; ++i) {
     if (is_digit(in.digits[i])) {
       frac = (frac * 10) + (unsigned)(in.digits[i] - '0');
     }
@@ -380,7 +380,7 @@ parsed_double_to_double(const ExessDecimalDouble in)
     return sign * nextafter(g, (double)INFINITY);
   }
 
-  if ((guess.f & 1u) == 0) {
+  if ((guess.f & 1U) == 0) {
     return sign * g; // Round towards even
   }
 

@@ -14,7 +14,7 @@
 typedef uint64_t Hugit;
 
 static const uint32_t bigit_mask = ~(uint32_t)0;
-static const uint64_t carry_mask = (uint64_t) ~(uint32_t)0 << 32u;
+static const uint64_t carry_mask = (uint64_t) ~(uint32_t)0 << 32U;
 
 typedef struct {
   unsigned bigits;
@@ -113,7 +113,7 @@ exess_bigint_set_u64(ExessBigint* num, const uint64_t value)
 
   num->bigits[0] = (Bigit)(value & bigit_mask);
   num->bigits[1] = (Bigit)(value >> BIGINT_BIGIT_BITS);
-  num->n_bigits  = num->bigits[1] ? 2u : num->bigits[0] ? 1u : 0u;
+  num->n_bigits  = num->bigits[1] ? 2U : num->bigits[0] ? 1U : 0U;
 }
 
 void
@@ -133,7 +133,7 @@ read_u32(const char* const str, uint32_t* result, uint32_t* n_digits)
   uint32_t i = 0;
   for (; str[i] && *n_digits < uint32_digits10; ++i) {
     if (str[i] >= '0' && str[i] <= '9') {
-      *result = *result * 10u + (unsigned)(str[i] - '0');
+      *result = *result * 10U + (unsigned)(str[i] - '0');
       *n_digits += 1;
     } else if (str[i] != '.') {
       break;
@@ -178,7 +178,7 @@ exess_bigint_set_hex_string(ExessBigint* num, const char* const str)
   // Read leftovers into MSB if necessary
   if (i > -8) {
     memset(digit_buf, 0, sizeof(digit_buf));
-    memcpy(digit_buf, str, 8u + (unsigned)i);
+    memcpy(digit_buf, str, 8U + (unsigned)i);
     num->bigits[num->n_bigits++] = (Bigit)strtoll(digit_buf, NULL, 16);
   }
 
@@ -205,10 +205,10 @@ exess_bigint_multiply_u32(ExessBigint* num, const uint32_t factor)
 
     num->bigits[i] = (Bigit)(hugit & bigit_mask);
 
-    carry = (hugit >> 32u) + (carry >> 32u);
+    carry = (hugit >> 32U) + (carry >> 32U);
   }
 
-  for (; carry; carry >>= 32u) {
+  for (; carry; carry >>= 32U) {
     assert(num->n_bigits + 1 <= BIGINT_MAX_BIGITS);
     num->bigits[num->n_bigits++] = (Bigit)carry;
   }
@@ -228,7 +228,7 @@ exess_bigint_multiply_u64(ExessBigint* num, const uint64_t factor)
   }
 
   const Hugit f_lo = factor & bigit_mask;
-  const Hugit f_hi = factor >> 32u;
+  const Hugit f_hi = factor >> 32U;
 
   Hugit carry = 0;
   for (unsigned i = 0; i < num->n_bigits; ++i) {
@@ -237,10 +237,10 @@ exess_bigint_multiply_u64(ExessBigint* num, const uint64_t factor)
     const Hugit hugit = p_lo + (carry & bigit_mask);
 
     num->bigits[i] = (Bigit)(hugit & bigit_mask);
-    carry          = p_hi + (hugit >> 32u) + (carry >> 32u);
+    carry          = p_hi + (hugit >> 32U) + (carry >> 32U);
   }
 
-  for (; carry; carry >>= 32u) {
+  for (; carry; carry >>= 32U) {
     assert(num->n_bigits + 1 <= BIGINT_MAX_BIGITS);
     num->bigits[num->n_bigits++] = (Bigit)(carry & bigit_mask);
   }
@@ -254,7 +254,7 @@ exess_bigint_multiply_pow10(ExessBigint* num, const unsigned exponent)
      by 5^e (hard), then by 2^e (just a single left shift). */
 
   // 5^27, the largest power of 5 that fits in 64 bits
-  static const uint64_t pow5_27 = 7450580596923828125ull;
+  static const uint64_t pow5_27 = 7450580596923828125ULL;
 
   // Powers of 5 up to 5^13, the largest that fits in 32 bits
   static const uint32_t pow5[] = {
@@ -364,7 +364,7 @@ exess_bigint_plus_compare(const ExessBigint* l,
       return -1;
     }
 
-    borrow <<= 32u;
+    borrow <<= 32U;
   }
 
   return borrow ? -1 : 0;
@@ -379,7 +379,7 @@ exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
   }
 
   Hugit sum   = (Hugit)lhs->bigits[0] + rhs;
-  Bigit carry = (Bigit)(sum >> 32u);
+  Bigit carry = (Bigit)(sum >> 32U);
 
   lhs->bigits[0] = (Bigit)(sum & bigit_mask);
 
@@ -389,7 +389,7 @@ exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
 
     sum            = (Hugit)carry + lhs->bigits[i];
     lhs->bigits[i] = (Bigit)(sum & bigit_mask);
-    carry          = (Bigit)((sum & carry_mask) >> 32u);
+    carry          = (Bigit)((sum & carry_mask) >> 32U);
   }
 
   lhs->n_bigits = MAX(i, lhs->n_bigits);
@@ -407,14 +407,14 @@ exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs)
     const Hugit sum = (Hugit)lhs->bigits[i] + rhs->bigits[i] + carry;
 
     lhs->bigits[i] = (Bigit)(sum & bigit_mask);
-    carry          = (sum & carry_mask) >> 32u;
+    carry          = (sum & carry_mask) >> 32U;
   }
 
   for (; carry; ++i) {
     const Hugit sum = (Hugit)lhs->bigits[i] + carry;
 
     lhs->bigits[i] = (Bigit)(sum & bigit_mask);
-    carry          = (sum & carry_mask) >> 32u;
+    carry          = (sum & carry_mask) >> 32U;
   }
 
   lhs->n_bigits = MAX(i, lhs->n_bigits);
@@ -552,7 +552,7 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
     const unsigned llz   = exess_bigint_leading_zeros(lhs);
     const unsigned shift = rlz - llz - 1;
 
-    result += 1u << shift;
+    result += 1U << shift;
     exess_bigint_subtract_left_shifted(lhs, rhs, shift);
     ++big_steps;
   }
@@ -583,7 +583,7 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
     }
 
     const unsigned shift = rlz - llz - 1;
-    result += 1u << shift;
+    result += 1U << shift;
     exess_bigint_subtract_left_shifted(lhs, rhs, shift);
     ++final_steps;
   }

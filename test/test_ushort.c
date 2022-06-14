@@ -59,7 +59,7 @@ check_write(const uint16_t    value,
 static void
 test_write_ushort(void)
 {
-  check_write(0u, EXESS_SUCCESS, 2, "0");
+  check_write(0U, EXESS_SUCCESS, 2, "0");
   check_write(UINT16_MAX, EXESS_SUCCESS, 6, "65535");
 }
 

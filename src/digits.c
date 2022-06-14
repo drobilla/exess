@@ -75,7 +75,7 @@ calculate_initial_values(const uint64_t     significand,
      If the lower boundary is closer, we need to scale everything but the
      lower boundary to compensate, so add another factor of two here (this is
      faster than shifting them again later as in the paper). */
-  const unsigned lg_denom = 1u + lower_is_closer;
+  const unsigned lg_denom = 1U + lower_is_closer;
 
   if (exponent >= 0) {
     // delta = 2^e
@@ -193,7 +193,7 @@ exess_digits(const double d, char* const buf, const unsigned max_digits)
 
   const ExessSoftFloat value           = soft_float_from_double(d);
   const int            power           = (int)lrint(log10(d));
-  const bool           is_even         = !(value.f & 1u);
+  const bool           is_even         = !(value.f & 1U);
   const bool           lower_is_closer = double_lower_boundary_is_closer(d);
 
   // Calculate initial values so that v = (numer / denom) * 10^power
