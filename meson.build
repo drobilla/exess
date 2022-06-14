@@ -114,12 +114,12 @@ sources = files(
 
 # Set appropriate arguments for building against the library type
 subdir('meson/library')
-if library_type == 'static_library'
+if get_option('default_library') == 'static_library'
   add_project_arguments(['-DEXESS_STATIC'], language: ['c'])
 endif
 
 # Build shared and/or static library
-libexess = build_target(
+libexess = library(
   meson.project_name() + library_suffix,
   sources,
   c_args: ['-DEXESS_INTERNAL'],
@@ -127,7 +127,6 @@ libexess = build_target(
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
   install: true,
-  target_type: library_type,
   version: meson.project_version())
 
 # Generage pkg-config file for external dependants
@@ -141,8 +140,8 @@ pkg.generate(
 
 # Declare dependency for internal meson dependants
 exess_dep = declare_dependency(
-  link_with: libexess,
-  include_directories: include_dirs)
+  include_directories: include_dirs,
+  link_with: libexess)
 
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'exess')
