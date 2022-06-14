@@ -112,9 +112,9 @@ private_tests = [
 ]
 
 # Find or build a static library to link internal tests with
-if library_type == 'both_libraries'
+if get_option('default_library') == 'both'
   libexess_static = libexess.get_static_lib()
-elif library_type == 'shared_library'
+elif get_option('default_library') == 'shared'
   libexess_static = static_library(
     meson.project_name() + library_suffix,
     sources,
