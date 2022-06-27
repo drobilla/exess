@@ -29,6 +29,10 @@
 # Wtrampolines
 # Wvla-larger-than=BYTES
 #
+# Build specific:
+#
+# Wpoison-system-directories
+#
 # C Specific:
 #
 # Wc11-c2x-compat
@@ -123,6 +127,13 @@ if is_variable('cc')
   if get_option('strict')
     if cc.get_id() == 'clang'
       all_c_warnings += ['-Weverything']
+
+      if not meson.is_cross_build()
+        all_c_warnings += [
+          '-Wno-poison-system-directories',
+        ]
+      endif
+
     elif cc.get_id() == 'gcc'
       all_c_warnings += gcc_common_warnings + [
         '-Wabsolute-value',
@@ -140,6 +151,7 @@ if is_variable('cc')
         '-Wstrict-prototypes',
         '-Wunsuffixed-float-constants',
       ]
+
     elif cc.get_id() == 'msvc'
       all_c_warnings += [
         '/Wall',

@@ -150,12 +150,12 @@ if not get_option('docs').disabled()
   subdir('doc')
 endif
 
-if get_option('tests')
+if not get_option('tests').disabled()
   subdir('test')
 endif
 
 if not meson.is_subproject()
-  summary('Tests', get_option('tests'), bool_yn: true)
+  summary('Tests', not get_option('tests').disabled(), bool_yn: true)
   summary('Install prefix', get_option('prefix'))
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))
