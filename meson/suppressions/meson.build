@@ -29,11 +29,7 @@ if is_variable('cc')
         '-Wno-switch-enum',
       ]
 
-      if host_machine.system() == 'darwin'
-        c_suppressions += [
-          '-Wno-poison-system-directories',
-        ]
-      elif host_machine.system() == 'windows'
+      if host_machine.system() == 'windows'
         c_suppressions += [
           '-Wno-deprecated-declarations',
         ]
@@ -102,12 +98,6 @@ if is_variable('cpp')
         '-Wno-documentation-unknown-command',
         '-Wno-padded',
       ]
-
-      if host_machine.system() == 'darwin'
-        cpp_suppressions += [
-          '-Wno-poison-system-directories',
-        ]
-      endif
 
     elif cpp.get_id() == 'gcc'
       cpp_suppressions = [

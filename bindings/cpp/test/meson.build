@@ -6,6 +6,10 @@ test_link_args = []
 if cpp.get_id() == 'emscripten'
   test_args += ['-s', 'DISABLE_EXCEPTION_CATCHING=0']
   test_link_args += ['-s', 'DISABLE_EXCEPTION_CATCHING=0']
+elif cpp.get_id() == 'gcc'
+  test_args += [
+    '-Wno-shadow',
+  ]
 endif
 
 test('exess_hpp',
