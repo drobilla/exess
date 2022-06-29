@@ -161,6 +161,10 @@ elif cc.get_id() == 'gcc'
   header_c_args += [
     '-Wno-padded',
   ]
+elif cc.get_id() == 'msvc'
+  header_c_args += [
+    '/wd4820', # padding added after data member
+  ]
 endif
 
 test('headers',
