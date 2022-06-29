@@ -112,6 +112,7 @@ if is_variable('cpp')
       cpp_suppressions = [
         '/wd4028', # formal parameter different from declaration
         '/wd4204', # nonstandard extension: non-constant aggregate initializer
+        '/wd4514', # unreferenced inline function has been removed
         '/wd4706', # assignment within conditional expression
         '/wd4710', # function not inlined
         '/wd4711', # function selected for automatic inline expansion
