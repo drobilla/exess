@@ -69,9 +69,6 @@ x64_sanitize:
     - meson setup build -Db_lundef=false -Dbuildtype=plain -Dstrict=true -Dwerror=true -Ddocs=disabled
     - ninja -C build test
   variables:
-    # TODO: Figure out how to enable address and undefined sanitizers on CI.
-    # ASan fails because it needs docker run --privileged, and UBSan fails with
-    # clang7 in buster because it incorrectly(?) flags FLT_MAX as out of range.
     CC: "clang"
     CXX: "clang++"
     CFLAGS: "-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability"
