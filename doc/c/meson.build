@@ -26,8 +26,7 @@ subdir('api')
 
 custom_target(
   'singlehtml',
-  command: [sphinx_build, '-M', 'singlehtml',
-            meson.current_build_dir(), meson.current_build_dir(),
+  command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'singlehtml'],
   input: [c_rst_files, c_exess_rst, c_index_xml],
   output: 'singlehtml',
@@ -37,8 +36,7 @@ custom_target(
 
 custom_target(
   'html',
-  command: [sphinx_build, '-M', 'html',
-            meson.current_build_dir(), meson.current_build_dir(),
+  command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'html'],
   input: [c_rst_files, c_exess_rst, c_index_xml],
   output: 'html',

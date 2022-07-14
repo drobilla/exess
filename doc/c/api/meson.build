@@ -3,6 +3,6 @@
 
 c_exess_rst = custom_target(
   'exess.rst',
-  command: [dox_to_sphinx, '-f', '@INPUT0@', meson.current_build_dir()],
+  command: [dox_to_sphinx, '-f', '@INPUT0@', '@OUTDIR@'],
   input: [c_index_xml] + c_rst_files,
   output: 'exess.rst')
