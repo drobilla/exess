@@ -123,21 +123,24 @@ libexess = library(
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
   install: true,
-  version: meson.project_version())
+  version: meson.project_version(),
+)
 
 # Generage pkg-config file for external dependants
 pkg.generate(
   libexess,
-  name: 'Exess',
+  description: 'A simple and efficient regular expression implementation',
   filebase: versioned_name,
+  name: 'Exess',
   subdirs: [versioned_name],
   version: meson.project_version(),
-  description: 'A simple and efficient regular expression implementation')
+)
 
 # Declare dependency for internal meson dependants
 exess_dep = declare_dependency(
   include_directories: include_dirs,
-  link_with: libexess)
+  link_with: libexess,
+)
 
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'exess')
