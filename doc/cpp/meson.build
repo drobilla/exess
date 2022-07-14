@@ -4,13 +4,17 @@
 config = configuration_data()
 config.set('EXESS_VERSION', meson.project_version())
 
-conf_py = configure_file(configuration: config,
-                         input: files('../conf.py.in'),
-                         output: 'conf.py')
+conf_py = configure_file(
+  configuration: config,
+  input: files('../conf.py.in'),
+  output: 'conf.py',
+)
 
-configure_file(copy: true,
-               input: files('../summary.rst'),
-               output: 'summary.rst')
+configure_file(
+  copy: true,
+  input: files('../summary.rst'),
+  output: 'summary.rst',
+)
 
 cpp_rst_files = files(
   'index.rst',
@@ -26,20 +30,22 @@ subdir('api')
 
 custom_target(
   'singlehtml',
+  build_by_default: true,
   command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'singlehtml'],
   input: [cpp_rst_files, cpp_exess_rst, cpp_index_xml],
-  output: 'singlehtml',
-  build_by_default: true,
   install: true,
-  install_dir: docdir / 'exesspp-0')
+  install_dir: docdir / 'exesspp-0',
+  output: 'singlehtml',
+)
 
 custom_target(
   'html',
+  build_by_default: true,
   command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'html'],
   input: [cpp_rst_files, cpp_exess_rst, cpp_index_xml],
-  output: 'html',
-  build_by_default: true,
   install: true,
-  install_dir: docdir / 'exesspp-0')
+  install_dir: docdir / 'exesspp-0',
+  output: 'html',
+)

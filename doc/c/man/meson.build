@@ -35,15 +35,15 @@ man_pages = [
 # Run Sphinx to generate man pages
 man_docs = custom_target(
   'pages',
+  build_by_default: true,
   command: [sphinx_build, '-M', 'man',
             '@OUTDIR@' / '..', '@OUTDIR@' / '..',
             '-E', '-q', '-t', 'man'],
   input: [c_rst_files, c_exess_rst, c_index_xml],
-  output: man_pages,
-  build_by_default: true,
   install: true,
-  install_dir: get_option('mandir') / 'man3')
-
+  install_dir: get_option('mandir') / 'man3',
+  output: man_pages,
+)
 
 # "Links" from symbol names to corresponding page (one-line includes)
 man_links = [
@@ -101,11 +101,13 @@ foreach man_link : man_links
   link = man_link[0]
   target = man_link[1]
 
-  custom_target(link,
-                build_by_default: true,
-                command: [make_man_link, target, '@OUTPUT@'],
-                input: man_docs,
-                install: true,
-                install_dir: get_option('mandir') / 'man3',
-                output: link)
+  custom_target(
+    link,
+    build_by_default: true,
+    command: [make_man_link, target, '@OUTPUT@'],
+    input: man_docs,
+    install: true,
+    install_dir: get_option('mandir') / 'man3',
+    output: link,
+  )
 endforeach

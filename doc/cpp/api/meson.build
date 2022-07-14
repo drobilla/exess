@@ -3,6 +3,7 @@
 
 cpp_exess_rst = custom_target(
   'exess.rst',
+  build_by_default: true,
   command: [
     dox_to_sphinx,
     '-l', 'cpp',
@@ -11,5 +12,5 @@ cpp_exess_rst = custom_target(
     '@OUTDIR@',
   ],
   input: cpp_index_xml,
-  build_by_default: true,
-  output: 'exess.rst')
+  output: 'exess.rst',
+)
