@@ -9,7 +9,7 @@ c_doxyfile = configure_file(configuration: config,
                             input: files('../Doxyfile.in'),
                             output: 'Doxyfile')
 
-c_index_xml = custom_target('exess-c-index.xml',
+c_index_xml = custom_target('index.xml',
                             command: [doxygen, '@INPUT0@'],
                             input: [c_doxyfile] + c_headers,
                             output: 'index.xml')

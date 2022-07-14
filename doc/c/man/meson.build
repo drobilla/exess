@@ -34,7 +34,7 @@ man_pages = [
 
 # Run Sphinx to generate man pages
 man_docs = custom_target(
-  'man pages for exess',
+  'pages',
   command: [sphinx_build, '-M', 'man',
             meson.current_build_dir() / '..', meson.current_build_dir() / '..',
             '-E', '-q', '-t', 'man'],

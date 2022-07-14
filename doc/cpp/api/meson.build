@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 cpp_exess_rst = custom_target(
-  'Exess C++ API Sphinx Input',
+  'exess.rst',
   command: [dox_to_sphinx,
             '-l', 'cpp',
             '-f', '@INPUT@',

@@ -25,7 +25,7 @@ subdir('xml')
 subdir('api')
 
 custom_target(
-  'Exess C API Documentation (singlehtml)',
+  'singlehtml',
   command: [sphinx_build, '-M', 'singlehtml',
             meson.current_build_dir(), meson.current_build_dir(),
             '-E', '-q', '-t', 'singlehtml'],
@@ -36,7 +36,7 @@ custom_target(
   install_dir: docdir / 'exess-0')
 
 custom_target(
-  'Exess C API Documentation (html)',
+  'html',
   command: [sphinx_build, '-M', 'html',
             meson.current_build_dir(), meson.current_build_dir(),
             '-E', '-q', '-t', 'html'],

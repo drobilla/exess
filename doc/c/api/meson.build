@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 c_exess_rst = custom_target(
-  'Exess C API Sphinx Input',
+  'exess.rst',
   command: [dox_to_sphinx, '-f', '@INPUT0@', meson.current_build_dir()],
   input: [c_index_xml] + c_rst_files,
   output: 'exess.rst')
