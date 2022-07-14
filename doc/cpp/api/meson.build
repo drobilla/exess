@@ -3,10 +3,13 @@
 
 cpp_exess_rst = custom_target(
   'exess.rst',
-  command: [dox_to_sphinx,
-            '-l', 'cpp',
-            '-f', '@INPUT@',
-            meson.current_build_dir()],
+  command: [
+    dox_to_sphinx,
+    '-l', 'cpp',
+    '-f',
+    '@INPUT@',
+    '@OUTDIR@',
+  ],
   input: cpp_index_xml,
   build_by_default: true,
   output: 'exess.rst')

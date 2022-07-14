@@ -36,7 +36,7 @@ man_pages = [
 man_docs = custom_target(
   'pages',
   command: [sphinx_build, '-M', 'man',
-            meson.current_build_dir() / '..', meson.current_build_dir() / '..',
+            '@OUTDIR@' / '..', '@OUTDIR@' / '..',
             '-E', '-q', '-t', 'man'],
   input: [c_rst_files, c_exess_rst, c_index_xml],
   output: man_pages,
