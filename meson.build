@@ -129,7 +129,7 @@ libexess = library(
 # Generage pkg-config file for external dependants
 pkg.generate(
   libexess,
-  description: 'A simple and efficient regular expression implementation',
+  description: 'Simple library for reading and writing XSD datatypes',
   filebase: versioned_name,
   name: 'Exess',
   subdirs: [versioned_name],
