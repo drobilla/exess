@@ -3,11 +3,13 @@ Checks: >
   -*-magic-numbers,
   -altera-*,
   -bugprone-easily-swappable-parameters,
+  -cert-err33-c,
   -clang-analyzer-nullability.NullableDereferenced,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -llvm-header-guard,
   -llvmlibc-*,
   -readability-function-cognitive-complexity,
+  -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file

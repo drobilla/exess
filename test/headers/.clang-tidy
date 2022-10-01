@@ -1,6 +1,7 @@
 Checks: >
   *,
   -altera-struct-pack-align,
+  -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
