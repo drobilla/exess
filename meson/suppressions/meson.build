@@ -25,6 +25,7 @@ if is_variable('cc')
       c_suppressions += [
         '-Wno-bad-function-cast',
         '-Wno-c11-extensions',
+        '-Wno-declaration-after-statement',
         '-Wno-padded',
         '-Wno-switch-enum',
       ]
