@@ -142,6 +142,9 @@ exess_dep = declare_dependency(
   link_with: libexess,
 )
 
+# Override pkg-config dependency for internal meson dependants
+meson.override_dependency(versioned_name, exess_dep)
+
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'exess')
 
@@ -163,4 +166,3 @@ if not meson.is_subproject()
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))
 endif
-
