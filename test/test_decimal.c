@@ -202,9 +202,7 @@ check_round_trip(const double value)
   double parsed_value                      = 0.0;
   char   buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
 
-  /* fprintf(stderr, "%f\n", value); */
   assert(!exess_write_decimal(value, sizeof(buf), buf).status);
-  /* fprintf(stderr, "Buf: %s\n", buf); */
   assert(!exess_read_decimal(&parsed_value, buf).status);
   assert(double_matches(parsed_value, value));
 }

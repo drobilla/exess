@@ -75,7 +75,6 @@ else:
 
 groups = {
     "status": "Status",
-    # "numbers": "",
     "decimal": "Decimal Strings",
     "double": "Double Strings",
     "float": "Float Strings",
@@ -88,7 +87,6 @@ groups = {
     "uint": "Unsigned Int Strings",
     "ushort": "Unsigned Short Strings",
     "ubyte": "Unsigned Byte Strings",
-    # 'time_and_date': "",
     "duration": "Duration Strings",
     "datetime": "Datetime Strings",
     "timezone": "Time zone strings",
@@ -99,7 +97,6 @@ groups = {
     "base64": "Base64 Binary Strings",
     "datatypes": "Datatypes",
     "value": "Generic Values",
-    # 'generics': "",
 }
 
 author = "David Robillard <d@drobilla.net>"

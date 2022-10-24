@@ -12,8 +12,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <stdio.h>
-
 static const ExessTimezone missing  = {EXESS_LOCAL};
 static const ExessTimezone utc      = INIT_ZONE(0, 0);
 static const ExessTimezone plus     = INIT_ZONE(11, 30);

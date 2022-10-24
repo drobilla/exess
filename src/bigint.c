@@ -456,13 +456,11 @@ exess_bigint_leading_zeros(const ExessBigint* num)
          exess_clz32(num->bigits[num->n_bigits - 1]);
 }
 
-// EXESS_I_PURE_FUNC
 static Bigit
 exess_bigint_left_shifted_bigit_i(const ExessBigint* num,
                                   const Offset       amount,
                                   const unsigned     index)
 {
-  /* assert(exess_bigint_is_clamped(num)); */
   if (amount.bigits == 0 && amount.bits == 0) {
     return num->bigits[index];
   }
