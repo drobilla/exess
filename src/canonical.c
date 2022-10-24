@@ -166,11 +166,7 @@ write_hex(const char* const str, const size_t buf_size, char* const buf)
     }
   }
 
-  if (o == 0 || o % 2 != 0) {
-    return result(EXESS_EXPECTED_HEX, o);
-  }
-
-  return result(EXESS_SUCCESS, o);
+  return result((o == 0 || o % 2 != 0) ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, o);
 }
 
 static ExessResult

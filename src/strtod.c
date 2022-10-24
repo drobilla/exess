@@ -335,12 +335,10 @@ parsed_double_to_double(const ExessDecimalDouble in)
     }
   }
 
-  const int expt         = in.expt;
-  const int result_power = (int)in.n_digits + expt;
+  const int sign         = in.kind >= EXESS_POSITIVE_ZERO ? 1 : -1;
+  const int result_power = (int)in.n_digits + in.expt;
 
   // Return early for simple exact cases
-
-  const int sign = in.kind >= EXESS_POSITIVE_ZERO ? 1 : -1;
 
   if (result_power > max_decimal_power) {
     return sign * (double)INFINITY;
@@ -351,18 +349,18 @@ parsed_double_to_double(const ExessDecimalDouble in)
   }
 
   if (in.n_digits < max_exact_int_digits) {
-    if (expt < 0 && -expt < n_exact_pow10) {
-      return sign * ((double)frac / (double)POW10[-expt]);
+    if (in.expt < 0 && -in.expt < n_exact_pow10) {
+      return sign * ((double)frac / (double)POW10[-in.expt]);
     }
 
-    if (expt >= 0 && expt < n_exact_pow10) {
-      return sign * ((double)frac * (double)POW10[expt]);
+    if (in.expt >= 0 && in.expt < n_exact_pow10) {
+      return sign * ((double)frac * (double)POW10[in.expt]);
     }
   }
 
   // Try to guess the number using only soft floating point (fast path)
   ExessSoftFloat guess = {0, 0};
-  const bool     exact = sftod(frac, expt, (int)in.n_digits, &guess);
+  const bool     exact = sftod(frac, in.expt, (int)in.n_digits, &guess);
   const double   g     = soft_float_to_double(guess);
   if (exact) {
     return sign * g;
@@ -372,17 +370,7 @@ parsed_double_to_double(const ExessDecimalDouble in)
   // Compare it with the buffer using bigints to find out which
   const ExessSoftFloat upper = {guess.f * 2 + 1, guess.e - 1};
   const int            cmp   = compare_buffer(in.digits, in.expt, upper);
-  if (cmp < 0) {
-    return sign * g;
-  }
+  const bool round_up        = (cmp > 0) || (cmp == 0 && (guess.f & 1U) != 0);
 
-  if (cmp > 0) {
-    return sign * nextafter(g, (double)INFINITY);
-  }
-
-  if ((guess.f & 1U) == 0) {
-    return sign * g; // Round towards even
-  }
-
-  return sign * nextafter(g, (double)INFINITY); // Round odd up
+  return sign * (round_up ? nextafter(g, (double)INFINITY) : g);
 }
