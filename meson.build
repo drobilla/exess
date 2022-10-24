@@ -4,7 +4,7 @@
 project('exess', ['c'],
         version: '0.0.1',
         license: 'ISC',
-        meson_version: '>= 0.53.0',
+        meson_version: '>= 0.54.0',
         default_options: [
           'b_ndebug=if-release',
           'buildtype=release',
