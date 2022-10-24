@@ -12,11 +12,11 @@
 
 #include "exess/exess.h"
 
+#include <assert.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
-
-#include <assert.h>
 
 typedef enum {
   EXESS_POINT_AFTER,   ///< Decimal point is after all significant digits
@@ -76,7 +76,7 @@ number_kind(const double d)
   return EXESS_NAN;
 }
 
-ExessDecimalDouble
+static ExessDecimalDouble
 exess_measure_decimal(const double d, const unsigned max_precision)
 {
   ExessDecimalDouble value = {number_kind(d), 0, 0, {0}};
@@ -86,9 +86,8 @@ exess_measure_decimal(const double d, const unsigned max_precision)
   }
 
   // Get decimal digits
-  const double          abs_d = fabs(d);
   const ExessDigitCount count =
-    exess_digits(abs_d, value.digits, max_precision);
+    exess_digits(fabs(d), value.digits, max_precision);
 
   assert(count.count == 1 || value.digits[count.count - 1] != '0');
 
@@ -183,7 +182,7 @@ exess_read_decimal(double* const out, const char* const str)
   return end_read(r.status, str, i + r.count);
 }
 
-ExessResult
+static ExessResult
 exess_write_decimal_double(const ExessDecimalDouble decimal,
                            const size_t             buf_size,
                            char* const              buf)

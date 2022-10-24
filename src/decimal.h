@@ -4,10 +4,6 @@
 #ifndef EXESS_DECIMAL_H
 #define EXESS_DECIMAL_H
 
-#include "exess/exess.h"
-
-#include <stddef.h>
-
 // Define C11 numeric constants if the compiler hasn't already
 #ifndef FLT_DECIMAL_DIG
 #  define FLT_DECIMAL_DIG 9
@@ -34,17 +30,9 @@ typedef struct {
 } ExessDecimalDouble;
 
 ExessDecimalDouble
-exess_measure_decimal(double d, unsigned max_precision);
-
-ExessDecimalDouble
 exess_measure_float(float f);
 
 ExessDecimalDouble
 exess_measure_double(double d);
-
-ExessResult
-exess_write_decimal_double(ExessDecimalDouble decimal,
-                           size_t             buf_size,
-                           char*              buf);
 
 #endif // EXESS_DECIMAL_H
