@@ -33,15 +33,25 @@ read_sign(const char** const sptr)
   return 1;
 }
 
+static inline int
+skip_zeros(const char* const str)
+{
+  int n = 0;
+  while (str[n] == '0') {
+    ++n;
+  }
+
+  return n;
+}
+
 ExessResult
 parse_decimal(ExessDecimalDouble* const out, const char* const str)
 {
   memset(out, 0, sizeof(*out));
 
-  // Read leading sign if necessary
-  const char* s                = str;
-  const int   sign             = read_sign(&s);
-  int         n_leading_before = 0;
+  // Read leading sign if present
+  const char* s    = str;
+  const int   sign = read_sign(&s);
 
   out->kind = (sign < 0) ? EXESS_NEGATIVE : EXESS_POSITIVE;
 
@@ -51,19 +61,15 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
   }
 
   // Skip leading zeros before decimal point
-  while (*s == '0') {
-    ++s;
-    ++n_leading_before;
-  }
+  const int n_leading_before = skip_zeros(s);
+  s += n_leading_before;
 
   // Skip leading zeros after decimal point
-  int  n_leading_after = 0;     // Zeros skipped after decimal point
-  bool after_point     = false; // True if we are after the decimal point
-  if (*s == '.') {
-    after_point = true;
-    for (++s; *s == '0'; ++s) {
-      ++n_leading_after;
-    }
+  int  n_leading_after = 0;           // Zeros skipped after decimal point
+  bool after_point     = (*s == '.'); // We're after the decimal point
+  if (after_point) {
+    n_leading_after = skip_zeros(++s);
+    s += n_leading_after;
   }
 
   // Read significant digits of the mantissa into a 64-bit integer
@@ -96,10 +102,10 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
   // Calculate final output exponent
   out->expt = n_extra_before - n_after - n_leading_after;
 
-  if (out->n_digits == 0) {
-    out->kind =
-      out->kind == EXESS_NEGATIVE ? EXESS_NEGATIVE_ZERO : EXESS_POSITIVE_ZERO;
-  }
+  // Update the kind if necessary to handle zero cases
+  out->kind = out->n_digits                   ? out->kind
+              : (out->kind == EXESS_NEGATIVE) ? EXESS_NEGATIVE_ZERO
+                                              : EXESS_POSITIVE_ZERO;
 
   return result(EXESS_SUCCESS, (size_t)(s - str));
 }
