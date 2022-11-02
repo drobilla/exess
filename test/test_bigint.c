@@ -60,10 +60,12 @@ test_set(void)
   CHECK_SET(decimal_string, "0", "0");
   CHECK_SET(decimal_string, "1", "1");
   CHECK_SET(decimal_string, "01234567890", "499602D2");
-  CHECK_SET(decimal_string, "12345.67890", "499602D2");
-  CHECK_SET(decimal_string, "12345.67890EOF", "499602D2");
+  CHECK_SET(decimal_string, "12345", "3039");
+  CHECK_SET(decimal_string, "12345EOF", "3039");
+  CHECK_SET(decimal_string, "12345.67890", "3039");
+  CHECK_SET(decimal_string, "12345.67890EOF", "3039");
   CHECK_SET(decimal_string, "012345678901", "2DFDC1C35");
-  CHECK_SET(decimal_string, "12345.678901", "2DFDC1C35");
+  CHECK_SET(decimal_string, "12345.678901", "3039");
   CHECK_SET(decimal_string,
             "340282366920938463463374607431768211456",
             "100000000000000000000000000000000");
