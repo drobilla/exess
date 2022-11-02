@@ -67,13 +67,16 @@ number_tests = [
 ]
 
 foreach unit : public_tests
-  test(unit,
-       executable('test_@0@'.format(unit),
-                  files('test_@0@.c'.format(unit)),
-                  c_args: c_suppressions + test_args,
-                  dependencies: [m_dep, exess_dep],
-                  include_directories: include_directories('../src')),
-       suite: 'public')
+  test(
+    unit,
+    executable('test_@0@'.format(unit),
+               files('test_@0@.c'.format(unit)),
+               c_args: c_suppressions + test_args,
+               dependencies: [m_dep, exess_dep],
+               include_directories: include_directories('../src'),
+              ),
+    suite: 'public',
+  )
 endforeach
 
 foreach unit : number_tests
@@ -93,11 +96,13 @@ foreach unit : number_tests
 endforeach
 
 # Build test_uint as above, but keep the target to test options
-test_short = executable('test_short',
-                       files('test_short.c'),
-                       c_args: c_suppressions + test_args,
-                       dependencies: [m_dep, exess_dep],
-                       include_directories: include_directories('../src'))
+test_short = executable(
+  'test_short',
+  files('test_short.c'),
+  c_args: c_suppressions + test_args,
+  dependencies: [m_dep, exess_dep],
+  include_directories: include_directories('../src'),
+)
 
 test('short', test_short, suite: 'public')
 
@@ -149,7 +154,8 @@ elif get_option('default_library') == 'shared'
     include_directories: include_directories(['../include', '../src']),
     c_args: c_suppressions + ['-DEXESS_INTERNAL'],
     dependencies: [m_dep],
-    gnu_symbol_visibility: 'default')
+    gnu_symbol_visibility: 'default',
+  )
 else
   libexess_static = libexess
 endif
@@ -160,13 +166,16 @@ exess_static_dep = declare_dependency(
   link_with: libexess_static)
 
 foreach unit : private_tests
-  test(unit,
-       executable('test_@0@'.format(unit),
-                  files('test_@0@.c'.format(unit)),
-                  c_args: c_suppressions + test_args,
-                  dependencies: exess_static_dep,
-                  include_directories: include_directories('../src')),
-       suite: 'private')
+  test(
+    unit,
+    executable(
+      'test_@0@'.format(unit),
+      files('test_@0@.c'.format(unit)),
+      c_args: c_suppressions + test_args,
+      dependencies: exess_static_dep,
+      include_directories: include_directories('../src')),
+    suite: 'private',
+  )
 endforeach
 
 #######################
@@ -189,10 +198,14 @@ elif cc.get_id() == 'msvc'
   ]
 endif
 
-test('headers',
-     executable('test_headers',
-                files('headers/test_headers.c'),
-                c_args: header_c_args,
-                dependencies: exess_dep,
-                include_directories: include_dirs),
-    suite: 'public')
+test(
+  'headers',
+  executable(
+    'test_headers',
+    files('headers/test_headers.c'),
+    c_args: header_c_args,
+    dependencies: exess_dep,
+    include_directories: include_dirs,
+  ),
+  suite: 'public',
+)
