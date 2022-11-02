@@ -56,6 +56,19 @@ Dependencies
 ------------
 
 None, except the C standard library.
+To be precise, zix uses only the following functions from the standard library:
+
+  * `ldexp`
+  * `llrint`
+  * `llrintf`
+  * `log10`
+  * `lrint`
+  * `memcmp`
+  * `memcpy`
+  * `memset`
+  * `nextafter`
+  * `strcmp`
+  * `strncmp`
 
 Building
 --------
