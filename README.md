@@ -70,23 +70,10 @@ To be precise, zix uses only the following functions from the standard library:
   * `strcmp`
   * `strncmp`
 
-Building
---------
-
-A [Meson][] build definition is included which can be used to do a proper
-system installation with a `pkg-config` file, generate IDE projects, run the
-tests, and so on.  For example, the library and tests can be built and run like
-so:
-
-    meson setup build
-    cd build
-    ninja test
-
-See the [Meson documentation][] for more details on using Meson.
-
 Documentation
 -------------
 
+ * [Installation instructions](INSTALL.md)
  * [API reference (single page)](https://drobilla.gitlab.io/exess/c/singlehtml)
  * [API reference (paginated)](https://drobilla.gitlab.io/exess/c/html)
 
