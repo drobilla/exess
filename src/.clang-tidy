@@ -4,5 +4,4 @@ Checks: >
   -hicpp-multiway-paths-covered,
   -llvm-header-guard,
   -misc-no-recursion,
-  -readability-function-cognitive-complexity,
 InheritParentConfig: true
