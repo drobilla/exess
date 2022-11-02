@@ -76,7 +76,7 @@ test_round_trip(const ExessNumTestOptions opts)
   if (opts.exhaustive) {
     fprintf(stderr, "Testing xsd:int exhaustively\n");
 
-    for (int64_t i = INT32_MIN; i <= INT32_MAX; ++i) {
+    for (int64_t i = opts.low; i <= opts.high; ++i) {
       assert(!exess_write_int((int32_t)i, sizeof(buf), buf).status);
       assert(!exess_read_int(&parsed_value, buf).status);
       assert(parsed_value == i);
@@ -103,7 +103,8 @@ test_round_trip(const ExessNumTestOptions opts)
 int
 main(int argc, char** argv)
 {
-  const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
+  const ExessNumTestOptions opts =
+    parse_num_test_options(argc, argv, INT32_MIN, INT32_MAX);
 
   if (!opts.error) {
     test_read_int();

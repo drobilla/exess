@@ -171,7 +171,7 @@ check_round_trip(const float value)
 {
   float parsed_value                    = 0.0F;
   char  buf[EXESS_MAX_FLOAT_LENGTH + 1] = {
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
   assert(!exess_write_float(value, sizeof(buf), buf).status);
   assert(!exess_read_float(&parsed_value, buf).status);
@@ -190,7 +190,7 @@ test_round_trip(const ExessNumTestOptions opts)
   if (opts.exhaustive) {
     fprintf(stderr, "Testing xsd:float exhaustively\n");
 
-    for (int64_t i = 0; i <= UINT32_MAX; ++i) {
+    for (int64_t i = opts.low; i <= opts.high; ++i) {
       const float value = float_from_rep((uint32_t)i);
 
       check_round_trip(value);
@@ -217,7 +217,8 @@ test_round_trip(const ExessNumTestOptions opts)
 int
 main(int argc, char** argv)
 {
-  const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
+  const ExessNumTestOptions opts =
+    parse_num_test_options(argc, argv, 0U, UINT32_MAX);
 
   if (!opts.error) {
     test_read_float();

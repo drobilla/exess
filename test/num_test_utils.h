@@ -15,6 +15,8 @@
 
 typedef struct {
   size_t   n_tests;
+  int64_t  low;
+  int64_t  high;
   uint32_t seed;
   bool     exhaustive;
   bool     error;
@@ -24,6 +26,8 @@ static bool
 print_num_test_usage(const char* const name)
 {
   fprintf(stderr, "Usage: %s [OPTION]...\n", name);
+  fprintf(stderr, "  -h           Optional high value for exhaustive test.\n");
+  fprintf(stderr, "  -l           Optional low value for exhaustive test.\n");
   fprintf(stderr, "  -n NUM_TESTS Number of random tests to run.\n");
   fprintf(stderr, "  -s SEED      Use random seed.\n");
   fprintf(stderr, "  -x           Exhaustively test numbers.\n");
@@ -31,14 +35,35 @@ print_num_test_usage(const char* const name)
 }
 
 static ExessNumTestOptions
-parse_num_test_options(const int argc, char* const* const argv)
+parse_num_test_options(const int          argc,
+                       char* const* const argv,
+                       const int64_t      min_rep,
+                       const int64_t      max_rep)
 {
-  ExessNumTestOptions opts = {
-    16384U, (uint32_t)time(NULL) + (uint32_t)getpid(), false, false};
+  ExessNumTestOptions opts = {16384U,
+                              min_rep,
+                              max_rep,
+                              (uint32_t)time(NULL) + (uint32_t)getpid(),
+                              false,
+                              false};
 
   int a = 1;
   for (; a < argc && argv[a][0] == '-'; ++a) {
-    if (argv[a][1] == 'x') {
+    if (argv[a][1] == 'h') {
+      if (++a == argc) {
+        opts.error = print_num_test_usage(argv[0]);
+        break;
+      }
+
+      opts.high = (int64_t)strtoll(argv[a], NULL, 10);
+    } else if (argv[a][1] == 'l') {
+      if (++a == argc) {
+        opts.error = print_num_test_usage(argv[0]);
+        break;
+      }
+
+      opts.low = (int64_t)strtoll(argv[a], NULL, 10);
+    } else if (argv[a][1] == 'x') {
       opts.exhaustive = true;
     } else if (argv[a][1] == 's') {
       if (++a == argc) {

@@ -230,7 +230,8 @@ test_round_trip(const ExessNumTestOptions opts)
 int
 main(int argc, char** argv)
 {
-  const ExessNumTestOptions opts = parse_num_test_options(argc, argv);
+  const ExessNumTestOptions opts =
+    parse_num_test_options(argc, argv, 0, INT32_MAX);
 
   if (!opts.error) {
     test_read_date();

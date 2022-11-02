@@ -48,19 +48,22 @@ public_tests = [
   'decimal',
   'double',
   'duration',
-  'float',
   'hex',
-  'int',
   'long',
-  # 'short', # Built separately below to test arguments
   'strerror',
   'time',
   'timezone',
   'ubyte',
-  'uint',
   'ulong',
   'ushort',
   'value',
+]
+
+number_tests = [
+  'float',
+  'int',
+  # 'short', # Built separately below to test arguments
+  'uint',
 ]
 
 foreach unit : public_tests
@@ -71,6 +74,22 @@ foreach unit : public_tests
                   dependencies: [m_dep, exess_dep],
                   include_directories: include_directories('../src')),
        suite: 'public')
+endforeach
+
+foreach unit : number_tests
+  test_prog = executable(
+    'test_@0@'.format(unit),
+    files('test_@0@.c'.format(unit)),
+    c_args: c_suppressions + test_args,
+    dependencies: [m_dep, exess_dep],
+    include_directories: include_directories('../src'),
+  )
+
+  # Run default randomized test (like the others run above)
+  test(unit, test_prog, suite: 'public')
+
+  # Run a short exhaustive test (mainly to hit the test code)
+  test(unit, test_prog, args: ['-x', '-l', '0', '-h', '512'], suite: 'public')
 endforeach
 
 # Build test_uint as above, but keep the target to test options
@@ -89,6 +108,7 @@ test('short', test_short, suite: 'public')
 good_args = [
   ['-n', '1024'],
   ['-s', '1234'],
+  ['-x', '-l', '16', '-h', '127'],
   ['-x'],
 ]
 
@@ -98,9 +118,11 @@ foreach args : good_args
 endforeach
 
 bad_args = [
-  ['-s'],
-  ['-n'],
   ['-X'],
+  ['-h'],
+  ['-l'],
+  ['-n'],
+  ['-s'],
 ]
 
 foreach args : bad_args
