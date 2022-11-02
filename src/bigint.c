@@ -370,6 +370,18 @@ exess_bigint_plus_compare(const ExessBigint* l,
   return borrow ? -1 : 0;
 }
 
+static unsigned
+exess_bigint_add_carry(ExessBigint* lhs, unsigned i, bool carry)
+{
+  for (; carry; ++i) {
+    const Hugit sum = (Hugit)carry + lhs->bigits[i];
+    lhs->bigits[i]  = (Bigit)(sum & bigit_mask);
+    carry           = (Bigit)((sum & carry_mask) >> 32U);
+  }
+
+  return i;
+}
+
 void
 exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
 {
@@ -383,16 +395,8 @@ exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
 
   lhs->bigits[0] = (Bigit)(sum & bigit_mask);
 
-  unsigned i = 1;
-  for (; carry; ++i) {
-    assert(carry == 0 || carry == 1);
-
-    sum            = (Hugit)carry + lhs->bigits[i];
-    lhs->bigits[i] = (Bigit)(sum & bigit_mask);
-    carry          = (Bigit)((sum & carry_mask) >> 32U);
-  }
-
-  lhs->n_bigits = MAX(i, lhs->n_bigits);
+  const unsigned i = exess_bigint_add_carry(lhs, 1U, carry);
+  lhs->n_bigits    = MAX(i, lhs->n_bigits);
   assert(exess_bigint_is_clamped(lhs));
 }
 
@@ -410,15 +414,23 @@ exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs)
     carry          = (sum & carry_mask) >> 32U;
   }
 
-  for (; carry; ++i) {
-    const Hugit sum = (Hugit)lhs->bigits[i] + carry;
-
-    lhs->bigits[i] = (Bigit)(sum & bigit_mask);
-    carry          = (sum & carry_mask) >> 32U;
-  }
-
+  i             = exess_bigint_add_carry(lhs, i, carry);
   lhs->n_bigits = MAX(i, lhs->n_bigits);
   assert(exess_bigint_is_clamped(lhs));
+}
+
+static unsigned
+exess_bigint_subtract_borrow(ExessBigint* lhs, unsigned i, bool borrow)
+{
+  for (; borrow; ++i) {
+    const Bigit l = lhs->bigits[i];
+
+    lhs->bigits[i] -= borrow;
+
+    borrow = l == 0;
+  }
+
+  return i;
 }
 
 void
@@ -438,14 +450,7 @@ exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs)
     borrow         = l < r || (l == r && borrow);
   }
 
-  for (; borrow; ++i) {
-    const Bigit l = lhs->bigits[i];
-
-    lhs->bigits[i] -= borrow;
-
-    borrow = l == 0;
-  }
-
+  exess_bigint_subtract_borrow(lhs, i, borrow);
   exess_bigint_clamp(lhs);
 }
 
@@ -519,14 +524,7 @@ exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
     borrow         = l < r || ((l == r) && borrow);
   }
 
-  for (; borrow; ++i) {
-    const Bigit l = lhs->bigits[i];
-
-    lhs->bigits[i] -= borrow;
-
-    borrow = l == 0;
-  }
-
+  exess_bigint_subtract_borrow(lhs, i, borrow);
   exess_bigint_clamp(lhs);
 }
 
