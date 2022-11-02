@@ -50,9 +50,6 @@ void
 exess_bigint_set_decimal_string(ExessBigint* num, const char* str);
 
 void
-exess_bigint_set_hex_string(ExessBigint* num, const char* str);
-
-void
 exess_bigint_multiply_u32(ExessBigint* num, uint32_t factor);
 
 void

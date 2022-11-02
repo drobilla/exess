@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Some test data borrowed from http://github.com/google/double-conversion
    which uses a completely different bigint representation (so if these agree,
@@ -15,6 +17,30 @@
    edges of the implementation, or interesting cases collected from testing the
    decimal implementation.  Almost everything here uses the hex representation
    so it is easy to dump into Python as a sanity check. */
+
+static void
+exess_bigint_set_hex_string(ExessBigint* num, const char* const str)
+{
+  exess_bigint_zero(num);
+
+  // Read digits from right to left until we run off the beginning
+  const int length       = (int)strlen(str);
+  char      digit_buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int       i            = length - 8;
+  for (; i >= 0; i -= 8) {
+    memcpy(digit_buf, str + i, 8);
+    num->bigits[num->n_bigits++] = (Bigit)strtoll(digit_buf, NULL, 16);
+  }
+
+  // Read leftovers into MSB if necessary
+  if (i > -8) {
+    memset(digit_buf, 0, sizeof(digit_buf));
+    memcpy(digit_buf, str, 8U + (unsigned)i);
+    num->bigits[num->n_bigits++] = (Bigit)strtoll(digit_buf, NULL, 16);
+  }
+
+  exess_bigint_clamp(num);
+}
 
 static ExessBigint
 bigint_from_hex(const char* str)
