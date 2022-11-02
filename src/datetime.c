@@ -129,6 +129,23 @@ exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
   return -1;
 }
 
+static int32_t
+add_field(const int32_t  lhs,
+          const int32_t  rhs,
+          const int32_t  max,
+          int32_t* const carry)
+{
+  const int32_t temp = lhs + rhs + *carry;
+
+  if (temp < 0) {
+    *carry = temp / max - 1;
+    return max + (temp % max);
+  }
+
+  *carry = temp / max;
+  return temp % max;
+}
+
 ExessDateTime
 exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
 {
@@ -136,6 +153,8 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
     See <https://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes>.
     This algorithm is modified to support subtraction when d is negative.
   */
+
+  static const int32_t giga = 1000000000;
 
   const int32_t d_year       = d.months / 12;
   const int32_t d_month      = d.months % 12;
@@ -160,7 +179,8 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
   }
 
   // Years (may be modified additionally below)
-  temp = s.year + d_year + carry;
+  temp  = s.year + d_year + carry;
+  carry = 0;
   if (temp > INT16_MAX) {
     return infinite_future(s.is_utc);
   }
@@ -171,45 +191,14 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
 
   e.year = (int16_t)temp;
 
-  // Nanoseconds
-  temp = (int32_t)s.nanosecond + d_nanosecond;
-  if (temp < 0) {
-    e.nanosecond = (uint32_t)(1000000000 + (temp % 1000000000));
-    carry        = temp / 1000000000 - 1;
-  } else {
-    e.nanosecond = (uint32_t)(temp % 1000000000);
-    carry        = temp / 1000000000;
-  }
+  // Day time
 
-  // Seconds
-  temp = s.second + d_second + carry;
-  if (temp < 0) {
-    e.second = (uint8_t)(60 + (temp % 60));
-    carry    = temp / 60 - 1;
-  } else {
-    e.second = (uint8_t)(temp % 60);
-    carry    = temp / 60;
-  }
+  e.nanosecond =
+    (uint32_t)add_field((int32_t)s.nanosecond, d_nanosecond, giga, &carry);
 
-  // Minutes
-  temp = s.minute + d_minute + carry;
-  if (temp < 0) {
-    e.minute = (uint8_t)(60 + (temp % 60));
-    carry    = temp / 60 - 1;
-  } else {
-    e.minute = (uint8_t)(temp % 60);
-    carry    = temp / 60;
-  }
-
-  // Hours
-  temp = s.hour + d_hour + carry;
-  if (temp < 0) {
-    e.hour = (uint8_t)(24 + (temp % 24));
-    carry  = temp / 24 - 1;
-  } else {
-    e.hour = (uint8_t)(temp % 24);
-    carry  = temp / 24;
-  }
+  e.second = (uint8_t)add_field(s.second, d_second, 60, &carry);
+  e.minute = (uint8_t)add_field(s.minute, d_minute, 60, &carry);
+  e.hour   = (uint8_t)add_field(s.hour, d_hour, 24, &carry);
 
   /*
     Carry days into months and years as necessary.  Note that the algorithm in
@@ -308,7 +297,7 @@ exess_write_datetime(const ExessDateTime value,
   const ExessDate     date  = {value.year, value.month, value.day, local};
   const ExessTimezone zone  = {value.is_utc ? 0 : EXESS_LOCAL};
   const ExessTime     time  = {
-    zone, value.hour, value.minute, value.second, value.nanosecond};
+         zone, value.hour, value.minute, value.second, value.nanosecond};
 
   if (!in_range(value.month, 1, 12) || !in_range(value.day, 1, 31) ||
       !in_range(value.hour, 0, 24) || !in_range(value.minute, 0, 59) ||
