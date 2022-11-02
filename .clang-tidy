@@ -6,3 +6,6 @@ Checks: >
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.IgnoreMacros
+    value: 'true'

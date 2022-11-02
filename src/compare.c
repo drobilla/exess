@@ -4,9 +4,37 @@
 #include "exess/exess.h"
 
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+
+static int
+exess_compare_datatypes(const ExessDatatype lhs_datatype,
+                        const ExessDatatype rhs_datatype)
+{
+  const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);
+  const char* const rhs_datatype_uri = exess_datatype_uri(rhs_datatype);
+
+  return !lhs_datatype_uri   ? -1
+         : !rhs_datatype_uri ? 1
+                             : strcmp(lhs_datatype_uri, rhs_datatype_uri);
+}
+
+static int
+exess_compare_blob(const size_t      lhs_size,
+                   const void* const lhs_value,
+                   const size_t      rhs_size,
+                   const void* const rhs_value)
+{
+  if (lhs_size != rhs_size) {
+    const bool shorter_lhs = lhs_size < rhs_size;
+    const int  cmp =
+      memcmp(lhs_value, rhs_value, shorter_lhs ? lhs_size : rhs_size);
+
+    return cmp < 0 ? -1 : cmp > 0 ? 1 : shorter_lhs ? -1 : 1;
+  }
+
+  return memcmp(lhs_value, rhs_value, lhs_size);
+}
 
 int
 exess_value_compare(const ExessDatatype lhs_datatype,
@@ -17,12 +45,7 @@ exess_value_compare(const ExessDatatype lhs_datatype,
                     const void* const   rhs_value)
 {
   if (lhs_datatype != rhs_datatype) {
-    const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);
-    const char* const rhs_datatype_uri = exess_datatype_uri(rhs_datatype);
-
-    return !lhs_datatype_uri   ? -1
-           : !rhs_datatype_uri ? 1
-                               : strcmp(lhs_datatype_uri, rhs_datatype_uri);
+    return exess_compare_datatypes(lhs_datatype, rhs_datatype);
   }
 
 #define EXESS_VALUE_CMP(lhs, rhs) \
@@ -101,15 +124,7 @@ exess_value_compare(const ExessDatatype lhs_datatype,
 
   case EXESS_HEX:
   case EXESS_BASE64:
-    if (lhs_size != rhs_size) {
-      const bool shorter_lhs = lhs_size < rhs_size;
-      const int  cmp =
-        memcmp(lhs_value, rhs_value, shorter_lhs ? lhs_size : rhs_size);
-
-      return cmp < 0 ? -1 : cmp > 0 ? 1 : shorter_lhs ? -1 : 1;
-    }
-
-    return memcmp(lhs_value, rhs_value, lhs_size);
+    return exess_compare_blob(lhs_size, lhs_value, rhs_size, rhs_value);
   }
 
 #undef EXESS_VALUE_CMP

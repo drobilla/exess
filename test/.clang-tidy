@@ -3,5 +3,4 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -cert-err33-c,
   -llvm-header-guard,
-  -readability-function-cognitive-complexity,
 InheritParentConfig: true
