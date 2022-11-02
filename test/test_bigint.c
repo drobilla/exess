@@ -344,6 +344,7 @@ test_multiply_u32(void)
 {
   check_multiply_u32("0", 0x25, "0");
   check_multiply_u32("123456789ABCDEF", 0, "0");
+  check_multiply_u32("123456789ABCDEF", 1, "123456789ABCDEF");
   check_multiply_u32("2", 0x5, "A");
   check_multiply_u32("10000000", 0x9, "90000000");
   check_multiply_u32("100000000000000", 0xFFFF, "FFFF00000000000000");
