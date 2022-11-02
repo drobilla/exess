@@ -18,3 +18,6 @@ option('use_builtin_clz', type: 'feature', value: 'auto', yield: true,
 
 option('use_builtin_clzll', type: 'feature', value: 'auto', yield: true,
        description: 'Use __builtin_clzll')
+
+option('title', type: 'string', value: 'Exess',
+       description: 'Project title')
