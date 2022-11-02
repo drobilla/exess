@@ -1,10 +1,8 @@
 Checks: >
   -*-magic-numbers,
   -bugprone-easily-swappable-parameters,
-  -cert-dcl16-c,
   -hicpp-multiway-paths-covered,
   -llvm-header-guard,
   -misc-no-recursion,
   -readability-function-cognitive-complexity,
-  -readability-identifier-length,
 InheritParentConfig: true

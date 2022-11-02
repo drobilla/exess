@@ -1,7 +1,6 @@
 Checks: >
   *,
   -altera-*,
-  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -llvmlibc-*,
   -readability-identifier-length,
 WarningsAsErrors: '*'
