@@ -6,9 +6,7 @@
 
 #include "attributes.h"
 
-#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 
 typedef uint32_t Bigit;
 
@@ -29,9 +27,6 @@ typedef struct {
 
 void
 exess_bigint_zero(ExessBigint* num);
-
-size_t
-exess_bigint_print_hex(FILE* stream, const ExessBigint* num);
 
 void
 exess_bigint_clamp(ExessBigint* num);
