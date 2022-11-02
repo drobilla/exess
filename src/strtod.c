@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: ISC
 
 #include "strtod.h"
+
+#include "attributes.h"
 #include "bigint.h"
 #include "decimal.h"
 #include "ieee_float.h"
@@ -309,6 +311,21 @@ compare_buffer(const char* buf, const int expt, const ExessSoftFloat upper)
   return exess_bigint_compare(&buf_bigint, &upper_bigint);
 }
 
+EXESS_I_PURE_FUNC
+static uint64_t
+read_fraction(size_t n_digits, const char* const digits)
+{
+  uint64_t frac = 0;
+
+  for (unsigned i = 0U; i < n_digits; ++i) {
+    if (is_digit(digits[i])) {
+      frac = (frac * 10U) + (unsigned)(digits[i] - '0');
+    }
+  }
+
+  return frac;
+}
+
 double
 parsed_double_to_double(const ExessDecimalDouble in)
 {
@@ -317,6 +334,7 @@ parsed_double_to_double(const ExessDecimalDouble in)
   static const int      max_decimal_power    = 309;  // Max finite power
   static const int      min_decimal_power    = -324; // Min non-zero power
 
+  // Return early for edge cases
   switch (in.kind) {
   case EXESS_NEGATIVE:
     break;
@@ -334,15 +352,9 @@ parsed_double_to_double(const ExessDecimalDouble in)
     return (double)NAN;
   }
 
-  uint64_t frac = 0;
-  for (unsigned i = 0U; i < in.n_digits; ++i) {
-    if (is_digit(in.digits[i])) {
-      frac = (frac * 10) + (unsigned)(in.digits[i] - '0');
-    }
-  }
-
-  const int sign         = in.kind >= EXESS_POSITIVE_ZERO ? 1 : -1;
-  const int result_power = (int)in.n_digits + in.expt;
+  const uint64_t frac         = read_fraction(in.n_digits, in.digits);
+  const int      sign         = in.kind >= EXESS_POSITIVE_ZERO ? 1 : -1;
+  const int      result_power = (int)in.n_digits + in.expt;
 
   // Return early for simple exact cases
 
