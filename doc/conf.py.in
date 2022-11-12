@@ -28,7 +28,9 @@ _opaque = [
     "uint8_t",
 ]
 
-nitpick_ignore = list(map(lambda x: ("c:identifier", x), _opaque))
+_c_nitpick_ignore = map(lambda x: ("c:identifier", x), _opaque)
+_cpp_nitpick_ignore = map(lambda x: ("cpp:identifier", x), _opaque)
+nitpick_ignore = list(_c_nitpick_ignore) + list(_cpp_nitpick_ignore)
 
 # HTML output
 

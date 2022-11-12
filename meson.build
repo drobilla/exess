@@ -9,6 +9,7 @@ project('exess', ['c'],
           'b_ndebug=if-release',
           'buildtype=release',
           'c_std=c99',
+          'cpp_std=c++17',
         ])
 
 exess_src_root = meson.current_source_dir()
@@ -24,10 +25,19 @@ versioned_name = 'exess' + version_suffix
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
+# Optional C++ compiler
+if not get_option('bindings_cpp').disabled()
+  add_languages(['cpp'], native: false)
+  cpp = meson.get_compiler('cpp')
+endif
+
 # Set global warning flags
 if get_option('strict') and not meson.is_subproject()
   subdir('meson/warnings')
   add_project_arguments(all_c_warnings, language: ['c'])
+  if not get_option('bindings_cpp').disabled()
+    add_project_arguments(all_cpp_warnings, language: ['cpp'])
+  endif
 endif
 subdir('meson/suppressions')
 
@@ -151,6 +161,10 @@ install_headers(c_headers, subdir: versioned_name / 'exess')
 #######################
 # Optional Components #
 #######################
+
+if not get_option('bindings_cpp').disabled()
+  subdir('bindings/cpp')
+endif
 
 if not get_option('docs').disabled()
   subdir('doc')

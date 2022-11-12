@@ -1,0 +1,10 @@
+# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: 0BSD OR ISC
+
+cpp_headers = files('include/exess/exess.hpp')
+
+exess_hpp_dep = declare_dependency(
+  dependencies: exess_dep,
+  include_directories: include_directories('include'))
+
+subdir('test')

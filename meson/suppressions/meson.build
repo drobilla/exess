@@ -83,3 +83,59 @@ if is_variable('cc')
 
   c_suppressions = cc.get_supported_arguments(c_suppressions)
 endif
+
+#######
+# C++ #
+#######
+
+if is_variable('cpp')
+  cpp_suppressions = []
+
+  if cpp.get_id() == 'clang'
+    cpp_suppressions += [
+      '-Wno-inline',
+      '-Wno-padded',
+    ]
+
+    if host_machine.system() == 'darwin'
+      cpp_suppressions += [
+        '-Wno-poison-system-directories',
+      ]
+    endif
+
+  elif cpp.get_id() == 'gcc'
+    cpp_suppressions += [
+      '-Wno-inline',
+      '-Wno-padded',
+      '-Wno-unused-const-variable',
+      '-Wno-useless-cast',
+    ]
+
+    if host_machine.system() == 'windows'
+      cpp_suppressions += [
+        '-Wno-cast-function-type',
+        '-Wno-suggest-attribute=format',
+      ]
+    endif
+
+  elif cpp.get_id() == 'msvc'
+    cpp_suppressions += [
+      '/wd4061', # enumerator in switch is not explicitly handled
+      '/wd4191', # unsafe conversion from type to type
+      '/wd4514', # unreferenced inline function has been removed
+      '/wd4625', # copy constructor implicitly deleted
+      '/wd4626', # copy assignment operator implicitly deleted
+      '/wd4706', # assignment within conditional expression
+      '/wd4710', # function not inlined
+      '/wd4711', # function selected for automatic inline expansion
+      '/wd4800', # implicit conversion to bool
+      '/wd4820', # padding added after construct
+      '/wd5026', # move constructor implicitly deleted
+      '/wd5027', # move assignment operator implicitly deleted
+      '/wd5039', # pointer to potentially throwing function passed to C
+      '/wd5045', # will insert Spectre mitigation for memory load
+    ]
+  endif
+
+  cpp_suppressions = cpp.get_supported_arguments(cpp_suppressions)
+endif

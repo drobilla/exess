@@ -41,6 +41,15 @@
 # Wdeclaration-after-statement
 # Wtraditional
 # Wtraditional-conversion
+#
+# C++ Specific:
+#
+# Wc++0x-compat
+# Wc++1z-compat
+# Wc++2a-compat
+# Wctad-maybe-unsupported
+# Wnamespaces
+# Wtemplates
 
 # GCC warnings that apply to all C-family languages
 gcc_common_warnings = [
@@ -124,43 +133,101 @@ gcc_common_warnings = [
 if is_variable('cc')
   all_c_warnings = []
 
-  if get_option('strict')
-    if cc.get_id() == 'clang'
-      all_c_warnings += ['-Weverything']
+  if cc.get_id() == 'clang'
+    all_c_warnings += ['-Weverything']
 
-      if not meson.is_cross_build()
-        all_c_warnings += [
-          '-Wno-poison-system-directories',
-        ]
-      endif
-
-    elif cc.get_id() == 'gcc'
-      all_c_warnings += gcc_common_warnings + [
-        '-Wabsolute-value',
-        '-Wbad-function-cast',
-        '-Wc++-compat',
-        '-Wenum-conversion',
-        '-Wjump-misses-init',
-        '-Wmissing-parameter-type',
-        '-Wmissing-prototypes',
-        '-Wnested-externs',
-        '-Wold-style-declaration',
-        '-Wold-style-definition',
-        '-Woverride-init',
-        '-Wsign-compare',
-        '-Wstrict-prototypes',
-        '-Wunsuffixed-float-constants',
-      ]
-
-    elif cc.get_id() == 'msvc'
+    if not meson.is_cross_build()
       all_c_warnings += [
-        '/Wall',
-        '/experimental:external',
-        '/external:W0',
-        '/external:anglebrackets',
+        '-Wno-poison-system-directories',
       ]
     endif
+
+  elif cc.get_id() == 'gcc'
+    all_c_warnings += gcc_common_warnings + [
+      '-Wabsolute-value',
+      '-Wbad-function-cast',
+      '-Wc++-compat',
+      '-Wenum-conversion',
+      '-Wjump-misses-init',
+      '-Wmissing-parameter-type',
+      '-Wmissing-prototypes',
+      '-Wnested-externs',
+      '-Wold-style-declaration',
+      '-Wold-style-definition',
+      '-Woverride-init',
+      '-Wsign-compare',
+      '-Wstrict-prototypes',
+      '-Wunsuffixed-float-constants',
+    ]
+
+  elif cc.get_id() == 'msvc'
+    all_c_warnings += ['/Wall']
   endif
 
   all_c_warnings = cc.get_supported_arguments(all_c_warnings)
+endif
+
+#######
+# C++ #
+#######
+
+if is_variable('cpp')
+  all_cpp_warnings = []
+
+  if cpp.get_id() == 'clang'
+    all_cpp_warnings += [
+      '-Weverything',
+      '-Wno-c++98-compat',
+      '-Wno-c++98-compat-pedantic',
+      '-Wno-nullability-extension',
+    ]
+
+  elif cpp.get_id() == 'gcc'
+    all_cpp_warnings += gcc_common_warnings + [
+      '-Wabi-tag',
+      '-Waligned-new=all',
+      '-Wcatch-value=3',
+      '-Wcomma-subscript',
+      '-Wconditionally-supported',
+      '-Wctor-dtor-privacy',
+      '-Wdelete-non-virtual-dtor',
+      '-Wdeprecated',
+      '-Wdeprecated-copy',
+      '-Wdeprecated-copy-dtor',
+      '-Wdeprecated-enum-enum-conversion',
+      '-Wdeprecated-enum-float-conversion',
+      '-Weffc++',
+      '-Wexpansion-to-defined',
+      '-Wextra-semi',
+      '-Wimport',
+      '-Winvalid-imported-macros',
+      '-Wmismatched-tags',
+      '-Wmultiple-inheritance',
+      '-Wnoexcept',
+      '-Wnoexcept-type',
+      '-Wnon-virtual-dtor',
+      '-Wold-style-cast',
+      '-Woverloaded-virtual',
+      '-Wplacement-new=2',
+      '-Wredundant-move',
+      '-Wredundant-tags',
+      '-Wregister',
+      '-Wsign-compare',
+      '-Wsign-promo',
+      '-Wsized-deallocation',
+      '-Wstrict-null-sentinel',
+      '-Wsuggest-final-methods',
+      '-Wsuggest-final-types',
+      '-Wsuggest-override',
+      '-Wuseless-cast',
+      '-Wvirtual-inheritance',
+      '-Wvolatile',
+      '-Wzero-as-null-pointer-constant',
+    ]
+
+  elif cpp.get_id() == 'msvc'
+    all_cpp_warnings += ['/Wall']
+  endif
+
+  all_cpp_warnings = cpp.get_supported_arguments(all_cpp_warnings)
 endif
