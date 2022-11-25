@@ -3,10 +3,10 @@ Exess
 
 Exess is a simple library for reading and writing [XSD][] datatypes.
 
-Exess is useful for applications that need to read/write common datatypes
-from/to strings, in a standard and locale-independent format.  It supports
-reading values from any valid string, and writing values in canonical form.
-The implementation is not complete, but includes support for all of the common
+Exess is useful for applications that need to read and write common datatypes
+as strings in a standard and locale-independent format.  It supports reading
+values from any valid string, and writing values in canonical form.  The
+implementation is not complete, but includes support for all of the common
 generally useful datatypes (the XML-specific and partial Gregorian calendar
 datatypes are omitted).
 
@@ -16,13 +16,13 @@ the exact same `float` as the original value.
 
 The API consists mainly of simple read and write functions for each datatype.
 There are also utility functions for rewriting strings in canonical form,
-reading/writing binary values to/from opaque buffers,
+reading/writing opaque binary values,
 and coercing values between datatypes.
 
 For flexibility, allocation is handled by the caller, making it possible to
-work on the stack, or to read/write values directly from/to fields in a
-structure.  Syntax errors are reported with a descriptive error code and
-character offset, allowing friendly error messages to be produced.
+work on the stack, or to directly read/write fields in a structure.  Syntax
+errors are reported with a character offset and error code, allowing the caller
+to produce precise and friendly error messages.
 
 Supported Datatypes
 -------------------
@@ -44,6 +44,8 @@ Exess supports reading and writing:
 
   * `duration`, like "P1Y6M".
 
+  * `datetime`, like "2001-01-30T14:30:45".
+
   * `time`, like "12:30:00.00".
 
   * `date`, like "2001-12-31".
@@ -56,7 +58,7 @@ Dependencies
 ------------
 
 None, except the C standard library.
-To be precise, zix uses only the following functions from the standard library:
+To be precise, exess uses only the following functions from the standard library:
 
   * `ldexp`
   * `llrint`
@@ -69,6 +71,8 @@ To be precise, zix uses only the following functions from the standard library:
   * `nextafter`
   * `strcmp`
   * `strncmp`
+  * `trunc`
+  * `truncf`
 
 Documentation
 -------------
