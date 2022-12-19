@@ -8,16 +8,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if defined(_WIN32) && !defined(EXESS_STATIC) && defined(EXESS_INTERNAL)
-#  define EXESS_API __declspec(dllexport)
-#elif defined(_WIN32) && !defined(EXESS_STATIC)
-#  define EXESS_API __declspec(dllimport)
-#elif defined(__GNUC__)
-#  define EXESS_API __attribute__((visibility("default")))
-#else
-#  define EXESS_API
+// EXESS_API must be used to decorate things in the public API
+#ifndef EXESS_API
+#  if defined(_WIN32) && !defined(EXESS_STATIC) && defined(EXESS_INTERNAL)
+#    define EXESS_API __declspec(dllexport)
+#  elif defined(_WIN32) && !defined(EXESS_STATIC)
+#    define EXESS_API __declspec(dllimport)
+#  elif defined(__GNUC__)
+#    define EXESS_API __attribute__((visibility("default")))
+#  else
+#    define EXESS_API
+#  endif
 #endif
 
+// GCC function attributes
 #ifdef __GNUC__
 #  define EXESS_PURE_FUNC __attribute__((pure))
 #  define EXESS_CONST_FUNC __attribute__((const))
@@ -26,6 +30,7 @@
 #  define EXESS_CONST_FUNC
 #endif
 
+// Clang nullability attributes
 #if defined(__clang__) && __clang_major__ >= 7
 #  define EXESS_NONNULL _Nonnull
 #  define EXESS_NULLABLE _Nullable
@@ -34,12 +39,12 @@
 #  define EXESS_NULLABLE
 #endif
 
-// Pure API functions have no observable side-effects
+/// A pure function in the public API that only reads memory
 #define EXESS_PURE_API \
   EXESS_API            \
   EXESS_PURE_FUNC
 
-// Const API functions are pure, and read no memory other than their parameters
+/// A const function in the public API that is pure and only reads parameters
 #define EXESS_CONST_API \
   EXESS_API             \
   EXESS_CONST_FUNC
