@@ -149,7 +149,7 @@ if get_option('default_library') == 'both'
   libexess_static = libexess.get_static_lib()
 elif get_option('default_library') == 'shared'
   libexess_static = static_library(
-    meson.project_name() + library_suffix,
+    versioned_name,
     sources,
     include_directories: include_directories(['../include', '../src']),
     c_args: c_suppressions + ['-DEXESS_INTERNAL'],

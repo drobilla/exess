@@ -64,6 +64,16 @@ endforeach
 
 m_dep = cc.find_library('m', required: false)
 
+##########################
+# Platform Configuration #
+##########################
+
+if host_machine.system() == 'windows'
+  soversion = ''
+else
+  soversion = meson.project_version().split('.')[0]
+endif
+
 ###########
 # Library #
 ###########
@@ -109,20 +119,20 @@ sources = files(
 )
 
 # Set appropriate arguments for building against the library type
-subdir('meson/library')
 if get_option('default_library') == 'static_library'
   add_project_arguments(['-DEXESS_STATIC'], language: ['c'])
 endif
 
 # Build shared and/or static library
 libexess = library(
-  meson.project_name() + library_suffix,
+  versioned_name,
   sources,
   c_args: c_suppressions + ['-DEXESS_INTERNAL'],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
   install: true,
+  soversion: soversion,
   version: meson.project_version(),
 )
 
