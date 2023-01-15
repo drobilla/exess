@@ -68,7 +68,11 @@ m_dep = cc.find_library('m', required: false)
 # Platform Configuration #
 ##########################
 
+# Use versioned name everywhere to support parallel major version installations
 if host_machine.system() == 'windows'
+  if get_option('default_library') == 'both'
+    error('default_library=both is not supported on Windows')
+  endif
   soversion = ''
 else
   soversion = meson.project_version().split('.')[0]
