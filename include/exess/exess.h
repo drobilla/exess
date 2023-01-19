@@ -1,4 +1,4 @@
-// Copyright 2021 David Robillard <d@drobilla.net>
+// Copyright 2021-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_EXESS_H
@@ -54,7 +54,7 @@ extern "C" {
 #endif
 
 /**
-   @defgroup exess_c Exess C API
+   @defgroup exess Exess C API
    @{
 */
 
@@ -1209,6 +1209,9 @@ exess_write_hex(size_t                    data_size,
    @{
 */
 
+/**
+   An identifier for a supported datatype.
+*/
 typedef enum {
   EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
   EXESS_BOOLEAN,              ///< xsd:boolean (see @ref exess_boolean)

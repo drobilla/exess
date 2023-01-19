@@ -1,4 +1,4 @@
-# Copyright 2021 David Robillard <d@drobilla.net>
+# Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 config = configuration_data()
@@ -33,7 +33,7 @@ custom_target(
   build_by_default: true,
   command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'singlehtml'],
-  input: [c_rst_files, c_exess_rst, c_index_xml],
+  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
   install: true,
   install_dir: docdir / 'exess-0',
   output: 'singlehtml',
@@ -44,7 +44,7 @@ custom_target(
   build_by_default: true,
   command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
             '-E', '-q', '-t', 'html'],
-  input: [c_rst_files, c_exess_rst, c_index_xml],
+  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
   install: true,
   install_dir: docdir / 'exess-0',
   output: 'html',
