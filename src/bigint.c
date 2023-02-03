@@ -514,14 +514,12 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
   const unsigned rlz    = exess_bigint_leading_zeros(rhs);
 
   // Shift and subtract until the LHS does not have more bigits
-  int big_steps = 0;
   while (lhs->n_bigits > rhs->n_bigits) {
     const unsigned llz   = exess_bigint_leading_zeros(lhs);
     const unsigned shift = rlz - llz - 1;
 
     result += 1U << shift;
     exess_bigint_subtract_left_shifted(lhs, rhs, shift);
-    ++big_steps;
   }
 
   // Handle simple termination cases
@@ -540,7 +538,6 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
   }
 
   // Both now have the same number of digits, finish with subtraction
-  int final_steps = 0;
   for (; cmp >= 0; cmp = exess_bigint_compare(lhs, rhs)) {
     const unsigned llz = exess_bigint_leading_zeros(lhs);
     if (rlz == llz) {
@@ -552,7 +549,6 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
     const unsigned shift = rlz - llz - 1;
     result += 1U << shift;
     exess_bigint_subtract_left_shifted(lhs, rhs, shift);
-    ++final_steps;
   }
 
   return result;

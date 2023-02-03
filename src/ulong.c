@@ -23,10 +23,8 @@ exess_read_ulong(uint64_t* const out, const char* const str)
   }
 
   // Skip leading zeros
-  int n_zeroes = 0;
   while (str[i] == '0') {
     ++i;
-    ++n_zeroes;
   }
 
   // Read digits
