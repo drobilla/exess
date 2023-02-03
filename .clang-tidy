@@ -4,7 +4,9 @@
 Checks: >
   *,
   -altera-*,
+  -bugprone-assignment-in-if-condition,
   -llvmlibc-*,
+  -modernize-macro-to-enum,
   -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
