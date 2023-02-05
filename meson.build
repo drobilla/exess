@@ -123,15 +123,16 @@ sources = files(
 )
 
 # Set appropriate arguments for building against the library type
-if get_option('default_library') == 'static_library'
-  add_project_arguments(['-DEXESS_STATIC'], language: ['c'])
+extra_c_args = []
+if get_option('default_library') == 'static'
+  extra_c_args = ['-DEXESS_STATIC']
 endif
 
 # Build shared and/or static library
 libexess = library(
   versioned_name,
   sources,
-  c_args: c_suppressions + ['-DEXESS_INTERNAL'],
+  c_args: extra_c_args + c_suppressions + ['-DEXESS_INTERNAL'],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,

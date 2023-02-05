@@ -5,19 +5,19 @@ autoship = find_program('autoship', required: false)
 reuse = find_program('reuse', required: false)
 
 # Add extra warning suppressions for test code
-test_args = []
+test_suppressions = []
 if get_option('strict')
   if cc.get_id() == 'clang'
-    test_args = [
+    test_suppressions = [
       '-Wno-float-equal',
     ]
   elif cc.get_id() == 'gcc'
-    test_args = [
+    test_suppressions = [
       '-Wno-float-equal',
       '-Wno-suggest-attribute=pure',
     ]
   elif cc.get_id() == 'msvc'
-    test_args = [
+    test_suppressions = [
       '/wd4996',  # POSIX name is deprecated
     ]
   endif
@@ -72,7 +72,7 @@ foreach unit : public_tests
     executable(
       'test_@0@'.format(unit),
       files('test_@0@.c'.format(unit)),
-      c_args: c_suppressions + test_args,
+      c_args: extra_c_args + c_suppressions + test_suppressions,
       dependencies: [m_dep, exess_dep],
       include_directories: include_directories('../src'),
     ),
@@ -84,7 +84,7 @@ foreach unit : number_tests
   test_prog = executable(
     'test_@0@'.format(unit),
     files('test_@0@.c'.format(unit)),
-    c_args: c_suppressions + test_args,
+    c_args: extra_c_args + c_suppressions + test_suppressions,
     dependencies: [m_dep, exess_dep],
     include_directories: include_directories('../src'),
   )
@@ -100,7 +100,7 @@ endforeach
 test_short = executable(
   'test_short',
   files('test_short.c'),
-  c_args: c_suppressions + test_args,
+  c_args: extra_c_args + c_suppressions + test_suppressions,
   dependencies: [m_dep, exess_dep],
   include_directories: include_directories('../src'),
 )
@@ -140,62 +140,73 @@ endforeach
 # Private Unit Tests #
 ######################
 
-private_tests = [
-  'bigint',
-  'int_math',
-]
+if get_option('default_library') == 'shared'
+  # Build independent tests with the necessary library source code
 
-# Find or build a static library to link internal tests with
-if get_option('default_library') == 'both'
-  libexess_static = libexess.get_static_lib()
-elif get_option('default_library') == 'shared'
-  libexess_static = static_library(
-    versioned_name,
-    sources,
-    c_args: c_suppressions + ['-DEXESS_INTERNAL'],
-    dependencies: [m_dep],
-    gnu_symbol_visibility: 'default',
-    include_directories: include_directories(['../include', '../src']),
-  )
-else
-  libexess_static = libexess
-endif
-
-exess_static_dep = declare_dependency(
-  dependencies: [m_dep],
-  include_directories: include_directories(['../include']),
-  link_with: libexess_static,
-)
-
-foreach unit : private_tests
   test(
     unit,
     executable(
-      'test_@0@'.format(unit),
-      files('test_@0@.c'.format(unit)),
-      c_args: c_suppressions + test_args,
-      dependencies: exess_static_dep,
+      'test_int_math',
+      files('test_int_math.c', '../src/int_math.c'),
+      c_args: extra_c_args + c_suppressions + test_suppressions,
       include_directories: include_directories('../src')),
     suite: 'private',
   )
-endforeach
+
+  test(
+    unit,
+    executable(
+      'test_bigint',
+      files('test_bigint.c', '../src/bigint.c', '../src/int_math.c'),
+      c_args: extra_c_args + c_suppressions + test_suppressions,
+      include_directories: include_directories('../src')),
+    suite: 'private',
+  )
+
+else
+  # Use the main static library because private symbols are available
+  if get_option('default_library') == 'both'
+    libexess_static = libexess.get_static_lib()
+  else
+    libexess_static = libexess
+  endif
+
+  exess_static_dep = declare_dependency(
+    dependencies: [m_dep],
+    include_directories: include_directories(['../include']),
+    link_with: libexess_static,
+  )
+
+  foreach unit : ['bigint', 'int_math']
+    test(
+      unit,
+      executable(
+        'test_@0@'.format(unit),
+        files('test_@0@.c'.format(unit)),
+        c_args: extra_c_args + c_suppressions + test_suppressions,
+        dependencies: exess_static_dep,
+        include_directories: include_directories('../src')),
+      suite: 'private',
+    )
+  endforeach
+endif
 
 #######################
 # Header Warning Test #
 #######################
 
-header_c_args = []
+header_suppressions = []
 if cc.get_id() == 'clang'
-  header_c_args += [
+  header_suppressions += [
     '-Wno-nullability-extension',
     '-Wno-padded',
   ]
 elif cc.get_id() == 'gcc'
-  header_c_args += [
+  header_suppressions += [
     '-Wno-padded',
   ]
 elif cc.get_id() == 'msvc'
-  header_c_args += [
+  header_suppressions += [
     '/wd4820', # padding added after data member
   ]
 endif
@@ -205,7 +216,7 @@ test(
   executable(
     'test_headers',
     files('headers/test_headers.c'),
-    c_args: header_c_args,
+    c_args: extra_c_args + header_suppressions,
     dependencies: exess_dep,
     include_directories: include_dirs,
   ),
