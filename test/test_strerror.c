@@ -16,6 +16,7 @@ main(void)
     assert(strlen(exess_strerror(i)) > 0);
   }
 
+  assert(!strcmp(exess_strerror((ExessStatus)-1), "Unknown error"));
   assert(!strcmp(exess_strerror((ExessStatus)9999), "Unknown error"));
 
   return 0;

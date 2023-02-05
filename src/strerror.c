@@ -31,7 +31,6 @@ exess_strerror(const ExessStatus status)
     "Unsupported value",
   };
 
-  return (status >= EXESS_SUCCESS && status <= EXESS_UNSUPPORTED)
-           ? strings[status]
-           : "Unknown error";
+  return ((unsigned)status <= (unsigned)EXESS_UNSUPPORTED) ? strings[status]
+                                                           : "Unknown error";
 }
