@@ -69,12 +69,13 @@ number_tests = [
 foreach unit : public_tests
   test(
     unit,
-    executable('test_@0@'.format(unit),
-               files('test_@0@.c'.format(unit)),
-               c_args: c_suppressions + test_args,
-               dependencies: [m_dep, exess_dep],
-               include_directories: include_directories('../src'),
-              ),
+    executable(
+      'test_@0@'.format(unit),
+      files('test_@0@.c'.format(unit)),
+      c_args: c_suppressions + test_args,
+      dependencies: [m_dep, exess_dep],
+      include_directories: include_directories('../src'),
+    ),
     suite: 'public',
   )
 endforeach
@@ -151,19 +152,20 @@ elif get_option('default_library') == 'shared'
   libexess_static = static_library(
     versioned_name,
     sources,
-    include_directories: include_directories(['../include', '../src']),
     c_args: c_suppressions + ['-DEXESS_INTERNAL'],
     dependencies: [m_dep],
     gnu_symbol_visibility: 'default',
+    include_directories: include_directories(['../include', '../src']),
   )
 else
   libexess_static = libexess
 endif
 
 exess_static_dep = declare_dependency(
-  include_directories: include_directories(['../include']),
   dependencies: [m_dep],
-  link_with: libexess_static)
+  include_directories: include_directories(['../include']),
+  link_with: libexess_static,
+)
 
 foreach unit : private_tests
   test(
