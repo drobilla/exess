@@ -141,6 +141,13 @@ libexess = library(
   version: meson.project_version(),
 )
 
+# Declare dependency for internal meson dependants
+exess_dep = declare_dependency(
+  compile_args: extra_c_args,
+  include_directories: include_dirs,
+  link_with: libexess,
+)
+
 # Generage pkg-config file for external dependants
 pkg.generate(
   libexess,
@@ -149,12 +156,6 @@ pkg.generate(
   name: 'Exess',
   subdirs: [versioned_name],
   version: meson.project_version(),
-)
-
-# Declare dependency for internal meson dependants
-exess_dep = declare_dependency(
-  include_directories: include_dirs,
-  link_with: libexess,
 )
 
 # Override pkg-config dependency for internal meson dependants
