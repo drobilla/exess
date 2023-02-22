@@ -31,39 +31,6 @@ if get_option('strict') and not meson.is_subproject()
 endif
 subdir('meson/suppressions')
 
-#####################
-# Compiler Features #
-#####################
-
-feature_checks = {
-  'builtin_clz': 'return __builtin_clz(1);',
-  'builtin_clzll': 'return __builtin_clzll(1);',
-}
-
-foreach name, fragment : feature_checks
-  opt = get_option('use_@0@'.format(name))
-  code = 'int main(void) { @0@ }'.format(fragment)
-  define_name = 'HAVE_@0@'.format(name.to_upper())
-
-  if opt.enabled()
-    add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
-  elif opt.disabled()
-    add_project_arguments(['-D@0@=0'.format(define_name)], language: ['c'])
-  elif get_option('checks')
-    if cc.links(code, name: name)
-      add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
-    else
-      add_project_arguments(['-D@0@=0'.format(define_name)], language: ['c'])
-    endif
-  endif
-endforeach
-
-################
-# Dependencies #
-################
-
-m_dep = cc.find_library('m', required: false)
-
 ##########################
 # Platform Configuration #
 ##########################
@@ -77,6 +44,43 @@ if host_machine.system() == 'windows'
 else
   soversion = meson.project_version().split('.')[0]
 endif
+
+# Build platform-specific configuration arguments
+platform_c_args = []
+if get_option('checks').disabled()
+  # Generic build without platform-specific features
+  platform_c_args += ['-DEXESS_NO_DEFAULT_CONFIG']
+elif get_option('checks').auto()
+  # Statically detect configuration from the build environment
+  platform_c_args += system_c_args
+else
+  feature_checks = {
+    'builtin_clz': 'return __builtin_clz(1);',
+    'builtin_clzll': 'return __builtin_clzll(1);',
+  }
+
+  foreach name, fragment : feature_checks
+    opt = get_option('use_@0@'.format(name))
+    code = 'int main(void) { @0@ }'.format(fragment)
+    define_name = 'HAVE_@0@'.format(name.to_upper())
+
+    if opt.enabled()
+      add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
+    elif opt.disabled()
+      add_project_arguments(['-D@0@=0'.format(define_name)], language: ['c'])
+    elif cc.links(code, name: name)
+      add_project_arguments(['-D@0@=1'.format(define_name)], language: ['c'])
+    else
+      add_project_arguments(['-D@0@=0'.format(define_name)], language: ['c'])
+    endif
+  endforeach
+endif
+
+################
+# Dependencies #
+################
+
+m_dep = cc.find_library('m', required: false)
 
 ###########
 # Library #
@@ -132,7 +136,7 @@ endif
 libexess = library(
   versioned_name,
   sources,
-  c_args: extra_c_args + c_suppressions + ['-DEXESS_INTERNAL'],
+  c_args: platform_c_args + extra_c_args + c_suppressions + ['-DEXESS_INTERNAL'],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
@@ -152,6 +156,7 @@ exess_dep = declare_dependency(
 pkg.generate(
   libexess,
   description: 'Simple library for reading and writing XSD datatypes',
+  extra_cflags: extra_c_args,
   filebase: versioned_name,
   name: 'Exess',
   subdirs: [versioned_name],
