@@ -1089,14 +1089,13 @@ exess_base64_decoded_size(size_t length);
    an #EXESS_NO_SPACE error will be returned.  The required space can be
    calculated with exess_base64_decoded_size().
 
-   When this is called, the output blob must have the size of the available
-   buffer in bytes, and a pointer to the buffer.  On return, the size will be
-   set to the exact size of the decoded data, which may be smaller than the
-   initial available size.  Only these first bytes are written, the rest of the
-   buffer is not modified.
+   When this is called, `out` must point to a buffer of at least `out_size`
+   bytes.  The returned result contains the exact size of the decoded data,
+   which may be smaller than `out_size`.  Only these first bytes are written,
+   the rest of the buffer is not modified.
 
    @param out_size The size of `out` in bytes.
-   @param out The blob to set to the decoded binary data.
+   @param out Buffer where the decoded binary data will be written.
    @param str String to parse.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
@@ -1161,14 +1160,13 @@ exess_hex_decoded_size(size_t length);
    an #EXESS_NO_SPACE error will be returned.  The required space can be
    calculated with exess_hex_decoded_size().
 
-   When this is called, the output blob must have the size of the available
-   buffer in bytes, and a pointer to the buffer.  On return, the size will be
-   set to the exact size of the decoded data, which may be smaller than the
-   initial available size.  Only these first bytes are written, the rest of the
-   buffer is not modified.
+   When this is called, `out` must point to a buffer of at least `out_size`
+   bytes.  The returned result contains the exact size of the decoded data,
+   which may be smaller than `out_size`.  Only these first bytes are written,
+   the rest of the buffer is not modified.
 
    @param out_size The size of `out` in bytes.
-   @param out The blob to set to the decoded binary data.
+   @param out Buffer where the decoded binary data will be written.
    @param str String to parse.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
