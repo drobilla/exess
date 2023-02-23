@@ -28,26 +28,32 @@ endforeach
 subdir('xml')
 subdir('api')
 
-custom_target(
-  'singlehtml',
-  build_by_default: true,
-  command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
-            '-E', '-q', '-t', 'singlehtml'],
-  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
-  install: true,
-  install_dir: docdir / 'exess-0',
-  output: 'singlehtml',
-)
+if not get_option('singlehtml').disabled()
+  custom_target(
+    'singlehtml',
+    build_by_default: true,
+    command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
+              '-E', '-q', '-t', 'singlehtml'],
+    input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
+    install: true,
+    install_dir: docdir / versioned_name,
+    output: 'singlehtml',
+  )
+endif
 
-custom_target(
-  'html',
-  build_by_default: true,
-  command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
-            '-E', '-q', '-t', 'html'],
-  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
-  install: true,
-  install_dir: docdir / 'exess-0',
-  output: 'html',
-)
+if not get_option('html').disabled()
+  custom_target(
+    'html',
+    build_by_default: true,
+    command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
+              '-E', '-q', '-t', 'html'],
+    input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
+    install: true,
+    install_dir: docdir / versioned_name,
+    output: 'html',
+  )
+endif
 
-subdir('man')
+if not get_option('man').disabled()
+  subdir('man')
+endif

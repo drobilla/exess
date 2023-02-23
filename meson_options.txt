@@ -7,6 +7,15 @@ option('checks', type: 'feature', value: 'enabled', yield: true,
 option('docs', type: 'feature', value: 'auto', yield: true,
        description: 'Build documentation')
 
+option('html', type: 'feature', value: 'auto', yield: true,
+       description: 'Build paginated HTML documentation')
+
+option('man', type: 'feature', value: 'auto', yield: true,
+       description: 'Build man page documentation')
+
+option('singlehtml', type: 'feature', value: 'auto', yield: true,
+       description: 'Build single-page HTML documentation')
+
 option('strict', type: 'boolean', value: false, yield: true,
        description: 'Enable ultra-strict warnings')
 
