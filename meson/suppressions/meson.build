@@ -14,7 +14,7 @@
 if is_variable('cc')
   c_suppressions = []
 
-  if get_option('strict')
+  if get_option('warning_level') == 'everything'
     if cc.get_id() == 'emscripten'
       c_suppressions += [
         '-Wno-disabled-macro-expansion',
@@ -72,10 +72,20 @@ if is_variable('cc')
     c_suppressions += [
       '-Wno-nullability-extension',
     ]
+
+    if host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
+      c_suppressions += [
+        '-Wno-c11-extensions',
+      ]
+    endif
   endif
 
   if cc.get_id() == 'msvc'
     c_suppressions += [
+      '/experimental:external',
+      '/external:W0',
+      '/external:anglebrackets',
+
       '/wd4706', # assignment within conditional expression
       '/wd4996', # POSIX name for this item is deprecated
     ]

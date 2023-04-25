@@ -1,4 +1,4 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 default:
@@ -10,7 +10,7 @@ default:
 dev:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Db_coverage=true -Ddocs=enabled
+    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Db_coverage=true -Ddocs=enabled
     - ninja -C build test
     - ninja -C build coverage-html
     - meson configure -Dbuildtype=release -Db_coverage=false build
@@ -24,13 +24,13 @@ dev:
 static:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Ddefault_library=static -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Ddefault_library=static -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
 
 sanitize:
   image: lv2plugin/debian-x64-clang
   script:
-    - meson setup build -Db_lundef=false -Dbuildtype=plain -Dstrict=true -Dwerror=true -Dc_args="-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability" -Dc_link_args="-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability" -Ddocs=disabled
+    - meson setup build -Db_lundef=false -Dbuildtype=plain -Dwarning_level=3 -Dwerror=true -Dc_args="-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability" -Dc_link_args="-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability" -Ddocs=disabled
     - ninja -C build test
     - meson configure build -Dbuildtype=debugoptimized -Dc_args="" -Dc_link_args=""
     - meson configure build -Db_sanitize=thread
@@ -45,7 +45,7 @@ sanitize:
 fedora:
   image: lv2plugin/fedora-dev
   script:
-    - meson setup build -Dbuildtype=plain -Dstrict=true -Dwerror=true
+    - meson setup build -Dbuildtype=plain -Dwarning_level=3 -Dwerror=true
     - ninja -C build test
   variables:
     CFLAGS: -O2 -D_FORTIFY_SOURCE=2
@@ -55,7 +55,7 @@ fedora:
 arm32:
   image: lv2plugin/debian-arm32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/arm-linux-gnueabihf.ini -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -63,7 +63,7 @@ arm32:
 arm64:
   image: lv2plugin/debian-arm64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/aarch64-linux-gnu.ini -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -71,7 +71,7 @@ arm64:
 x32:
   image: lv2plugin/debian-x32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-linux-gnu.ini -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -79,7 +79,7 @@ x32:
 mingw32:
   image: lv2plugin/debian-mingw32
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/i686-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dbuildtype=debug -Dwarning_level=everything -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -90,7 +90,7 @@ mingw32:
 mingw64:
   image: lv2plugin/debian-mingw64
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/x86_64-w64-mingw32.ini -Dc_args="-static-libgcc" -Dc_link_args="-static-libgcc" -Dbuildtype=debug -Dwarning_level=everything -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -102,7 +102,7 @@ mingw64:
 freebsd:
   tags: [freebsd,meson]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -110,7 +110,7 @@ freebsd:
 mac:
   tags: [macos]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -118,7 +118,7 @@ mac:
 win:
   tags: [windows,meson]
   script:
-    - meson setup build -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddocs=disabled
+    - meson setup build -Dbuildtype=debug -Dwarning_level=everything -Dwerror=true -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test
@@ -126,7 +126,7 @@ win:
 wasm:
   image: lv2plugin/debian-wasm
   script:
-    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=debug -Dstrict=true -Dwerror=true -Ddefault_library=static -Ddocs=disabled
+    - meson setup build --cross-file=/usr/share/meson/cross/wasm.ini -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Ddefault_library=static -Ddocs=disabled
     - ninja -C build test
     - meson configure -Dbuildtype=release build
     - ninja -C build test

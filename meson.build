@@ -1,4 +1,4 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 project('exess', ['c'],
@@ -25,10 +25,6 @@ pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
 # Set global warning flags
-if get_option('strict') and not meson.is_subproject()
-  subdir('meson/warnings')
-  add_project_arguments(all_c_warnings, language: ['c'])
-endif
 subdir('meson/suppressions')
 
 ##########################

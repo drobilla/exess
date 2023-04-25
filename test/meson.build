@@ -6,7 +6,7 @@ reuse = find_program('reuse', required: false)
 
 # Add extra warning suppressions for test code
 test_suppressions = []
-if get_option('strict')
+if get_option('warning_level') == 'everything'
   if cc.get_id() == 'clang'
     test_suppressions = [
       '-Wno-float-equal',
@@ -196,7 +196,7 @@ endif
 #######################
 
 header_suppressions = []
-if cc.get_id() == 'clang'
+if cc.get_id() in ['clang', 'emscripten']
   header_suppressions += [
     '-Wno-nullability-extension',
     '-Wno-padded',
@@ -207,6 +207,10 @@ elif cc.get_id() == 'gcc'
   ]
 elif cc.get_id() == 'msvc'
   header_suppressions += [
+    '/experimental:external',
+    '/external:W0',
+    '/external:anglebrackets',
+
     '/wd4820', # padding added after data member
   ]
 endif
