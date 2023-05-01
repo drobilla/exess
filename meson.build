@@ -24,8 +24,98 @@ versioned_name = 'exess' + version_suffix
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
-# Set global warning flags
-subdir('meson/suppressions')
+# Set global warning suppressions
+warning_level = get_option('warning_level')
+c_suppressions = []
+if cc.get_id() in ['clang', 'emscripten']
+  if warning_level == 'everything'
+    c_suppressions += [
+      '-Wno-bad-function-cast',
+      '-Wno-c11-extensions',
+      '-Wno-declaration-after-statement',
+      '-Wno-padded',
+      '-Wno-switch-enum',
+    ]
+
+    if host_machine.system() == 'windows'
+      c_suppressions += [
+        '-Wno-deprecated-declarations',
+      ]
+    endif
+  endif
+
+  if warning_level in ['everything', '3']
+    c_suppressions += [
+      '-Wno-nullability-extension',
+    ]
+
+    if host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
+      c_suppressions += [
+        '-Wno-c11-extensions',
+      ]
+    endif
+  endif
+
+  if cc.get_id() == 'emscripten'
+    c_suppressions += [
+      '-Wno-disabled-macro-expansion',
+    ]
+  endif
+
+elif cc.get_id() == 'gcc'
+  if warning_level == 'everything'
+    c_suppressions += [
+      '-Wno-inline',
+      '-Wno-padded',
+      '-Wno-strict-overflow',
+      '-Wno-switch-default',
+      '-Wno-switch-enum',
+      '-Wno-unsuffixed-float-constants',
+      '-Wno-unused-const-variable',
+    ]
+
+    if host_machine.system() == 'windows'
+      c_suppressions += [
+        '-Wno-error=format', # MinGW
+      ]
+    endif
+  endif
+
+elif cc.get_id() == 'msvc'
+  c_suppressions += [
+    '/experimental:external',
+    '/external:W0',
+    '/external:anglebrackets',
+  ]
+
+  if warning_level == 'everything'
+    c_suppressions += [
+      '/wd4028', # formal parameter different from declaration
+      '/wd4061', # enumerator is not explicitly handled
+      '/wd4204', # nonstandard extension: non-constant aggregate initializer
+      '/wd4221', # initialized using address of automatic variable
+      '/wd4710', # function not inlined
+      '/wd4711', # function selected for automatic inline expansion
+      '/wd4738', # storing 32-bit float result in memory
+      '/wd4820', # padding added after data member
+      '/wd5045', # will insert Spectre mitigation
+    ]
+  endif
+
+  if warning_level in ['everything', '3']
+    c_suppressions += [
+      '/wd4706', # assignment within conditional expression
+    ]
+  endif
+
+  if warning_level in ['everything', '3', '2']
+    c_suppressions += [
+      '/wd4996', # POSIX name for this item is deprecated
+    ]
+  endif
+endif
+
+c_suppressions = cc.get_supported_arguments(c_suppressions)
 
 ##########################
 # Platform Configuration #
