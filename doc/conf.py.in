@@ -2,18 +2,26 @@
 # SPDX-License-Identifier: 0BSD OR ISC
 
 # Project information
-
 project = "Exess"
 copyright = "2021-2023, David Robillard"
 author = "David Robillard"
 release = "@EXESS_VERSION@"
+version = "@EXESS_VERSION@"
+desc = "A simple library for reading and writing XSD datatypes"
 
 # General configuration
-
 exclude_patterns = ["xml"]
 language = "en"
 nitpicky = True
 pygments_style = "friendly"
+
+# Try to import LV2 theme module
+try:
+    import sphinx_lv2_theme
+
+    have_lv2_theme = True
+except ModuleNotFoundError:
+    have_lv2_theme = False
 
 # Ignore everything opaque or external for nitpicky mode
 _opaque = [
@@ -33,46 +41,82 @@ nitpick_ignore = list(map(lambda x: ("c:identifier", x), _opaque))
 # HTML output
 
 html_copy_source = False
-html_short_title = "Exess"
-html_theme = "sphinx_lv2_theme"
+html_secnumber_suffix = " "
+html_short_title = "@EXESS_TITLE@"
 
-if tags.has("singlehtml"):
-    html_sidebars = {
-        "**": [
-            "globaltoc.html",
-        ]
-    }
+if have_lv2_theme:
+    html_theme = "sphinx_lv2_theme"
 
-    html_theme_options = {
-        "body_max_width": "48em",
-        "body_min_width": "48em",
-        "description": "A library for reading and writing XSD datatypes",
-        "show_footer_version": True,
-        "show_logo_version": False,
-        "logo_name": True,
-        "logo_width": "8em",
-        "nosidebar": False,
-        "page_width": "80em",
-        "sidebar_width": "18em",
-        "globaltoc_maxdepth": 3,
-        "globaltoc_collapse": False,
-    }
+    if tags.has("singlehtml"):
+        html_sidebars = {
+            "**": [
+                "globaltoc.html",
+            ]
+        }
+
+        html_theme_options = {
+            "body_max_width": "48em",
+            "body_min_width": "48em",
+            "description": "A library for reading and writing XSD datatypes",
+            "show_footer_version": True,
+            "show_logo_version": False,
+            "logo_name": True,
+            "logo_width": "8em",
+            "nosidebar": False,
+            "page_width": "80em",
+            "sidebar_width": "18em",
+            "globaltoc_maxdepth": 3,
+            "globaltoc_collapse": False,
+        }
+
+    else:
+        html_theme_options = {
+            "body_max_width": "60em",
+            "body_min_width": "40em",
+            "description": "A library for reading and writing XSD datatypes",
+            "show_footer_version": True,
+            "show_logo_version": False,
+            "logo_name": True,
+            "logo_width": "8em",
+            "nosidebar": True,
+            "page_width": "60em",
+            "sidebar_width": "14em",
+            "globaltoc_maxdepth": 1,
+            "globaltoc_collapse": True,
+        }
 
 else:
-    html_theme_options = {
-        "body_max_width": "60em",
-        "body_min_width": "40em",
-        "description": "A library for reading and writing XSD datatypes",
-        "show_footer_version": True,
-        "show_logo_version": False,
-        "logo_name": True,
-        "logo_width": "8em",
-        "nosidebar": True,
-        "page_width": "60em",
-        "sidebar_width": "14em",
-        "globaltoc_maxdepth": 1,
-        "globaltoc_collapse": True,
-    }
+    html_theme = "alabaster"
+
+    if tags.has("singlehtml"):
+        html_sidebars = {
+            "**": [
+                "globaltoc.html",
+            ]
+        }
+
+        html_theme_options = {
+            "body_max_width": "48em",
+            "body_min_width": "48em",
+            "description": desc,
+            "globaltoc_collapse": False,
+            "globaltoc_maxdepth": 3,
+            "logo_name": True,
+            "nosidebar": False,
+            "page_width": "80em",
+            "sidebar_width": "16em",
+        }
+
+    else:
+        html_theme_options = {
+            "body_max_width": "60em",
+            "body_min_width": "40em",
+            "description": desc,
+            "logo_name": True,
+            "nosidebar": True,
+            "page_width": "60em",
+            "show_relbars": True,
+        }
 
 # Man page output
 

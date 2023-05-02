@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: 0BSD OR ISC
 
 config = configuration_data()
+config.set('EXESS_TITLE', get_option('title'))
 config.set('EXESS_VERSION', meson.project_version())
 
 conf_py = configure_file(
