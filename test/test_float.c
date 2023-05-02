@@ -169,10 +169,10 @@ test_write_float(void)
 static void
 check_round_trip(const float value)
 {
-  float parsed_value                    = 0.0F;
-  char  buf[EXESS_MAX_FLOAT_LENGTH + 1] = {
-     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+  char buf[EXESS_MAX_FLOAT_LENGTH + 1] = {
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
+  float parsed_value = 0.0F;
   assert(!exess_write_float(value, sizeof(buf), buf).status);
   assert(!exess_read_float(&parsed_value, buf).status);
   assert(float_matches(parsed_value, value));
