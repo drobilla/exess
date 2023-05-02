@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_DECIMAL_H
@@ -12,6 +12,7 @@
 #  define DBL_DECIMAL_DIG 17
 #endif
 
+/// A "kind" of floating point number
 typedef enum {
   EXESS_NEGATIVE,
   EXESS_NEGATIVE_INFINITY,
@@ -22,6 +23,7 @@ typedef enum {
   EXESS_NAN,
 } ExessNumberKind;
 
+/// A floating point double stored as a decimal string
 typedef struct {
   ExessNumberKind kind;                        ///< Kind of number
   int             expt;                        ///< Power of 10 exponent
