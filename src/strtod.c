@@ -49,8 +49,6 @@ skip_zeros(const char* const str)
 ExessResult
 parse_decimal(ExessDecimalDouble* const out, const char* const str)
 {
-  memset(out, 0, sizeof(*out));
-
   // Read leading sign if present
   const char* s    = str;
   const int   sign = read_sign(&s);
@@ -115,8 +113,6 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
 ExessResult
 parse_double(ExessDecimalDouble* const out, const char* const str)
 {
-  memset(out, 0, sizeof(*out));
-
   // Handle non-numeric special cases
 
   if (!strcmp(str, "NaN")) {
