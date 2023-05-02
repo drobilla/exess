@@ -8,19 +8,19 @@
 #include <assert.h>
 #include <stdbool.h>
 
-static inline bool
+static bool
 less(const int cmp)
 {
   return cmp < 0;
 }
 
-static inline bool
+static bool
 equal(const int cmp)
 {
   return cmp == 0;
 }
 
-static inline bool
+static bool
 greater(const int cmp)
 {
   return cmp > 0;

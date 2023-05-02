@@ -14,7 +14,7 @@
 /// Hex encoding table
 static const char hex_map[] = "0123456789ABCDEF";
 
-static inline uint8_t
+static uint8_t
 decode_nibble(const char c)
 {
   if (is_digit(c)) {

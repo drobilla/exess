@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -219,17 +219,8 @@ exess_write_canonical(const char* const   str,
   case EXESS_NOTHING:
     break;
 
-  case EXESS_BOOLEAN:
-    r = write_bounded(str, datatype, buf_size, buf);
-    break;
-
   case EXESS_DECIMAL:
     r = write_decimal(str, buf_size, buf);
-    break;
-
-  case EXESS_DOUBLE:
-  case EXESS_FLOAT:
-    r = write_bounded(str, datatype, buf_size, buf);
     break;
 
   case EXESS_INTEGER:
@@ -250,25 +241,11 @@ exess_write_canonical(const char* const   str,
     }
     break;
 
-  case EXESS_LONG:
-  case EXESS_INT:
-  case EXESS_SHORT:
-  case EXESS_BYTE:
-    r = write_bounded(str, datatype, buf_size, buf);
-    break;
-
   case EXESS_NON_NEGATIVE_INTEGER:
     r = write_integer(str, buf_size, buf, &kind);
     if (kind == EXESS_NEGATIVE) {
       r.status = EXESS_BAD_VALUE;
     }
-    break;
-
-  case EXESS_ULONG:
-  case EXESS_UINT:
-  case EXESS_USHORT:
-  case EXESS_UBYTE:
-    r = write_bounded(str, datatype, buf_size, buf);
     break;
 
   case EXESS_POSITIVE_INTEGER:
@@ -278,19 +255,17 @@ exess_write_canonical(const char* const   str,
     }
     break;
 
-  case EXESS_DURATION:
-  case EXESS_DATETIME:
-  case EXESS_TIME:
-  case EXESS_DATE:
-    r = write_bounded(str, datatype, buf_size, buf);
-    break;
-
   case EXESS_HEX:
     r = write_hex(str, buf_size, buf);
     break;
 
   case EXESS_BASE64:
     r = write_base64(str, buf_size, buf);
+    break;
+
+  default:
+    r = write_bounded(str, datatype, buf_size, buf);
+    break;
   }
 
   return end_write(r.status, buf_size, buf, r.count);

@@ -10,6 +10,53 @@
 #include <string.h>
 
 size_t
+write_char(const char c, const size_t buf_size, char* const buf, const size_t i)
+{
+  if (buf && buf_size >= i + 1) {
+    buf[i] = c;
+  }
+
+  return 1;
+}
+
+size_t
+write_string(const size_t      len,
+             const char* const str,
+             const size_t      buf_size,
+             char* const       buf,
+             const size_t      i)
+{
+  if (buf && buf_size >= i + len + 1) {
+    memcpy(buf + i, str, len);
+    buf[i + len] = 0;
+  }
+
+  return len;
+}
+
+ExessResult
+end_write(const ExessStatus status,
+          const size_t      buf_size,
+          char* const       buf,
+          const size_t      i)
+{
+  ExessResult r = {status, status > EXESS_EXPECTED_END ? 0 : i};
+
+  if (buf) {
+    if (!status && i >= buf_size) {
+      r.status = EXESS_NO_SPACE;
+      r.count  = 0;
+    }
+
+    if (r.count < buf_size) {
+      buf[r.count] = '\0';
+    }
+  }
+
+  return r;
+}
+
+size_t
 write_two_digit_number(const uint8_t value,
                        const size_t  buf_size,
                        char* const   buf,

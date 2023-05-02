@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "date_utils.h"
@@ -156,13 +156,12 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
 
   static const int32_t giga = 1000000000;
 
-  const int32_t d_year       = d.months / 12;
-  const int32_t d_month      = d.months % 12;
-  const int32_t d_day        = d.seconds / (24 * 60 * 60);
-  const int32_t d_hour       = d.seconds / 60 / 60 % 24;
-  const int32_t d_minute     = d.seconds / 60 % 60;
-  const int32_t d_second     = d.seconds % 60;
-  const int32_t d_nanosecond = d.nanoseconds;
+  const int32_t d_year   = d.months / 12;
+  const int32_t d_month  = d.months % 12;
+  const int32_t d_day    = d.seconds / (24 * 60 * 60);
+  const int32_t d_hour   = d.seconds / 60 / 60 % 24;
+  const int32_t d_minute = d.seconds / 60 % 60;
+  const int32_t d_second = d.seconds % 60;
 
   ExessDateTime e     = {0, 0U, 0U, s.is_utc, 0U, 0U, 0U, 0U};
   int32_t       temp  = 0;
@@ -194,7 +193,7 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
   // Day time
 
   e.nanosecond =
-    (uint32_t)add_field((int32_t)s.nanosecond, d_nanosecond, giga, &carry);
+    (uint32_t)add_field((int32_t)s.nanosecond, d.nanoseconds, giga, &carry);
 
   e.second = (uint8_t)add_field(s.second, d_second, 60, &carry);
   e.minute = (uint8_t)add_field(s.minute, d_minute, 60, &carry);

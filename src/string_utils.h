@@ -17,17 +17,8 @@ in_range(const int c, const int min, const int max)
 static inline bool
 is_space(const int c)
 {
-  switch (c) {
-  case ' ':
-  case '\f':
-  case '\n':
-  case '\r':
-  case '\t':
-  case '\v':
-    return true;
-  default:
-    return false;
-  }
+  return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
+         c == '\v';
 }
 
 /// ALPHA ::= [A-Za-z]

@@ -185,6 +185,7 @@ sources = files(
   'src/compare.c',
   'src/datatype.c',
   'src/date.c',
+  'src/date_utils.c',
   'src/datetime.c',
   'src/decimal.c',
   'src/digits.c',

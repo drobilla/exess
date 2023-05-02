@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 
-static inline int
+static int
 read_sign(const char** const sptr)
 {
   if (**sptr == '-') {
@@ -35,7 +35,7 @@ read_sign(const char** const sptr)
   return 1;
 }
 
-static inline int
+static int
 skip_zeros(const char* const str)
 {
   int n = 0;

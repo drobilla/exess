@@ -172,7 +172,7 @@ emit_digits(ExessBigint* const       numer,
 }
 
 /// Return true if the lower boundary is closer than the upper boundary
-static inline bool
+static bool
 double_lower_boundary_is_closer(const double d)
 {
   const uint64_t rep          = double_to_rep(d);
