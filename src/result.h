@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_RESULT_H
-#define EXESS_RESULT_H
+#ifndef EXESS_SRC_RESULT_H
+#define EXESS_SRC_RESULT_H
 
 #include "exess/exess.h"
 
@@ -24,4 +24,4 @@ vresult(const ExessStatus status,
   return r;
 }
 
-#endif // EXESS_RESULT_H
+#endif // EXESS_SRC_RESULT_H

@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_DATE_UTILS_H
-#define EXESS_DATE_UTILS_H
+#ifndef EXESS_SRC_DATE_UTILS_H
+#define EXESS_SRC_DATE_UTILS_H
 
 #include "exess/exess.h"
 
@@ -45,4 +45,4 @@ write_year_number(int16_t value, size_t buf_size, char* buf);
 ExessResult
 read_date_numbers(ExessDate* out, const char* str);
 
-#endif // EXESS_DATE_UTILS_H
+#endif // EXESS_SRC_DATE_UTILS_H

@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_DECIMAL_H
-#define EXESS_DECIMAL_H
+#ifndef EXESS_SRC_DECIMAL_H
+#define EXESS_SRC_DECIMAL_H
 
 // Define C11 numeric constants if the compiler hasn't already
 #ifndef FLT_DECIMAL_DIG
@@ -35,4 +35,4 @@ exess_measure_float(float f);
 ExessDecimalDouble
 exess_measure_double(double d);
 
-#endif // EXESS_DECIMAL_H
+#endif // EXESS_SRC_DECIMAL_H

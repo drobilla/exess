@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SOFT_FLOAT_H
-#define EXESS_SOFT_FLOAT_H
+#ifndef EXESS_SRC_SOFT_FLOAT_H
+#define EXESS_SRC_SOFT_FLOAT_H
 
 #include "attributes.h"
 
@@ -55,4 +55,4 @@ soft_float_exact_pow10(int expt);
 ExessSoftFloat
 soft_float_pow10_under(int max_exponent, int* pow10_exponent);
 
-#endif // EXESS_SOFT_FLOAT_H
+#endif // EXESS_SRC_SOFT_FLOAT_H

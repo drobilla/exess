@@ -1,8 +1,8 @@
 // Copyright 2011-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_STRING_UTILS_H
-#define EXESS_STRING_UTILS_H
+#ifndef EXESS_SRC_STRING_UTILS_H
+#define EXESS_SRC_STRING_UTILS_H
 
 #include <stdbool.h>
 
@@ -58,4 +58,4 @@ is_base64(const int c)
   return is_alpha(c) || is_digit(c) || c == '+' || c == '/' || c == '=';
 }
 
-#endif // EXESS_STRING_UTILS_H
+#endif // EXESS_SRC_STRING_UTILS_H

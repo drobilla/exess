@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_READ_UTILS_H
-#define EXESS_READ_UTILS_H
+#ifndef EXESS_SRC_READ_UTILS_H
+#define EXESS_SRC_READ_UTILS_H
 
 #include "result.h"
 #include "string_utils.h"
@@ -55,4 +55,4 @@ end_read(const ExessStatus status, const char* str, const size_t i)
   return result((status || is_end(str[i])) ? status : EXESS_EXPECTED_END, i);
 }
 
-#endif // EXESS_READ_UTILS_H
+#endif // EXESS_SRC_READ_UTILS_H

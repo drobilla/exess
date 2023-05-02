@@ -1,8 +1,8 @@
 // Copyright 2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_TIMEZONE_H
-#define EXESS_TIMEZONE_H
+#ifndef EXESS_SRC_TIMEZONE_H
+#define EXESS_SRC_TIMEZONE_H
 
 #include "exess/exess.h"
 
@@ -43,4 +43,4 @@ write_timezone(ExessTimezone        value,
                char* EXESS_NULLABLE buf,
                size_t               o);
 
-#endif // EXESS_TIMEZONE_H
+#endif // EXESS_SRC_TIMEZONE_H

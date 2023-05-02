@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_WRITE_UTILS_H
-#define EXESS_WRITE_UTILS_H
+#ifndef EXESS_SRC_WRITE_UTILS_H
+#define EXESS_SRC_WRITE_UTILS_H
 
 #include "exess/exess.h"
 
@@ -69,4 +69,4 @@ write_special(size_t      string_length,
               size_t      buf_size,
               char*       buf);
 
-#endif // EXESS_WRITE_UTILS_H
+#endif // EXESS_SRC_WRITE_UTILS_H

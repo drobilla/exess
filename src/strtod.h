@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_STRTOD_H
-#define EXESS_STRTOD_H
+#ifndef EXESS_SRC_STRTOD_H
+#define EXESS_SRC_STRTOD_H
 
 #include "decimal.h"
 
@@ -17,4 +17,4 @@ parse_double(ExessDecimalDouble* out, const char* str);
 double
 parsed_double_to_double(ExessDecimalDouble in);
 
-#endif // EXESS_STRTOD_H
+#endif // EXESS_SRC_STRTOD_H

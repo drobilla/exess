@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_WARNINGS_H
-#define EXESS_WARNINGS_H
+#ifndef EXESS_SRC_WARNINGS_H
+#define EXESS_SRC_WARNINGS_H
 
 #if defined(__clang__)
 
@@ -30,4 +30,4 @@
 
 #endif
 
-#endif // EXESS_WARNINGS_H
+#endif // EXESS_SRC_WARNINGS_H

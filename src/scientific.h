@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SCIENTIFIC_H
-#define EXESS_SCIENTIFIC_H
+#ifndef EXESS_SRC_SCIENTIFIC_H
+#define EXESS_SRC_SCIENTIFIC_H
 
 #include "decimal.h"
 
@@ -19,4 +19,4 @@ exess_write_scientific(ExessDecimalDouble  value,
                        size_t              n,
                        char* EXESS_NONNULL buf);
 
-#endif // EXESS_SCIENTIFIC_H
+#endif // EXESS_SRC_SCIENTIFIC_H

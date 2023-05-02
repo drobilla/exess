@@ -32,8 +32,8 @@
     source code that touches `HAVE` symbols.
 */
 
-#ifndef EXESS_CONFIG_H
-#define EXESS_CONFIG_H
+#ifndef EXESS_SRC_CONFIG_H
+#define EXESS_SRC_CONFIG_H
 
 // Define version unconditionally so a warning will catch a mismatch
 #define EXESS_VERSION "0.0.1"
@@ -84,4 +84,4 @@
 #  define USE_BUILTIN_CLZLL 0
 #endif
 
-#endif // EXESS_CONFIG_H
+#endif // EXESS_SRC_CONFIG_H

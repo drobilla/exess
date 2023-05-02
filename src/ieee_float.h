@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_IEEE_FLOAT_H
-#define EXESS_IEEE_FLOAT_H
+#ifndef EXESS_SRC_IEEE_FLOAT_H
+#define EXESS_SRC_IEEE_FLOAT_H
 
 #include <float.h>
 #include <stdint.h>
@@ -33,4 +33,4 @@ double_to_rep(const double d)
   return rep;
 }
 
-#endif // EXESS_IEEE_FLOAT_H
+#endif // EXESS_SRC_IEEE_FLOAT_H

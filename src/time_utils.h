@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_TIME_UTILS_H
-#define EXESS_TIME_UTILS_H
+#ifndef EXESS_SRC_TIME_UTILS_H
+#define EXESS_SRC_TIME_UTILS_H
 
 #include "exess/exess.h"
 
@@ -21,4 +21,4 @@ write_nanoseconds(uint32_t nanosecond, size_t buf_size, char* buf, size_t i);
 ExessResult
 write_time(ExessTime value, size_t buf_size, char* buf, size_t offset);
 
-#endif // EXESS_TIME_UTILS_H
+#endif // EXESS_SRC_TIME_UTILS_H

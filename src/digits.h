@@ -1,8 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_DIGITS_H
-#define EXESS_DIGITS_H
+#ifndef EXESS_SRC_DIGITS_H
+#define EXESS_SRC_DIGITS_H
 
 typedef struct {
   unsigned count; ///< Number of digits
@@ -22,4 +22,4 @@ typedef struct {
 ExessDigitCount
 exess_digits(double d, char* buf, unsigned max_digits);
 
-#endif // EXESS_DIGITS_H
+#endif // EXESS_SRC_DIGITS_H
