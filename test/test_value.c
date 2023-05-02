@@ -76,7 +76,7 @@ test_read_value(void)
   {
     float a_float = NAN;
     check_read(&a_float, EXESS_FLOAT, "5.6", EXESS_SUCCESS, 3);
-    assert(float_matches(a_float, 5.6F));
+    assert(float_matches(a_float, 5.6f));
   }
   {
     int64_t a_long = 0;
@@ -225,7 +225,7 @@ test_write_value(void)
   const bool          a_bool     = true;
   const double        a_decimal  = 1.2;
   const double        a_double   = 3.4;
-  const float         a_float    = 5.6F;
+  const float         a_float    = 5.6f;
   const int64_t       a_long     = 7;
   const int32_t       a_int      = 8;
   const int16_t       a_short    = 9;

@@ -15,7 +15,7 @@
 static inline float
 float_from_rep(const uint32_t rep)
 {
-  float f = 0.0F;
+  float f = 0.0f;
   memcpy(&f, &rep, sizeof(f));
   return f;
 }
@@ -56,8 +56,8 @@ float_ulp_distance(const float a, const float b)
   assert(!isnan(b));
   EXESS_RESTORE_WARNINGS
 
-  assert(a >= 0.0F);
-  assert(b >= 0.0F);
+  assert(a >= 0.0f);
+  assert(b >= 0.0f);
 
   const uint32_t ia = float_to_rep(a);
   const uint32_t ib = float_to_rep(b);

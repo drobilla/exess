@@ -180,7 +180,7 @@ coerce_to_ulong(uint64_t* const      out,
       return EXESS_WOULD_ROUND;
     }
 
-    if (*(const float*)in < 0.0F || *(const float*)in > (float)MAX_FLOAT_INT) {
+    if (*(const float*)in < 0.0f || *(const float*)in > (float)MAX_FLOAT_INT) {
       return EXESS_OUT_OF_RANGE;
     }
 
