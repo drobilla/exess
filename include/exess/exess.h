@@ -58,10 +58,19 @@ extern "C" {
    @{
 */
 
+/**
+   @defgroup exess_symbols Symbols
+
+   Preprocessor symbols for convenience.
+
+   @{
+*/
+
 /// The base URI of XML Schema, `http://www.w3.org/2001/XMLSchema#`
 #define EXESS_XSD_URI "http://www.w3.org/2001/XMLSchema#"
 
 /**
+   @}
    @defgroup exess_status Status
 
    Status codes and return values used for error handling.
