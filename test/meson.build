@@ -1,9 +1,6 @@
 # Copyright 2021-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-autoship = find_program('autoship', required: false)
-reuse = find_program('reuse', required: false)
-
 # Add extra warning suppressions for test code
 test_suppressions = []
 if get_option('warning_level') == 'everything'
@@ -23,14 +20,18 @@ if get_option('warning_level') == 'everything'
   endif
 endif
 
-# Check project metadata
-if autoship.found()
-  test('autoship', autoship, args: ['test', exess_src_root], suite: 'data')
-endif
+if get_option('lint')
+  # Check project metadata
+  autoship = find_program('autoship', required: false)
+  if autoship.found()
+    test('autoship', autoship, args: ['test', exess_src_root], suite: 'data')
+  endif
 
-# Check licensing metadata
-if reuse.found()
-  test('REUSE', reuse, args: ['--root', exess_src_root, 'lint'], suite: 'data')
+  # Check licensing metadata
+  reuse = find_program('reuse', required: false)
+  if reuse.found()
+    test('REUSE', reuse, args: ['--root', exess_src_root, 'lint'], suite: 'data')
+  endif
 endif
 
 # Public API tests

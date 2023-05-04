@@ -10,6 +10,9 @@ option('docs', type: 'feature', value: 'auto', yield: true,
 option('html', type: 'feature', value: 'auto', yield: true,
        description: 'Build paginated HTML documentation')
 
+option('lint', type: 'boolean', value: false, yield: true,
+       description: 'Run code quality checks')
+
 option('man', type: 'feature', value: 'auto', yield: true,
        description: 'Build man page documentation')
 
