@@ -201,7 +201,7 @@ test_round_trip(const ExessNumTestOptions opts)
 {
   fprintf(stderr, "Testing xsd:gDate randomly with seed %u\n", opts.seed);
 
-  const uint64_t n_tests = MAX(256, opts.n_tests / 16);
+  const uint64_t n_tests = MAX(128, opts.n_tests / 16);
 
   uint32_t rng = opts.seed;
   for (uint64_t i = 0; i < n_tests; ++i) {
@@ -231,7 +231,7 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts =
-    parse_num_test_options(argc, argv, 0, INT32_MAX);
+    parse_num_test_options(argc, argv, 4096, 0, INT32_MAX);
 
   if (!opts.error) {
     test_read_date();

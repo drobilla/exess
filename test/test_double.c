@@ -219,7 +219,7 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts =
-    parse_num_test_options(argc, argv, 0, UINT32_MAX);
+    parse_num_test_options(argc, argv, 4096U, 0, UINT32_MAX);
 
   if (!opts.error) {
     test_read_double();

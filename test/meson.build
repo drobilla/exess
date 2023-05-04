@@ -91,10 +91,15 @@ foreach unit : number_tests
   )
 
   # Run default randomized test (like the others run above)
-  test(unit, test_prog, suite: 'public')
+  test(unit, test_prog, suite: ['public', 'random'])
 
   # Run a short exhaustive test (mainly to hit the test code)
-  test(unit, test_prog, args: ['-x', '-l', '0', '-h', '512'], suite: 'public')
+  test(
+    unit,
+    test_prog,
+    args: ['-x', '-l', '0', '-h', '512'],
+    suite: ['public', 'range'],
+  )
 endforeach
 
 # Build test_uint as above, but keep the target to test options

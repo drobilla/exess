@@ -104,7 +104,7 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts =
-    parse_num_test_options(argc, argv, INT32_MIN, INT32_MAX);
+    parse_num_test_options(argc, argv, 16384U, INT32_MIN, INT32_MAX);
 
   if (!opts.error) {
     test_read_int();

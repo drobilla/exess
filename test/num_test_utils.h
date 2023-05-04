@@ -37,10 +37,11 @@ print_num_test_usage(const char* const name)
 static ExessNumTestOptions
 parse_num_test_options(const int          argc,
                        char* const* const argv,
+                       const size_t       default_n_tests,
                        const int64_t      min_rep,
                        const int64_t      max_rep)
 {
-  ExessNumTestOptions opts = {16384U,
+  ExessNumTestOptions opts = {default_n_tests,
                               min_rep,
                               max_rep,
                               (uint32_t)time(NULL) + (uint32_t)getpid(),

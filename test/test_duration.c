@@ -285,7 +285,7 @@ int
 main(int argc, char** argv)
 {
   const ExessNumTestOptions opts =
-    parse_num_test_options(argc, argv, 0U, INT32_MAX);
+    parse_num_test_options(argc, argv, 16384U, 0U, INT32_MAX);
 
   if (!opts.error) {
     test_read_duration();
