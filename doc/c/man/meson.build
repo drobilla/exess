@@ -104,7 +104,7 @@ foreach man_link : man_links
   custom_target(
     link,
     build_by_default: true,
-    command: [make_man_link, target, '@OUTPUT@'],
+    command: [make_man_link, 'man3/' + target, '@OUTPUT@'],
     input: man_docs,
     install: true,
     install_dir: get_option('mandir') / 'man3',
