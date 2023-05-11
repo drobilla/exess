@@ -735,9 +735,9 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    non-positive members, and a positive duration has all non-negative members.
 */
 typedef struct {
-  int32_t months;
-  int32_t seconds;
-  int32_t nanoseconds;
+  int32_t months;      ///< Number of months
+  int32_t seconds;     ///< Number of seconds
+  int32_t nanoseconds; ///< Number of nanoseconds
 } ExessDuration;
 
 /**
@@ -949,10 +949,10 @@ exess_timezone(int8_t hours, int8_t minutes);
 
 /// Date (xsd:date)
 typedef struct {
-  int16_t       year;
-  uint8_t       month;
-  uint8_t       day;
-  ExessTimezone zone;
+  int16_t       year;  ///< Year
+  uint8_t       month; ///< Month: [1, 12]
+  uint8_t       day;   ///< Day: [1, 31]
+  ExessTimezone zone;  ///< Time zone
 } ExessDate;
 
 /**
@@ -1360,22 +1360,22 @@ exess_write_canonical(const char* EXESS_NONNULL value,
    numeric or time-based value and casting it to the appropriate type.
 */
 typedef union {
-  bool          as_bool;
-  double        as_double;
-  float         as_float;
-  int64_t       as_long;
-  int32_t       as_int;
-  int16_t       as_short;
-  int8_t        as_byte;
-  uint64_t      as_ulong;
-  uint32_t      as_uint;
-  uint16_t      as_ushort;
-  uint8_t       as_ubyte;
-  ExessDuration as_duration;
-  ExessDateTime as_datetime;
-  ExessTime     as_time;
-  ExessDate     as_date;
-  uint8_t       as_blob[EXESS_MAX_VALUE_SIZE];
+  bool          as_bool;                       ///< #EXESS_BOOLEAN
+  double        as_double;                     ///< #EXESS_DOUBLE
+  float         as_float;                      ///< #EXESS_FLOAT
+  int64_t       as_long;                       ///< #EXESS_LONG
+  int32_t       as_int;                        ///< #EXESS_INT
+  int16_t       as_short;                      ///< #EXESS_SHORT
+  int8_t        as_byte;                       ///< #EXESS_BYTE
+  uint64_t      as_ulong;                      ///< #EXESS_ULONG
+  uint32_t      as_uint;                       ///< #EXESS_UINT
+  uint16_t      as_ushort;                     ///< #EXESS_USHORT
+  uint8_t       as_ubyte;                      ///< #EXESS_UBYTE
+  ExessDuration as_duration;                   ///< #EXESS_DURATION
+  ExessDateTime as_datetime;                   ///< #EXESS_DATETIME
+  ExessTime     as_time;                       ///< #EXESS_TIME
+  ExessDate     as_date;                       ///< #EXESS_DATE
+  uint8_t       as_blob[EXESS_MAX_VALUE_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
 } ExessValue;
 
 /**
