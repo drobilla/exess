@@ -78,8 +78,9 @@ Documentation
 -------------
 
  * [Installation instructions](INSTALL.md)
- * [API reference (single page)](https://drobilla.gitlab.io/exess/c/singlehtml)
- * [API reference (paginated)](https://drobilla.gitlab.io/exess/c/html)
+ * [API reference (single page)](https://drobilla.gitlab.io/exess/doc/singlehtml/)
+ * [API reference (paginated)](https://drobilla.gitlab.io/exess/doc/html/)
+ * [API reference (EPub)](https://drobilla.gitlab.io/exess/doc/Exess-0.0.1.epub)
 
  -- David Robillard <d@drobilla.net>
 
