@@ -44,79 +44,76 @@ html_copy_source = False
 html_secnumber_suffix = " "
 html_short_title = "@EXESS_TITLE@"
 
+html_theme_options = {
+    "description": desc,
+    "logo_name": True,
+}
+
+if tags.has("singlehtml"):
+    html_sidebars = {"**": ["globaltoc.html"]}
+    html_theme_options.update(
+        {
+            "globaltoc_collapse": False,
+            "globaltoc_maxdepth": 3,
+            "nosidebar": False,
+            "page_width": "80em",
+        }
+    )
+else:
+    html_theme_options.update(
+        {
+            "globaltoc_collapse": True,
+            "globaltoc_maxdepth": 1,
+            "nosidebar": True,
+            "page_width": "60em",
+        }
+    )
+
 if have_lv2_theme:
     html_theme = "sphinx_lv2_theme"
 
+    html_theme_options.update(
+        {
+            "show_footer_version": True,
+            "show_logo_version": True,
+        }
+    )
+
     if tags.has("singlehtml"):
-        html_sidebars = {
-            "**": [
-                "globaltoc.html",
-            ]
-        }
-
-        html_theme_options = {
-            "body_max_width": "48em",
-            "body_min_width": "48em",
-            "description": "A library for reading and writing XSD datatypes",
-            "show_footer_version": True,
-            "show_logo_version": False,
-            "logo_name": True,
-            "logo_width": "8em",
-            "nosidebar": False,
-            "page_width": "80em",
-            "sidebar_width": "18em",
-            "globaltoc_maxdepth": 3,
-            "globaltoc_collapse": False,
-        }
-
+        html_theme_options.update(
+            {
+                "body_max_width": "60em",
+                "body_min_width": "60em",
+                "sidebar_width": "16em",
+            }
+        )
     else:
-        html_theme_options = {
-            "body_max_width": "60em",
-            "body_min_width": "40em",
-            "description": "A library for reading and writing XSD datatypes",
-            "show_footer_version": True,
-            "show_logo_version": False,
-            "logo_name": True,
-            "logo_width": "8em",
-            "nosidebar": True,
-            "page_width": "60em",
-            "sidebar_width": "14em",
-            "globaltoc_maxdepth": 1,
-            "globaltoc_collapse": True,
-        }
+        html_theme_options.update(
+            {
+                "body_max_width": "60em",
+                "body_min_width": "40em",
+            }
+        )
 
 else:
     html_theme = "alabaster"
 
     if tags.has("singlehtml"):
-        html_sidebars = {
-            "**": [
-                "globaltoc.html",
-            ]
-        }
-
-        html_theme_options = {
-            "body_max_width": "48em",
-            "body_min_width": "48em",
-            "description": desc,
-            "globaltoc_collapse": False,
-            "globaltoc_maxdepth": 3,
-            "logo_name": True,
-            "nosidebar": False,
-            "page_width": "80em",
-            "sidebar_width": "16em",
-        }
-
+        html_theme_options.update(
+            {
+                "body_max_width": "48em",
+                "body_min_width": "48em",
+                "sidebar_width": "18em",
+            }
+        )
     else:
-        html_theme_options = {
-            "body_max_width": "60em",
-            "body_min_width": "40em",
-            "description": desc,
-            "logo_name": True,
-            "nosidebar": True,
-            "page_width": "60em",
-            "show_relbars": True,
-        }
+        html_theme_options.update(
+            {
+                "body_max_width": "60em",
+                "body_min_width": "40em",
+                "show_relbars": True,
+            }
+        )
 
 # Man page output
 

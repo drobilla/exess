@@ -256,6 +256,19 @@ meson.override_dependency(versioned_name, exess_dep)
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'exess')
 
+# Display top-level summary (augmented in subdirectories)
+if not meson.is_subproject()
+  summary(
+    'Tests',
+    not get_option('tests').disabled(),
+    bool_yn: true,
+    section: 'Configuration',
+  )
+  summary('Install prefix', get_option('prefix'), section: 'Directories')
+  summary('Headers', get_option('prefix') / get_option('includedir'), section: 'Directories')
+  summary('Libraries', get_option('prefix') / get_option('libdir'), section: 'Directories')
+endif
+
 #######################
 # Optional Components #
 #######################
@@ -266,11 +279,4 @@ endif
 
 if not get_option('tests').disabled()
   subdir('test')
-endif
-
-if not meson.is_subproject()
-  summary('Tests', not get_option('tests').disabled(), bool_yn: true)
-  summary('Install prefix', get_option('prefix'))
-  summary('Headers', get_option('prefix') / get_option('includedir'))
-  summary('Libraries', get_option('prefix') / get_option('libdir'))
 endif

@@ -142,7 +142,7 @@ For example, this will print ``123``:
    char buf[4] = {0};
 
    ExessResult r = exess_write_canonical(" +123", EXESS_INT, sizeof(buf), buf);
-   if (!r) {
+   if (!r.status) {
      printf("%s\n", buf);
    }
 
