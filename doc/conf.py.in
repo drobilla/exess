@@ -43,6 +43,7 @@ nitpick_ignore = list(map(lambda x: ("c:identifier", x), _opaque))
 html_copy_source = False
 html_secnumber_suffix = " "
 html_short_title = "@EXESS_TITLE@"
+html_static_path = ["@EXESS_STATIC_PATH@"]
 
 html_theme_options = {
     "description": desc,
@@ -114,6 +115,14 @@ else:
                 "show_relbars": True,
             }
         )
+
+# EPub output
+
+epub_show_urls = "no"
+epub_description = "Exess, a library for reading and writing XSD datatypes."
+epub_title = "Exess @EXESS_VERSION@ Documentation"
+epub_basename = "Exess-@EXESS_VERSION@"
+epub_css_files = ["epubstyle.css"]
 
 # Man page output
 

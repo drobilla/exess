@@ -26,7 +26,7 @@ For example:
    int32_t     value = 0;
    ExessResult r     = exess_read_int(&value, "1234");
    if (!r.status) {
-     fprintf(stderr, "Read %zu bytes as int %d\n", r.count, value);
+     fprintf(stderr, "Read %zu bytes as %d\n", r.count, value);
    }
 
 If there was a syntax error,
@@ -135,13 +135,14 @@ simply read a value,
 then write it.
 If the value itself isn't required,
 then :func:`exess_write_canonical` can be used to do this in a single step.
-For example, this will print ``123``:
+For example, this will print ``12``:
 
 .. code-block:: c
 
-   char buf[4] = {0};
+   char        buf[4] = {0};
+   ExessResult r      = exess_write_canonical(
+     "+12", EXESS_INT, sizeof(buf), buf);
 
-   ExessResult r = exess_write_canonical(" +123", EXESS_INT, sizeof(buf), buf);
    if (!r.status) {
      printf("%s\n", buf);
    }

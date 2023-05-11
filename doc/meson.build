@@ -24,6 +24,8 @@ if not meson.is_subproject()
 endif
 
 if build_docs
+  subdir('_static')
+
   # Warn if the "official" theme isn't present
   pymod = import('python')
   doc_modules = ['sphinx_lv2_theme']
@@ -33,6 +35,7 @@ if build_docs
 
   # Configure conf.py for Sphinx
   config = configuration_data()
+  config.set('EXESS_STATIC_PATH', doc_static_build_dir)
   config.set('EXESS_TITLE', get_option('title'))
   config.set('EXESS_VERSION', meson.project_version())
   conf_py = configure_file(
@@ -58,7 +61,7 @@ if build_docs
   endif
 
   # Run Sphinx to generate final documentation for each format
-  foreach format : ['html', 'singlehtml']
+  foreach format : ['epub', 'html', 'singlehtml']
     if not get_option(format).disabled()
       subdir(format)
     endif
