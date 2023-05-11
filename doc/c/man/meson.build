@@ -36,9 +36,10 @@ man_pages = [
 man_docs = custom_target(
   'pages',
   build_by_default: true,
-  command: [sphinx_build, '-M', 'man',
-            '@OUTDIR@' / '..', '@OUTDIR@' / '..',
-            '-E', '-q', '-t', 'man'],
+  command: [
+    sphinx_build, '-M', 'man', '@OUTDIR@' / '..', '@OUTDIR@' / '..',
+    '-t', 'man',
+  ] + sphinx_flags,
   input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
   install: true,
   install_dir: get_option('mandir') / 'man3',

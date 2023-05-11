@@ -29,31 +29,27 @@ endforeach
 subdir('xml')
 subdir('api')
 
-if not get_option('singlehtml').disabled()
-  custom_target(
-    'singlehtml',
-    build_by_default: true,
-    command: [sphinx_build, '-M', 'singlehtml', '@OUTDIR@', '@OUTDIR@',
-              '-E', '-q', '-t', 'singlehtml'],
-    input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
-    install: true,
-    install_dir: docdir / versioned_name,
-    output: 'singlehtml',
-  )
+sphinx_flags = ['-E', '-a', '-q']
+if get_option('werror')
+  sphinx_flags += ['-W']
 endif
 
-if not get_option('html').disabled()
-  custom_target(
-    'html',
-    build_by_default: true,
-    command: [sphinx_build, '-M', 'html', '@OUTDIR@', '@OUTDIR@',
-              '-E', '-q', '-t', 'html'],
-    input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
-    install: true,
-    install_dir: docdir / versioned_name,
-    output: 'html',
-  )
-endif
+formats = ['html', 'singlehtml']
+foreach format : formats
+  if not get_option(format).disabled()
+    custom_target(
+      format,
+      build_by_default: true,
+      command: [
+        sphinx_build, '-M', format, '@OUTDIR@', '@OUTDIR@', '-t', format,
+      ] + sphinx_flags,
+      input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
+      install: true,
+      install_dir: docdir / versioned_name,
+      output: format,
+    )
+  endif
+endforeach
 
 if not get_option('man').disabled()
   subdir('man')
