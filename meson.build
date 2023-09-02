@@ -82,21 +82,11 @@ elif cc.get_id() == 'gcc'
   endif
 
 elif cc.get_id() == 'msvc'
-  c_suppressions += [
-    '/experimental:external',
-    '/external:W0',
-    '/external:anglebrackets',
-  ]
-
   if warning_level == 'everything'
     c_suppressions += [
-      '/wd4028', # formal parameter different from declaration
       '/wd4061', # enumerator is not explicitly handled
-      '/wd4204', # nonstandard extension: non-constant aggregate initializer
-      '/wd4221', # initialized using address of automatic variable
       '/wd4710', # function not inlined
       '/wd4711', # function selected for automatic inline expansion
-      '/wd4738', # storing 32-bit float result in memory
       '/wd4820', # padding added after data member
       '/wd5045', # will insert Spectre mitigation
     ]
@@ -105,12 +95,6 @@ elif cc.get_id() == 'msvc'
   if warning_level in ['everything', '3']
     c_suppressions += [
       '/wd4706', # assignment within conditional expression
-    ]
-  endif
-
-  if warning_level in ['everything', '3', '2']
-    c_suppressions += [
-      '/wd4996', # POSIX name for this item is deprecated
     ]
   endif
 endif
