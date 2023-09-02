@@ -89,6 +89,14 @@ test_read_time(void)
   check_read(
     " \f\n\r\t\v13:20:00 ", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 14);
 
+  // Trailing whitespace
+  check_read("13:20:45 ", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+  check_read("13:20:45\f", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+  check_read("13:20:45\n", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+  check_read("13:20:45\r", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+  check_read("13:20:45\t", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+  check_read("13:20:45\v", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
+
   // Trailing garbage
   check_read("13:20:00junk", EXESS_EXPECTED_SIGN, 13, 20, 0, 0, 0, 0, false, 8);
   check_read("13:20:00Zjunk", EXESS_EXPECTED_END, 13, 20, 0, 0, 0, 0, true, 9);
