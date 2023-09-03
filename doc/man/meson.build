@@ -1,8 +1,6 @@
 # Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-make_man_link = find_program('../../scripts/make_man_link.py')
-
 # Generated man pages to any links/aliases to create for that page
 man_links = {
   'exess.3': [],
@@ -105,27 +103,40 @@ man_docs = custom_target(
   output: man_output_names,
 )
 
-# Assemble a command and target prefix for creating link/alias pages
-make_man_link_command = [make_man_link]
-man_link_prefix = 'man3/'
+# Install symlinks for each man page link if enabled/supported
+man3dir = get_option('mandir') / 'man3'
+make_man_aliases = true
+if meson.version().version_compare('>=0.61.0')
+  if (get_option('man_links').enabled() or
+      (get_option('man_links').auto() and host_machine.system() != 'windows'))
+    make_man_aliases = false
+    foreach target : man_output_names
+      foreach link : man_links[target]
+        install_symlink(link, pointing_to: target, install_dir: man3dir)
+      endforeach
+    endforeach
+  endif
+endif
 
-# Make an alias man page or symlink for each link
-target_index = 0
-foreach target : man_output_names
-  foreach link : man_links[target]
-    custom_target(
-      link,
-      build_by_default: true,
-      command: make_man_link_command + [man_link_prefix + target, '@OUTPUT@'],
-      input: man_docs[target_index],
-      install: true,
-      install_dir: get_option('mandir') / 'man3',
-      output: link,
-    )
+# Otherwise, make alias pages for each man page link
+if make_man_aliases
+  make_man_link = find_program('../../scripts/make_man_link.py')
+  target_index = 0
+  foreach target : man_output_names
+    foreach link : man_links[target]
+      custom_target(
+        link,
+        build_by_default: true,
+        command: [make_man_link, 'man3/' + target, '@OUTPUT@'],
+        input: man_docs[target_index],
+        install: true,
+        install_dir: man3dir,
+        output: link,
+      )
+    endforeach
+    target_index = target_index + 1
   endforeach
-
-  target_index = target_index + 1
-endforeach
+endif
 
 if not meson.is_subproject()
   summary('Man pages', get_option('prefix') / get_option('mandir') / 'man3', section: 'Directories')
