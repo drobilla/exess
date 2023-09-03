@@ -18,7 +18,6 @@
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
 ExessResult
 exess_read_timezone(ExessTimezone* EXESS_NONNULL out,
                     const char* EXESS_NONNULL    str);
