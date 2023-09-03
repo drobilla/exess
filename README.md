@@ -1,33 +1,22 @@
 Exess
 =====
 
-Exess is a simple library for reading and writing [XSD][] datatypes.
+Exess is a simple C library for reading and writing [XSD][] datatypes.
 
-Exess is useful for applications that need to read and write common datatypes
-as strings in a standard and locale-independent format.  It supports reading
-values from any valid string, and writing values in canonical form.  The
-implementation is not complete, but includes support for all of the common
-generally useful datatypes (the XML-specific and partial Gregorian calendar
-datatypes are omitted).
+Exess provides portable, locale-independent, and standards-backed functions for
+converting common numeric and temporal datatypes to and from strings.
+Conversions are lossless wherever possible so, for example, a `float` written
+to a string will read back to exactly the original `float` value on any system.
 
-Conversion to a string and back is lossless for all supported values.  For
-example, writing a `float` number to a string then reading it back will yield
-the exact same `float` as the original value.
-
-The API consists mainly of simple read and write functions for each datatype.
-There are also utility functions for rewriting strings in canonical form,
-reading/writing opaque binary values,
-and coercing values between datatypes.
-
-For flexibility, allocation is handled by the caller, making it possible to
-work on the stack, or to directly read/write fields in a structure.  Syntax
-errors are reported with a character offset and error code, allowing the caller
-to produce precise and friendly error messages.
+The API is lightweight and avoids allocation entirely, making it simple to use
+and suitable for constrained contexts like plugins or embedded systems.
 
 Supported Datatypes
 -------------------
 
-Exess supports reading and writing:
+All of the common generally useful datatypes from the [XSD][] specification are
+supported, omitting some XML-specific and partial Gregorian calendar datatypes.
+Support for reading and writing is provided for:
 
   * `boolean`, like "false", "true", "0", or "1".
 
@@ -58,7 +47,7 @@ Dependencies
 ------------
 
 None, except the C standard library.
-To be precise, exess uses only the following functions from the standard library:
+More precisely, exess uses only the following functions from the standard library:
 
   * `ldexp`
   * `llrint`
@@ -77,10 +66,12 @@ To be precise, exess uses only the following functions from the standard library
 Documentation
 -------------
 
- * [Installation instructions](INSTALL.md)
- * [API reference (single page)](https://drobilla.gitlab.io/exess/doc/singlehtml/)
- * [API reference (paginated)](https://drobilla.gitlab.io/exess/doc/html/)
- * [API reference (EPub)](https://drobilla.gitlab.io/exess/doc/Exess-0.0.1.epub)
+  * [Installation instructions](INSTALL.md)
+  * Manual
+    * Installed as `man exess` and related pages
+    * [HTML](https://drobilla.gitlab.io/exess/doc/html/)
+    * [Single-page HTML](https://drobilla.gitlab.io/exess/doc/singlehtml/)
+    * [EPub](https://drobilla.gitlab.io/exess/doc/Exess-0.0.1.epub)
 
  -- David Robillard <d@drobilla.net>
 

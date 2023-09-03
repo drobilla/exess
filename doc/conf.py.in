@@ -127,6 +127,7 @@ epub_css_files = ["epubstyle.css"]
 # Man page output
 
 groups = {
+    "symbols": "Preprocessor Symbols",
     "status": "Status",
     "decimal": "Decimal Strings",
     "double": "Double Strings",
@@ -142,18 +143,19 @@ groups = {
     "ubyte": "Unsigned Byte Strings",
     "duration": "Duration Strings",
     "datetime": "Datetime Strings",
-    "timezone": "Time zone strings",
-    "date": "Date strings",
-    "time": "Time strings",
-    "binary": "",
-    "hex": "Hex Binary Strings",
+    "timezone": "Timezone Strings",
+    "date": "Date Strings",
+    "time": "Time Strings",
     "base64": "Base64 Binary Strings",
+    "hex": "Hex Binary Strings",
     "datatypes": "Datatypes",
+    "canon": "Canonical Form",
     "value": "Generic Values",
 }
 
-author = "David Robillard <d@drobilla.net>"
-man_pages = []
+man_author = "David Robillard <d@drobilla.net>"
+man_pages = [("index", "exess", "Exess", man_author, 3)]
+
 for group, title in groups.items():
     name = "exess_" + group
-    man_pages += [("api/" + name, name, title, author, 3)]
+    man_pages += [("api/" + name, name, title, man_author, 3)]

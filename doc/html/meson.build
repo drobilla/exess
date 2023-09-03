@@ -6,17 +6,19 @@ html_dir = docdir / versioned_name / 'html'
 custom_target(
   'html',
   build_by_default: true,
-  command: [
-    sphinx_build, '-M', 'html', '@OUTDIR@' / '..', '@OUTDIR@' / '..',
+  command: sphinx_build_command + [
+    '-b', 'html',
     '-t', 'html',
-  ] + sphinx_flags,
+    sphinx_in_dir,
+    '@OUTDIR@',
+  ],
   input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
   install: true,
   install_dir: html_dir,
   output: [
     'genindex.html',
     'index.html',
-    'overview.html',
+    'description.html',
     '_static',
     'api',
   ],

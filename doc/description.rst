@@ -1,11 +1,30 @@
 ###########
-Using Exess
+Description
 ###########
 
 .. default-domain:: c
 .. highlight:: c
 
-The exess C API is declared in ``exess.h``:
+Exess provides portable, locale-independent, and standards-backed functions for converting common numeric and temporal datatypes to and from strings.
+Conversions are lossless wherever possible so,
+for example,
+a ``float`` written to a string will read back to exactly the original ``float`` value on any system.
+
+*****
+Usage
+*****
+
+To use exess,
+the compiler must be configured to add the versioned include directory to the include path,
+and to link with the corresponding library.
+Depending on the package ``exess-0`` achieves this in most build systems,
+or the required flags can be fetched manually with ``pkg-config`` or a compatible tool:
+
+.. code-block:: sh
+
+   pkg-config --cflags --libs exess-0
+
+The API can then be used by including ``exess/exess.h``:
 
 .. code-block:: c
 
@@ -86,7 +105,7 @@ this operation can be about as expensive as actually writing the value.
 For example, it requires binary to decimal conversion for floating point numbers.
 For ``float`` and ``double``,
 since the length is bounded and relatively small,
-it may be better to write immediately to a static buffer,
+it's likely faster to write immediately to a sufficiently large buffer,
 then copy the result to the final destination.
 
 **************
@@ -102,25 +121,14 @@ Any value can be read with :func:`exess_read_value` and written with :func:`exes
 which work similarly to their typed counterparts,
 except they take a datatype, size, and pointer to a buffer rather than a value.
 
-Note that the datatype must be given to read a string.
-Since a given string could be a valid representation of many datatypes,
-the expected type must be known from some application-specific context.
-
-Dynamic Datatypes
-=================
-
 :enum:`ExessDatatype` enumerates all of the supported datatypes.
-The special value :enumerator:`EXESS_NOTHING` is used as a sentinel for unknown datatypes or other errors.
-
-If you have a datatype URI, then :func:`exess_datatype_from_uri()` can be used
-to map it to a datatype.  If the URI is not for a supported datatype, then it will return :enumerator:`EXESS_NOTHING`.
 
 Unbounded Numeric Types
 =======================
 
 There are 6 unbounded numeric types:
 decimal, integer, nonPositiveInteger, negativeInteger, nonNegativeInteger, and positiveInteger.
-The generic functions support reading and writing these types,
+The generic value functions support reading and writing these types,
 but store them in the largest corresponding native type:
 ``double``, ``int64_t``, or ``uint64_t``.
 If the value doesn't fit in this type,
@@ -130,11 +138,11 @@ Writing Canonical Form
 ======================
 
 Since values are always written in canonical form,
-the generic value interface can be used as a mechanism to convert any string to canonical form:
-simply read a value,
-then write it.
+the generic value functions can be used to convert any string to canonical form:
+simply read the value,
+then write it again.
 If the value itself isn't required,
-then :func:`exess_write_canonical` can be used to do this in a single step.
+then :func:`exess_write_canonical` can be used to do this more efficiently.
 For example, this will print ``12``:
 
 .. code-block:: c
@@ -147,8 +155,10 @@ For example, this will print ``12``:
      printf("%s\n", buf);
    }
 
-Note that it is better to use :func:`exess_write_canonical` if the value isn't required,
-since it supports transforming some values outside the range of native data types.
+Note that when the value isn't needed,
+it's better to use :func:`exess_write_canonical` since it supports transforming large values directly.
 Specifically,
-decimal and integer strings will be transformed directly,
-avoiding conversion into values and the limits of the machine's numeric types.
+unbounded numbers and binary values are transformed a character at a time,
+avoiding value conversion,
+the limits of the machine's numeric types,
+and the need for buffer space to store the value.

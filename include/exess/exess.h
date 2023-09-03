@@ -1447,9 +1447,9 @@ exess_value_compare(ExessDatatype             lhs_datatype,
 /**
    Coerce a value to another datatype if possible.
 
-   @param coercions Enabled coercion flags.  If this is zero, then
-   #EXESS_SUCCESS is only returned if the resulting value can be coerced back
-   to the original type without any loss of data.  Otherwise, the lossy
+   @param coercions Enabled coercion flags.  If this is zero (#EXESS_LOSSLESS),
+   then #EXESS_SUCCESS is only returned if the resulting value can be coerced
+   back to the original type without any loss of data.  Otherwise, the lossy
    coercions enabled by the set bits will be attempted.
 
    @param in_datatype The datatype of `in`.
