@@ -10,7 +10,7 @@ default:
 dev:
   image: lv2plugin/debian-x64
   script:
-    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Db_coverage=true -Ddocs=enabled -Depub=enabled -Dprefix=/
+    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Db_coverage=true -Ddefault_library=both -Ddocs=enabled -Depub=enabled -Dprefix=/
     - ninja -C build test
     - ninja -C build coverage-html
     - DESTDIR=$(pwd)/build/dest meson install -C build
