@@ -9,6 +9,6 @@ Comment: Contributed to the Commons as a tool configuration
 License: 0BSD OR ISC
 
 Files: *.md NEWS doc/*.rst
-Copyright: 2021-2022 David Robillard <d@drobilla.net>
+Copyright: 2021-2023 David Robillard <d@drobilla.net>
 Comment: Documentation
 License: ISC
