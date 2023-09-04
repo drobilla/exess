@@ -63,15 +63,10 @@ if build_docs
 
   # Run Sphinx to generate final documentation for each format
   sphinx_build_command = [sphinx_build] + sphinx_flags
-  foreach format : ['epub', 'html', 'singlehtml']
+  foreach format : ['epub', 'html', 'man', 'singlehtml']
     if not get_option(format).disabled()
       subdir(format)
     endif
   endforeach
-
-  # Generate man pages
-  if not get_option('man').disabled()
-    subdir('man')
-  endif
 endif
 
