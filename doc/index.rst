@@ -18,7 +18,9 @@ Exess is a simple C library for reading and writing XSD_ datatypes.
    for example,
    :manpage:`exess_int(3)` describes both the read and write functions for ``int32_t``.
    Aliases are also provided for individual functions,
-   like :manpage:`exess_read_int(3)` and :manpage:`exess_write_int(3)`.
+   for example,
+   :manpage:`exess_read_int(3)` and
+   :manpage:`exess_write_int(3)`.
 
    Utilities
       :manpage:`exess_symbols(3)`, :manpage:`exess_status(3)`
@@ -29,7 +31,7 @@ Exess is a simple C library for reading and writing XSD_ datatypes.
    Date and Time
       :manpage:`exess_duration(3)`, :manpage:`exess_datetime(3)`, :manpage:`exess_timezone(3)`, :manpage:`exess_date(3)`, :manpage:`exess_time(3)`
 
-   Binary
+   Binary Blobs
       :manpage:`exess_base64(3)`, :manpage:`exess_hex(3)`
 
    Datatypes
