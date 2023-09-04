@@ -19,8 +19,9 @@ option('lint', type: 'boolean', value: false, yield: true,
 option('man', type: 'feature', value: 'auto', yield: true,
        description: 'Build man page documentation')
 
-option('man_links', type: 'feature', value: 'auto', yield: true,
-       description: 'Use symlinks for man page aliases')
+option('man_links', type: 'combo', value: 'auto', yield: true,
+       choices: ['disabled', 'auto', 'alias', 'symbolic'],
+       description: 'Create man page aliases/symlinks for symbols')
 
 option('singlehtml', type: 'feature', value: 'auto', yield: true,
        description: 'Build single-page HTML documentation')

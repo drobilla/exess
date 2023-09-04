@@ -3,6 +3,11 @@ Upstream-Name: exess
 Upstream-Contact: David Robillard <d@drobilla.net>
 Source: https://gitlab.com/drobilla/exess
 
+Files: doc/man/alias.man.in
+Copyright: 2023 David Robillard <d@drobilla.net>
+Comment: Contributed to the Commons as a tool configuration
+License: 0BSD OR ISC
+
 Files: *.md NEWS doc/*.rst
 Copyright: 2021-2022 David Robillard <d@drobilla.net>
 Comment: Documentation

@@ -88,6 +88,7 @@ man_links = {
 
 # Run Sphinx to generate man pages
 man_output_names = man_links.keys()
+man3dir = get_option('mandir') / 'man3'
 man_docs = custom_target(
   'man',
   build_by_default: true,
@@ -97,47 +98,41 @@ man_docs = custom_target(
     sphinx_in_dir,
     '@OUTDIR@',
   ],
-  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],# + files('exess.rst'),
+  input: [c_rst_files, c_exess_rst, c_index_xml, conf_py],
   install: true,
-  install_dir: get_option('mandir') / 'man3',
+  install_dir: man3dir,
   output: man_output_names,
 )
 
-# Install symlinks for each man page link if enabled/supported
-man3dir = get_option('mandir') / 'man3'
-make_man_aliases = true
-if meson.version().version_compare('>=0.61.0')
-  if (get_option('man_links').enabled() or
-      (get_option('man_links').auto() and host_machine.system() != 'windows'))
-    make_man_aliases = false
-    foreach target : man_output_names
-      foreach link : man_links[target]
-        install_symlink(link, pointing_to: target, install_dir: man3dir)
-      endforeach
-    endforeach
-  endif
-endif
-
-# Otherwise, make alias pages for each man page link
-if make_man_aliases
-  make_man_link = find_program('../../scripts/make_man_link.py')
-  target_index = 0
+man_links_mode = get_option('man_links')
+if (meson.version().version_compare('>=0.61.0') and
+    (man_links_mode == 'symbolic' or
+     (man_links_mode == 'auto' and host_machine.system() != 'windows')))
+  # Install symlinks for each man page link if enabled/supported
   foreach target : man_output_names
     foreach link : man_links[target]
-      custom_target(
-        link,
-        build_by_default: true,
-        command: [make_man_link, 'man3/' + target, '@OUTPUT@'],
-        input: man_docs[target_index],
+      install_symlink(link, pointing_to: target, install_dir: man3dir)
+    endforeach
+  endforeach
+
+elif man_links_mode != 'disabled'
+  # Otherwise, make alias pages for each man page link
+  alias_man_in = files('alias.man.in')
+  foreach target : man_output_names
+    foreach link : man_links[target]
+      config = configuration_data()
+      config.set('TARGET', 'man3/' + target)
+      configure_file(
+        configuration: config,
+        input: alias_man_in,
+        output: link,
         install: true,
         install_dir: man3dir,
-        output: link,
       )
     endforeach
-    target_index = target_index + 1
   endforeach
 endif
 
 if not meson.is_subproject()
-  summary('Man pages', get_option('prefix') / get_option('mandir') / 'man3', section: 'Directories')
+  summary('Man pages', get_option('prefix') / man3dir, section: 'Directories')
 endif
