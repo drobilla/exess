@@ -35,6 +35,7 @@ if cc.get_id() in ['clang', 'emscripten']
       '-Wno-declaration-after-statement',
       '-Wno-padded',
       '-Wno-switch-enum',
+      '-Wno-unsafe-buffer-usage',
     ]
 
     if host_machine.system() == 'windows'
