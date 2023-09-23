@@ -15,7 +15,7 @@ if get_option('warning_level') == 'everything'
     ]
   elif cc.get_id() == 'msvc'
     test_suppressions = [
-      '/wd4996',  # POSIX name is deprecated
+      '/wd4996', # POSIX name is deprecated
     ]
   endif
 endif
@@ -30,7 +30,12 @@ if get_option('lint')
   # Check licensing metadata
   reuse = find_program('reuse', required: false)
   if reuse.found()
-    test('REUSE', reuse, args: ['--root', exess_src_root, 'lint'], suite: 'data')
+    test(
+      'REUSE',
+      reuse,
+      args: ['--root', exess_src_root, 'lint'],
+      suite: 'data',
+    )
   endif
 endif
 
@@ -153,9 +158,10 @@ if get_option('default_library') == 'shared'
     unit,
     executable(
       'test_int_math',
-      files('test_int_math.c', '../src/int_math.c'),
+      files('../src/int_math.c', 'test_int_math.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
-      include_directories: include_directories('../src')),
+      include_directories: include_directories('../src'),
+    ),
     suite: 'private',
   )
 
@@ -163,9 +169,10 @@ if get_option('default_library') == 'shared'
     unit,
     executable(
       'test_bigint',
-      files('test_bigint.c', '../src/bigint.c', '../src/int_math.c'),
+      files('../src/bigint.c', '../src/int_math.c', 'test_bigint.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
-      include_directories: include_directories('../src')),
+      include_directories: include_directories('../src'),
+    ),
     suite: 'private',
   )
 
@@ -191,7 +198,8 @@ else
         files('test_@0@.c'.format(unit)),
         c_args: extra_c_args + c_suppressions + test_suppressions,
         dependencies: exess_static_dep,
-        include_directories: include_directories('../src')),
+        include_directories: include_directories('../src'),
+      ),
       suite: 'private',
     )
   endforeach

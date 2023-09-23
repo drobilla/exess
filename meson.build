@@ -1,15 +1,18 @@
 # Copyright 2021-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-project('exess', ['c'],
-        version: '0.0.1',
-        license: 'ISC',
-        meson_version: '>= 0.54.0',
-        default_options: [
-          'b_ndebug=if-release',
-          'buildtype=release',
-          'c_std=c99',
-        ])
+project(
+  'exess',
+  ['c'],
+  default_options: [
+    'b_ndebug=if-release',
+    'buildtype=release',
+    'c_std=c99',
+  ],
+  license: 'ISC',
+  meson_version: '>= 0.54.0',
+  version: '0.0.1',
+)
 
 exess_src_root = meson.current_source_dir()
 major_version = meson.project_version().split('.')[0]
@@ -250,8 +253,16 @@ if not meson.is_subproject()
     section: 'Configuration',
   )
   summary('Install prefix', get_option('prefix'), section: 'Directories')
-  summary('Headers', get_option('prefix') / get_option('includedir'), section: 'Directories')
-  summary('Libraries', get_option('prefix') / get_option('libdir'), section: 'Directories')
+  summary(
+    'Headers',
+    get_option('prefix') / get_option('includedir'),
+    section: 'Directories',
+  )
+  summary(
+    'Libraries',
+    get_option('prefix') / get_option('libdir'),
+    section: 'Directories',
+  )
 endif
 
 #######################

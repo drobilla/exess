@@ -25,5 +25,9 @@ custom_target(
 )
 
 if not meson.is_subproject()
-  summary('Paginated HTML', get_option('prefix') / html_dir, section: 'Directories')
+  summary(
+    'HTML',
+    get_option('prefix') / html_dir,
+    section: 'Directories',
+  )
 endif

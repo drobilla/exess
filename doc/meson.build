@@ -29,7 +29,13 @@ if build_docs
   # Warn if the "official" theme isn't present
   pymod = import('python')
   doc_modules = ['sphinx_lv2_theme']
-  if not pymod.find_installation('python3', modules: doc_modules, required: false).found()
+  if (
+    not pymod.find_installation(
+      'python3',
+      modules: doc_modules,
+      required: false,
+    ).found()
+  )
     warning('Missing sphinx_lv2_theme module, falling back to alabaster')
   endif
 
@@ -45,7 +51,7 @@ if build_docs
   )
 
   # Copy hand-written documentation files
-  c_rst_files = files('index.rst', 'description.rst')
+  c_rst_files = files('description.rst', 'index.rst')
   foreach f : c_rst_files
     configure_file(copy: true, input: f, output: '@PLAINNAME@')
   endforeach

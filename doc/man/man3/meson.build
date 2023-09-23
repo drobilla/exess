@@ -105,9 +105,14 @@ man_docs = custom_target(
 )
 
 man_links_mode = get_option('man_links')
-if (meson.version().version_compare('>=0.61.0') and
-    (man_links_mode == 'symbolic' or
-     (man_links_mode == 'auto' and host_machine.system() != 'windows')))
+if (
+  meson.version().version_compare('>=0.61.0')
+  and (
+    man_links_mode == 'symbolic'
+    or (man_links_mode == 'auto'
+    and host_machine.system() != 'windows')
+  )
+)
   # Install symlinks for each man page link if enabled/supported
   foreach target : man_output_names
     foreach link : man_links[target]

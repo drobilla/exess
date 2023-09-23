@@ -22,5 +22,9 @@ custom_target(
 )
 
 if not meson.is_subproject()
-  summary('Unified HTML', get_option('prefix') / singlehtml_dir, section: 'Directories')
+  summary(
+    'Single HTML',
+    get_option('prefix') / singlehtml_dir,
+    section: 'Directories',
+  )
 endif
