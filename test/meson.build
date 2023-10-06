@@ -215,10 +215,18 @@ if cc.get_id() in ['clang', 'emscripten']
     '-Wno-nullability-extension',
     '-Wno-padded',
   ]
+
+  if not meson.is_cross_build()
+    header_suppressions += [
+      '-Wno-poison-system-directories',
+    ]
+  endif
+
 elif cc.get_id() == 'gcc'
   header_suppressions += [
     '-Wno-padded',
   ]
+
 elif cc.get_id() == 'msvc'
   header_suppressions += [
     '/experimental:external',
