@@ -133,7 +133,6 @@ read_time(ExessDuration* const out, const Field field, const char* const str)
 
     r.status         = set_field(out, field, SECOND, value);
     out->nanoseconds = (int32_t)nanoseconds;
-
     break;
   }
 

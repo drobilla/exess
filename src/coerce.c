@@ -428,20 +428,20 @@ coerce_to_time(const ExessCoercions coercions,
     return result(EXESS_UNSUPPORTED, 0U);
   }
 
-  if ((coercions & (ExessCoercions)EXESS_TRUNCATE)) {
-    const ExessDateTime datetime = *(const ExessDateTime*)in;
-
-    const ExessTime time = {datetime.is_utc ? EXESS_UTC : EXESS_LOCAL,
-                            datetime.hour,
-                            datetime.minute,
-                            datetime.second,
-                            datetime.nanosecond};
-
-    *out = time;
-    return result(EXESS_SUCCESS, sizeof(ExessTime));
+  if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
+    return result(EXESS_WOULD_TRUNCATE, 0U);
   }
 
-  return result(EXESS_WOULD_TRUNCATE, 0U);
+  const ExessDateTime datetime = *(const ExessDateTime*)in;
+
+  const ExessTime time = {datetime.is_utc ? EXESS_UTC : EXESS_LOCAL,
+                          datetime.hour,
+                          datetime.minute,
+                          datetime.second,
+                          datetime.nanosecond};
+
+  *out = time;
+  return result(EXESS_SUCCESS, sizeof(ExessTime));
 }
 
 static ExessResult
@@ -454,19 +454,19 @@ coerce_to_date(const ExessCoercions coercions,
     return result(EXESS_UNSUPPORTED, 0U);
   }
 
-  if (coercions & (ExessCoercions)EXESS_TRUNCATE) {
-    const ExessDateTime datetime = *(const ExessDateTime*)in;
-
-    const ExessDate date = {datetime.year,
-                            datetime.month,
-                            datetime.day,
-                            datetime.is_utc ? EXESS_UTC : EXESS_LOCAL};
-
-    *out = date;
-    return result(EXESS_SUCCESS, sizeof(ExessDate));
+  if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
+    return result(EXESS_WOULD_TRUNCATE, 0U);
   }
 
-  return result(EXESS_WOULD_TRUNCATE, 0U);
+  const ExessDateTime datetime = *(const ExessDateTime*)in;
+
+  const ExessDate date = {datetime.year,
+                          datetime.month,
+                          datetime.day,
+                          datetime.is_utc ? EXESS_UTC : EXESS_LOCAL};
+
+  *out = date;
+  return result(EXESS_SUCCESS, sizeof(ExessDate));
 }
 
 ExessResult
@@ -536,7 +536,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(int32_t*)out = (int32_t)l_out;
       return result(EXESS_SUCCESS, sizeof(int32_t));
     }
-
     break;
 
   case EXESS_SHORT:
@@ -544,7 +543,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(int16_t*)out = (int16_t)l_out;
       return result(EXESS_SUCCESS, sizeof(int16_t));
     }
-
     break;
 
   case EXESS_BYTE:
@@ -552,7 +550,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(int8_t*)out = (int8_t)l_out;
       return result(EXESS_SUCCESS, sizeof(int8_t));
     }
-
     break;
 
   case EXESS_NON_NEGATIVE_INTEGER:
@@ -565,7 +562,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(uint32_t*)out = (uint32_t)u_out;
       return result(EXESS_SUCCESS, sizeof(uint32_t));
     }
-
     break;
 
   case EXESS_USHORT:
@@ -573,7 +569,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(uint16_t*)out = (uint16_t)u_out;
       return result(EXESS_SUCCESS, sizeof(uint16_t));
     }
-
     break;
 
   case EXESS_UBYTE:
@@ -581,7 +576,6 @@ exess_value_coerce(const ExessCoercions coercions,
       *(uint8_t*)out = (uint8_t)u_out;
       return result(EXESS_SUCCESS, sizeof(uint8_t));
     }
-
     break;
 
   case EXESS_POSITIVE_INTEGER:
