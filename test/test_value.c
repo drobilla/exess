@@ -86,17 +86,6 @@ test_read_value(void)
     check_read(&a_long, EXESS_INTEGER, "7", EXESS_SUCCESS, 1);
     assert(a_long == 7);
 
-    check_read(
-      &a_long, EXESS_NON_POSITIVE_INTEGER, "f", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_long, EXESS_NON_POSITIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_long, EXESS_NON_POSITIVE_INTEGER, "-8", EXESS_SUCCESS, 2);
-    assert(a_long == -8);
-
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "f", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "-9", EXESS_SUCCESS, 2);
-    assert(a_long == -9);
-
     check_read(&a_long, EXESS_LONG, "10", EXESS_SUCCESS, 2);
     assert(a_long == 10);
   }
@@ -134,13 +123,6 @@ test_read_value(void)
     uint8_t a_ubyte = 0U;
     check_read(&a_ubyte, EXESS_UBYTE, "17", EXESS_SUCCESS, 2);
     assert(a_ubyte == 17U);
-  }
-  {
-    uint64_t a_ulong = 0U;
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "-1", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "0", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "18", EXESS_SUCCESS, 2);
-    assert(a_ulong == 18U);
   }
   {
     ExessDateTime a_datetime = datetime;

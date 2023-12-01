@@ -66,8 +66,6 @@ coerce_to_long(int64_t* const       out,
   }
 
   case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
     *out = *(const int64_t*)in;
     return EXESS_SUCCESS;
@@ -84,7 +82,6 @@ coerce_to_long(int64_t* const       out,
     *out = (int64_t) * (const int8_t*)in;
     return EXESS_SUCCESS;
 
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG: {
     const uint64_t u = *(const uint64_t*)in;
 
@@ -107,17 +104,6 @@ coerce_to_long(int64_t* const       out,
   case EXESS_UBYTE:
     *out = *(const uint8_t*)in;
     return EXESS_SUCCESS;
-
-  case EXESS_POSITIVE_INTEGER: {
-    const uint64_t u = *(const uint64_t*)in;
-
-    if (u > INT64_MAX) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (int64_t)u;
-    return EXESS_SUCCESS;
-  }
 
   case EXESS_DURATION:
   case EXESS_DATETIME:
@@ -188,8 +174,6 @@ coerce_to_ulong(uint64_t* const      out,
     return EXESS_SUCCESS;
 
   case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
     if (*(const int64_t*)in < 0) {
       return EXESS_OUT_OF_RANGE;
@@ -222,7 +206,6 @@ coerce_to_ulong(uint64_t* const      out,
     *out = (uint64_t) * (const int8_t*)in;
     return EXESS_SUCCESS;
 
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     *out = *(const uint64_t*)in;
     return EXESS_SUCCESS;
@@ -237,10 +220,6 @@ coerce_to_ulong(uint64_t* const      out,
 
   case EXESS_UBYTE:
     *out = *(const uint8_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_POSITIVE_INTEGER:
-    *out = *(const uint64_t*)in;
     return EXESS_SUCCESS;
 
   case EXESS_DURATION:
@@ -518,15 +497,6 @@ exess_value_coerce(const ExessCoercions coercions,
     return coerce_to_float(coercions, in_datatype, in, (float*)out);
 
   case EXESS_INTEGER:
-    return coerce_to_integer(
-      coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
-
-  case EXESS_NON_POSITIVE_INTEGER:
-    return coerce_to_integer(coercions, in_datatype, in, 0, (int64_t*)out);
-
-  case EXESS_NEGATIVE_INTEGER:
-    return coerce_to_integer(coercions, in_datatype, in, -1, (int64_t*)out);
-
   case EXESS_LONG:
     return coerce_to_integer(
       coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
@@ -552,7 +522,6 @@ exess_value_coerce(const ExessCoercions coercions,
     }
     break;
 
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     return coerce_to_unsigned_integer(
       coercions, in_datatype, in, 0U, (uint64_t*)out);
@@ -577,10 +546,6 @@ exess_value_coerce(const ExessCoercions coercions,
       return result(EXESS_SUCCESS, sizeof(uint8_t));
     }
     break;
-
-  case EXESS_POSITIVE_INTEGER:
-    return coerce_to_unsigned_integer(
-      coercions, in_datatype, in, 1U, (uint64_t*)out);
 
   case EXESS_DURATION:
   case EXESS_DATETIME:

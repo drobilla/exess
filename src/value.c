@@ -41,20 +41,6 @@ exess_read_value(const ExessDatatype datatype,
   case EXESS_FLOAT:
     return fixed(exess_read_float((float*)out, str), sizeof(float));
   case EXESS_INTEGER:
-    return fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
-
-  case EXESS_NON_POSITIVE_INTEGER:
-    r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
-    return (!r.status && *(const int64_t*)out > 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
-             : r;
-
-  case EXESS_NEGATIVE_INTEGER:
-    r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
-    return (!r.status && *(const int64_t*)out >= 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
-             : r;
-
   case EXESS_LONG:
     return fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
   case EXESS_INT:
@@ -63,7 +49,6 @@ exess_read_value(const ExessDatatype datatype,
     return fixed(exess_read_short((int16_t*)out, str), sizeof(int16_t));
   case EXESS_BYTE:
     return fixed(exess_read_byte((int8_t*)out, str), sizeof(int8_t));
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     return fixed(exess_read_ulong((uint64_t*)out, str), sizeof(uint64_t));
   case EXESS_UINT:
@@ -72,12 +57,6 @@ exess_read_value(const ExessDatatype datatype,
     return fixed(exess_read_ushort((uint16_t*)out, str), sizeof(uint16_t));
   case EXESS_UBYTE:
     return fixed(exess_read_ubyte((uint8_t*)out, str), sizeof(uint8_t));
-
-  case EXESS_POSITIVE_INTEGER:
-    r = fixed(exess_read_ulong((uint64_t*)out, str), sizeof(uint64_t));
-    return (!r.status && *(const uint64_t*)out == 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
-             : r;
 
   case EXESS_DURATION:
     return fixed(exess_read_duration((ExessDuration*)out, str),
@@ -123,8 +102,6 @@ exess_write_value(const ExessDatatype datatype,
   case EXESS_FLOAT:
     return exess_write_float(*(const float*)value, buf_size, buf);
   case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
     return exess_write_long(*(const int64_t*)value, buf_size, buf);
   case EXESS_INT:
@@ -133,7 +110,6 @@ exess_write_value(const ExessDatatype datatype,
     return exess_write_short(*(const int16_t*)value, buf_size, buf);
   case EXESS_BYTE:
     return exess_write_byte(*(const int8_t*)value, buf_size, buf);
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     return exess_write_ulong(*(const uint64_t*)value, buf_size, buf);
   case EXESS_UINT:
@@ -142,8 +118,6 @@ exess_write_value(const ExessDatatype datatype,
     return exess_write_ushort(*(const uint16_t*)value, buf_size, buf);
   case EXESS_UBYTE:
     return exess_write_ubyte(*(const uint8_t*)value, buf_size, buf);
-  case EXESS_POSITIVE_INTEGER:
-    return exess_write_ulong(*(const uint64_t*)value, buf_size, buf);
   case EXESS_DURATION:
     return exess_write_duration(*(const ExessDuration*)value, buf_size, buf);
   case EXESS_DATETIME:

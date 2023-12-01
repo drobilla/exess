@@ -11,12 +11,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef enum {
-  EXESS_NEGATIVE,
-  EXESS_ZERO,
-  EXESS_POSITIVE,
-} ExessIntegerKind;
-
 /// Return true iff `c` is "+" or "-"
 static inline bool
 is_sign(const int c)
@@ -113,10 +107,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
 }
 
 static ExessResult
-write_integer(const char* const       str,
-              const size_t            buf_size,
-              char* const             buf,
-              ExessIntegerKind* const kind)
+write_integer(const char* const str, const size_t buf_size, char* const buf)
 {
   const size_t sign    = scan(is_space, str, 0);   // Sign
   const size_t leading = skip(is_sign, str, sign); // First digit
@@ -134,16 +125,12 @@ write_integer(const char* const       str,
   size_t o = 0;
   if (first == last) {
     o += write_char('0', buf_size, buf, o);
-    *kind = EXESS_ZERO;
     return result(EXESS_SUCCESS, o);
   }
 
   // Add leading sign only if the number is negative
   if (str[sign] == '-') {
-    *kind = EXESS_NEGATIVE;
     o += write_char('-', buf_size, buf, o);
-  } else {
-    *kind = EXESS_POSITIVE;
   }
 
   // Add digits
@@ -212,8 +199,7 @@ exess_write_canonical(const char* const   str,
                       const size_t        buf_size,
                       char* const         buf)
 {
-  ExessIntegerKind kind = EXESS_ZERO;
-  ExessResult      r    = {EXESS_UNSUPPORTED, 0};
+  ExessResult r = {EXESS_UNSUPPORTED, 0};
 
   switch (datatype) {
   case EXESS_NOTHING:
@@ -224,35 +210,7 @@ exess_write_canonical(const char* const   str,
     break;
 
   case EXESS_INTEGER:
-    r = write_integer(str, buf_size, buf, &kind);
-    break;
-
-  case EXESS_NON_POSITIVE_INTEGER:
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_POSITIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-    break;
-
-  case EXESS_NEGATIVE_INTEGER:
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_ZERO || kind == EXESS_POSITIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-    break;
-
-  case EXESS_NON_NEGATIVE_INTEGER:
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_NEGATIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-    break;
-
-  case EXESS_POSITIVE_INTEGER:
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_NEGATIVE || kind == EXESS_ZERO) {
-      r.status = EXESS_BAD_VALUE;
-    }
+    r = write_integer(str, buf_size, buf);
     break;
 
   case EXESS_HEX:

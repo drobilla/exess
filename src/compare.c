@@ -61,8 +61,6 @@ exess_value_compare(const ExessDatatype lhs_datatype,
   case EXESS_FLOAT:
     return COMPARE(*(const float*)lhs_value, *(const float*)rhs_value);
   case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
     return COMPARE(*(const int64_t*)lhs_value, *(const int64_t*)rhs_value);
   case EXESS_INT:
@@ -71,7 +69,6 @@ exess_value_compare(const ExessDatatype lhs_datatype,
     return COMPARE(*(const int16_t*)lhs_value, *(const int16_t*)rhs_value);
   case EXESS_BYTE:
     return COMPARE(*(const int8_t*)lhs_value, *(const int8_t*)rhs_value);
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     return COMPARE(*(const uint64_t*)lhs_value, *(const uint64_t*)rhs_value);
   case EXESS_UINT:
@@ -80,8 +77,6 @@ exess_value_compare(const ExessDatatype lhs_datatype,
     return COMPARE(*(const uint16_t*)lhs_value, *(const uint16_t*)rhs_value);
   case EXESS_UBYTE:
     return COMPARE(*(const uint8_t*)lhs_value, *(const uint8_t*)rhs_value);
-  case EXESS_POSITIVE_INTEGER:
-    return COMPARE(*(const uint64_t*)lhs_value, *(const uint64_t*)rhs_value);
   case EXESS_DURATION:
     return exess_duration_compare(*(const ExessDuration*)lhs_value,
                                   *(const ExessDuration*)rhs_value);

@@ -16,19 +16,13 @@ Supported Datatypes
 
 All of the common generally useful datatypes from the [XSD][] specification are
 supported, omitting some XML-specific and partial Gregorian calendar datatypes.
-Support for reading and writing is provided for:
+Support for reading and writing values is provided for:
 
   * `boolean`, like "false", "true", "0", or "1".
 
-  * `decimal`, like "1.234" (stored as `double`).
+  * `float` and `double`, like "4.2E1". or "4.2e1".
 
-  * `float` and `double`, like "4.2E1" or "4.2e1".
-
-  * The unbounded integer types `integer`, `nonPositiveInteger`,
-    `negativeInteger`, `nonNegativeInteger`, and `nonPositiveInteger` (stored
-    as `int64_t` or `uint64_t`).
-
-  * The fixed size integer types `long`, `int`, `short`, `byte`,
+  * The fixed-size integer types `long`, `int`, `short`, `byte`,
     `unsignedLong`, `unsignedInt`, `unsignedShort`, and `unsignedByte`.
 
   * `duration`, like "P1Y6M".
@@ -42,6 +36,13 @@ Support for reading and writing is provided for:
   * `hex`, like "EC5355".
 
   * `base64`, like "Zm9vYmFy".
+
+Additional unbounded numeric types are supported for canonical rewriting, but
+otherwise fall back to the largest corresponding fixed-size type:
+
+  * `integer`, like "12345678987654321" (stored as `long`).
+
+  * `decimal`, like "1.234" (stored as `double`).
 
 Dependencies
 ------------

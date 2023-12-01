@@ -1220,30 +1220,26 @@ exess_write_hex(size_t                    data_size,
    An identifier for a supported datatype.
 */
 typedef enum {
-  EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
-  EXESS_BOOLEAN,              ///< xsd:boolean (see @ref exess_boolean)
-  EXESS_DECIMAL,              ///< xsd:decimal (see @ref exess_decimal)
-  EXESS_DOUBLE,               ///< xsd:double (see @ref exess_double)
-  EXESS_FLOAT,                ///< xsd:float (see @ref exess_float)
-  EXESS_INTEGER,              ///< xsd:integer (see @ref exess_long)
-  EXESS_NON_POSITIVE_INTEGER, ///< xsd:nonPositiveInteger (see @ref exess_long)
-  EXESS_NEGATIVE_INTEGER,     ///< xsd:negativeInteger (see @ref exess_long)
-  EXESS_LONG,                 ///< xsd:long (see @ref exess_long)
-  EXESS_INT,                  ///< xsd:integer (see @ref exess_int)
-  EXESS_SHORT,                ///< xsd:short (see @ref exess_short)
-  EXESS_BYTE,                 ///< xsd:byte (see @ref exess_byte)
-  EXESS_NON_NEGATIVE_INTEGER, ///< xsd:nonNegativeInteger (see @ref exess_ulong)
-  EXESS_ULONG,                ///< xsd:unsignedLong (see @ref exess_ulong)
-  EXESS_UINT,                 ///< xsd:unsignedInt (see @ref exess_uint)
-  EXESS_USHORT,               ///< xsd:unsignedShort (see @ref exess_ushort)
-  EXESS_UBYTE,                ///< xsd:unsignedByte (see @ref exess_ubyte)
-  EXESS_POSITIVE_INTEGER,     ///< xsd:positiveInteger (see @ref exess_ulong)
-  EXESS_DURATION,             ///< xsd:duration (see @ref exess_duration)
-  EXESS_DATETIME,             ///< xsd:dateTime (see @ref exess_datetime)
-  EXESS_TIME,                 ///< xsd:time (see @ref exess_time)
-  EXESS_DATE,                 ///< xsd:date (see @ref exess_date)
-  EXESS_HEX,                  ///< xsd:hexBinary (see @ref exess_hex)
-  EXESS_BASE64,               ///< xsd:base64Binary (see @ref exess_base64)
+  EXESS_NOTHING,  ///< Sentinel for unknown datatypes or errors
+  EXESS_BOOLEAN,  ///< xsd:boolean (see @ref exess_boolean)
+  EXESS_DECIMAL,  ///< xsd:decimal (see @ref exess_decimal)
+  EXESS_DOUBLE,   ///< xsd:double (see @ref exess_double)
+  EXESS_FLOAT,    ///< xsd:float (see @ref exess_float)
+  EXESS_INTEGER,  ///< xsd:integer (see @ref exess_long)
+  EXESS_LONG,     ///< xsd:long (see @ref exess_long)
+  EXESS_INT,      ///< xsd:integer (see @ref exess_int)
+  EXESS_SHORT,    ///< xsd:short (see @ref exess_short)
+  EXESS_BYTE,     ///< xsd:byte (see @ref exess_byte)
+  EXESS_ULONG,    ///< xsd:unsignedLong (see @ref exess_ulong)
+  EXESS_UINT,     ///< xsd:unsignedInt (see @ref exess_uint)
+  EXESS_USHORT,   ///< xsd:unsignedShort (see @ref exess_ushort)
+  EXESS_UBYTE,    ///< xsd:unsignedByte (see @ref exess_ubyte)
+  EXESS_DURATION, ///< xsd:duration (see @ref exess_duration)
+  EXESS_DATETIME, ///< xsd:dateTime (see @ref exess_datetime)
+  EXESS_TIME,     ///< xsd:time (see @ref exess_time)
+  EXESS_DATE,     ///< xsd:date (see @ref exess_date)
+  EXESS_HEX,      ///< xsd:hexBinary (see @ref exess_hex)
+  EXESS_BASE64,   ///< xsd:base64Binary (see @ref exess_base64)
 } ExessDatatype;
 
 /**
@@ -1272,10 +1268,8 @@ exess_datatype_from_uri(const char* EXESS_NONNULL uri);
 /**
    Return whether a datatype has an upper bound on value sizes.
 
-   This returns true for all datatypes except #EXESS_DECIMAL, #EXESS_INTEGER
-   and its half-bounded subtypes #EXESS_NON_POSITIVE_INTEGER,
-   #EXESS_NEGATIVE_INTEGER, #EXESS_NON_NEGATIVE_INTEGER, and
-   #EXESS_POSITIVE_INTEGER, and the binary types #EXESS_HEX and #EXESS_BASE64.
+   This returns true for all datatypes except #EXESS_DECIMAL, #EXESS_INTEGER,
+   and the binary types #EXESS_HEX and #EXESS_BASE64.
 
    For bounded datatypes, the maximum length of the string representation is
    available via exess_max_length(), or as static constants like

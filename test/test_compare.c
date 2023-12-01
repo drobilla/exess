@@ -91,18 +91,14 @@ test_compare(void)
   check_comparisons(EXESS_DOUBLE, "1.0E-1", "1.0E0", "1.0E1");
   check_comparisons(EXESS_FLOAT, "-1.0E-1", "1.0E0", "1.0E1");
   check_comparisons(EXESS_INTEGER, "-9", "0", "9");
-  check_comparisons(EXESS_NON_POSITIVE_INTEGER, "-9", "-5", "0");
-  check_comparisons(EXESS_NEGATIVE_INTEGER, "-9", "-5", "-1");
   check_comparisons(EXESS_LONG, "-9", "0", "9");
   check_comparisons(EXESS_INT, "-9", "0", "9");
   check_comparisons(EXESS_SHORT, "-9", "0", "9");
   check_comparisons(EXESS_BYTE, "-9", "0", "9");
-  check_comparisons(EXESS_NON_NEGATIVE_INTEGER, "0", "5", "9");
   check_comparisons(EXESS_ULONG, "0", "5", "9");
   check_comparisons(EXESS_UINT, "0", "5", "9");
   check_comparisons(EXESS_USHORT, "0", "5", "9");
   check_comparisons(EXESS_UBYTE, "0", "5", "9");
-  check_comparisons(EXESS_POSITIVE_INTEGER, "1", "5", "9");
 
   // Duration
   check_comparisons(EXESS_DURATION, "-P9Y", "P0Y", "P9Y");

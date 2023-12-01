@@ -129,12 +129,11 @@ except they take a datatype, size, and pointer to a buffer rather than a value.
 Unbounded Numeric Types
 =======================
 
-There are 6 unbounded numeric types:
-decimal, integer, nonPositiveInteger, negativeInteger, nonNegativeInteger, and positiveInteger.
+Two unbounded numeric types are supported: decimal, and integer.
 The generic value functions support reading and writing these types,
 but store them in the largest corresponding native type:
 ``double``, ``int64_t``, or ``uint64_t``.
-If the value doesn't fit in this type,
+If the value doesn't fit,
 then :func:`exess_read_value` will return an :enumerator:`EXESS_OUT_OF_RANGE` error.
 
 Writing Canonical Form

@@ -7,34 +7,30 @@
 #include <stdint.h>
 #include <string.h>
 
-#define N_DATATYPES 24
+#define N_DATATYPES 20
 
 /// The full URI for supported datatypes
 static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
-  NULL,                               //
-  EXESS_XSD_URI "boolean",            //
-  EXESS_XSD_URI "decimal",            //
-  EXESS_XSD_URI "double",             //
-  EXESS_XSD_URI "float",              //
-  EXESS_XSD_URI "integer",            //
-  EXESS_XSD_URI "nonPositiveInteger", //
-  EXESS_XSD_URI "negativeInteger",    //
-  EXESS_XSD_URI "long",               //
-  EXESS_XSD_URI "int",                //
-  EXESS_XSD_URI "short",              //
-  EXESS_XSD_URI "byte",               //
-  EXESS_XSD_URI "nonNegativeInteger", //
-  EXESS_XSD_URI "unsignedLong",       //
-  EXESS_XSD_URI "unsignedInt",        //
-  EXESS_XSD_URI "unsignedShort",      //
-  EXESS_XSD_URI "unsignedByte",       //
-  EXESS_XSD_URI "positiveInteger",    //
-  EXESS_XSD_URI "duration",           //
-  EXESS_XSD_URI "datetime",           //
-  EXESS_XSD_URI "time",               //
-  EXESS_XSD_URI "date",               //
-  EXESS_XSD_URI "hexBinary",          //
-  EXESS_XSD_URI "base64Binary",       //
+  NULL,                          //
+  EXESS_XSD_URI "boolean",       //
+  EXESS_XSD_URI "decimal",       //
+  EXESS_XSD_URI "double",        //
+  EXESS_XSD_URI "float",         //
+  EXESS_XSD_URI "integer",       //
+  EXESS_XSD_URI "long",          //
+  EXESS_XSD_URI "int",           //
+  EXESS_XSD_URI "short",         //
+  EXESS_XSD_URI "byte",          //
+  EXESS_XSD_URI "unsignedLong",  //
+  EXESS_XSD_URI "unsignedInt",   //
+  EXESS_XSD_URI "unsignedShort", //
+  EXESS_XSD_URI "unsignedByte",  //
+  EXESS_XSD_URI "duration",      //
+  EXESS_XSD_URI "datetime",      //
+  EXESS_XSD_URI "time",          //
+  EXESS_XSD_URI "date",          //
+  EXESS_XSD_URI "hexBinary",     //
+  EXESS_XSD_URI "base64Binary",  //
 };
 
 /// The maximum length of the string representation of datatypes
@@ -45,18 +41,14 @@ static const size_t exess_max_lengths[] = {
   EXESS_MAX_DOUBLE_LENGTH,
   EXESS_MAX_FLOAT_LENGTH,
   0, // integer
-  0, // nonPositiveInteger
-  0, // negativeInteger
   EXESS_MAX_LONG_LENGTH,
   EXESS_MAX_INT_LENGTH,
   EXESS_MAX_SHORT_LENGTH,
   EXESS_MAX_BYTE_LENGTH,
-  0, // nonNegativeInteger
   EXESS_MAX_ULONG_LENGTH,
   EXESS_MAX_UINT_LENGTH,
   EXESS_MAX_USHORT_LENGTH,
   EXESS_MAX_UBYTE_LENGTH,
-  0, // positiveInteger
   EXESS_MAX_DURATION_LENGTH,
   EXESS_MAX_DATETIME_LENGTH,
   EXESS_MAX_TIME_LENGTH,
@@ -74,17 +66,13 @@ static const size_t exess_value_sizes[] = {
   sizeof(float),
   sizeof(int64_t),
   sizeof(int64_t),
-  sizeof(int64_t),
-  sizeof(int64_t),
   sizeof(int32_t),
   sizeof(int16_t),
   sizeof(int8_t),
   sizeof(uint64_t),
-  sizeof(uint64_t),
   sizeof(uint32_t),
   sizeof(uint16_t),
   sizeof(uint8_t),
-  sizeof(uint64_t),
   sizeof(ExessDuration),
   sizeof(ExessDateTime),
   sizeof(ExessTime),

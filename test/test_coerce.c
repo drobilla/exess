@@ -279,34 +279,6 @@ test_long(void)
   check_from_to(EXESS_LONG, min_long_str, EXESS_INTEGER, min_long_str);
   check_from_to(EXESS_LONG, max_long_str, EXESS_INTEGER, max_long_str);
 
-  // Non-positive values to/from nonPositiveInteger
-  check_from_to(
-    EXESS_LONG, min_long_str, EXESS_NON_POSITIVE_INTEGER, min_long_str);
-  check_from_to(EXESS_LONG, "0", EXESS_NON_POSITIVE_INTEGER, "0");
-  check_failure(
-    EXESS_LONG, "1", EXESS_NON_POSITIVE_INTEGER, EXESS_OUT_OF_RANGE);
-
-  // Negative values to/from negativeInteger
-  check_from_to(EXESS_LONG, min_long_str, EXESS_NEGATIVE_INTEGER, min_long_str);
-  check_from_to(EXESS_LONG, "-1", EXESS_NEGATIVE_INTEGER, "-1");
-  check_failure(EXESS_LONG, "0", EXESS_NEGATIVE_INTEGER, EXESS_OUT_OF_RANGE);
-
-  // Non-negative values to/from nonNegativeInteger
-  check_failure(
-    EXESS_LONG, "-1", EXESS_NON_NEGATIVE_INTEGER, EXESS_OUT_OF_RANGE);
-  check_from_to(EXESS_LONG, "0", EXESS_NON_NEGATIVE_INTEGER, "0");
-  check_from_to(
-    EXESS_LONG, max_long_str, EXESS_NON_NEGATIVE_INTEGER, max_long_str);
-
-  // Positive values to/from positiveInteger
-  check_failure(EXESS_LONG, "-1", EXESS_POSITIVE_INTEGER, EXESS_OUT_OF_RANGE);
-  check_failure(EXESS_LONG, "0", EXESS_POSITIVE_INTEGER, EXESS_OUT_OF_RANGE);
-  check_from_to(EXESS_LONG, max_long_str, EXESS_POSITIVE_INTEGER, max_long_str);
-  check_failure(EXESS_POSITIVE_INTEGER,
-                "9223372036854775808",
-                EXESS_LONG,
-                EXESS_OUT_OF_RANGE);
-
   // Float
   check_failure(EXESS_FLOAT, "1.5", EXESS_LONG, EXESS_WOULD_ROUND);
   check_from_to(EXESS_LONG, "-16777215", EXESS_FLOAT, "-1.6777215E7");
@@ -372,24 +344,6 @@ test_ulong(void)
   check_failure(
     EXESS_ULONG, "9223372036854775808", EXESS_INTEGER, EXESS_OUT_OF_RANGE);
 
-  // Only zero to/from nonPositiveInteger
-  check_from_to(EXESS_ULONG, "0", EXESS_NON_POSITIVE_INTEGER, "0");
-  check_failure(
-    EXESS_ULONG, "1", EXESS_NON_POSITIVE_INTEGER, EXESS_OUT_OF_RANGE);
-
-  // Not convertible to/from negativeInteger
-  check_failure(EXESS_ULONG, "0", EXESS_NEGATIVE_INTEGER, EXESS_OUT_OF_RANGE);
-  check_failure(EXESS_ULONG, "1", EXESS_NEGATIVE_INTEGER, EXESS_OUT_OF_RANGE);
-
-  // Any value to/from nonNegativeInteger
-  check_from_to(EXESS_ULONG, "0", EXESS_NON_NEGATIVE_INTEGER, "0");
-  check_from_to(
-    EXESS_ULONG, max_ulong_str, EXESS_NON_NEGATIVE_INTEGER, max_ulong_str);
-
-  // Positive values to/from positiveInteger
-  check_failure(EXESS_ULONG, "0", EXESS_POSITIVE_INTEGER, EXESS_OUT_OF_RANGE);
-  check_from_to(EXESS_ULONG, "1", EXESS_POSITIVE_INTEGER, "1");
-
   // Float
   check_failure(EXESS_FLOAT, "-1", EXESS_ULONG, EXESS_OUT_OF_RANGE);
   check_failure(EXESS_FLOAT, "1.5", EXESS_ULONG, EXESS_WOULD_ROUND);
@@ -422,14 +376,6 @@ static void
 test_large_integers(void)
 {
   check_failure(EXESS_TIME, "00:00:00", EXESS_INTEGER, EXESS_UNSUPPORTED);
-  check_failure(
-    EXESS_TIME, "00:00:00", EXESS_NON_POSITIVE_INTEGER, EXESS_UNSUPPORTED);
-  check_failure(
-    EXESS_TIME, "00:00:00", EXESS_NEGATIVE_INTEGER, EXESS_UNSUPPORTED);
-  check_failure(
-    EXESS_TIME, "00:00:00", EXESS_NON_NEGATIVE_INTEGER, EXESS_UNSUPPORTED);
-  check_failure(
-    EXESS_TIME, "00:00:00", EXESS_POSITIVE_INTEGER, EXESS_UNSUPPORTED);
 }
 
 static void
