@@ -10,7 +10,7 @@ project(
     'c_std=c99',
   ],
   license: 'ISC',
-  meson_version: '>= 0.54.0',
+  meson_version: '>= 0.56.0',
   version: '0.0.1',
 )
 

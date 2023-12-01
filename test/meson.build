@@ -96,14 +96,14 @@ foreach unit : number_tests
   )
 
   # Run default randomized test (like the others run above)
-  test(unit, test_prog, suite: ['public', 'random'])
+  test(unit + '_random', test_prog, suite: ['public'])
 
   # Run a short exhaustive test (mainly to hit the test code)
   test(
-    unit,
+    unit + '_range',
     test_prog,
     args: ['-x', '-l', '0', '-h', '512'],
-    suite: ['public', 'range'],
+    suite: 'public',
   )
 endforeach
 
@@ -130,7 +130,7 @@ good_args = [
 ]
 
 foreach args : good_args
-  name = ' '.join(args).underscorify()
+  name = ' '.join(args).underscorify().substring(1)
   test(name, test_short, args: args, suite: ['test_args'])
 endforeach
 
@@ -143,7 +143,7 @@ bad_args = [
 ]
 
 foreach args : bad_args
-  name = ' '.join(args).underscorify()
+  name = ' '.join(args).underscorify().substring(1)
   test(name, test_short, args: args, should_fail: true, suite: ['test_args'])
 endforeach
 
@@ -155,7 +155,7 @@ if get_option('default_library') == 'shared'
   # Build independent tests with the necessary library source code
 
   test(
-    unit,
+    'int_math',
     executable(
       'test_int_math',
       files('../src/int_math.c', 'test_int_math.c'),
@@ -166,7 +166,7 @@ if get_option('default_library') == 'shared'
   )
 
   test(
-    unit,
+    'bigint',
     executable(
       'test_bigint',
       files('../src/bigint.c', '../src/int_math.c', 'test_bigint.c'),
