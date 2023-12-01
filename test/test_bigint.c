@@ -16,7 +16,7 @@
    everything is probably fine).  Others cases are either made up to hit the
    edges of the implementation, or interesting cases collected from testing the
    decimal implementation.  Almost everything here uses the hex representation
-   so it is easy to dump into Python as a sanity check. */
+   so it's easy to dump into Python as a sanity check. */
 
 static void
 exess_bigint_set_hex_string(ExessBigint* num, const char* const str)

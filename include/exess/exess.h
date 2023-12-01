@@ -44,7 +44,7 @@
   EXESS_API            \
   EXESS_PURE_FUNC
 
-/// A const function in the public API that is pure and only reads parameters
+/// A const function in the public API that's pure and only reads parameters
 #define EXESS_CONST_API \
   EXESS_API             \
   EXESS_CONST_FUNC
@@ -713,7 +713,7 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    "P1DT2H", "PT30M", or "PT4.5S".
 
    Non-canonical form allows zero fields, leading zeros, and for seconds to be
-   written as a decimal even if it is integer, for example "P06D", "PT7.0S", or
+   written as a decimal even if it's integer, for example "P06D", "PT7.0S", or
    "P0Y0M01DT06H00M00S".
 
    @{
@@ -746,9 +746,9 @@ typedef struct {
    Note that xsd:duration literals are not totally ordered in general, since
    they can include all fields of a date, and the relation between those is not
    always constant (such as the number of days in a month).  The ExessDuration
-   representation, however, is normalised in a way that avoids this problem.
+   representation, however, is normalized in a way that avoids this problem.
 
-   A duration is less than another if it is a shorter duration of time.
+   A duration is less than another if it's a shorter duration of time.
 
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.

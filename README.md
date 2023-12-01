@@ -6,7 +6,7 @@ Exess is a simple C library for reading and writing [XSD][] datatypes.
 Exess provides portable, locale-independent, and standards-backed functions for
 converting common numeric and temporal datatypes to and from strings.
 Conversions are lossless wherever possible so, for example, a `float` written
-to a string will read back to exactly the original `float` value on any system.
+to a string will read back as exactly the original value on any system.
 
 The API is lightweight and avoids allocation entirely, making it simple to use
 and suitable for constrained contexts like plugins or embedded systems.
@@ -76,7 +76,3 @@ Documentation
  -- David Robillard <d@drobilla.net>
 
 [XSD]: https://www.w3.org/TR/xmlschema-2/
-
-[Meson]: https://mesonbuild.com/
-
-[Meson documentation]: https://mesonbuild.com/Quick-guide.html

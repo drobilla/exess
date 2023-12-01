@@ -8,7 +8,7 @@ Description
 Exess provides portable, locale-independent, and standards-backed functions for converting common numeric and temporal datatypes to and from strings.
 Conversions are lossless wherever possible so,
 for example,
-a ``float`` written to a string will read back to exactly the original ``float`` value on any system.
+a ``float`` written to a string will read back as exactly the original value on any system.
 
 *****
 Usage
@@ -18,7 +18,7 @@ To use exess,
 the compiler must be configured to add the versioned include directory to the include path,
 and to link with the corresponding library.
 Depending on the package ``exess-0`` achieves this in most build systems,
-or the required flags can be fetched manually with ``pkg-config`` or a compatible tool:
+or the required flags can be fetched manually with pkg-config_ or a compatible tool:
 
 .. code-block:: sh
 
@@ -29,6 +29,11 @@ The API can then be used by including ``exess/exess.h``:
 .. code-block:: c
 
    #include <exess/exess.h>
+
+Exess can also be used as a meson_ subproject.
+If neither meson nor pkg-config are available,
+things will need to be configured manually,
+for example by passing compiler options like ``-I/usr/include/exess-0 -lexess-0``.
 
 **************
 Reading Values
@@ -45,7 +50,7 @@ For example:
    int32_t     value = 0;
    ExessResult r     = exess_read_int(&value, "1234");
    if (!r.status) {
-     fprintf(stderr, "Read %zu bytes as %d\n", r.count, value);
+     printf("Read %zu bytes as %d\n", r.count, value);
    }
 
 If there was a syntax error,
@@ -53,8 +58,7 @@ the status code indicates the specific problem.
 If a value was read but didn't end at whitespace or the end of the string,
 the status :enumerator:`EXESS_EXPECTED_END` is returned.
 This indicates that there is trailing garbage in the string,
-so the parse may not be complete or correct depending on the context.
-
+so the parse may be incomplete or incorrect depending on the context.
 
 **************
 Writing Values
@@ -85,7 +89,7 @@ Allocating Strings
 ******************
 
 Exess doesn't do any allocation itself,
-so the calling code is responsible for providing a large enough buffer for output.
+so the calling code is responsible for providing a large enough output buffer.
 The `count` returned by write functions can be used to determine the space required for a specific value.
 If the write function is called with a null output buffer,
 then this count is still returned as if a value were written.
@@ -120,7 +124,6 @@ which allows for reading and writing any supported datatype without explicitly h
 Any value can be read with :func:`exess_read_value` and written with :func:`exess_write_value`,
 which work similarly to their typed counterparts,
 except they take a datatype, size, and pointer to a buffer rather than a value.
-
 :enum:`ExessDatatype` enumerates all of the supported datatypes.
 
 Unbounded Numeric Types
@@ -162,3 +165,6 @@ unbounded numbers and binary values are transformed a character at a time,
 avoiding value conversion,
 the limits of the machine's numeric types,
 and the need for buffer space to store the value.
+
+.. _meson: https://mesonbuild.com/
+.. _pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/

@@ -8,11 +8,10 @@ To build from source, you will need:
 
  * A relatively modern C compiler (GCC, Clang, and MSVC are known to work).
 
- * [Meson](http://mesonbuild.com/), which depends on
-   [Python](http://python.org/).
+ * [Meson][], which depends on [Python][].
 
-This is a brief overview of building this project with meson.  See the meson
-documentation for more detailed information.
+This is a brief overview of building this project with meson.  See the [meson
+documentation][] for more detailed information.
 
 Configuration
 -------------
@@ -29,7 +28,7 @@ configuration:
   * `CFLAGS`: C compiler options.
   * `LDFLAGS`: Linker options.
 
-However, it is better to use meson options for configuration.  All options can
+However, it's better to use meson options for configuration.  All options can
 be inspected with the `configure` command from within the build directory:
 
     cd build
@@ -68,3 +67,9 @@ For packaging, the installation may be staged to a directory using the
     DESTDIR=/tmp/mypackage/ meson install
 
     meson install --destdir=/tmp/mypackage/
+
+[Meson]: https://mesonbuild.com/
+
+[Python]: http://python.org/
+
+[meson documentation]: https://mesonbuild.com/Quick-guide.html
