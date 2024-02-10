@@ -49,6 +49,12 @@ quotient(const int32_t a, const int32_t low, const int32_t high)
 }
 
 static int
+compare_field(const unsigned lhs, const unsigned rhs)
+{
+  return lhs < rhs ? -1 : lhs == rhs ? 0 : 1;
+}
+
+static int
 exess_datetime_compare_determinate(const ExessDateTime lhs,
                                    const ExessDateTime rhs)
 {
@@ -56,28 +62,14 @@ exess_datetime_compare_determinate(const ExessDateTime lhs,
     return lhs.year < rhs.year ? -1 : 1;
   }
 
-  if (lhs.month != rhs.month) {
-    return lhs.month < rhs.month ? -1 : 1;
-  }
-
-  if (lhs.day != rhs.day) {
-    return lhs.day < rhs.day ? -1 : 1;
-  }
-
-  if (lhs.hour != rhs.hour) {
-    return lhs.hour < rhs.hour ? -1 : 1;
-  }
-
-  if (lhs.minute != rhs.minute) {
-    return lhs.minute < rhs.minute ? -1 : 1;
-  }
-
-  if (lhs.second != rhs.second) {
-    return lhs.second < rhs.second ? -1 : 1;
-  }
-
-  if (lhs.nanosecond != rhs.nanosecond) {
-    return lhs.nanosecond < rhs.nanosecond ? -1 : 1;
+  int cmp = 0;
+  if ((cmp = compare_field(lhs.month, rhs.month)) ||
+      (cmp = compare_field(lhs.day, rhs.day)) ||
+      (cmp = compare_field(lhs.hour, rhs.hour)) ||
+      (cmp = compare_field(lhs.minute, rhs.minute)) ||
+      (cmp = compare_field(lhs.second, rhs.second)) ||
+      (cmp = compare_field(lhs.nanosecond, rhs.nanosecond))) {
+    return cmp;
   }
 
   return 0;
@@ -146,6 +138,48 @@ add_field(const int32_t  lhs,
   return temp % max;
 }
 
+/**
+   Set the day, carrying into into months and years as necessary.
+
+   Note that the algorithm in the spec first clamps here, but we don't because
+   no such datetime should exist (exess_read_datetime refuses to read them).
+   This might return the infinite past or future.
+  */
+EXESS_CONST_FUNC
+static ExessDateTime
+carry_set_day(ExessDateTime e, int day)
+{
+  while (day < 1 || day > days_in_month(e.year, e.month)) {
+    if (day < 1) {
+      if (e.month == 1) {
+        if (e.year == INT16_MIN) {
+          return infinite_past(e.is_utc);
+        }
+
+        --e.year;
+        e.month = 12;
+        day += days_in_month(e.year, e.month);
+      } else {
+        --e.month;
+        day += days_in_month(e.year, e.month);
+      }
+    } else {
+      day -= days_in_month(e.year, e.month);
+      if (++e.month > 12) {
+        if (e.year == INT16_MAX) {
+          return infinite_future(e.is_utc);
+        }
+
+        ++e.year;
+        e.month = (uint8_t)modulo(e.month, 1, 13);
+      }
+    }
+  }
+
+  e.day = (uint8_t)day;
+  return e;
+}
+
 ExessDateTime
 exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
 {
@@ -199,42 +233,7 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
   e.minute = (uint8_t)add_field(s.minute, d_minute, 60, &carry);
   e.hour   = (uint8_t)add_field(s.hour, d_hour, 24, &carry);
 
-  /*
-    Carry days into months and years as necessary.  Note that the algorithm in
-    the spec first clamps here, but we don't because no such datetime should
-    exist (exess_read_datetime refuses to read them)
-  */
-  int32_t day = s.day + d_day + carry;
-  while (day < 1 || day > days_in_month(e.year, e.month)) {
-    if (day < 1) {
-      if (e.month == 1) {
-        if (e.year == INT16_MIN) {
-          return infinite_past(s.is_utc);
-        }
-
-        --e.year;
-        e.month = 12;
-        day += days_in_month(e.year, e.month);
-      } else {
-        --e.month;
-        day += days_in_month(e.year, e.month);
-      }
-    } else {
-      day -= days_in_month(e.year, e.month);
-      if (++e.month > 12) {
-        if (e.year == INT16_MAX) {
-          return infinite_future(s.is_utc);
-        }
-
-        ++e.year;
-        e.month = (uint8_t)modulo(e.month, 1, 13);
-      }
-    }
-  }
-
-  e.day = (uint8_t)day;
-
-  return e;
+  return carry_set_day(e, s.day + d_day + carry);
 }
 
 ExessResult
