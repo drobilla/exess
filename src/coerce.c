@@ -151,108 +151,24 @@ coerce_to_ulong(uint64_t* const      out,
                 const void* const    in,
                 const ExessCoercions coercions)
 {
-  switch (in_datatype) {
-  case EXESS_NOTHING:
-    break;
-
-  case EXESS_BOOLEAN:
-    *out = *(const bool*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_DECIMAL:
-  case EXESS_DOUBLE:
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) &&
-        *(const double*)in > trunc(*(const double*)in)) {
-      return EXESS_WOULD_ROUND;
-    }
-
-    if (*(const double*)in < 0.0 ||
-        *(const double*)in > (double)MAX_DOUBLE_INT) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t)llrint(*(const double*)in);
-    return EXESS_SUCCESS;
-
-  case EXESS_FLOAT:
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) &&
-        *(const float*)in > truncf(*(const float*)in)) {
-      return EXESS_WOULD_ROUND;
-    }
-
-    if (*(const float*)in < 0.0f || *(const float*)in > (float)MAX_FLOAT_INT) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t)llrintf(*(const float*)in);
-    return EXESS_SUCCESS;
-
-  case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
-  case EXESS_LONG:
-    if (*(const int64_t*)in < 0) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t) * (const int64_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_INT:
-    if (*(const int32_t*)in < 0) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t) * (const int*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_SHORT:
-    if (*(const int16_t*)in < 0) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t) * (const int16_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_BYTE:
-    if (*(const int8_t*)in < 0) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t) * (const int8_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_NON_NEGATIVE_INTEGER:
-  case EXESS_ULONG:
+  if (in_datatype == EXESS_NON_NEGATIVE_INTEGER || in_datatype == EXESS_ULONG ||
+      in_datatype == EXESS_POSITIVE_INTEGER) {
     *out = *(const uint64_t*)in;
     return EXESS_SUCCESS;
-
-  case EXESS_UINT:
-    *out = *(const uint32_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_USHORT:
-    *out = *(const uint16_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_UBYTE:
-    *out = *(const uint8_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_POSITIVE_INTEGER:
-    *out = *(const uint64_t*)in;
-    return EXESS_SUCCESS;
-
-  case EXESS_DURATION:
-  case EXESS_DATETIME:
-  case EXESS_TIME:
-  case EXESS_DATE:
-  case EXESS_HEX:
-  case EXESS_BASE64:
-    break;
   }
 
-  return EXESS_UNSUPPORTED;
+  int64_t     signed_out = 0;
+  ExessStatus st         = EXESS_SUCCESS;
+  if ((st = coerce_to_long(&signed_out, in_datatype, in, coercions))) {
+    return st;
+  }
+
+  if (signed_out < 0) {
+    return EXESS_OUT_OF_RANGE;
+  }
+
+  *out = (uint64_t)signed_out;
+  return st;
 }
 
 static ExessStatus
