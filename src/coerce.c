@@ -394,10 +394,7 @@ coerce_to_signed(const ExessDatatype in_datatype,
     return r;
   }
 
-  if (out_datatype == EXESS_LONG) {
-    *(int64_t*)out = value;
-    r.count        = sizeof(int64_t);
-  } else if (out_datatype == EXESS_INT) {
+  if (out_datatype == EXESS_INT) {
     *(int32_t*)out = (int32_t)value;
     r.count        = sizeof(int32_t);
   } else if (out_datatype == EXESS_SHORT) {
@@ -425,10 +422,7 @@ coerce_to_unsigned(const ExessDatatype in_datatype,
     return r;
   }
 
-  if (out_datatype == EXESS_ULONG) {
-    *(uint64_t*)out = value;
-    r.count         = sizeof(uint64_t);
-  } else if (out_datatype == EXESS_UINT) {
+  if (out_datatype == EXESS_UINT) {
     *(uint32_t*)out = (uint32_t)value;
     r.count         = sizeof(uint32_t);
   } else if (out_datatype == EXESS_USHORT) {
