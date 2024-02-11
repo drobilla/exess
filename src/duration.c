@@ -165,16 +165,23 @@ read_time(ExessDuration* const out, const Field field, const char* const str)
   return result(next.status, i + 1 + next.count);
 }
 
+static int
+compare_field(const int32_t lhs, const int32_t rhs)
+{
+  return lhs < rhs ? -1 : lhs == rhs ? 0 : 1;
+}
+
 int
 exess_duration_compare(const ExessDuration lhs, const ExessDuration rhs)
 {
-  return lhs.months < rhs.months             ? -1
-         : lhs.months > rhs.months           ? 1
-         : lhs.seconds < rhs.seconds         ? -1
-         : lhs.seconds > rhs.seconds         ? 1
-         : lhs.nanoseconds < rhs.nanoseconds ? -1
-         : lhs.nanoseconds > rhs.nanoseconds ? 1
-                                             : 0;
+  int cmp = 0;
+  if ((cmp = compare_field(lhs.months, rhs.months)) ||
+      (cmp = compare_field(lhs.seconds, rhs.seconds)) ||
+      (cmp = compare_field(lhs.nanoseconds, rhs.nanoseconds))) {
+    return cmp;
+  }
+
+  return 0;
 }
 
 ExessResult

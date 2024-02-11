@@ -7,3 +7,6 @@ Checks: >
   -cert-err33-c,
   -llvm-header-guard,
 InheritParentConfig: true
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '21'
