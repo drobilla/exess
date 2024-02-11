@@ -212,21 +212,20 @@ coerce_to_decimal(const ExessDatatype in_datatype,
   ExessStatus st    = EXESS_SUCCESS;
   int64_t     l_out = 0;
 
-  switch (in_datatype) {
-  case EXESS_DOUBLE:
+  if (in_datatype == EXESS_DOUBLE) {
     *(double*)out = *(const double*)in;
     return result(EXESS_SUCCESS, sizeof(double));
+  }
 
-  case EXESS_FLOAT:
+  if (in_datatype == EXESS_FLOAT) {
     *(double*)out = (double)*(const float*)in;
     return result(EXESS_SUCCESS, sizeof(double));
+  }
 
-  default:
-    if (!(st = coerce_signed(
-            &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
-      *(double*)out = (double)l_out;
-      return result(EXESS_SUCCESS, sizeof(double));
-    }
+  if (!(st = coerce_signed(
+          &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+    *(double*)out = (double)l_out;
+    return result(EXESS_SUCCESS, sizeof(double));
   }
 
   return result(st, 0U);
@@ -237,24 +236,22 @@ coerce_to_double(const ExessDatatype in_datatype,
                  const void* const   in,
                  double* const       out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
-
-  switch (in_datatype) {
-  case EXESS_DECIMAL:
+  if (in_datatype == EXESS_DECIMAL) {
     *out = *(const double*)in;
     return result(EXESS_SUCCESS, sizeof(double));
+  }
 
-  case EXESS_FLOAT:
+  if (in_datatype == EXESS_FLOAT) {
     *out = (double)*(const float*)in;
     return result(EXESS_SUCCESS, sizeof(double));
+  }
 
-  default:
-    if (!(st = coerce_signed(
-            &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
-      *out = (double)l_out;
-      return result(EXESS_SUCCESS, sizeof(double));
-    }
+  ExessStatus st    = EXESS_SUCCESS;
+  int64_t     l_out = 0;
+  if (!(st = coerce_signed(
+          &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+    *out = (double)l_out;
+    return result(EXESS_SUCCESS, sizeof(double));
   }
 
   return result(st, 0U);
@@ -266,25 +263,22 @@ coerce_to_float(const ExessCoercions coercions,
                 const void* const    in,
                 float* const         out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
-
-  switch (in_datatype) {
-  case EXESS_DECIMAL:
-  case EXESS_DOUBLE:
+  if (in_datatype == EXESS_DECIMAL || in_datatype == EXESS_DOUBLE) {
     if (!(coercions & (ExessCoercions)EXESS_REDUCE_PRECISION)) {
       return result(EXESS_WOULD_REDUCE_PRECISION, 0U);
     }
 
     *out = (float)*(const double*)in;
     return result(EXESS_SUCCESS, sizeof(float));
+  }
 
-  default:
-    if (!(st = coerce_signed(
-            &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT))) {
-      *out = (float)l_out;
-      return result(EXESS_SUCCESS, sizeof(float));
-    }
+  ExessStatus st    = EXESS_SUCCESS;
+  int64_t     l_out = 0;
+
+  if (!(st = coerce_signed(
+          &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT))) {
+    *out = (float)l_out;
+    return result(EXESS_SUCCESS, sizeof(float));
   }
 
   return result(st, 0U);

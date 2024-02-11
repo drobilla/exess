@@ -37,7 +37,6 @@ if cc.get_id() in ['clang', 'emscripten']
       '-Wno-c11-extensions',
       '-Wno-declaration-after-statement',
       '-Wno-padded',
-      '-Wno-switch-enum',
       '-Wno-unsafe-buffer-usage',
     ]
 
@@ -79,7 +78,6 @@ elif cc.get_id() == 'gcc'
       '-Wno-padded',
       '-Wno-strict-overflow',
       '-Wno-switch-default',
-      '-Wno-switch-enum',
       '-Wno-unsuffixed-float-constants',
       '-Wno-unused-const-variable',
     ]
@@ -94,7 +92,6 @@ elif cc.get_id() == 'gcc'
 elif cc.get_id() == 'msvc'
   if warning_level == 'everything'
     c_suppressions += [
-      '/wd4061', # enumerator is not explicitly handled
       '/wd4710', # function not inlined
       '/wd4711', # function selected for automatic inline expansion
       '/wd4820', # padding added after data member

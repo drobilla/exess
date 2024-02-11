@@ -215,57 +215,44 @@ exess_write_canonical(const char* const   str,
   ExessIntegerKind kind = EXESS_ZERO;
   ExessResult      r    = {EXESS_UNSUPPORTED, 0};
 
-  switch (datatype) {
-  case EXESS_NOTHING:
-    break;
-
-  case EXESS_DECIMAL:
+  if (datatype == EXESS_DECIMAL) {
     r = write_decimal(str, buf_size, buf);
-    break;
 
-  case EXESS_INTEGER:
+  } else if (datatype == EXESS_INTEGER) {
     r = write_integer(str, buf_size, buf, &kind);
-    break;
 
-  case EXESS_NON_POSITIVE_INTEGER:
+  } else if (datatype == EXESS_NON_POSITIVE_INTEGER) {
     r = write_integer(str, buf_size, buf, &kind);
     if (kind == EXESS_POSITIVE) {
       r.status = EXESS_BAD_VALUE;
     }
-    break;
 
-  case EXESS_NEGATIVE_INTEGER:
+  } else if (datatype == EXESS_NEGATIVE_INTEGER) {
     r = write_integer(str, buf_size, buf, &kind);
     if (kind == EXESS_ZERO || kind == EXESS_POSITIVE) {
       r.status = EXESS_BAD_VALUE;
     }
-    break;
 
-  case EXESS_NON_NEGATIVE_INTEGER:
+  } else if (datatype == EXESS_NON_NEGATIVE_INTEGER) {
     r = write_integer(str, buf_size, buf, &kind);
     if (kind == EXESS_NEGATIVE) {
       r.status = EXESS_BAD_VALUE;
     }
-    break;
 
-  case EXESS_POSITIVE_INTEGER:
+  } else if (datatype == EXESS_POSITIVE_INTEGER) {
     r = write_integer(str, buf_size, buf, &kind);
     if (kind == EXESS_NEGATIVE || kind == EXESS_ZERO) {
       r.status = EXESS_BAD_VALUE;
     }
-    break;
 
-  case EXESS_HEX:
+  } else if (datatype == EXESS_HEX) {
     r = write_hex(str, buf_size, buf);
-    break;
 
-  case EXESS_BASE64:
+  } else if (datatype == EXESS_BASE64) {
     r = write_base64(str, buf_size, buf);
-    break;
 
-  default:
+  } else {
     r = write_bounded(str, datatype, buf_size, buf);
-    break;
   }
 
   return end_write(r.status, buf_size, buf, r.count);
