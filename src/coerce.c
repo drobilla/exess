@@ -385,6 +385,69 @@ coerce_to_date(const ExessCoercions coercions,
   return result(EXESS_SUCCESS, sizeof(ExessDate));
 }
 
+static ExessResult
+coerce_to_signed(const ExessDatatype in_datatype,
+                 const void* const   in,
+                 const ExessDatatype out_datatype,
+                 void* const         out,
+                 const int64_t       min,
+                 const int64_t       max)
+{
+  ExessResult r = {EXESS_SUCCESS, 0U};
+
+  int64_t value = 0;
+  if ((r.status = coerce_signed(&value, in_datatype, in, min, max))) {
+    return r;
+  }
+
+  if (out_datatype == EXESS_LONG) {
+    *(int64_t*)out = value;
+    r.count        = sizeof(int64_t);
+  } else if (out_datatype == EXESS_INT) {
+    *(int32_t*)out = (int32_t)value;
+    r.count        = sizeof(int32_t);
+  } else if (out_datatype == EXESS_SHORT) {
+    *(int16_t*)out = (int16_t)value;
+    r.count        = sizeof(int16_t);
+  } else if (out_datatype == EXESS_BYTE) {
+    *(int8_t*)out = (int8_t)value;
+    r.count       = sizeof(int8_t);
+  }
+
+  return r;
+}
+
+static ExessResult
+coerce_to_unsigned(const ExessDatatype in_datatype,
+                   const void* const   in,
+                   const ExessDatatype out_datatype,
+                   void* const         out,
+                   const uint64_t      max)
+{
+  ExessResult r = {EXESS_SUCCESS, 0U};
+
+  uint64_t value = 0U;
+  if ((r.status = coerce_unsigned(&value, in_datatype, in, max))) {
+    return r;
+  }
+
+  if (out_datatype == EXESS_ULONG) {
+    *(uint64_t*)out = value;
+    r.count         = sizeof(uint64_t);
+  } else if (out_datatype == EXESS_UINT) {
+    *(uint32_t*)out = (uint32_t)value;
+    r.count         = sizeof(uint32_t);
+  } else if (out_datatype == EXESS_USHORT) {
+    *(uint16_t*)out = (uint16_t)value;
+    r.count         = sizeof(uint16_t);
+  } else if (out_datatype == EXESS_UBYTE) {
+    *(uint8_t*)out = (uint8_t)value;
+    r.count        = sizeof(uint8_t);
+  }
+
+  return r;
+}
+
 ExessResult
 exess_value_coerce(const ExessCoercions coercions,
                    const ExessDatatype  in_datatype,
@@ -416,9 +479,7 @@ exess_value_coerce(const ExessCoercions coercions,
     return result(EXESS_NO_SPACE, 0U);
   }
 
-  ExessStatus st    = EXESS_UNSUPPORTED;
-  int64_t     l_out = 0;
-  uint64_t    u_out = 0U;
+  ExessStatus st = EXESS_UNSUPPORTED;
 
   switch (out_datatype) {
   case EXESS_NOTHING:
@@ -448,25 +509,16 @@ exess_value_coerce(const ExessCoercions coercions,
       coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
 
   case EXESS_INT:
-    if (!(st = coerce_signed(&l_out, in_datatype, in, INT32_MIN, INT32_MAX))) {
-      *(int32_t*)out = (int32_t)l_out;
-      return result(EXESS_SUCCESS, sizeof(int32_t));
-    }
-    break;
+    return coerce_to_signed(
+      in_datatype, in, out_datatype, out, INT32_MIN, INT32_MAX);
 
   case EXESS_SHORT:
-    if (!(st = coerce_signed(&l_out, in_datatype, in, INT16_MIN, INT16_MAX))) {
-      *(int16_t*)out = (int16_t)l_out;
-      return result(EXESS_SUCCESS, sizeof(int16_t));
-    }
-    break;
+    return coerce_to_signed(
+      in_datatype, in, out_datatype, out, INT16_MIN, INT16_MAX);
 
   case EXESS_BYTE:
-    if (!(st = coerce_signed(&l_out, in_datatype, in, INT8_MIN, INT8_MAX))) {
-      *(int8_t*)out = (int8_t)l_out;
-      return result(EXESS_SUCCESS, sizeof(int8_t));
-    }
-    break;
+    return coerce_to_signed(
+      in_datatype, in, out_datatype, out, INT8_MIN, INT8_MAX);
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
@@ -474,25 +526,13 @@ exess_value_coerce(const ExessCoercions coercions,
       coercions, in_datatype, in, 0U, (uint64_t*)out);
 
   case EXESS_UINT:
-    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT32_MAX))) {
-      *(uint32_t*)out = (uint32_t)u_out;
-      return result(EXESS_SUCCESS, sizeof(uint32_t));
-    }
-    break;
+    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT32_MAX);
 
   case EXESS_USHORT:
-    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT16_MAX))) {
-      *(uint16_t*)out = (uint16_t)u_out;
-      return result(EXESS_SUCCESS, sizeof(uint16_t));
-    }
-    break;
+    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT16_MAX);
 
   case EXESS_UBYTE:
-    if (!(st = coerce_unsigned(&u_out, in_datatype, in, UINT8_MAX))) {
-      *(uint8_t*)out = (uint8_t)u_out;
-      return result(EXESS_SUCCESS, sizeof(uint8_t));
-    }
-    break;
+    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT8_MAX);
 
   case EXESS_POSITIVE_INTEGER:
     return coerce_to_unsigned_integer(
