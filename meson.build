@@ -215,6 +215,7 @@ libexess = library(
   versioned_name,
   sources,
   c_args: platform_c_args + extra_c_args + c_suppressions + ['-DEXESS_INTERNAL'],
+  darwin_versions: [major_version + '.0.0', meson.project_version()],
   dependencies: [m_dep],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
