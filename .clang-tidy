@@ -6,6 +6,7 @@ Checks: >
   -altera-*,
   -bugprone-assignment-in-if-condition,
   -llvmlibc-*,
+  -misc-include-cleaner,
   -modernize-macro-to-enum,
   -readability-identifier-length,
 WarningsAsErrors: '*'
