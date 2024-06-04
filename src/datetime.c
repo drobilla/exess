@@ -294,7 +294,8 @@ exess_write_datetime(const ExessDateTime value,
   const ExessTimezone local = {EXESS_LOCAL};
   const ExessDate     date  = {value.year, value.month, value.day, local};
   const ExessTimezone zone  = {value.is_utc ? 0 : EXESS_LOCAL};
-  const ExessTime     time  = {
+
+  const ExessTime time = {
     zone, value.hour, value.minute, value.second, value.nanosecond};
 
   if (!in_range(value.month, 1, 12) || !in_range(value.day, 1, 31) ||

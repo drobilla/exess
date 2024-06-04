@@ -934,7 +934,8 @@ typedef int8_t ExessTimezone;
    @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
    parameters are invalid or not supported.
 */
-EXESS_CONST_API ExessTimezone
+EXESS_CONST_API
+ExessTimezone
 exess_timezone(int8_t hours, int8_t minutes);
 
 /**

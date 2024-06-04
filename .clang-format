@@ -5,6 +5,9 @@
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignEscapedNewlinesLeft: true
+AttributeMacros:
+  - EXESS_CONST_FUNC
+  - EXESS_PURE_FUNC
 BasedOnStyle: Mozilla
 BraceWrapping:
   AfterNamespace: false
@@ -26,8 +29,8 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false
 StatementMacros:
   - EXESS_API
-  - EXESS_CONST_FUNC
-  - EXESS_PURE_FUNC
+  - EXESS_CONST_API
+  - EXESS_PURE_API
   - _Generic
   - _Pragma
 ...
