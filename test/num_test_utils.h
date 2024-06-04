@@ -26,11 +26,12 @@ static bool
 print_num_test_usage(const char* const name)
 {
   fprintf(stderr, "Usage: %s [OPTION]...\n", name);
-  fprintf(stderr, "  -h           Optional high value for exhaustive test.\n");
-  fprintf(stderr, "  -l           Optional low value for exhaustive test.\n");
-  fprintf(stderr, "  -n NUM_TESTS Number of random tests to run.\n");
-  fprintf(stderr, "  -s SEED      Use random seed.\n");
-  fprintf(stderr, "  -x           Exhaustively test numbers.\n");
+  fprintf(stderr,
+          "  -h           Optional high value for exhaustive tests\n"
+          "  -l           Optional low value for exhaustive tests\n"
+          "  -n NUM_TESTS Number of random tests to run\n"
+          "  -s SEED      Random seed\n"
+          "  -x           Exhaustively test numbers\n");
   return true;
 }
 
