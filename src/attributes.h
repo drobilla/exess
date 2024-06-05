@@ -7,11 +7,9 @@
 #ifdef __GNUC__
 #  define EXESS_I_PURE_FUNC __attribute__((pure))
 #  define EXESS_I_CONST_FUNC __attribute__((const))
-#  define EXESS_I_MALLOC_FUNC __attribute__((malloc))
 #else
 #  define EXESS_I_PURE_FUNC
 #  define EXESS_I_CONST_FUNC
-#  define EXESS_I_MALLOC_FUNC
 #endif
 
 #endif // EXESS_SRC_ATTRIBUTES_H
