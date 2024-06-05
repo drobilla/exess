@@ -13,7 +13,7 @@
 #include <string.h>
 
 int
-exess_date_compare(const ExessDate lhs, const ExessDate rhs)
+exess_compare_date(const ExessDate lhs, const ExessDate rhs)
 {
   ExessDateTime lhs_datetime = {
     lhs.year, lhs.month, lhs.day, lhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
@@ -33,7 +33,7 @@ exess_date_compare(const ExessDate lhs, const ExessDate rhs)
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }
 
-  return exess_datetime_compare(lhs_datetime, rhs_datetime);
+  return exess_compare_datetime(lhs_datetime, rhs_datetime);
 }
 
 ExessResult

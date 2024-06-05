@@ -76,7 +76,7 @@ exess_datetime_compare_determinate(const ExessDateTime lhs,
 }
 
 int
-exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
+exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
 
@@ -91,13 +91,13 @@ exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
   if (lhs.is_utc) {
     ExessDateTime r_minus = exess_add_datetime_duration(rhs, minus_14h);
     r_minus.is_utc        = true;
-    if (exess_datetime_compare(lhs, r_minus) < 0) {
+    if (exess_compare_datetime(lhs, r_minus) < 0) {
       return -1;
     }
 
     ExessDateTime r_plus = exess_add_datetime_duration(rhs, plus_14h);
     r_plus.is_utc        = true;
-    if (exess_datetime_compare(lhs, r_plus) > 0) {
+    if (exess_compare_datetime(lhs, r_plus) > 0) {
       return 1;
     }
 
@@ -107,13 +107,13 @@ exess_datetime_compare(const ExessDateTime lhs, const ExessDateTime rhs)
 
   ExessDateTime l_plus = exess_add_datetime_duration(lhs, plus_14h);
   l_plus.is_utc        = true;
-  if (exess_datetime_compare(l_plus, rhs) < 0) {
+  if (exess_compare_datetime(l_plus, rhs) < 0) {
     return -1;
   }
 
   ExessDateTime l_minus = exess_add_datetime_duration(lhs, minus_14h);
   l_minus.is_utc        = true;
-  if (exess_datetime_compare(l_minus, rhs) > 0) {
+  if (exess_compare_datetime(l_minus, rhs) > 0) {
     return 1;
   }
 

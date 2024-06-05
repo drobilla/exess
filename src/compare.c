@@ -83,19 +83,19 @@ exess_value_compare(const ExessDatatype lhs_datatype,
   case EXESS_POSITIVE_INTEGER:
     return COMPARE(*(const uint64_t*)lhs_value, *(const uint64_t*)rhs_value);
   case EXESS_DURATION:
-    return exess_duration_compare(*(const ExessDuration*)lhs_value,
+    return exess_compare_duration(*(const ExessDuration*)lhs_value,
                                   *(const ExessDuration*)rhs_value);
 
   case EXESS_DATETIME:
-    return exess_datetime_compare(*(const ExessDateTime*)lhs_value,
+    return exess_compare_datetime(*(const ExessDateTime*)lhs_value,
                                   *(const ExessDateTime*)rhs_value);
 
   case EXESS_TIME:
-    return exess_time_compare(*(const ExessTime*)lhs_value,
+    return exess_compare_time(*(const ExessTime*)lhs_value,
                               *(const ExessTime*)rhs_value);
 
   case EXESS_DATE:
-    return exess_date_compare(*(const ExessDate*)lhs_value,
+    return exess_compare_date(*(const ExessDate*)lhs_value,
                               *(const ExessDate*)rhs_value);
 
   case EXESS_HEX:

@@ -172,7 +172,7 @@ compare_field(const int32_t lhs, const int32_t rhs)
 }
 
 int
-exess_duration_compare(const ExessDuration lhs, const ExessDuration rhs)
+exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
 {
   int cmp = 0;
   if ((cmp = compare_field(lhs.months, rhs.months)) ||
