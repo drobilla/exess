@@ -8,7 +8,11 @@ Description
 Exess provides portable, locale-independent, and standards-backed functions for converting common numeric and temporal datatypes to and from strings.
 Conversions are lossless wherever possible so,
 for example,
-a ``float`` written to a string will read back as exactly the original value on any system.
+a ``float`` written as a string can be read back as the exact original value on any system.
+
+The supported datatypes are defined by the XML Schema specification,
+although they (along with exess itself) are useful in general,
+and compatible with many other standards.
 
 *****
 Usage
@@ -17,7 +21,8 @@ Usage
 To use exess,
 the compiler must be configured to add the versioned include directory to the include path,
 and to link with the corresponding library.
-Depending on the package ``exess-0`` achieves this in most build systems,
+With most build systems,
+the ``exess-0`` package can be used for this,
 or the required flags can be fetched manually with pkg-config_ or a compatible tool:
 
 .. code-block:: sh
@@ -30,10 +35,8 @@ The API can then be used by including ``exess/exess.h``:
 
    #include <exess/exess.h>
 
-Exess can also be used as a meson_ subproject.
-If neither meson nor pkg-config are available,
-things will need to be configured manually,
-for example by passing compiler options like ``-I/usr/include/exess-0 -lexess-0``.
+If build system support is unavailable,
+arguments like ``-I/usr/include/exess-0 -lexess-0`` must be added to the compiler command manually.
 
 **************
 Reading Values
@@ -88,8 +91,9 @@ for example:
 Allocating Strings
 ******************
 
-Exess doesn't do any allocation itself,
-so the calling code is responsible for providing a large enough output buffer.
+Exess never allocates memory,
+the calling code is responsible for providing a large enough output buffer.
+
 The `count` returned by write functions can be used to determine the space required for a specific value.
 If the write function is called with a null output buffer,
 then this count is still returned as if a value were written.
@@ -100,23 +104,22 @@ For example:
 .. code-block:: c
 
    ExessResult r   = exess_write_int(1234, 0, NULL);
-   char*       str = (char*)calloc(r.count + 1, 1);
+   char*       buf = (char*)calloc(r.count + 1, 1);
 
    r = exess_write_int(1234, r.count + 1, buf);
 
 Note that for some types,
-this operation can be about as expensive as actually writing the value.
+this operation is about as expensive as actually writing the value.
 For example, it requires binary to decimal conversion for floating point numbers.
-For ``float`` and ``double``,
-since the length is bounded and relatively small,
-it's likely faster to write immediately to a sufficiently large buffer,
+For this reason,
+it can be faster to first write to a sufficiently large static buffer,
 then copy the result to the final destination.
 
 **************
 Generic Values
 **************
 
-The fundamental read and write functions all have similar semantics,
+The simple read and write functions all have similar semantics,
 but different type signatures since they use different value types.
 An alternative API that works with opaque buffers is also provided,
 which allows for reading and writing any supported datatype without explicitly handling each case.
@@ -157,14 +160,6 @@ For example, this will print ``12``:
    if (!r.status) {
      printf("%s\n", buf);
    }
-
-Note that when the value isn't needed,
-it's better to use :func:`exess_write_canonical` since it supports transforming large values directly.
-Specifically,
-unbounded numbers and binary values are transformed a character at a time,
-avoiding value conversion,
-the limits of the machine's numeric types,
-and the need for buffer space to store the value.
 
 .. _meson: https://mesonbuild.com/
 .. _pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/

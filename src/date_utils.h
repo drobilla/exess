@@ -9,12 +9,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/// Return whether a year is a leap year in the proleptic Gregorian calendar
 static inline bool
 is_leap_year(const int64_t year)
 {
   return !(year % 4) && ((year % 100) || !(year % 400));
 }
 
+/// Return the number of days in some month of the proleptic Gregorian calendar
 static inline uint8_t
 days_in_month(const int16_t year, const uint8_t month)
 {
