@@ -39,6 +39,12 @@ sanitize:
   variables:
     CC: "clang"
 
+c23:
+  image: lv2plugin/debian-x64
+  script:
+    - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Dc_std=c2x
+    - ninja -C build test
+
 # Linux Distributions
 
 fedora:

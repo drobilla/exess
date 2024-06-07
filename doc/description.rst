@@ -71,16 +71,10 @@ It returns an :struct:`ExessResult`,
 with a ``status`` code and the ``count`` of characters written,
 not including the trailing null byte.
 
-For datatypes with a bounded length,
-a constant like :var:`EXESS_MAX_INT_LENGTH` is the maximum length of the canonical representation of any value.
-This can be used to allocate buffers statically or on the stack,
-for example:
-
 .. code-block:: c
 
-   char s[EXESS_MAX_INT_LENGTH + 1] = {0};
-
-   ExessResult r = exess_write_int(1234, sizeof(s), s);
+   char        s[12] = {0};
+   ExessResult r     = exess_write_int(1234, sizeof(s), s);
    if (!r.status) {
      printf("Write error: %s\n", exess_strerror(r.status));
    }
@@ -91,6 +85,13 @@ Allocating Strings
 
 Exess never allocates memory,
 the calling code is responsible for providing a large enough output buffer.
+
+For datatypes with a bounded length,
+the array :var:`exess_max_lengths`,
+indexed by the corresponding :enum:`ExessDatatype` value,
+contains the length of the longest possible string value of that datatype,
+or zero if the datatype is unbounded.
+The longest string of any unbounded datatype is 41 bytes.
 
 The `count` returned by write functions can be used to determine the space required for a specific value.
 If the write function is called with a null output buffer,

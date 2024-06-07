@@ -28,6 +28,7 @@ SKIP_FUNCTION_MACROS = NO
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = EXESS_API \
+                         EXESS_CONSTEXPR= \
                          EXESS_CONST_API \
                          EXESS_CONST_FUNC= \
                          EXESS_NONNULL= \

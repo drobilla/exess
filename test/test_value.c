@@ -48,7 +48,7 @@ check_read(void*               value,
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
-  assert(r.status || r.write_count == exess_value_size(datatype));
+  assert(r.status || r.write_count == exess_value_sizes[datatype]);
 }
 
 static void

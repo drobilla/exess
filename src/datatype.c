@@ -3,8 +3,6 @@
 
 #include <exess/exess.h>
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #define N_DATATYPES 24
@@ -37,62 +35,6 @@ static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
   EXESS_XSD_URI "base64Binary",       //
 };
 
-/// The maximum length of the string representation of datatypes
-static const size_t exess_max_lengths[] = {
-  0, // Unknown
-  EXESS_MAX_BOOLEAN_LENGTH,
-  0, // decimal
-  EXESS_MAX_DOUBLE_LENGTH,
-  EXESS_MAX_FLOAT_LENGTH,
-  0, // integer
-  0, // nonPositiveInteger
-  0, // negativeInteger
-  EXESS_MAX_LONG_LENGTH,
-  EXESS_MAX_INT_LENGTH,
-  EXESS_MAX_SHORT_LENGTH,
-  EXESS_MAX_BYTE_LENGTH,
-  0, // nonNegativeInteger
-  EXESS_MAX_ULONG_LENGTH,
-  EXESS_MAX_UINT_LENGTH,
-  EXESS_MAX_USHORT_LENGTH,
-  EXESS_MAX_UBYTE_LENGTH,
-  0, // positiveInteger
-  EXESS_MAX_DURATION_LENGTH,
-  EXESS_MAX_DATETIME_LENGTH,
-  EXESS_MAX_TIME_LENGTH,
-  EXESS_MAX_DATE_LENGTH,
-  0, // hexBinary
-  0, // base64Binary
-};
-
-/// The size of the binary value representation of datatypes
-static const size_t exess_value_sizes[] = {
-  0, // Unknown
-  sizeof(bool),
-  sizeof(double),
-  sizeof(double),
-  sizeof(float),
-  sizeof(int64_t),
-  sizeof(int64_t),
-  sizeof(int64_t),
-  sizeof(int64_t),
-  sizeof(int32_t),
-  sizeof(int16_t),
-  sizeof(int8_t),
-  sizeof(uint64_t),
-  sizeof(uint64_t),
-  sizeof(uint32_t),
-  sizeof(uint16_t),
-  sizeof(uint8_t),
-  sizeof(uint64_t),
-  sizeof(ExessDuration),
-  sizeof(ExessDateTime),
-  sizeof(ExessTime),
-  sizeof(ExessDate),
-  0, // hexBinary
-  0, // base64Binary
-};
-
 const char*
 exess_datatype_uri(const ExessDatatype datatype)
 {
@@ -115,22 +57,4 @@ exess_datatype_from_uri(const char* const uri)
   }
 
   return EXESS_NOTHING;
-}
-
-bool
-exess_datatype_is_bounded(const ExessDatatype datatype)
-{
-  return exess_max_length(datatype) > 0;
-}
-
-size_t
-exess_max_length(const ExessDatatype datatype)
-{
-  return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0U;
-}
-
-size_t
-exess_value_size(const ExessDatatype datatype)
-{
-  return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0U;
 }

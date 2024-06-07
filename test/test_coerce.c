@@ -42,7 +42,7 @@ check_conversions(const ExessDatatype  from_datatype,
                                                    &coerced);
 
   assert(!coerced_r.status);
-  assert(coerced_r.count >= exess_value_size(to_datatype));
+  assert(coerced_r.count >= exess_value_sizes[to_datatype]);
 
   // Write coerced value and check string against expectation
   const ExessResult coerced_str_r = exess_write_value(
@@ -65,7 +65,7 @@ check_conversions(const ExessDatatype  from_datatype,
                                                      &tripped);
 
     assert(!tripped_r.status);
-    assert(tripped_r.count >= exess_value_size(from_datatype));
+    assert(tripped_r.count >= exess_value_sizes[from_datatype]);
 
     // Write round-tripped value and check string against the original
     const ExessResult tr = exess_write_value(from_datatype,
