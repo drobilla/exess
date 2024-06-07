@@ -446,7 +446,7 @@ exess_value_coerce(const ExessCoercions coercions,
                    void* const          out)
 {
   // Ensure the input is sufficiently large so we don't read out of bounds
-  if (in_size < exess_value_size(in_datatype)) {
+  if (in_size < exess_value_sizes[in_datatype]) {
     return result(EXESS_BAD_VALUE, 0U);
   }
 
@@ -463,7 +463,7 @@ exess_value_coerce(const ExessCoercions coercions,
   }
 
   // Ensure the output is sufficiently large so we don't write out of bounds
-  if (out_size < exess_value_size(out_datatype)) {
+  if (out_size < exess_value_sizes[out_datatype]) {
     return result(EXESS_NO_SPACE, 0U);
   }
 

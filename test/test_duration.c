@@ -18,6 +18,7 @@
 static const ExessDuration zero       = {0, 0, 0};
 static const ExessDuration lowest     = {-INT32_MAX, -INT32_MAX, -999999999};
 static const ExessDuration highest    = {INT32_MAX, INT32_MAX, 999999999};
+static const ExessDuration longest    = {-2119579475, -1093803875, -999999999};
 static const ExessDuration year       = {12, 0, 0};
 static const ExessDuration month      = {1, 0, 0};
 static const ExessDuration day        = {0, 24 * 60 * 60, 0};
@@ -187,6 +188,9 @@ test_write_duration(void)
   check_write(
     highest, EXESS_SUCCESS, 38, "P178956970Y7M24855DT3H14M7.999999999S");
 
+  check_write(
+    longest, EXESS_SUCCESS, 42, "-P176631622Y11M12659DT18H24M35.999999999S");
+
   check_write(year, EXESS_SUCCESS, 4, "P1Y");
   check_write(month, EXESS_SUCCESS, 4, "P1M");
   check_write(day, EXESS_SUCCESS, 4, "P1D");
@@ -203,15 +207,15 @@ test_write_duration(void)
   check_write(n_second, EXESS_SUCCESS, 6, "-PT1S");
   check_write(n_nanosecond, EXESS_SUCCESS, 16, "-PT0.000000001S");
 
-  check_write(garbage1, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage2, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage3, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage4, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage5, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage6, EXESS_BAD_VALUE, 41, "");
-  check_write(garbage7, EXESS_OUT_OF_RANGE, 41, "");
-  check_write(garbage8, EXESS_OUT_OF_RANGE, 41, "");
-  check_write(garbage9, EXESS_OUT_OF_RANGE, 41, "");
+  check_write(garbage1, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage2, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage3, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage4, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage5, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage6, EXESS_BAD_VALUE, 42, "");
+  check_write(garbage7, EXESS_OUT_OF_RANGE, 42, "");
+  check_write(garbage8, EXESS_OUT_OF_RANGE, 42, "");
+  check_write(garbage9, EXESS_OUT_OF_RANGE, 42, "");
 
   check_write(zero, EXESS_NO_SPACE, 3, "");
   check_write(lowest, EXESS_NO_SPACE, 24, "");

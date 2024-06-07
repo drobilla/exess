@@ -214,6 +214,7 @@ if cc.get_id() in ['clang', 'emscripten']
   header_suppressions += [
     '-Wno-nullability-extension',
     '-Wno-padded',
+    '-Wno-pre-c2x-compat',
   ]
 
   if not meson.is_cross_build()

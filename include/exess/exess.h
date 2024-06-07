@@ -39,6 +39,11 @@
 #  define EXESS_NULLABLE
 #endif
 
+#if defined(__GNUC__) && __GNUC__ >= 7
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Wunused-const-variable\"")
+#endif
+
 /// A pure function in the public API that only reads memory
 #define EXESS_PURE_API \
   EXESS_API            \
@@ -48,6 +53,14 @@
 #define EXESS_CONST_API \
   EXESS_API             \
   EXESS_CONST_FUNC
+
+/// A static constant expression usable at compile time
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || \
+     (defined(__cplusplus) && __cplusplus >= 201103L))
+#  define EXESS_CONSTEXPR constexpr
+#else
+#  define EXESS_CONSTEXPR const
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -743,10 +756,9 @@ typedef struct {
 /**
    Compare two durations.
 
-   Note that xsd:duration literals are not totally ordered in general, since
-   they can include all fields of a date, and the relation between those is not
-   always constant (such as the number of days in a month).  The ExessDuration
-   representation, however, is normalized in a way that avoids this problem.
+   Although xsd:duration literals aren't totally ordered in general, this
+   function will consider any number of `months` greater than any number of
+   `seconds`, even if it may equal more days than one month.
 
    A duration is less than another if it's a shorter duration of time.
 
@@ -1221,7 +1233,7 @@ exess_write_hex(size_t                    data_size,
    An identifier for a supported datatype.
 */
 typedef enum {
-  EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
+  EXESS_NOTHING = 0U,         ///< Sentinel for unknown datatypes or errors
   EXESS_BOOLEAN,              ///< xsd:boolean (see @ref exess_boolean)
   EXESS_DECIMAL,              ///< xsd:decimal (see @ref exess_decimal)
   EXESS_DOUBLE,               ///< xsd:double (see @ref exess_double)
@@ -1248,6 +1260,87 @@ typedef enum {
 } ExessDatatype;
 
 /**
+   The number of supported ExessDatatype values.
+*/
+#define EXESS_NUM_DATATYPES 24
+
+/**
+   Array of maximum string lengths, indexed by datatype.
+
+   Each entry is the maximum length of a string with the indexed datatype, or
+   zero if the datatype is unknown or unbounded.  For example:
+
+   @code
+   unsigned four_bytes = exess_max_lengths[EXESS_BYTE];
+   @endcode
+
+   The unbounded types are #EXESS_DECIMAL, #EXESS_INTEGER and its half-bounded
+   subtypes #EXESS_NON_POSITIVE_INTEGER, #EXESS_NEGATIVE_INTEGER,
+   #EXESS_NON_NEGATIVE_INTEGER, and #EXESS_POSITIVE_INTEGER, and the binary
+   types #EXESS_HEX and #EXESS_BASE64.
+*/
+static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_NUM_DATATYPES] = {
+  0U,  // Unknown datatype
+  5U,  // boolean
+  0U,  // decimal
+  24U, // double
+  15U, // float
+  0U,  // integer
+  0U,  // nonPositiveInteger
+  0U,  // negativeInteger
+  20U, // long
+  11U, // int
+  6U,  // short
+  4U,  // byte
+  0U,  // nonNegativeInteger
+  20U, // ulong
+  10U, // uint
+  5U,  // ushort
+  3U,  // ubyte
+  0U,  // positiveInteger
+  41U, // duration
+  32U, // datetime
+  24U, // time
+  18U, // date
+  0U,  // hexBinary
+  0U,  // base64Binary
+};
+
+/**
+   Array of binary value sizes, indexed by datatype.
+
+   Each entry is the size of the binary representation of the indexed datatype
+   (not a string length), or zero for #EXESS_HEX and #EXESS_BASE64, since such
+   values can be arbitrarily large.
+*/
+static EXESS_CONSTEXPR uint8_t exess_value_sizes[EXESS_NUM_DATATYPES] = {
+  0U,                    // Unknown
+  sizeof(bool),          // boolean
+  sizeof(double),        // decimal
+  sizeof(double),        // double
+  sizeof(float),         // float
+  sizeof(int64_t),       // integer
+  sizeof(int64_t),       // nonPositiveInteger
+  sizeof(int64_t),       // negativeInteger
+  sizeof(int64_t),       // long
+  sizeof(int32_t),       // int
+  sizeof(int16_t),       // short
+  sizeof(int8_t),        // byte
+  sizeof(uint64_t),      // nonNegativeInteger
+  sizeof(uint64_t),      // ulong
+  sizeof(uint32_t),      // uint
+  sizeof(uint16_t),      // ushort
+  sizeof(uint8_t),       // ubyte
+  sizeof(uint64_t),      // positiveInteger
+  sizeof(ExessDuration), // duration
+  sizeof(ExessDateTime), // datetime
+  sizeof(ExessTime),     // time
+  sizeof(ExessDate),     // date
+  0U,                    // hexBinary
+  0U,                    // base64Binary
+};
+
+/**
    Return the URI for a supported datatype.
 
    This only returns URIs that start with
@@ -1269,49 +1362,6 @@ exess_datatype_uri(ExessDatatype datatype);
 EXESS_PURE_API
 ExessDatatype
 exess_datatype_from_uri(const char* EXESS_NONNULL uri);
-
-/**
-   Return whether a datatype has an upper bound on value sizes.
-
-   This returns true for all datatypes except #EXESS_DECIMAL, #EXESS_INTEGER
-   and its half-bounded subtypes #EXESS_NON_POSITIVE_INTEGER,
-   #EXESS_NEGATIVE_INTEGER, #EXESS_NON_NEGATIVE_INTEGER, and
-   #EXESS_POSITIVE_INTEGER, and the binary types #EXESS_HEX and #EXESS_BASE64.
-
-   For bounded datatypes, the maximum length of the string representation is
-   available via exess_max_length(), or as static constants like
-   #EXESS_MAX_INT_LENGTH.
-
-   @return True if values of the given datatype have a maximum size.
-*/
-EXESS_CONST_API
-bool
-exess_datatype_is_bounded(ExessDatatype datatype);
-
-/**
-   Return the maximum length of a string with the given datatype.
-
-   For unbounded datatypes, this returns 0.
-
-   @return A string length in bytes, or zero.
-*/
-EXESS_CONST_API
-size_t
-exess_max_length(ExessDatatype datatype);
-
-/**
-   Return the size of a value with the given datatype.
-
-   Note that this is the size of the binary representation, not a string
-   length.  For hex and base64Binary, this returns 0, since such values can be
-   arbitrarily large.
-
-   @return The size in bytes required by a value, or zero if there is no such
-   limit.
-*/
-EXESS_CONST_API
-size_t
-exess_value_size(ExessDatatype datatype);
 
 /**
    @}
@@ -1529,6 +1579,10 @@ exess_write_value(ExessDatatype             datatype,
 
 #ifdef __cplusplus
 } // extern "C"
+#endif
+
+#if defined(__GNUC__) && __GNUC__ >= 7
+_Pragma("GCC diagnostic pop")
 #endif
 
 #endif // EXESS_EXESS_H

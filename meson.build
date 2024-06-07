@@ -37,6 +37,7 @@ if cc.get_id() in ['clang', 'emscripten']
       '-Wno-c11-extensions',
       '-Wno-declaration-after-statement',
       '-Wno-padded',
+      '-Wno-pre-c2x-compat',
       '-Wno-unsafe-buffer-usage',
     ]
 

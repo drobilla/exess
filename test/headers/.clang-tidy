@@ -4,7 +4,6 @@
 Checks: >
   *,
   -altera-struct-pack-align,
-  -modernize-macro-to-enum,
   -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

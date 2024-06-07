@@ -24,7 +24,7 @@ exess_read_value(const ExessDatatype datatype,
 {
   ExessVariableResult r = {EXESS_UNSUPPORTED, 0, 0};
 
-  if (out_size < exess_value_size(datatype)) {
+  if (out_size < exess_value_sizes[datatype]) {
     r.status = EXESS_NO_SPACE;
     return r;
   }
