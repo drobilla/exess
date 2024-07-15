@@ -20,6 +20,27 @@ typedef struct {
   unsigned bits;
 } Offset;
 
+// FIXME
+static void
+exess_bigint_zero(ExessBigint* num);
+
+static void
+exess_bigint_clamp(ExessBigint* num);
+
+static void
+exess_bigint_add_u32(ExessBigint* lhs, uint32_t rhs);
+
+static void
+exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs);
+
+/// Faster implementation of exess_bigint_subtract(lhs, rhs << amount)
+static void
+exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
+                                   const ExessBigint* rhs,
+                                   unsigned           amount);
+
+// END FIXME
+
 static inline Offset
 make_offset(const unsigned i)
 {
@@ -74,7 +95,7 @@ exess_bigint_shift_left(ExessBigint* num, const unsigned amount)
   assert(exess_bigint_is_clamped(num));
 }
 
-void
+static void
 exess_bigint_zero(ExessBigint* num)
 {
   static const ExessBigint zero = {{0}, 0};
@@ -97,7 +118,7 @@ exess_bigint_set_u32(ExessBigint* num, const uint32_t value)
   num->n_bigits  = (bool)value;
 }
 
-void
+static void
 exess_bigint_clamp(ExessBigint* num)
 {
   while (num->n_bigits > 0 && num->bigits[num->n_bigits - 1] == 0) {
@@ -159,14 +180,9 @@ exess_bigint_set_decimal_string(ExessBigint* num, const char* const str)
 void
 exess_bigint_multiply_u32(ExessBigint* num, const uint32_t factor)
 {
-  switch (factor) {
-  case 0:
-    exess_bigint_zero(num);
+  assert(factor); // Multiplying by zero is simple, but not needed
+  if (factor == 1U) {
     return;
-  case 1:
-    return;
-  default:
-    break;
   }
 
   Hugit carry = 0;
@@ -188,14 +204,9 @@ exess_bigint_multiply_u32(ExessBigint* num, const uint32_t factor)
 void
 exess_bigint_multiply_u64(ExessBigint* num, const uint64_t factor)
 {
-  switch (factor) {
-  case 0:
-    exess_bigint_zero(num);
+  assert(factor); // Multiplying by zero is simple, but not needed
+  if (factor == 1U) {
     return;
-  case 1:
-    return;
-  default:
-    break;
   }
 
   const Hugit f_lo = factor & bigit_mask;
@@ -464,14 +475,6 @@ exess_bigint_left_shifted_bigit_i(const ExessBigint* num,
   const unsigned right_shift = BIGINT_BIGIT_BITS - amount.bits;
   return (num->bigits[index - amount.bigits] << amount.bits) |
          (num->bigits[index - amount.bigits - 1] >> right_shift);
-}
-
-Bigit
-exess_bigint_left_shifted_bigit(const ExessBigint* num,
-                                const unsigned     amount,
-                                const unsigned     index)
-{
-  return exess_bigint_left_shifted_bigit_i(num, make_offset(amount), index);
 }
 
 void

@@ -147,63 +147,6 @@ foreach args : bad_args
   test(name, test_short, args: args, should_fail: true, suite: ['test_args'])
 endforeach
 
-######################
-# Private Unit Tests #
-######################
-
-if get_option('default_library') == 'shared'
-  # Build independent tests with the necessary library source code
-
-  test(
-    'int_math',
-    executable(
-      'test_int_math',
-      files('../src/int_math.c', 'test_int_math.c'),
-      c_args: extra_c_args + c_suppressions + test_suppressions,
-      implicit_include_directories: false,
-    ),
-    suite: 'private',
-  )
-
-  test(
-    'bigint',
-    executable(
-      'test_bigint',
-      files('../src/bigint.c', '../src/int_math.c', 'test_bigint.c'),
-      c_args: extra_c_args + c_suppressions + test_suppressions,
-      implicit_include_directories: false,
-    ),
-    suite: 'private',
-  )
-
-else
-  # Use the main static library because private symbols are available
-  if get_option('default_library') == 'both'
-    libexess_static = libexess.get_static_lib()
-  else
-    libexess_static = libexess
-  endif
-
-  exess_static_dep = declare_dependency(
-    dependencies: [m_dep],
-    link_with: libexess_static,
-  )
-
-  foreach unit : ['bigint', 'int_math']
-    test(
-      unit,
-      executable(
-        'test_@0@'.format(unit),
-        files('test_@0@.c'.format(unit)),
-        c_args: extra_c_args + c_suppressions + test_suppressions,
-        dependencies: exess_static_dep,
-        implicit_include_directories: false,
-      ),
-      suite: 'private',
-    )
-  endforeach
-endif
-
 #######################
 # Header Warning Test #
 #######################

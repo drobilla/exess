@@ -26,12 +26,6 @@ typedef struct {
 } ExessBigint;
 
 void
-exess_bigint_zero(ExessBigint* num);
-
-void
-exess_bigint_clamp(ExessBigint* num);
-
-void
 exess_bigint_shift_left(ExessBigint* num, unsigned amount);
 
 void
@@ -62,24 +56,7 @@ EXESS_I_PURE_FUNC int
 exess_bigint_compare(const ExessBigint* lhs, const ExessBigint* rhs);
 
 void
-exess_bigint_add_u32(ExessBigint* lhs, uint32_t rhs);
-
-void
 exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs);
-
-void
-exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs);
-
-EXESS_I_PURE_FUNC Bigit
-exess_bigint_left_shifted_bigit(const ExessBigint* num,
-                                unsigned           amount,
-                                unsigned           index);
-
-/// Faster implementation of exess_bigint_subtract(lhs, rhs << amount)
-void
-exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
-                                   const ExessBigint* rhs,
-                                   unsigned           amount);
 
 /// Faster implementation of exess_bigint_compare(l + p, c)
 EXESS_I_PURE_FUNC int
