@@ -5,7 +5,9 @@ Checks: >
   -*-magic-numbers,
   -bugprone-easily-swappable-parameters,
   -cert-err33-c,
+  -clang-analyzer-optin.core.EnumCastOutOfRange,
   -llvm-header-guard,
+  -readability-avoid-nested-conditional-operator,
 InheritParentConfig: true
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
