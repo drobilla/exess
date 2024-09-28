@@ -126,7 +126,7 @@ check_write(const float       value,
             const char* const expected_string)
 {
   char buf[EXESS_MAX_FLOAT_LENGTH + 1] = {
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
 
   assert(buf_size <= sizeof(buf));
 

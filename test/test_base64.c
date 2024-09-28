@@ -34,7 +34,7 @@ check_read(const char* const string,
 static void
 test_rfc4648_cases(void)
 {
-  char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+  char buf[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 
   assert(!exess_write_base64(6, "foobar", sizeof(buf), buf).status);
   assert(!strcmp(buf, "Zm9vYmFy"));

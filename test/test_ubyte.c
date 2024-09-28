@@ -45,7 +45,7 @@ check_write(const uint8_t     value,
             const size_t      buf_size,
             const char* const expected_string)
 {
-  char buf[EXESS_MAX_UBYTE_LENGTH + 1] = {1, 2, 3, 4};
+  char buf[EXESS_MAX_UBYTE_LENGTH + 1] = {1, 2, 3, 0};
 
   assert(buf_size <= sizeof(buf));
 

@@ -132,7 +132,7 @@ check_write(const ExessTimezone value,
   // The timezone interface is not public, so we test it via time
   char buf[EXESS_MAX_TIME_LENGTH + 1] = {1,  2,  3,  4,  5,  6,  7,  8,  9,
                                          10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                         19, 20, 21, 22, 23, 24, 25};
+                                         19, 20, 21, 22, 23, 24, 0};
 
   assert(buf_size <= sizeof(buf) - 8);
 

@@ -140,7 +140,7 @@ check_write(const ExessDate   value,
             const char* const expected_string)
 {
   char buf[EXESS_MAX_DATE_LENGTH + 1] = {
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 0};
 
   assert(buf_size <= sizeof(buf));
 
