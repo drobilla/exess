@@ -70,8 +70,7 @@ test_num_digits(void)
   assert(20 == exess_num_digits(18446744073709551615ULL));
 }
 
-EXESS_I_PURE_FUNC
-int
+EXESS_I_PURE_FUNC int
 main(void)
 {
   test_clz32();

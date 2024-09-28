@@ -307,8 +307,7 @@ compare_buffer(const char* buf, const int expt, const ExessSoftFloat upper)
   return exess_bigint_compare(&buf_bigint, &upper_bigint);
 }
 
-EXESS_I_PURE_FUNC
-static uint64_t
+EXESS_I_PURE_FUNC static uint64_t
 read_fraction(size_t n_digits, const char* const digits)
 {
   uint64_t frac = 0;

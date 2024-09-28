@@ -34,28 +34,23 @@ static const uint64_t POW10[] = {1ULL,
                                  10000000000000000000ULL};
 
 /// Return the number of leading zeros in `i`
-EXESS_I_CONST_FUNC
-unsigned
+EXESS_I_CONST_FUNC unsigned
 exess_clz32(uint32_t i);
 
 /// Return the number of leading zeros in `i`
-EXESS_I_CONST_FUNC
-unsigned
+EXESS_I_CONST_FUNC unsigned
 exess_clz64(uint64_t i);
 
 /// Return the log base 2 of `i`
-EXESS_I_CONST_FUNC
-uint64_t
+EXESS_I_CONST_FUNC uint64_t
 exess_ilog2(uint64_t i);
 
 /// Return the log base 10 of `i`
-EXESS_I_CONST_FUNC
-uint64_t
+EXESS_I_CONST_FUNC uint64_t
 exess_ilog10(uint64_t i);
 
 /// Return the number of decimal digits required to represent `i`
-EXESS_I_CONST_FUNC
-uint8_t
+EXESS_I_CONST_FUNC uint8_t
 exess_num_digits(uint64_t i);
 
 #endif // EXESS_SRC_INTMATH_H

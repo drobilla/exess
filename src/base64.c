@@ -14,8 +14,7 @@
 #include <string.h>
 
 // Map a 6-bit base64 group to a base64 digit
-EXESS_PURE_FUNC
-static inline uint8_t
+EXESS_PURE_FUNC static inline uint8_t
 map(const unsigned group)
 {
   assert(group < 64);

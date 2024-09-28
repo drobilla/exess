@@ -58,8 +58,7 @@ exess_bigint_multiply_u64(ExessBigint* num, uint64_t factor);
 void
 exess_bigint_multiply_pow10(ExessBigint* num, unsigned exponent);
 
-EXESS_I_PURE_FUNC
-int
+EXESS_I_PURE_FUNC int
 exess_bigint_compare(const ExessBigint* lhs, const ExessBigint* rhs);
 
 void
@@ -71,8 +70,7 @@ exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs);
 void
 exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs);
 
-EXESS_I_PURE_FUNC
-Bigit
+EXESS_I_PURE_FUNC Bigit
 exess_bigint_left_shifted_bigit(const ExessBigint* num,
                                 unsigned           amount,
                                 unsigned           index);
@@ -84,8 +82,7 @@ exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
                                    unsigned           amount);
 
 /// Faster implementation of exess_bigint_compare(l + p, c)
-EXESS_I_PURE_FUNC
-int
+EXESS_I_PURE_FUNC int
 exess_bigint_plus_compare(const ExessBigint* l,
                           const ExessBigint* p,
                           const ExessBigint* c);

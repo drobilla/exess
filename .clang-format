@@ -1,36 +1,37 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2020-2024 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 ---
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
-AlignEscapedNewlinesLeft: true
+AlignEscapedNewlines: Left
 AttributeMacros:
+  - EXESS_API
+  - EXESS_CONST_API
   - EXESS_CONST_FUNC
+  - EXESS_I_CONST_FUNC
+  - EXESS_I_MALLOC_FUNC
+  - EXESS_I_PURE_FUNC
+  - EXESS_NONNULL
+  - EXESS_NULLABLE
+  - EXESS_PURE_API
   - EXESS_PURE_FUNC
 BasedOnStyle: Mozilla
 BraceWrapping:
-  AfterNamespace: false
-  AfterClass: true
   AfterEnum: false
   AfterExternBlock: false
   AfterFunction: true
   AfterStruct: false
   SplitEmptyFunction: false
-  SplitEmptyRecord: false
-BinPackArguments: false
-BinPackParameters: false
 BreakBeforeBraces: Custom
 Cpp11BracedListStyle: true
-FixNamespaceComments: true
 IndentCaseLabels: false
 IndentPPDirectives: AfterHash
 KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false
 StatementMacros:
-  - EXESS_API
-  - EXESS_CONST_API
-  - EXESS_PURE_API
+  - EXESS_DISABLE_CONVERSION_WARNINGS
+  - EXESS_RESTORE_WARNINGS
   - _Generic
   - _Pragma
 ...

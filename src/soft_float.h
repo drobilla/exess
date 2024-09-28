@@ -18,8 +18,7 @@ static const int max_dec_expt  = 340;
 static const int dec_expt_step = 8;
 
 /// Convert `d` to a soft float
-EXESS_I_CONST_FUNC
-ExessSoftFloat
+EXESS_I_CONST_FUNC ExessSoftFloat
 soft_float_from_double(double d);
 
 /// Convert `v` to a double
@@ -27,18 +26,15 @@ double
 soft_float_to_double(ExessSoftFloat v);
 
 /// Normalize `value` so the MSb of its significand is 1
-EXESS_I_CONST_FUNC
-ExessSoftFloat
+EXESS_I_CONST_FUNC ExessSoftFloat
 soft_float_normalize(ExessSoftFloat value);
 
 /// Multiply `lhs` by `rhs` and return the result
-EXESS_I_CONST_FUNC
-ExessSoftFloat
+EXESS_I_CONST_FUNC ExessSoftFloat
 soft_float_multiply(ExessSoftFloat lhs, ExessSoftFloat rhs);
 
 /// Return exactly 10^e for e in [0...dec_expt_step]
-EXESS_I_CONST_FUNC
-ExessSoftFloat
+EXESS_I_CONST_FUNC ExessSoftFloat
 soft_float_exact_pow10(int expt);
 
 /**

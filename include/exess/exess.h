@@ -40,14 +40,10 @@
 #endif
 
 /// A pure function in the public API that only reads memory
-#define EXESS_PURE_API \
-  EXESS_API            \
-  EXESS_PURE_FUNC
+#define EXESS_PURE_API EXESS_API EXESS_PURE_FUNC
 
 /// A const function in the public API that's pure and only reads parameters
-#define EXESS_CONST_API \
-  EXESS_API             \
-  EXESS_CONST_FUNC
+#define EXESS_CONST_API EXESS_API EXESS_CONST_FUNC
 
 #ifdef __cplusplus
 extern "C" {
@@ -141,8 +137,7 @@ typedef struct {
    The returned string is always one sentence, with an uppercase first
    character, and no trailing period.
 */
-EXESS_CONST_API
-const char* EXESS_NONNULL
+EXESS_CONST_API const char* EXESS_NONNULL
 exess_strerror(ExessStatus status);
 
 /**
@@ -187,8 +182,7 @@ exess_strerror(ExessStatus status);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -201,8 +195,7 @@ exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -238,8 +231,7 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -256,8 +248,7 @@ exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output and `status` #EXESS_SUCCESS,
    or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -285,8 +276,7 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -303,8 +293,7 @@ exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -327,8 +316,7 @@ exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -341,8 +329,7 @@ exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -372,8 +359,7 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -386,8 +372,7 @@ exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -414,8 +399,7 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -428,8 +412,7 @@ exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -456,8 +439,7 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -470,8 +452,7 @@ exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -498,8 +479,7 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -512,8 +492,7 @@ exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -543,8 +522,7 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -557,8 +535,7 @@ exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -586,8 +563,7 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -600,8 +576,7 @@ exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -629,8 +604,7 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -643,8 +617,7 @@ exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -671,8 +644,7 @@ exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -685,8 +657,7 @@ exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -753,8 +724,7 @@ typedef struct {
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
-EXESS_CONST_API
-int
+EXESS_CONST_API int
 exess_duration_compare(ExessDuration lhs, ExessDuration rhs);
 
 /**
@@ -764,8 +734,7 @@ exess_duration_compare(ExessDuration lhs, ExessDuration rhs);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_duration(ExessDuration* EXESS_NONNULL out,
                     const char* EXESS_NONNULL    str);
 
@@ -779,8 +748,7 @@ exess_read_duration(ExessDuration* EXESS_NONNULL out,
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_duration(ExessDuration        value,
                      size_t               buf_size,
                      char* EXESS_NULLABLE buf);
@@ -838,8 +806,7 @@ typedef struct {
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
-EXESS_CONST_API
-int
+EXESS_CONST_API int
 exess_datetime_compare(ExessDateTime lhs, ExessDateTime rhs);
 
 /**
@@ -858,8 +825,7 @@ exess_datetime_compare(ExessDateTime lhs, ExessDateTime rhs);
    @return `s + d`, or an infinite past or infinite future if underflow or
    overflow occurs.
 */
-EXESS_CONST_API
-ExessDateTime
+EXESS_CONST_API ExessDateTime
 exess_add_datetime_duration(ExessDateTime s, ExessDuration d);
 
 /**
@@ -869,8 +835,7 @@ exess_add_datetime_duration(ExessDateTime s, ExessDuration d);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_datetime(ExessDateTime* EXESS_NONNULL out,
                     const char* EXESS_NONNULL    str);
 
@@ -884,8 +849,7 @@ exess_read_datetime(ExessDateTime* EXESS_NONNULL out,
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_datetime(ExessDateTime        value,
                      size_t               buf_size,
                      char* EXESS_NULLABLE buf);
@@ -934,8 +898,7 @@ typedef int8_t ExessTimezone;
    @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
    parameters are invalid or not supported.
 */
-EXESS_CONST_API
-ExessTimezone
+EXESS_CONST_API ExessTimezone
 exess_timezone(int8_t hours, int8_t minutes);
 
 /**
@@ -967,8 +930,7 @@ typedef struct {
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
-EXESS_CONST_API
-int
+EXESS_CONST_API int
 exess_date_compare(ExessDate lhs, ExessDate rhs);
 
 /**
@@ -978,8 +940,7 @@ exess_date_compare(ExessDate lhs, ExessDate rhs);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -995,8 +956,7 @@ exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -1030,8 +990,7 @@ typedef struct {
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
-EXESS_CONST_API
-int
+EXESS_CONST_API int
 exess_time_compare(ExessTime lhs, ExessTime rhs);
 
 /**
@@ -1041,8 +1000,7 @@ exess_time_compare(ExessTime lhs, ExessTime rhs);
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
@@ -1057,8 +1015,7 @@ exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
@@ -1084,8 +1041,7 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
    @param length The number of input (text) bytes to decode.
    @return The size of a decoded value in bytes.
 */
-EXESS_CONST_API
-size_t
+EXESS_CONST_API size_t
 exess_base64_decoded_size(size_t length);
 
 /**
@@ -1111,8 +1067,7 @@ exess_base64_decoded_size(size_t length);
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status` code.
 */
-EXESS_API
-ExessVariableResult
+EXESS_API ExessVariableResult
 exess_read_base64(size_t                    out_size,
                   void* EXESS_NONNULL       out,
                   const char* EXESS_NONNULL str);
@@ -1132,8 +1087,7 @@ exess_read_base64(size_t                    out_size,
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_base64(size_t                    data_size,
                    const void* EXESS_NONNULL data,
                    size_t                    buf_size,
@@ -1155,8 +1109,7 @@ exess_write_base64(size_t                    data_size,
    @param length The number of input (text) bytes to decode.
    @return The size of a decoded value in bytes.
 */
-EXESS_CONST_API
-size_t
+EXESS_CONST_API size_t
 exess_hex_decoded_size(size_t length);
 
 /**
@@ -1182,8 +1135,7 @@ exess_hex_decoded_size(size_t length);
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status` code.
 */
-EXESS_API
-ExessVariableResult
+EXESS_API ExessVariableResult
 exess_read_hex(size_t                    out_size,
                void* EXESS_NONNULL       out,
                const char* EXESS_NONNULL str);
@@ -1202,8 +1154,7 @@ exess_read_hex(size_t                    out_size,
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_hex(size_t                    data_size,
                 const void* EXESS_NONNULL data,
                 size_t                    buf_size,
@@ -1256,8 +1207,7 @@ typedef enum {
    @param datatype Datatype tag.
    @return The URI of the datatype, or null for #EXESS_NOTHING.
 */
-EXESS_CONST_API
-const char* EXESS_NULLABLE
+EXESS_CONST_API const char* EXESS_NULLABLE
 exess_datatype_uri(ExessDatatype datatype);
 
 /**
@@ -1266,8 +1216,7 @@ exess_datatype_uri(ExessDatatype datatype);
    @return A datatype tag, or #EXESS_NOTHING if the URI is not a supported
    datatype.
 */
-EXESS_PURE_API
-ExessDatatype
+EXESS_PURE_API ExessDatatype
 exess_datatype_from_uri(const char* EXESS_NONNULL uri);
 
 /**
@@ -1284,8 +1233,7 @@ exess_datatype_from_uri(const char* EXESS_NONNULL uri);
 
    @return True if values of the given datatype have a maximum size.
 */
-EXESS_CONST_API
-bool
+EXESS_CONST_API bool
 exess_datatype_is_bounded(ExessDatatype datatype);
 
 /**
@@ -1295,8 +1243,7 @@ exess_datatype_is_bounded(ExessDatatype datatype);
 
    @return A string length in bytes, or zero.
 */
-EXESS_CONST_API
-size_t
+EXESS_CONST_API size_t
 exess_max_length(ExessDatatype datatype);
 
 /**
@@ -1309,8 +1256,7 @@ exess_max_length(ExessDatatype datatype);
    @return The size in bytes required by a value, or zero if there is no such
    limit.
 */
-EXESS_CONST_API
-size_t
+EXESS_CONST_API size_t
 exess_value_size(ExessDatatype datatype);
 
 /**
@@ -1332,8 +1278,7 @@ exess_value_size(ExessDatatype datatype);
    status may be an error from reading or writing, but the `count` always
    refers to the number of characters written.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_canonical(const char* EXESS_NONNULL value,
                       ExessDatatype             datatype,
                       size_t                    buf_size,
@@ -1436,8 +1381,7 @@ typedef uint32_t ExessCoercions;
    less than, equal to, or greater than the right-hand value, respectively
    (like `strcmp`).
 */
-EXESS_PURE_API
-int
+EXESS_PURE_API int
 exess_value_compare(ExessDatatype             lhs_datatype,
                     size_t                    lhs_size,
                     const void* EXESS_NONNULL lhs_value,
@@ -1466,8 +1410,7 @@ exess_value_compare(ExessDatatype             lhs_datatype,
    if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
    between the types is not supported at all.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_value_coerce(ExessCoercions            coercions,
                    ExessDatatype             in_datatype,
                    size_t                    in_size,
@@ -1491,8 +1434,7 @@ exess_value_coerce(ExessCoercions            coercions,
    @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
    and a `status` code.
 */
-EXESS_API
-ExessVariableResult
+EXESS_API ExessVariableResult
 exess_read_value(ExessDatatype             datatype,
                  size_t                    out_size,
                  void* EXESS_NONNULL       out,
@@ -1514,8 +1456,7 @@ exess_read_value(ExessDatatype             datatype,
    @return The `count` of characters in the output, and `status`
    #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
 */
-EXESS_API
-ExessResult
+EXESS_API ExessResult
 exess_write_value(ExessDatatype             datatype,
                   size_t                    value_size,
                   const void* EXESS_NONNULL value,

@@ -10,8 +10,7 @@
 
 #include <stddef.h>
 
-EXESS_CONST_FUNC
-size_t
+EXESS_CONST_FUNC size_t
 exess_scientific_string_length(ExessDecimalDouble value);
 
 ExessResult

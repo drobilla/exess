@@ -145,8 +145,7 @@ add_field(const int32_t  lhs,
    no such datetime should exist (exess_read_datetime refuses to read them).
    This might return the infinite past or future.
   */
-EXESS_CONST_FUNC
-static ExessDateTime
+EXESS_CONST_FUNC static ExessDateTime
 carry_set_day(ExessDateTime e, int day)
 {
   while (day < 1 || day > days_in_month(e.year, e.month)) {
