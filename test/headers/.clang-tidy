@@ -6,6 +6,9 @@ Checks: >
   -*-macro-to-enum,
   -altera-struct-pack-align,
   -readability-identifier-length,
-WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '0'
 FormatStyle: file
+HeaderFilterRegex: '.*'
+WarningsAsErrors: '*'

@@ -1,4 +1,4 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2024 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 Checks: >
@@ -8,7 +8,7 @@ Checks: >
   -clang-analyzer-optin.core.EnumCastOutOfRange,
   -llvm-header-guard,
   -readability-avoid-nested-conditional-operator,
-InheritParentConfig: true
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
     value: '21'
+InheritParentConfig: true
