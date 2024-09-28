@@ -11,12 +11,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef enum {
-  EXESS_NEGATIVE,
-  EXESS_ZERO,
-  EXESS_POSITIVE,
-} ExessIntegerKind;
-
 /// Return true iff `c` is "+" or "-"
 static inline bool
 is_sign(const int c)
@@ -113,37 +107,51 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
 }
 
 static ExessResult
-write_integer(const char* const       str,
-              const size_t            buf_size,
-              char* const             buf,
-              ExessIntegerKind* const kind)
+write_integer(const ExessDatatype datatype,
+              const char* const   str,
+              const size_t        buf_size,
+              char* const         buf)
 {
-  const size_t sign    = scan(is_space, str, 0);   // Sign
+  const size_t sign = scan(is_space, str, 0); // Sign
+  if (str[sign] == '-' && (datatype == EXESS_NON_NEGATIVE_INTEGER ||
+                           datatype == EXESS_POSITIVE_INTEGER)) {
+    return result(EXESS_BAD_VALUE, sign);
+  }
+
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (!is_digit(str[leading])) {
-    return result(EXESS_EXPECTED_DIGIT, sign);
+    return result(EXESS_EXPECTED_DIGIT, leading);
   }
 
   const size_t first = scan(is_zero, str, leading); // First non-zero
   const size_t last  = scan(is_digit, str, first);  // Last digit
   const size_t end   = scan(is_space, str, last);   // Last non-space
 
-  const ExessStatus st = is_end(str[end]) ? EXESS_SUCCESS : EXESS_EXPECTED_END;
+  ExessStatus st = is_end(str[end]) ? EXESS_SUCCESS : EXESS_EXPECTED_END;
 
   // Handle zero as a special case (no non-zero digits to copy)
   size_t o = 0;
   if (first == last) {
+    if (datatype == EXESS_NEGATIVE_INTEGER ||
+        datatype == EXESS_POSITIVE_INTEGER) {
+      return result(EXESS_BAD_VALUE, sign);
+    }
+
     o += write_char('0', buf_size, buf, o);
-    *kind = EXESS_ZERO;
     return result(EXESS_SUCCESS, o);
   }
 
   // Add leading sign only if the number is negative
   if (str[sign] == '-') {
-    *kind = EXESS_NEGATIVE;
+    st = (datatype == EXESS_NON_NEGATIVE_INTEGER ||
+          datatype == EXESS_POSITIVE_INTEGER)
+           ? EXESS_BAD_VALUE
+           : EXESS_SUCCESS;
+
     o += write_char('-', buf_size, buf, o);
-  } else {
-    *kind = EXESS_POSITIVE;
+  } else if (datatype == EXESS_NON_POSITIVE_INTEGER ||
+             datatype == EXESS_NEGATIVE_INTEGER) {
+    return result(EXESS_BAD_VALUE, sign);
   }
 
   // Add digits
@@ -212,48 +220,17 @@ exess_write_canonical(const char* const   str,
                       const size_t        buf_size,
                       char* const         buf)
 {
-  ExessIntegerKind kind = EXESS_ZERO;
-  ExessResult      r    = {EXESS_UNSUPPORTED, 0};
-
-  if (datatype == EXESS_DECIMAL) {
-    r = write_decimal(str, buf_size, buf);
-
-  } else if (datatype == EXESS_INTEGER) {
-    r = write_integer(str, buf_size, buf, &kind);
-
-  } else if (datatype == EXESS_NON_POSITIVE_INTEGER) {
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_POSITIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-
-  } else if (datatype == EXESS_NEGATIVE_INTEGER) {
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_ZERO || kind == EXESS_POSITIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-
-  } else if (datatype == EXESS_NON_NEGATIVE_INTEGER) {
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_NEGATIVE) {
-      r.status = EXESS_BAD_VALUE;
-    }
-
-  } else if (datatype == EXESS_POSITIVE_INTEGER) {
-    r = write_integer(str, buf_size, buf, &kind);
-    if (kind == EXESS_NEGATIVE || kind == EXESS_ZERO) {
-      r.status = EXESS_BAD_VALUE;
-    }
-
-  } else if (datatype == EXESS_HEX) {
-    r = write_hex(str, buf_size, buf);
-
-  } else if (datatype == EXESS_BASE64) {
-    r = write_base64(str, buf_size, buf);
-
-  } else {
-    r = write_bounded(str, datatype, buf_size, buf);
-  }
+  const ExessResult r =
+    (datatype == EXESS_DECIMAL) ? write_decimal(str, buf_size, buf)
+    : ((datatype == EXESS_INTEGER) ||
+       (datatype == EXESS_NON_POSITIVE_INTEGER) ||
+       (datatype == EXESS_NEGATIVE_INTEGER) ||
+       (datatype == EXESS_NON_NEGATIVE_INTEGER) ||
+       (datatype == EXESS_POSITIVE_INTEGER))
+      ? write_integer(datatype, str, buf_size, buf)
+    : (datatype == EXESS_HEX)    ? write_hex(str, buf_size, buf)
+    : (datatype == EXESS_BASE64) ? write_base64(str, buf_size, buf)
+                                 : write_bounded(str, datatype, buf_size, buf);
 
   return end_write(r.status, buf_size, buf, r.count);
 }
