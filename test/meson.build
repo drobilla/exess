@@ -20,7 +20,7 @@ if get_option('warning_level') == 'everything'
   endif
 endif
 
-if get_option('lint')
+if not meson.is_subproject() and get_option('lint')
   # Check project metadata
   autoship = find_program('autoship', required: false)
   if autoship.found()
