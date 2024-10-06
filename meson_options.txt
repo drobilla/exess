@@ -4,36 +4,36 @@
 option('checks', type: 'feature', value: 'enabled', yield: true,
        description: 'Check for platform-specific features')
 
-option('docs', type: 'feature', value: 'auto', yield: true,
+option('docs', type: 'feature', yield: true,
        description: 'Build documentation')
 
 option('epub', type: 'feature', value: 'disabled', yield: true,
        description: 'Build EPub documentation')
 
-option('html', type: 'feature', value: 'auto', yield: true,
+option('html', type: 'feature', yield: true,
        description: 'Build paginated HTML documentation')
 
 option('lint', type: 'boolean', value: false, yield: true,
        description: 'Run code quality checks')
 
-option('man', type: 'feature', value: 'auto', yield: true,
+option('man', type: 'feature', yield: true,
        description: 'Build man page documentation')
 
-option('man_links', type: 'combo', value: 'auto', yield: true,
+option('man_links', type: 'combo', yield: true,
        choices: ['disabled', 'auto', 'alias', 'symbolic'],
        description: 'Create man page aliases/symlinks for symbols')
 
-option('singlehtml', type: 'feature', value: 'auto', yield: true,
+option('singlehtml', type: 'feature', yield: true,
        description: 'Build single-page HTML documentation')
 
-option('tests', type: 'feature', value: 'auto', yield: true,
+option('tests', type: 'feature', yield: true,
        description: 'Build tests')
 
 option('title', type: 'string', value: 'Exess',
        description: 'Project title')
 
-option('use_builtin_clz', type: 'feature', value: 'auto', yield: true,
+option('use_builtin_clz', type: 'feature', yield: true,
        description: 'Use __builtin_clz')
 
-option('use_builtin_clzll', type: 'feature', value: 'auto', yield: true,
+option('use_builtin_clzll', type: 'feature', yield: true,
        description: 'Use __builtin_clzll')
