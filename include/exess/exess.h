@@ -882,10 +882,10 @@ exess_write_datetime(ExessDateTime        value,
 typedef int8_t ExessTimezone;
 
 /// Sentinel value for local time (127)
-#define EXESS_LOCAL INT8_MAX
+#define EXESS_LOCAL ((ExessTimezone)INT8_MAX)
 
 /// Sentinel value for UTC time (0)
-#define EXESS_UTC 0U
+#define EXESS_UTC ((ExessTimezone)0U)
 
 /**
    Construct a time zone offset from hours and minutes.
