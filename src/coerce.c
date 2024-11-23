@@ -437,7 +437,7 @@ coerce_to_unsigned(const ExessDatatype in_datatype,
 }
 
 ExessResult
-exess_value_coerce(const ExessCoercions coercions,
+exess_coerce_value(const ExessCoercions coercions,
                    const ExessDatatype  in_datatype,
                    const size_t         in_size,
                    const void* const    in,

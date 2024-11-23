@@ -1,4 +1,4 @@
-// Copyright 2021-2023 David Robillard <d@drobilla.net>
+// Copyright 2021-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_EXESS_H
@@ -725,7 +725,7 @@ typedef struct {
    respectively.
 */
 EXESS_CONST_API int
-exess_duration_compare(ExessDuration lhs, ExessDuration rhs);
+exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
 
 /**
    Read an xsd:duration string after any leading whitespace.
@@ -807,7 +807,7 @@ typedef struct {
    respectively.
 */
 EXESS_CONST_API int
-exess_datetime_compare(ExessDateTime lhs, ExessDateTime rhs);
+exess_compare_datetime(ExessDateTime lhs, ExessDateTime rhs);
 
 /**
    Add a duration to a datetime.
@@ -925,13 +925,13 @@ typedef struct {
    Note that comparison of dates is not always determinate.  The comparison of
    two dates works the same way as the comparison of two datetimes with
    equivalent times, except adjusted according to the timezone if necessary.
-   See exess_datetime_compare() for details.
+   See exess_compare_datetime() for details.
 
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
 EXESS_CONST_API int
-exess_date_compare(ExessDate lhs, ExessDate rhs);
+exess_compare_date(ExessDate lhs, ExessDate rhs);
 
 /**
    Read an xsd:date string after any leading whitespace.
@@ -985,13 +985,13 @@ typedef struct {
 
    Note that comparison of times is not always determinate.  The comparison of
    two times works the same way as the comparison of two datetimes with an
-   arbitrary date, see exess_datetime_compare() for details.
+   arbitrary date, see exess_compare_datetime() for details.
 
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
 */
 EXESS_CONST_API int
-exess_time_compare(ExessTime lhs, ExessTime rhs);
+exess_compare_time(ExessTime lhs, ExessTime rhs);
 
 /**
    Read an xsd:time string after any leading whitespace.
@@ -1382,7 +1382,7 @@ typedef uint32_t ExessCoercions;
    (like `strcmp`).
 */
 EXESS_PURE_API int
-exess_value_compare(ExessDatatype             lhs_datatype,
+exess_compare_value(ExessDatatype             lhs_datatype,
                     size_t                    lhs_size,
                     const void* EXESS_NONNULL lhs_value,
                     ExessDatatype             rhs_datatype,
@@ -1411,7 +1411,7 @@ exess_value_compare(ExessDatatype             lhs_datatype,
    between the types is not supported at all.
 */
 EXESS_API ExessResult
-exess_value_coerce(ExessCoercions            coercions,
+exess_coerce_value(ExessCoercions            coercions,
                    ExessDatatype             in_datatype,
                    size_t                    in_size,
                    const void* EXESS_NONNULL in,

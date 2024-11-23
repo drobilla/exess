@@ -33,7 +33,7 @@ check_conversions(const ExessDatatype  from_datatype,
   assert(!vr.status);
 
   // Coerce to target datatype
-  const ExessResult coerced_r = exess_value_coerce(coercions,
+  const ExessResult coerced_r = exess_coerce_value(coercions,
                                                    from_datatype,
                                                    vr.write_count,
                                                    &value,
@@ -56,7 +56,7 @@ check_conversions(const ExessDatatype  from_datatype,
     char       tripped_str[328] = {42};
 
     // Coerce the value back to the original type
-    const ExessResult tripped_r = exess_value_coerce(coercions,
+    const ExessResult tripped_r = exess_coerce_value(coercions,
                                                      to_datatype,
                                                      coerced_r.count,
                                                      &coerced,
@@ -116,7 +116,7 @@ check_failure(const ExessDatatype from_datatype,
   assert(!vr.status);
 
   // Try to coerce to target datatype
-  const ExessResult coerced_r = exess_value_coerce(EXESS_LOSSLESS,
+  const ExessResult coerced_r = exess_coerce_value(EXESS_LOSSLESS,
                                                    from_datatype,
                                                    vr.write_count,
                                                    &value,
@@ -133,19 +133,19 @@ test_overflow(void)
   const uint32_t v = 4294967295U;
   uint16_t       o = 42U;
 
-  ExessResult r = exess_value_coerce(
+  ExessResult r = exess_coerce_value(
     EXESS_LOSSLESS, EXESS_SHORT, 1U, &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_BAD_VALUE);
   assert(o == 42U);
 
-  r = exess_value_coerce(
+  r = exess_coerce_value(
     EXESS_LOSSLESS, EXESS_SHORT, sizeof(v), &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
   assert(o == 42U);
 
-  r = exess_value_coerce(
+  r = exess_coerce_value(
     EXESS_LOSSLESS, EXESS_HEX, sizeof(v), &v, EXESS_BASE64, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
@@ -161,7 +161,7 @@ test_unknown(void)
   uint8_t in[32]  = {0U};
   uint8_t out[32] = {0U};
 
-  assert(exess_value_coerce(EXESS_LOSSLESS,
+  assert(exess_coerce_value(EXESS_LOSSLESS,
                             EXESS_NOTHING,
                             sizeof(in),
                             in,
@@ -170,7 +170,7 @@ test_unknown(void)
                             out)
            .status);
 
-  assert(exess_value_coerce(EXESS_LOSSLESS,
+  assert(exess_coerce_value(EXESS_LOSSLESS,
                             EXESS_NOTHING,
                             sizeof(in),
                             in,
@@ -179,7 +179,7 @@ test_unknown(void)
                             out)
            .status);
 
-  assert(exess_value_coerce(EXESS_LOSSLESS,
+  assert(exess_coerce_value(EXESS_LOSSLESS,
                             EXESS_LONG,
                             sizeof(long_value),
                             &long_value,
@@ -188,7 +188,7 @@ test_unknown(void)
                             out)
            .status);
 
-  assert(exess_value_coerce(EXESS_LOSSLESS,
+  assert(exess_coerce_value(EXESS_LOSSLESS,
                             EXESS_ULONG,
                             sizeof(ulong_value),
                             &ulong_value,

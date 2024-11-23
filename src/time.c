@@ -17,7 +17,7 @@
 #include <string.h>
 
 int
-exess_time_compare(const ExessTime lhs, const ExessTime rhs)
+exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 {
   ExessDateTime lhs_datetime = {1970,
                                 1U,
@@ -49,7 +49,7 @@ exess_time_compare(const ExessTime lhs, const ExessTime rhs)
     rhs_datetime = exess_add_datetime_duration(rhs_datetime, rhs_tz_duration);
   }
 
-  return exess_datetime_compare(lhs_datetime, rhs_datetime);
+  return exess_compare_datetime(lhs_datetime, rhs_datetime);
 }
 
 ExessResult
