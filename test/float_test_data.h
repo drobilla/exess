@@ -1,7 +1,6 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "attributes.h"
 #include "ieee_float.h"
 #include "warnings.h"
 
@@ -30,7 +29,7 @@ double_from_rep(const uint64_t rep)
 }
 
 /// Return the distance between two doubles in ULPs
-static EXESS_I_PURE_FUNC uint64_t
+static inline uint64_t
 double_ulp_distance(const double a, const double b)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS
@@ -48,7 +47,7 @@ double_ulp_distance(const double a, const double b)
 }
 
 /// Return the distance between two floats in ULPs
-static EXESS_I_PURE_FUNC uint32_t
+static inline uint32_t
 float_ulp_distance(const float a, const float b)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS

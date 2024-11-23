@@ -3,7 +3,6 @@
 
 #undef NDEBUG
 
-#include "attributes.h"
 #include "int_math.h"
 
 #include <assert.h>
@@ -70,7 +69,7 @@ test_num_digits(void)
   assert(20 == exess_num_digits(18446744073709551615ULL));
 }
 
-EXESS_I_PURE_FUNC int
+int
 main(void)
 {
   test_clz32();

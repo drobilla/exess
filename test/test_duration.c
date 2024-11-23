@@ -4,7 +4,6 @@
 #undef NDEBUG
 
 #include "int_test_data.h"
-#include "macros.h"
 #include "num_test_utils.h"
 
 #include "exess/exess.h"
@@ -257,7 +256,8 @@ test_round_trip(const ExessNumTestOptions opts)
 {
   fprintf(stderr, "Testing xsd:duration randomly with seed %u\n", opts.seed);
 
-  const uint64_t n_tests = MAX(256, opts.n_tests / 16);
+  const uint64_t n_tests =
+    (opts.n_tests >= 4096U) ? (opts.n_tests / 16U) : 256U;
 
   uint32_t rng = opts.seed;
   for (size_t i = 0; i < n_tests; ++i) {
