@@ -27,7 +27,7 @@ check_read(const char* const string,
   assert(r.status || r.write_count == expected_value_size);
   if (expected_value_length > 0) {
     assert(!strncmp(buf, expected_value, expected_value_length));
-    assert(r.write_count <= exess_hex_decoded_size(strlen(string)));
+    assert(r.write_count <= exess_decoded_hex_size(strlen(string)));
   }
 }
 

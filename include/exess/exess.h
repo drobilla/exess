@@ -1042,7 +1042,7 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
    @return The size of a decoded value in bytes.
 */
 EXESS_CONST_API size_t
-exess_base64_decoded_size(size_t length);
+exess_decoded_base64_size(size_t length);
 
 /**
    Read a binary value from a base64 string.
@@ -1053,7 +1053,7 @@ exess_base64_decoded_size(size_t length);
 
    The caller must allocate a large enough buffer to read the value, otherwise
    an #EXESS_NO_SPACE error will be returned.  The required space can be
-   calculated with exess_base64_decoded_size().
+   calculated with exess_decoded_base64_size().
 
    When this is called, `out` must point to a buffer of at least `out_size`
    bytes.  The returned result contains the exact size of the decoded data,
@@ -1110,7 +1110,7 @@ exess_write_base64(size_t                    data_size,
    @return The size of a decoded value in bytes.
 */
 EXESS_CONST_API size_t
-exess_hex_decoded_size(size_t length);
+exess_decoded_hex_size(size_t length);
 
 /**
    Read a binary value from a hex string.
@@ -1121,7 +1121,7 @@ exess_hex_decoded_size(size_t length);
 
    The caller must allocate a large enough buffer to read the value, otherwise
    an #EXESS_NO_SPACE error will be returned.  The required space can be
-   calculated with exess_hex_decoded_size().
+   calculated with exess_decoded_hex_size().
 
    When this is called, `out` must point to a buffer of at least `out_size`
    bytes.  The returned result contains the exact size of the decoded data,

@@ -5,7 +5,7 @@
 man_links = {
   'exess.3': [],
   'exess_base64.3': [
-    'exess_base64_decoded_size.3',
+    'exess_decoded_base64_size.3',
     'exess_read_base64.3',
     'exess_write_base64.3',
   ],
@@ -51,7 +51,7 @@ man_links = {
   'exess_float.3': ['exess_read_float.3', 'exess_write_float.3'],
 
   'exess_hex.3': [
-    'exess_hex_decoded_size.3',
+    'exess_decoded_hex_size.3',
     'exess_read_hex.3',
     'exess_write_hex.3',
   ],

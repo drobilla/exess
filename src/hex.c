@@ -41,7 +41,7 @@ next_char(const char* const str, size_t* const i)
 }
 
 size_t
-exess_hex_decoded_size(const size_t length)
+exess_decoded_hex_size(const size_t length)
 {
   return length / 2;
 }
