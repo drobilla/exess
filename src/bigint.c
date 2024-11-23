@@ -24,7 +24,7 @@ static inline Offset
 make_offset(const unsigned i)
 {
   const unsigned bigits = i / BIGINT_BIGIT_BITS;
-  const unsigned bits   = i - bigits * BIGINT_BIGIT_BITS;
+  const unsigned bits   = i % BIGINT_BIGIT_BITS;
 
   const Offset offset = {bigits, bits};
   return offset;
