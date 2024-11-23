@@ -3,7 +3,8 @@
 
 #undef NDEBUG
 
-#include "float_test_data.h"
+#include "double_test_utils.h"
+#include "float_test_utils.h"
 
 #include "exess/exess.h"
 

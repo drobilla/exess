@@ -1,5 +1,8 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
+
+#ifndef EXESS_TEST_NUM_TEST_UTILS_H
+#define EXESS_TEST_NUM_TEST_UTILS_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -103,3 +106,5 @@ print_num_test_progress(const uint64_t i, const uint64_t n_tests)
     fprintf(stderr, "%f%%\n", (double)i / (double)n_tests * 100.0);
   }
 }
+
+#endif // EXESS_TEST_NUM_TEST_UTILS_H

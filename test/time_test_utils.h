@@ -1,7 +1,10 @@
 // Copyright 2011-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "int_test_data.h"
+#ifndef EXESS_TEST_TIME_TEST_UTILS_H
+#define EXESS_TEST_TIME_TEST_UTILS_H
+
+#include "int_test_utils.h"
 
 #include "exess/exess.h"
 
@@ -35,3 +38,5 @@ timezone_matches(const ExessTimezone zone,
   return (!expected_is_present && zone == EXESS_LOCAL) ||
          zone == 4 * expected_hour + expected_minute / 15;
 }
+
+#endif // EXESS_TEST_TIME_TEST_UTILS_H

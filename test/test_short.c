@@ -3,7 +3,7 @@
 
 #undef NDEBUG
 
-#include "int_test_data.h"
+#include "int_test_utils.h"
 #include "num_test_utils.h"
 
 #include "exess/exess.h"

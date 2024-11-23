@@ -1,8 +1,8 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef INT_TEST_DATA_H
-#define INT_TEST_DATA_H
+#ifndef EXESS_TEST_INT_TEST_UTILS_H
+#define EXESS_TEST_INT_TEST_UTILS_H
 
 #include <stdint.h>
 
@@ -26,4 +26,4 @@ lcg64(const uint64_t i)
   return (a * i) + c;
 }
 
-#endif // INT_TEST_DATA_H
+#endif // EXESS_TEST_INT_TEST_UTILS_H
