@@ -36,11 +36,11 @@ print_num_test_usage(const char* const name)
 {
   fprintf(stderr, "Usage: %s [OPTION]...\n", name);
   fprintf(stderr,
-          "  -h           Optional high value for exhaustive tests\n"
-          "  -l           Optional low value for exhaustive tests\n"
-          "  -n NUM_TESTS Number of random tests to run\n"
-          "  -s SEED      Random seed\n"
-          "  -x           Exhaustively test numbers\n");
+          "  -h            Optional high value for exhaustive tests\n"
+          "  -l            Optional low value for exhaustive tests\n"
+          "  -n NUM_TESTS  Number of random tests to run\n"
+          "  -s SEED       Random seed\n"
+          "  -x            Exhaustively test numbers\n");
   return true;
 }
 
