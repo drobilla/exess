@@ -20,6 +20,9 @@
 #include <stdint.h>
 #include <string.h>
 
+/// Number of digits always represented exactly by an unsigned 64-bit integer
+static const int uint64_digits10 = 19;
+
 static int
 read_sign(const char** const sptr)
 {

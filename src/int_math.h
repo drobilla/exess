@@ -8,9 +8,6 @@
 
 #include <stdint.h>
 
-/// Number of digits always represented exactly by an unsigned 64-bit integer
-static const int uint64_digits10 = 19;
-
 /// Powers of 10 indexed by exponent, so POW10[e] == 10^e
 static const uint64_t POW10[] = {1ULL,
                                  10ULL,
