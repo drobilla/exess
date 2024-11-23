@@ -5,7 +5,6 @@ Checks: >
   *,
   -*-macro-to-enum,
   -altera-*,
-  -bugprone-assignment-in-if-condition,
   -llvmlibc-*,
   -misc-include-cleaner,
   -readability-identifier-length,

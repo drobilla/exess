@@ -331,7 +331,8 @@ exess_bigint_plus_compare(const ExessBigint* l,
       return 1;
     }
 
-    if ((borrow += ci - sum) > 1) {
+    borrow += ci - sum;
+    if (borrow > 1) {
       return -1;
     }
 

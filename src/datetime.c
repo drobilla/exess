@@ -62,17 +62,13 @@ exess_datetime_compare_determinate(const ExessDateTime lhs,
     return lhs.year < rhs.year ? -1 : 1;
   }
 
-  int cmp = 0;
-  if ((cmp = compare_field(lhs.month, rhs.month)) ||
-      (cmp = compare_field(lhs.day, rhs.day)) ||
-      (cmp = compare_field(lhs.hour, rhs.hour)) ||
-      (cmp = compare_field(lhs.minute, rhs.minute)) ||
-      (cmp = compare_field(lhs.second, rhs.second)) ||
-      (cmp = compare_field(lhs.nanosecond, rhs.nanosecond))) {
-    return cmp;
-  }
-
-  return 0;
+  int cmp = compare_field(lhs.month, rhs.month);
+  cmp     = cmp ? cmp : compare_field(lhs.day, rhs.day);
+  cmp     = cmp ? cmp : compare_field(lhs.hour, rhs.hour);
+  cmp     = cmp ? cmp : compare_field(lhs.minute, rhs.minute);
+  cmp     = cmp ? cmp : compare_field(lhs.second, rhs.second);
+  cmp     = cmp ? cmp : compare_field(lhs.nanosecond, rhs.nanosecond);
+  return cmp;
 }
 
 int

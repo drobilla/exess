@@ -28,7 +28,8 @@ read_date_numbers(ExessDate* const out, const char* const str)
 
   // Read month
   ++i;
-  if ((r = read_two_digit_number(&out->month, 1, 12, str + i)).status) {
+  r = read_two_digit_number(&out->month, 1, 12, str + i);
+  if (r.status) {
     return result(r.status, i + r.count);
   }
 
@@ -40,7 +41,8 @@ read_date_numbers(ExessDate* const out, const char* const str)
 
   // Read day
   ++i;
-  if ((r = read_two_digit_number(&out->day, 1, 31, str + i)).status) {
+  r = read_two_digit_number(&out->day, 1, 31, str + i);
+  if (r.status) {
     return result(r.status, i + r.count);
   }
 

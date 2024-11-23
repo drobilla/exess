@@ -157,17 +157,18 @@ coerce_to_ulong(uint64_t* const      out,
     return EXESS_SUCCESS;
   }
 
-  int64_t     signed_out = 0;
-  ExessStatus st         = EXESS_SUCCESS;
-  if ((st = coerce_to_long(&signed_out, in_datatype, in, coercions))) {
-    return st;
+  int64_t           signed_out = 0;
+  const ExessStatus st =
+    coerce_to_long(&signed_out, in_datatype, in, coercions);
+
+  if (!st) {
+    if (signed_out < 0) {
+      return EXESS_OUT_OF_RANGE;
+    }
+
+    *out = (uint64_t)signed_out;
   }
 
-  if (signed_out < 0) {
-    return EXESS_OUT_OF_RANGE;
-  }
-
-  *out = (uint64_t)signed_out;
   return st;
 }
 
@@ -188,10 +189,10 @@ coerce_to_boolean(const ExessCoercions coercions,
                   const void* const    in,
                   bool* const          out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
+  int64_t           l_out = 0;
+  const ExessStatus st    = coerce_to_long(&l_out, in_datatype, in, coercions);
 
-  if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+  if (!st) {
     const bool truncate = (coercions & (ExessCoercions)EXESS_TRUNCATE);
     if (!truncate && l_out != 0 && l_out != 1) {
       return result(EXESS_WOULD_TRUNCATE, 0U);
@@ -209,9 +210,6 @@ coerce_to_decimal(const ExessDatatype in_datatype,
                   const void* const   in,
                   void* const         out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
-
   if (in_datatype == EXESS_DOUBLE) {
     *(double*)out = *(const double*)in;
     return result(EXESS_SUCCESS, sizeof(double));
@@ -222,8 +220,11 @@ coerce_to_decimal(const ExessDatatype in_datatype,
     return result(EXESS_SUCCESS, sizeof(double));
   }
 
-  if (!(st = coerce_signed(
-          &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+  int64_t           l_out = 0;
+  const ExessStatus st =
+    coerce_signed(&l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
+
+  if (!st) {
     *(double*)out = (double)l_out;
     return result(EXESS_SUCCESS, sizeof(double));
   }
@@ -246,10 +247,10 @@ coerce_to_double(const ExessDatatype in_datatype,
     return result(EXESS_SUCCESS, sizeof(double));
   }
 
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
-  if (!(st = coerce_signed(
-          &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT))) {
+  int64_t           l_out = 0;
+  const ExessStatus st =
+    coerce_signed(&l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
+  if (!st) {
     *out = (double)l_out;
     return result(EXESS_SUCCESS, sizeof(double));
   }
@@ -272,11 +273,11 @@ coerce_to_float(const ExessCoercions coercions,
     return result(EXESS_SUCCESS, sizeof(float));
   }
 
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
+  int64_t           l_out = 0;
+  const ExessStatus st =
+    coerce_signed(&l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT);
 
-  if (!(st = coerce_signed(
-          &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT))) {
+  if (!st) {
     *out = (float)l_out;
     return result(EXESS_SUCCESS, sizeof(float));
   }
@@ -291,10 +292,10 @@ coerce_to_integer(const ExessCoercions coercions,
                   const int64_t        max,
                   int64_t* const       out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  int64_t     l_out = 0;
+  int64_t           l_out = 0;
+  const ExessStatus st    = coerce_to_long(&l_out, in_datatype, in, coercions);
 
-  if (!(st = coerce_to_long(&l_out, in_datatype, in, coercions))) {
+  if (!st) {
     if (l_out > max) {
       return result(EXESS_OUT_OF_RANGE, 0U);
     }
@@ -313,10 +314,10 @@ coerce_to_unsigned_integer(const ExessCoercions coercions,
                            const uint64_t       min,
                            uint64_t* const      out)
 {
-  ExessStatus st    = EXESS_SUCCESS;
-  uint64_t    u_out = 0;
+  uint64_t          u_out = 0;
+  const ExessStatus st    = coerce_to_ulong(&u_out, in_datatype, in, coercions);
 
-  if (!(st = coerce_to_ulong(&u_out, in_datatype, in, coercions))) {
+  if (!st) {
     if (u_out < min) {
       return result(EXESS_OUT_OF_RANGE, 0U);
     }
@@ -387,22 +388,20 @@ coerce_to_signed(const ExessDatatype in_datatype,
                  const int64_t       min,
                  const int64_t       max)
 {
-  ExessResult r = {EXESS_SUCCESS, 0U};
+  int64_t     value = 0;
+  ExessResult r     = {coerce_signed(&value, in_datatype, in, min, max), 0U};
 
-  int64_t value = 0;
-  if ((r.status = coerce_signed(&value, in_datatype, in, min, max))) {
-    return r;
-  }
-
-  if (out_datatype == EXESS_INT) {
-    *(int32_t*)out = (int32_t)value;
-    r.count        = sizeof(int32_t);
-  } else if (out_datatype == EXESS_SHORT) {
-    *(int16_t*)out = (int16_t)value;
-    r.count        = sizeof(int16_t);
-  } else if (out_datatype == EXESS_BYTE) {
-    *(int8_t*)out = (int8_t)value;
-    r.count       = sizeof(int8_t);
+  if (!r.status) {
+    if (out_datatype == EXESS_INT) {
+      *(int32_t*)out = (int32_t)value;
+      r.count        = sizeof(int32_t);
+    } else if (out_datatype == EXESS_SHORT) {
+      *(int16_t*)out = (int16_t)value;
+      r.count        = sizeof(int16_t);
+    } else if (out_datatype == EXESS_BYTE) {
+      *(int8_t*)out = (int8_t)value;
+      r.count       = sizeof(int8_t);
+    }
   }
 
   return r;
@@ -415,22 +414,20 @@ coerce_to_unsigned(const ExessDatatype in_datatype,
                    void* const         out,
                    const uint64_t      max)
 {
-  ExessResult r = {EXESS_SUCCESS, 0U};
+  uint64_t    value = 0U;
+  ExessResult r     = {coerce_unsigned(&value, in_datatype, in, max), 0U};
 
-  uint64_t value = 0U;
-  if ((r.status = coerce_unsigned(&value, in_datatype, in, max))) {
-    return r;
-  }
-
-  if (out_datatype == EXESS_UINT) {
-    *(uint32_t*)out = (uint32_t)value;
-    r.count         = sizeof(uint32_t);
-  } else if (out_datatype == EXESS_USHORT) {
-    *(uint16_t*)out = (uint16_t)value;
-    r.count         = sizeof(uint16_t);
-  } else if (out_datatype == EXESS_UBYTE) {
-    *(uint8_t*)out = (uint8_t)value;
-    r.count        = sizeof(uint8_t);
+  if (!r.status) {
+    if (out_datatype == EXESS_UINT) {
+      *(uint32_t*)out = (uint32_t)value;
+      r.count         = sizeof(uint32_t);
+    } else if (out_datatype == EXESS_USHORT) {
+      *(uint16_t*)out = (uint16_t)value;
+      r.count         = sizeof(uint16_t);
+    } else if (out_datatype == EXESS_UBYTE) {
+      *(uint8_t*)out = (uint8_t)value;
+      r.count        = sizeof(uint8_t);
+    }
   }
 
   return r;

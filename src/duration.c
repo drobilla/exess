@@ -67,7 +67,8 @@ read_date(ExessDuration* const out, const Field field, const char* const str)
   size_t i = r.count;
   switch (str[i]) {
   case 'Y':
-    if ((r.status = set_field(out, field, YEAR, value))) {
+    r.status = set_field(out, field, YEAR, value);
+    if (r.status) {
       return r;
     }
 
@@ -79,7 +80,8 @@ read_date(ExessDuration* const out, const Field field, const char* const str)
     break;
 
   case 'M':
-    if ((r.status = set_field(out, field, MONTH, value))) {
+    r.status = set_field(out, field, MONTH, value);
+    if (r.status) {
       return r;
     }
 
@@ -91,7 +93,8 @@ read_date(ExessDuration* const out, const Field field, const char* const str)
     break;
 
   case 'D':
-    if ((r.status = set_field(out, field, DAY, value))) {
+    r.status = set_field(out, field, DAY, value);
+    if (r.status) {
       return r;
     }
 
@@ -174,14 +177,10 @@ compare_field(const int32_t lhs, const int32_t rhs)
 int
 exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
 {
-  int cmp = 0;
-  if ((cmp = compare_field(lhs.months, rhs.months)) ||
-      (cmp = compare_field(lhs.seconds, rhs.seconds)) ||
-      (cmp = compare_field(lhs.nanoseconds, rhs.nanoseconds))) {
-    return cmp;
-  }
-
-  return 0;
+  int cmp = compare_field(lhs.months, rhs.months);
+  cmp     = cmp ? cmp : compare_field(lhs.seconds, rhs.seconds);
+  cmp     = cmp ? cmp : compare_field(lhs.nanoseconds, rhs.nanoseconds);
+  return cmp;
 }
 
 ExessResult

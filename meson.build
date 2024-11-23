@@ -99,12 +99,6 @@ elif cc.get_id() == 'msvc'
       '/wd5045', # will insert Spectre mitigation
     ]
   endif
-
-  if warning_level in ['everything', '3']
-    c_suppressions += [
-      '/wd4706', # assignment within conditional expression
-    ]
-  endif
 endif
 
 c_suppressions = cc.get_supported_arguments(c_suppressions)
