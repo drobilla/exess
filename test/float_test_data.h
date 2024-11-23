@@ -75,16 +75,10 @@ float_matches(const float a, const float b)
   const bool b_is_negative = signbit(b);
   EXESS_RESTORE_WARNINGS
 
-  if (a_is_nan && b_is_nan) {
-    return true;
-  }
-
-  if (a_is_nan || b_is_nan || a_is_negative != b_is_negative) {
-    return false;
-  }
-
-  return a_is_negative ? float_ulp_distance(-a, -b) == 0
-                       : float_ulp_distance(a, b) == 0;
+  return (a_is_nan && b_is_nan) ||
+         (!a_is_nan && !b_is_nan && a_is_negative == b_is_negative &&
+          (a_is_negative ? float_ulp_distance(-a, -b) == 0
+                         : float_ulp_distance(a, b) == 0));
 }
 
 static inline bool
@@ -97,14 +91,8 @@ double_matches(const double a, const double b)
   const bool b_is_negative = signbit(b);
   EXESS_RESTORE_WARNINGS
 
-  if (a_is_nan && b_is_nan) {
-    return true;
-  }
-
-  if (a_is_nan || b_is_nan || a_is_negative != b_is_negative) {
-    return false;
-  }
-
-  return a_is_negative ? double_ulp_distance(-a, -b) == 0
-                       : double_ulp_distance(a, b) == 0;
+  return (a_is_nan && b_is_nan) ||
+         (!a_is_nan && !b_is_nan && a_is_negative == b_is_negative &&
+          (a_is_negative ? double_ulp_distance(-a, -b) == 0
+                         : double_ulp_distance(a, b) == 0));
 }
