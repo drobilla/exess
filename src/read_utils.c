@@ -6,7 +6,7 @@
 #include "result.h"
 #include "string_utils.h"
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 size_t
 skip_whitespace(const char* const str)

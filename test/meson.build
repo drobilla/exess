@@ -80,7 +80,6 @@ foreach unit : public_tests
       files('test_@0@.c'.format(unit)),
       c_args: extra_c_args + c_suppressions + test_suppressions,
       dependencies: [m_dep, exess_dep],
-      include_directories: include_directories('../src'),
     ),
     suite: 'public',
   )
@@ -92,7 +91,6 @@ foreach unit : number_tests
     files('test_@0@.c'.format(unit)),
     c_args: extra_c_args + c_suppressions + test_suppressions,
     dependencies: [m_dep, exess_dep],
-    include_directories: include_directories('../src'),
   )
 
   # Run default randomized test (like the others run above)
@@ -113,7 +111,6 @@ test_short = executable(
   files('test_short.c'),
   c_args: extra_c_args + c_suppressions + test_suppressions,
   dependencies: [m_dep, exess_dep],
-  include_directories: include_directories('../src'),
 )
 
 test('short', test_short, suite: 'public')
@@ -160,7 +157,6 @@ if get_option('default_library') == 'shared'
       'test_int_math',
       files('../src/int_math.c', 'test_int_math.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
-      include_directories: include_directories('../src'),
     ),
     suite: 'private',
   )
@@ -171,7 +167,6 @@ if get_option('default_library') == 'shared'
       'test_bigint',
       files('../src/bigint.c', '../src/int_math.c', 'test_bigint.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
-      include_directories: include_directories('../src'),
     ),
     suite: 'private',
   )
@@ -186,7 +181,6 @@ else
 
   exess_static_dep = declare_dependency(
     dependencies: [m_dep],
-    include_directories: include_directories(['../include']),
     link_with: libexess_static,
   )
 
@@ -198,7 +192,6 @@ else
         files('test_@0@.c'.format(unit)),
         c_args: extra_c_args + c_suppressions + test_suppressions,
         dependencies: exess_static_dep,
-        include_directories: include_directories('../src'),
       ),
       suite: 'private',
     )
@@ -244,7 +237,6 @@ test(
     files('headers/test_headers.c'),
     c_args: extra_c_args + header_suppressions,
     dependencies: exess_dep,
-    include_directories: include_dirs,
   ),
   suite: 'public',
 )

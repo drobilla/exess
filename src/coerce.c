@@ -3,7 +3,7 @@
 
 #include "result.h"
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <math.h>
 #include <stdbool.h>

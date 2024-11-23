@@ -1,7 +1,7 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 const char*
 exess_strerror(const ExessStatus status)

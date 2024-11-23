@@ -1,7 +1,8 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "exess/exess.h"
+#include <exess/exess.h>
+
 #include "int_math.h"
 #include "read_utils.h"
 #include "result.h"

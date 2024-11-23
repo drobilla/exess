@@ -4,7 +4,7 @@
 #ifndef EXESS_SRC_RESULT_H
 #define EXESS_SRC_RESULT_H
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <stddef.h>
 

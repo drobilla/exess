@@ -6,7 +6,7 @@
 #include "int_test_utils.h"
 #include "num_test_utils.h"
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <assert.h>
 #include <stdint.h>

@@ -4,7 +4,7 @@
 #ifndef EXESS_SRC_WRITE_UTILS_H
 #define EXESS_SRC_WRITE_UTILS_H
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <stddef.h>
 #include <stdint.h>

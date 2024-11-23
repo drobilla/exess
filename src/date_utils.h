@@ -4,7 +4,7 @@
 #ifndef EXESS_SRC_DATE_UTILS_H
 #define EXESS_SRC_DATE_UTILS_H
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <stdbool.h>
 #include <stdint.h>

@@ -3,7 +3,7 @@
 
 #undef NDEBUG
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <assert.h>
 #include <stddef.h>

@@ -66,6 +66,7 @@ elif cc.get_id() == 'gcc'
 elif cc.get_id() == 'msvc'
   if warning_level == 'everything'
     c_suppressions += [
+      '/wd4464', # relative include path contains '..'
       '/wd4710', # function not inlined
       '/wd4711', # function selected for automatic inline expansion
       '/wd4820', # padding added after data member

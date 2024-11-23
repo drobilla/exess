@@ -6,7 +6,7 @@
 
 #include "decimal.h"
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <stddef.h>
 

@@ -3,7 +3,7 @@
 
 #undef NDEBUG
 
-#include "bigint.h"
+#include "../src/bigint.h"
 
 #include <assert.h>
 #include <stdbool.h>

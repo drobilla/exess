@@ -3,7 +3,7 @@
 
 #undef NDEBUG
 
-#include "int_math.h"
+#include "../src/int_math.h"
 
 #include <assert.h>
 #include <stdint.h>

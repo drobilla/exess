@@ -4,8 +4,8 @@
 #ifndef EXESS_TEST_DOUBLE_TEST_UTILS_H
 #define EXESS_TEST_DOUBLE_TEST_UTILS_H
 
-#include "ieee_float.h"
-#include "warnings.h"
+#include "../src/ieee_float.h"
+#include "../src/warnings.h"
 
 #include <assert.h>
 #include <math.h>

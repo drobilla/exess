@@ -5,7 +5,7 @@
 #include "result.h"
 #include "scientific.h"
 
-#include "exess/exess.h"
+#include <exess/exess.h>
 
 #include <math.h>
 #include <string.h>
