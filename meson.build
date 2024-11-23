@@ -33,8 +33,6 @@ c_suppressions = []
 if cc.get_id() in ['clang', 'emscripten']
   if warning_level == 'everything'
     c_suppressions += [
-      '-Wno-bad-function-cast',
-      '-Wno-c11-extensions',
       '-Wno-declaration-after-statement',
       '-Wno-padded',
       '-Wno-switch-default',
@@ -42,52 +40,27 @@ if cc.get_id() in ['clang', 'emscripten']
     ]
 
     if not meson.is_cross_build()
-      c_suppressions += [
-        '-Wno-poison-system-directories',
-      ]
-    endif
-
-    if host_machine.system() == 'windows'
-      c_suppressions += [
-        '-Wno-deprecated-declarations',
-      ]
+      c_suppressions += ['-Wno-poison-system-directories']
     endif
   endif
 
   if warning_level in ['everything', '3']
-    c_suppressions += [
-      '-Wno-nullability-extension',
-    ]
+    c_suppressions += ['-Wno-nullability-extension']
 
     if host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
-      c_suppressions += [
-        '-Wno-c11-extensions',
-      ]
+      c_suppressions += ['-Wno-c11-extensions']
     endif
-  endif
-
-  if cc.get_id() == 'emscripten'
-    c_suppressions += [
-      '-Wno-disabled-macro-expansion',
-    ]
   endif
 
 elif cc.get_id() == 'gcc'
   if warning_level == 'everything'
     c_suppressions += [
-      '-Wno-inline',
       '-Wno-padded',
       '-Wno-strict-overflow',
       '-Wno-switch-default',
       '-Wno-unsuffixed-float-constants',
       '-Wno-unused-const-variable',
     ]
-
-    if host_machine.system() == 'windows'
-      c_suppressions += [
-        '-Wno-error=format', # MinGW
-      ]
-    endif
   endif
 
 elif cc.get_id() == 'msvc'
