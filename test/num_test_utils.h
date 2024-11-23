@@ -22,6 +22,12 @@ typedef struct {
   bool     error;
 } ExessNumTestOptions;
 
+static inline bool
+is_digit(const int c)
+{
+  return c >= '0' && c <= '9';
+}
+
 static bool
 print_num_test_usage(const char* const name)
 {
