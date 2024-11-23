@@ -14,7 +14,7 @@ Exess is a simple C library for reading and writing XSD_ datatypes.
    See Also
    ********
 
-   This manual is split into pages that describe a group of related symbols,
+   This manual is split into pages that describe groups of related symbols,
    for example,
    :manpage:`exess_int(3)` describes both the read and write functions for ``int32_t``.
    Aliases are also provided for individual functions,
@@ -36,6 +36,12 @@ Exess is a simple C library for reading and writing XSD_ datatypes.
 
    Datatypes
       :manpage:`exess_datatypes(3)`, :manpage:`exess_canon(3)`, :manpage:`exess_value(3)`
+
+   *********
+   Standards
+   *********
+
+   *XML Schema Part 2: Datatypes Second Edition* https://www.w3.org/TR/xmlschema-2/
 
 .. only:: not man
 

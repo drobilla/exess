@@ -694,7 +694,7 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 #define EXESS_MAX_DURATION_LENGTH 41
 
 /**
-   A duration of time (xsd:duration value).
+   Duration of time (xsd:duration).
 
    To save space and to simplify arithmetic, this representation only stores
    two values: integer months, and decimal seconds (to nanosecond precision).
@@ -778,7 +778,7 @@ exess_write_duration(ExessDuration        value,
 #define EXESS_MAX_DATETIME_LENGTH 32
 
 /**
-   A date and time (xsd:dateTime value).
+   Date and time (xsd:dateTime).
 
    This representation follows the syntax, except the UTC flag is stored
    between the date and time for more efficient packing.
