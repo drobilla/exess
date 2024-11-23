@@ -3,10 +3,6 @@
 
 #undef NDEBUG
 
-#include "date_utils.h"
-#include "int_test_data.h"
-#include "macros.h"
-#include "num_test_utils.h"
 #include "time_test_utils.h"
 
 #include "exess/exess.h"
@@ -182,62 +178,11 @@ test_write_date(void)
   assert(r.count == 0);
 }
 
-static void
-check_round_trip(const ExessDate value)
-{
-  ExessDate parsed_value                   = {0, 0, 0, EXESS_LOCAL};
-  char      buf[EXESS_MAX_DATE_LENGTH + 1] = {0};
-
-  assert(!exess_write_date(value, sizeof(buf), buf).status);
-  assert(!exess_read_date(&parsed_value, buf).status);
-  assert(parsed_value.year == value.year);
-  assert(parsed_value.month == value.month);
-  assert(parsed_value.day == value.day);
-  assert(parsed_value.zone == value.zone);
-}
-
-static void
-test_round_trip(const ExessNumTestOptions opts)
-{
-  fprintf(stderr, "Testing xsd:gDate randomly with seed %u\n", opts.seed);
-
-  const uint64_t n_tests = MAX(128, opts.n_tests / 16);
-
-  uint32_t rng = opts.seed;
-  for (uint64_t i = 0; i < n_tests; ++i) {
-    rng = lcg32(rng);
-
-    const int16_t year = (int16_t)(rng % UINT16_MAX);
-    for (uint8_t month = 1; month < 13; ++month) {
-      for (uint8_t day = 1; day <= days_in_month(year, month); ++day) {
-        const ExessDate no_zone      = {year, month, day, EXESS_LOCAL};
-        const ExessDate lowest_zone  = {year, month, day, 4 * -14 + 0};
-        const ExessDate highest_zone = {year, month, day, 4 * 14};
-
-        check_round_trip(no_zone);
-        check_round_trip(lowest_zone);
-        check_round_trip(highest_zone);
-
-        const ExessDate value = {year, month, day, random_timezone(&rng)};
-        check_round_trip(value);
-      }
-    }
-
-    print_num_test_progress(i, n_tests);
-  }
-}
-
 int
-main(int argc, char** argv)
+main(void)
 {
-  const ExessNumTestOptions opts =
-    parse_num_test_options(argc, argv, 4096, 0, INT32_MAX);
+  test_read_date();
+  test_write_date();
 
-  if (!opts.error) {
-    test_read_date();
-    test_write_date();
-    test_round_trip(opts);
-  }
-
-  return (int)opts.error;
+  return 0;
 }

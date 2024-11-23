@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -136,6 +136,34 @@ test_add(void)
   check_is_overflow(exess_add_datetime_duration(utc_max, plus_second), true);
   check_is_overflow(exess_add_datetime_duration(utc_max, plus_nanosecond),
                     true);
+}
+
+static void
+test_calendar(void)
+{
+  // February has 28 days in non-leap years
+  check_add("-1400-02-28T12:00:00", "P1D", "-1400-03-01T12:00:00");
+  check_add("-0399-02-28T12:00:00", "P1D", "-0399-03-01T12:00:00");
+  check_add("-0300-02-28T12:00:00", "P1D", "-0300-03-01T12:00:00");
+  check_add("-0200-02-28T12:00:00", "P1D", "-0200-03-01T12:00:00");
+  check_add("-0100-02-28T12:00:00", "P1D", "-0100-03-01T12:00:00");
+  check_add("-0001-02-28T12:00:00", "P1D", "-0001-03-01T12:00:00");
+  check_add("0001-02-28T12:00:00", "P1D", "0001-03-01T12:00:00");
+  check_add("0100-02-28T12:00:00", "P1D", "0100-03-01T12:00:00");
+  check_add("0200-02-28T12:00:00", "P1D", "0200-03-01T12:00:00");
+  check_add("0300-02-28T12:00:00", "P1D", "0300-03-01T12:00:00");
+  check_add("0399-02-28T12:00:00", "P1D", "0399-03-01T12:00:00");
+  check_add("1400-02-28T12:00:00", "P1D", "1400-03-01T12:00:00");
+
+  // February has 29 days in leap years
+  check_add("-0400-02-28T12:00:00", "P1D", "-0400-02-29T12:00:00");
+  check_add("-0096-02-28T12:00:00", "P1D", "-0096-02-29T12:00:00");
+  check_add("-0004-02-28T12:00:00", "P1D", "-0004-02-29T12:00:00");
+  check_add("0000-02-28T12:00:00", "P1D", "0000-02-29T12:00:00");
+  check_add("0004-02-28T12:00:00", "P1D", "0004-02-29T12:00:00");
+  check_add("0096-02-28T12:00:00", "P1D", "0096-02-29T12:00:00");
+  check_add("0400-02-28T12:00:00", "P1D", "0400-02-29T12:00:00");
+  check_add("1600-02-28T12:00:00", "P1D", "1600-02-29T12:00:00");
 }
 
 static void
@@ -439,6 +467,7 @@ int
 main(void)
 {
   test_add();
+  test_calendar();
   test_read_datetime();
   test_write_datetime();
 
