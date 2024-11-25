@@ -137,8 +137,8 @@ emit_digits(ExessBigint* const       numer,
             ExessBigint* const       d_lower,
             ExessBigint* const       d_upper,
             const bool               is_even,
-            char* const              buffer,
-            const size_t             max_digits)
+            const unsigned           max_digits,
+            char* const              buffer)
 {
   unsigned length = 0;
   for (size_t i = 0; i < max_digits; ++i) {
@@ -185,7 +185,7 @@ double_lower_boundary_is_closer(const double d)
 }
 
 ExessDigitCount
-exess_digits(const double d, char* const buf, const unsigned max_digits)
+exess_digits(const double d, const unsigned max_digits, char* const buf)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS
   assert(isfinite(d) && fpclassify(d) != FP_ZERO);
@@ -231,7 +231,7 @@ exess_digits(const double d, char* const buf, const unsigned max_digits)
   // Write digits to output
   assert(check_initial_values(&numer, &denom, d_upper));
   count.count =
-    emit_digits(&numer, &denom, &d_lower, d_upper, is_even, buf, max_digits);
+    emit_digits(&numer, &denom, &d_lower, d_upper, is_even, max_digits, buf);
 
   // Trim trailing zeros
   while (count.count > 1 && buf[count.count - 1] == '0') {

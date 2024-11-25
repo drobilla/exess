@@ -16,10 +16,10 @@ typedef struct {
    actual number is given by the exponent in the return value.
 
    @param d The number to convert to digits, must be finite and non-zero.
-   @param buf The output buffer at least `max_digits` long.
    @param max_digits The maximum number of digits to write.
+   @param buf The output buffer at least `max_digits` long.
 */
 ExessDigitCount
-exess_digits(double d, char* buf, unsigned max_digits);
+exess_digits(double d, unsigned max_digits, char* buf);
 
 #endif // EXESS_SRC_DIGITS_H

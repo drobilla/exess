@@ -87,7 +87,7 @@ exess_measure_decimal(const double d, const unsigned max_precision)
 
   // Get decimal digits
   const ExessDigitCount count =
-    exess_digits(fabs(d), value.digits, max_precision);
+    exess_digits(fabs(d), max_precision, value.digits);
 
   assert(count.count == 1 || value.digits[count.count - 1] != '0');
 
