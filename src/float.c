@@ -24,8 +24,8 @@ exess_read_float(float* const out, const char* const str)
 ExessResult
 exess_write_float(const float value, const size_t buf_size, char* const buf)
 {
-  const ExessDecimalDouble decimal = exess_measure_float(value);
+  const ExessDecimalDouble decimal = measure_float(value);
 
-  return buf ? exess_write_scientific(decimal, buf_size, buf)
-             : result(EXESS_SUCCESS, exess_scientific_string_length(decimal));
+  return buf ? write_scientific(decimal, buf_size, buf)
+             : result(EXESS_SUCCESS, scientific_string_length(decimal));
 }

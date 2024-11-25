@@ -13,7 +13,7 @@
 #include <string.h>
 
 size_t
-exess_scientific_string_length(const ExessDecimalDouble value)
+scientific_string_length(const ExessDecimalDouble value)
 {
   switch (value.kind) {
   case EXESS_NEGATIVE:
@@ -43,9 +43,9 @@ exess_scientific_string_length(const ExessDecimalDouble value)
 }
 
 ExessResult
-exess_write_scientific(const ExessDecimalDouble value,
-                       const size_t             n,
-                       char* const              buf)
+write_scientific(const ExessDecimalDouble value,
+                 const size_t             n,
+                 char* const              buf)
 {
   size_t i = 0;
 

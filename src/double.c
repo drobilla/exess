@@ -32,11 +32,11 @@ exess_read_double(double* const out, const char* const str)
 ExessResult
 exess_write_double(const double value, const size_t buf_size, char* const buf)
 {
-  const ExessDecimalDouble decimal = exess_measure_double(value);
+  const ExessDecimalDouble decimal = measure_double(value);
 
   const ExessResult r =
-    buf ? exess_write_scientific(decimal, buf_size, buf)
-        : result(EXESS_SUCCESS, exess_scientific_string_length(decimal));
+    buf ? write_scientific(decimal, buf_size, buf)
+        : result(EXESS_SUCCESS, scientific_string_length(decimal));
 
   return end_write(r.status, buf_size, buf, r.count);
 }

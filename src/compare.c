@@ -8,8 +8,8 @@
 #include <string.h>
 
 static int
-exess_compare_datatypes(const ExessDatatype lhs_datatype,
-                        const ExessDatatype rhs_datatype)
+compare_datatypes(const ExessDatatype lhs_datatype,
+                  const ExessDatatype rhs_datatype)
 {
   const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);
   const char* const rhs_datatype_uri = exess_datatype_uri(rhs_datatype);
@@ -20,10 +20,10 @@ exess_compare_datatypes(const ExessDatatype lhs_datatype,
 }
 
 static int
-exess_compare_blob(const size_t      lhs_size,
-                   const void* const lhs_value,
-                   const size_t      rhs_size,
-                   const void* const rhs_value)
+compare_blob(const size_t      lhs_size,
+             const void* const lhs_value,
+             const size_t      rhs_size,
+             const void* const rhs_value)
 {
   if (lhs_size != rhs_size) {
     const bool   shorter_lhs = lhs_size < rhs_size;
@@ -45,7 +45,7 @@ exess_compare_value(const ExessDatatype lhs_datatype,
                     const void* const   rhs_value)
 {
   if (lhs_datatype != rhs_datatype) {
-    return exess_compare_datatypes(lhs_datatype, rhs_datatype);
+    return compare_datatypes(lhs_datatype, rhs_datatype);
   }
 
 #define COMPARE(lhs, rhs) ((lhs) < (rhs)) ? (-1) : ((lhs) > (rhs)) ? 1 : 0
@@ -100,7 +100,7 @@ exess_compare_value(const ExessDatatype lhs_datatype,
 
   case EXESS_HEX:
   case EXESS_BASE64:
-    return exess_compare_blob(lhs_size, lhs_value, rhs_size, rhs_value);
+    return compare_blob(lhs_size, lhs_value, rhs_size, rhs_value);
   }
 
 #undef COMPARE

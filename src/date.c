@@ -52,7 +52,7 @@ exess_read_date(ExessDate* const out, const char* const str)
   }
 
   // Read timezone
-  r = exess_read_timezone(&out->zone, str + i);
+  r = read_timezone(&out->zone, str + i);
 
   return result(r.status, i + r.count);
 }

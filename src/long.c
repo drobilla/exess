@@ -60,7 +60,7 @@ exess_read_long(int64_t* const out, const char* const str)
 }
 
 static size_t
-exess_long_string_length(const int64_t value)
+long_string_length(const int64_t value)
 {
   if (value == INT64_MIN) {
     return 20;
@@ -77,7 +77,7 @@ ExessResult
 exess_write_long(const int64_t value, const size_t buf_size, char* const buf)
 {
   if (!buf) {
-    return result(EXESS_SUCCESS, exess_long_string_length(value));
+    return result(EXESS_SUCCESS, long_string_length(value));
   }
 
   if (value == INT64_MIN) {

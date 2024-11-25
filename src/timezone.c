@@ -33,7 +33,7 @@ exess_timezone(const int8_t hours, const int8_t minutes)
 }
 
 ExessResult
-exess_read_timezone(ExessTimezone* const out, const char* const str)
+read_timezone(ExessTimezone* const out, const char* const str)
 {
   *out = EXESS_LOCAL;
 

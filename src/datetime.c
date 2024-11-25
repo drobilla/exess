@@ -55,8 +55,7 @@ compare_field(const unsigned lhs, const unsigned rhs)
 }
 
 static int
-exess_datetime_compare_determinate(const ExessDateTime lhs,
-                                   const ExessDateTime rhs)
+compare_datetime_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   if (lhs.year != rhs.year) {
     return lhs.year < rhs.year ? -1 : 1;
@@ -78,7 +77,7 @@ exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
 
   if (lhs.is_utc == rhs.is_utc) {
     // Simple case, both are either UTC or local
-    return exess_datetime_compare_determinate(lhs, rhs);
+    return compare_datetime_determinate(lhs, rhs);
   }
 
   static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};

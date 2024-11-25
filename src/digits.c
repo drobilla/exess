@@ -185,7 +185,7 @@ double_lower_boundary_is_closer(const double d)
 }
 
 ExessDigitCount
-exess_digits(const double d, const unsigned max_digits, char* const buf)
+generate_digits(const double d, const unsigned max_digits, char* const buf)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS
   assert(isfinite(d) && fpclassify(d) != FP_ZERO);

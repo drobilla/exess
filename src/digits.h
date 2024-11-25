@@ -20,6 +20,6 @@ typedef struct {
    @param buf The output buffer at least `max_digits` long.
 */
 ExessDigitCount
-exess_digits(double d, unsigned max_digits, char* buf);
+generate_digits(double d, unsigned max_digits, char* buf);
 
 #endif // EXESS_SRC_DIGITS_H

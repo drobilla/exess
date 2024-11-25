@@ -11,11 +11,9 @@
 #include <stddef.h>
 
 EXESS_CONST_FUNC size_t
-exess_scientific_string_length(ExessDecimalDouble value);
+scientific_string_length(ExessDecimalDouble value);
 
 ExessResult
-exess_write_scientific(ExessDecimalDouble  value,
-                       size_t              n,
-                       char* EXESS_NONNULL buf);
+write_scientific(ExessDecimalDouble value, size_t n, char* EXESS_NONNULL buf);
 
 #endif // EXESS_SRC_SCIENTIFIC_H

@@ -32,9 +32,9 @@ typedef struct {
 } ExessDecimalDouble;
 
 ExessDecimalDouble
-exess_measure_float(float f);
+measure_float(float f);
 
 ExessDecimalDouble
-exess_measure_double(double d);
+measure_double(double d);
 
 #endif // EXESS_SRC_DECIMAL_H

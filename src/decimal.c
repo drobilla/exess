@@ -77,7 +77,7 @@ number_kind(const double d)
 }
 
 static ExessDecimalDouble
-exess_measure_decimal(const double d, const unsigned max_precision)
+measure_decimal(const double d, const unsigned max_precision)
 {
   ExessDecimalDouble value = {number_kind(d), 0, 0, {0}};
 
@@ -87,7 +87,7 @@ exess_measure_decimal(const double d, const unsigned max_precision)
 
   // Get decimal digits
   const ExessDigitCount count =
-    exess_digits(fabs(d), max_precision, value.digits);
+    generate_digits(fabs(d), max_precision, value.digits);
 
   assert(count.count == 1 || value.digits[count.count - 1] != '0');
 
@@ -98,19 +98,19 @@ exess_measure_decimal(const double d, const unsigned max_precision)
 }
 
 ExessDecimalDouble
-exess_measure_float(const float f)
+measure_float(const float f)
 {
-  return exess_measure_decimal((double)f, FLT_DECIMAL_DIG);
+  return measure_decimal((double)f, FLT_DECIMAL_DIG);
 }
 
 ExessDecimalDouble
-exess_measure_double(const double d)
+measure_double(const double d)
 {
-  return exess_measure_decimal(d, DBL_DECIMAL_DIG);
+  return measure_decimal(d, DBL_DECIMAL_DIG);
 }
 
 static size_t
-exess_decimal_double_string_length(const ExessDecimalDouble decimal)
+decimal_double_string_length(const ExessDecimalDouble decimal)
 {
   switch (decimal.kind) {
   case EXESS_NEGATIVE:
@@ -183,12 +183,12 @@ exess_read_decimal(double* const out, const char* const str)
 }
 
 static ExessResult
-exess_write_decimal_double(const ExessDecimalDouble decimal,
-                           const size_t             buf_size,
-                           char* const              buf)
+write_decimal_double(const ExessDecimalDouble decimal,
+                     const size_t             buf_size,
+                     char* const              buf)
 {
   if (!buf) {
-    return result(EXESS_SUCCESS, exess_decimal_double_string_length(decimal));
+    return result(EXESS_SUCCESS, decimal_double_string_length(decimal));
   }
 
   size_t i = 0;
@@ -248,7 +248,7 @@ exess_write_decimal_double(const ExessDecimalDouble decimal,
 ExessResult
 exess_write_decimal(const double value, const size_t n, char* const buf)
 {
-  const ExessDecimalDouble decimal = exess_measure_double(value);
+  const ExessDecimalDouble decimal = measure_double(value);
 
-  return exess_write_decimal_double(decimal, n, buf);
+  return write_decimal_double(decimal, n, buf);
 }

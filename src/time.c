@@ -112,7 +112,7 @@ exess_read_time(ExessTime* const out, const char* const str)
 
   // Read timezone if present
   if (!is_end(str[i])) {
-    r = exess_read_timezone(&out->zone, str + i);
+    r = read_timezone(&out->zone, str + i);
     i += r.count;
   } else {
     out->zone = EXESS_LOCAL;

@@ -19,8 +19,7 @@
    @return The `count` of characters read, and a `status` code.
 */
 ExessResult
-exess_read_timezone(ExessTimezone* EXESS_NONNULL out,
-                    const char* EXESS_NONNULL    str);
+read_timezone(ExessTimezone* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
    Write a canonical timezone suffix.
