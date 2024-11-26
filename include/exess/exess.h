@@ -149,13 +149,13 @@ exess_strerror(ExessStatus status);
 /**
    @defgroup exess_decimal Decimal
 
-   An xsd:decimal is a decimal number of arbitrary precision, but this
+   A `decimal` is a decimal number of arbitrary precision, but this
    implementation only supports values that fit in a `double`.
 
-   Unlike xsd:double, xsd:decimal is written in numeric form, never in
-   scientific notation.  Special infinity and NaN values are not supported.
-   Note that the xsd:decimal representation for some numbers is very long, so
-   xsd:double may be a better choice for values in a wide range.
+   Unlike `double`, `decimal` is written in numeric form, never in scientific
+   notation.  Special infinity and NaN values aren't supported.  Note that the
+   `decimal` representation for some numbers is very long, so `double` may be a
+   better choice for values in a wide range.
 
    Canonical form has no leading "+" sign, and at most 1 leading or trailing
    zero such that there is at least 1 digit on either side of the decimal
@@ -163,20 +163,19 @@ exess_strerror(ExessStatus status);
 
    Non-canonical form allows a leading "+", any number of leading and trailing
    zeros, any number of digits (including zero) on either side of the point,
-   and does not require a decimal point, like "+1", "01", "-.5", "4.", and
-   "42".
+   and doesn't require a decimal point, like "+1", "01", "-.5", "4.", and "42".
 
    @{
 */
 
-/// The maximum length of an xsd:decimal string from exess_write_decimal(), 327
+/// The maximum length of a `decimal` string from exess_write_decimal(), 327
 #define EXESS_MAX_DECIMAL_LENGTH 327
 
 /**
-   Read an xsd:decimal string after any leading whitespace.
+   Read a `decimal` string after any leading whitespace.
 
    Values beyond the range of `decimal` will produce `-INF` or `INF`, and
-   return an error because these are not valid decimal values.
+   return an error because these aren't valid decimal values.
 
    @param out Set to the parsed value, or NaN on error.
    @param str String input.
@@ -186,7 +185,7 @@ EXESS_API ExessResult
 exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:decimal string.
+   Write a canonical `decimal` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -202,7 +201,7 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_double Double
 
-   An xsd:double is an IEEE-754 64-bit floating point number, written in
+   A `double` is an IEEE-754 64-bit floating point number, written in
    scientific notation.
 
    Canonical form has no leading "+" sign, at most 1 leading or trailing zero
@@ -213,17 +212,17 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 
    Non-canonical form allows a leading "+", any number of leading and trailing
    zeros, any number of digits (including zero) on either side of the point,
-   and does not require an exponent or decimal point, like "+1E3", "1E+3",
+   and doesn't require an exponent or decimal point, like "+1E3", "1E+3",
    ".5E3", "4.2", and "42".
 
    @{
 */
 
-/// The maximum length of a canonical xsd:double string, 24
+/// The maximum length of a canonical `double` string, 24
 #define EXESS_MAX_DOUBLE_LENGTH 24
 
 /**
-   Read an xsd:double string after any leading whitespace.
+   Read a `double` string after any leading whitespace.
 
    Values beyond the range of `double` will produce `-INF` or `INF`.
 
@@ -235,11 +234,11 @@ EXESS_API ExessResult
 exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:double string.
+   Write a canonical `double` string.
 
    Any `double` value is supported.  Reading the resulting string with
    exess_read_double() will produce exactly `value`, except the extra bits in
-   NaNs are not preserved.
+   NaNs aren't preserved.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -255,20 +254,20 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_float Float
 
-   An xsd:float is an IEEE-754 32-bit floating point number, written in
+   A `float` is an IEEE-754 32-bit floating point number, written in
    scientific notation.
 
-   The lexical form is the same as xsd:double, the only difference is that the
-   value space of xsd:float is smaller.  See @ref exess_double for details.
+   The lexical form is the same as `double`, the only difference is that the
+   value space of `float` is smaller.  See @ref exess_double for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:float string, 15
+/// The maximum length of a canonical `float` string, 15
 #define EXESS_MAX_FLOAT_LENGTH 15
 
 /**
-   Read an xsd:float string after any leading whitespace.
+   Read a `float` string after any leading whitespace.
 
    Values beyond the range of `float` will produce `-INF` or `INF`.
 
@@ -280,11 +279,11 @@ EXESS_API ExessResult
 exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:float string.
+   Write a canonical `float` string.
 
    Any `float` value is supported.  Reading the resulting string with
    exess_read_float() will produce exactly `value`, except the extra bits in
-   NaNs are not preserved.
+   NaNs aren't preserved.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -300,17 +299,17 @@ exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_boolean Boolean
 
-   An xsd:boolean has only two possible values, canonically written as "false"
+   A `boolean` has only two possible values, canonically written as "false"
    and "true".  The non-canonical forms "0" and "1" are also supported.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:boolean string, 5
+/// The maximum length of a canonical `boolean` string, 5
 #define EXESS_MAX_BOOLEAN_LENGTH 5
 
 /**
-   Read an xsd:boolean string after any leading whitespace.
+   Read a `boolean` string after any leading whitespace.
 
    @param out Set to the parsed value, or false on error.
    @param str String input.
@@ -320,7 +319,7 @@ EXESS_API ExessResult
 exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:boolean string.
+   Write a canonical `boolean` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -336,7 +335,7 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_long Long
 
-   An xsd:long is a signed 64-bit integer, written in decimal.
+   A `long` is a signed 64-bit integer, written in decimal.
 
    Values range from -9223372036854775808 to 9223372036854775807 inclusive.
 
@@ -349,11 +348,11 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
    @{
 */
 
-/// The maximum length of a canonical xsd:long string, 20
+/// The maximum length of a canonical `long` string, 20
 #define EXESS_MAX_LONG_LENGTH 20
 
 /**
-   Read an xsd:long string after any leading whitespace.
+   Read a `long` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -363,7 +362,7 @@ EXESS_API ExessResult
 exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:long string.
+   Write a canonical `long` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -379,21 +378,21 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_int Int
 
-   An xsd:int is a signed 32-bit integer.
+   An `int` is a signed 32-bit integer.
 
    Values range from -2147483648 to 2147483647 inclusive.
 
-   The lexical form is the same as xsd:long, the only difference is that the
+   The lexical form is the same as `long`, the only difference is that the
    value space of xsd:int is smaller.  See @ref exess_long for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:int string, 11
+/// The maximum length of a canonical `int` string, 11
 #define EXESS_MAX_INT_LENGTH 11
 
 /**
-   Read an xsd:int string after any leading whitespace.
+   Read an `int` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -403,7 +402,7 @@ EXESS_API ExessResult
 exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:int string.
+   Write a canonical `int` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -419,21 +418,21 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_short Short
 
-   An xsd:short is a signed 16-bit integer.
+   A `short` is a signed 16-bit integer.
 
    Values range from -32768 to 32767 inclusive.
 
-   The lexical form is the same as xsd:long, the only difference is that the
-   value space of xsd:short is smaller.  See @ref exess_long for details.
+   The lexical form is the same as `long`, the only difference is that the
+   value space of `short` is smaller.  See @ref exess_long for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:short string, 6
+/// The maximum length of a canonical `short` string, 6
 #define EXESS_MAX_SHORT_LENGTH 6
 
 /**
-   Read an xsd:short string after any leading whitespace.
+   Read a `short` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -443,7 +442,7 @@ EXESS_API ExessResult
 exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:short string.
+   Write a canonical `short` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -459,21 +458,21 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_byte Byte
 
-   An xsd:byte is a signed 8-bit integer.
+   A `byte` is a signed 8-bit integer.
 
    Values range from -128 to 127 inclusive.
 
-   The lexical form is the same as xsd:long, the only difference is that the
-   value space of xsd:byte is smaller.  See @ref exess_long for details.
+   The lexical form is the same as `long`, the only difference is that the
+   value space of `byte` is smaller.  See @ref exess_long for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:byte string, 4
+/// The maximum length of a canonical `byte` string, 4
 #define EXESS_MAX_BYTE_LENGTH 4
 
 /**
-   Read an xsd:byte string after any leading whitespace.
+   Read a `byte` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -483,7 +482,7 @@ EXESS_API ExessResult
 exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:byte string.
+   Write a canonical `byte` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -499,7 +498,7 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_ulong Unsigned Long
 
-   An xsd:unsignedLong is an unsigned 64-bit integer, written in decimal.
+   An `unsignedLong` is an unsigned 64-bit integer, written in decimal.
 
    Values range from 0 to 18446744073709551615 inclusive.
 
@@ -512,11 +511,11 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @{
 */
 
-/// The maximum length of a canonical xsd:unsignedLong string, 20
+/// The maximum length of a canonical `unsignedLong` string, 20
 #define EXESS_MAX_ULONG_LENGTH 20
 
 /**
-   Read an xsd:unsignedLong string after any leading whitespace.
+   Read an `unsignedLong` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -526,7 +525,7 @@ EXESS_API ExessResult
 exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:unsignedLong string.
+   Write a canonical `unsignedLong` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -542,22 +541,22 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_uint Unsigned Int
 
-   An xsd:unsignedInt is an unsigned 32-bit integer.
+   An `unsignedInt` is an unsigned 32-bit integer.
 
    Values range from 0 to 4294967295 inclusive.
 
-   The lexical form is the same as xsd:unsignedLong, the only difference is
-   that the value space of xsd:unsignedInt is smaller.  See @ref exess_ulong
+   The lexical form is the same as `unsignedLong`, the only difference is
+   that the value space of `unsignedInt` is smaller.  See @ref exess_ulong
    for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:unsignedInt string, 10
+/// The maximum length of a canonical `unsignedInt` string, 10
 #define EXESS_MAX_UINT_LENGTH 10
 
 /**
-   Read an xsd:unsignedInt string after any leading whitespace.
+   Read an `unsignedInt` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -567,7 +566,7 @@ EXESS_API ExessResult
 exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:unsignedInt string.
+   Write a canonical `unsignedInt` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -583,22 +582,22 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_ushort Unsigned Short
 
-   An xsd:unsignedShort is an unsigned 16-bit integer.
+   An `unsignedShort` is an unsigned 16-bit integer.
 
    Values range from 0 to 65535 inclusive.
 
-   The lexical form is the same as xsd:unsignedLong, the only difference is
-   that the value space of xsd:unsignedShort is smaller.  See @ref exess_ulong
+   The lexical form is the same as `unsignedLong`, the only difference is
+   that the value space of `unsignedShort` is smaller.  See @ref exess_ulong
    for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:unsignedShort string, 5
+/// The maximum length of a canonical `unsignedShort` string, 5
 #define EXESS_MAX_USHORT_LENGTH 5
 
 /**
-   Read an xsd:unsignedShort string after any leading whitespace.
+   Read an `unsignedShort` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -608,7 +607,7 @@ EXESS_API ExessResult
 exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:unsignedShort string.
+   Write a canonical `unsignedShort` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -624,21 +623,21 @@ exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_ubyte Unsigned Byte
 
-   An xsd:unsignedByte is an unsigned 8-bit integer.  Values range from 0 to
+   An `unsignedByte` is an unsigned 8-bit integer.  Values range from 0 to
    255 inclusive.
 
-   The lexical form is the same as xsd:unsignedLong, the only difference is
-   that the value space of xsd:unsignedByte is smaller.  See @ref exess_ulong
+   The lexical form is the same as `unsignedLong`, the only difference is
+   that the value space of `unsignedByte` is smaller.  See @ref exess_ulong
    for details.
 
    @{
 */
 
-/// The maximum length of a canonical xsd:unsignedByte string, 3
+/// The maximum length of a canonical `unsignedByte` string, 3
 #define EXESS_MAX_UBYTE_LENGTH 3
 
 /**
-   Read an xsd:unsignedByte string after any leading whitespace.
+   Read an `unsignedByte` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -648,7 +647,7 @@ EXESS_API ExessResult
 exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:unsignedByte string.
+   Write a canonical `unsignedByte` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -670,7 +669,7 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    @defgroup exess_duration Duration
 
-   An xsd:duration is a positive or negative duration of time, written in ISO
+   A `duration` is a positive or negative duration of time, written in ISO
    8601 format like "PnYnMnDTnHnMnS" where each "n" is a number and fields may
    be omitted if they are zero.
 
@@ -690,11 +689,11 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @{
 */
 
-/// The maximum length of an xsd:duration string from exess_write_duration(), 41
+/// The maximum length of a `duration` string from exess_write_duration(), 41
 #define EXESS_MAX_DURATION_LENGTH 41
 
 /**
-   Duration of time (xsd:duration).
+   Duration of time.
 
    To save space and to simplify arithmetic, this representation only stores
    two values: integer months, and decimal seconds (to nanosecond precision).
@@ -714,10 +713,15 @@ typedef struct {
 /**
    Compare two durations.
 
-   Note that xsd:duration literals are not totally ordered in general, since
-   they can include all fields of a date, and the relation between those is not
-   always constant (such as the number of days in a month).  The ExessDuration
-   representation, however, is normalized in a way that avoids this problem.
+   Note that `duration` literals aren't totally ordered in general, since they
+   can include all fields of a date, and the relation between those fields
+   (such as the number of days in a month) varies.
+
+   The #ExessDuration representation condenses all fields into two values:
+   (integer) months and (decimal) seconds.  This comparison considers a month
+   to be greater than any number of seconds, so any two #ExessDuration can be
+   compared, but the ordering may not be the same as "actual" time duration
+   depending on calendar details.
 
    A duration is less than another if it's a shorter duration of time.
 
@@ -728,7 +732,7 @@ EXESS_CONST_API int
 exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
 
 /**
-   Read an xsd:duration string after any leading whitespace.
+   Read a `duration` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -739,7 +743,7 @@ exess_read_duration(ExessDuration* EXESS_NONNULL out,
                     const char* EXESS_NONNULL    str);
 
 /**
-   Write a canonical xsd:duration string.
+   Write a canonical `duration` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -756,7 +760,7 @@ exess_write_duration(ExessDuration        value,
    @}
    @defgroup exess_datetime Datetime
 
-   An xsd:datetime is a date and time in either UTC or local time.
+   A `datetime` is a date and time in either UTC or local time.
 
    Strings have the form YYYY-MM-DDTHH:MM:SS with at least 4 year digits
    (negative or positive), and all other fields positive two-digit integers
@@ -766,7 +770,7 @@ exess_write_duration(ExessDuration        value,
    A local datetime has no suffix, a datetime with a time zone is always in
    UTC, and is written with a "Z" suffix, for example 2001-02-03T12:13:14Z.
 
-   Canonical form only includes a decimal point if the number of seconds is not
+   Canonical form only includes a decimal point if the number of seconds isn't
    an integer.
 
    This implementation supports up to nanosecond resolution.
@@ -774,11 +778,11 @@ exess_write_duration(ExessDuration        value,
    @{
 */
 
-/// The maximum length of an xsd:dateTime string from exess_write_datetime(), 32
+/// The maximum length of a `dateTime` string from exess_write_datetime(), 32
 #define EXESS_MAX_DATETIME_LENGTH 32
 
 /**
-   Date and time (xsd:dateTime).
+   Date and time.
 
    This representation follows the syntax, except the UTC flag is stored
    between the date and time for more efficient packing.
@@ -797,7 +801,7 @@ typedef struct {
 /**
    Compare two datetimes.
 
-   Note that datetimes are not totally ordered since the order between UTC and
+   Note that datetimes aren't totally ordered since the order between UTC and
    local times can be indeterminate.  When comparing UTC and local times, if
    there is a difference of more than 14 hours, then the comparison is
    determinate (according to the XSD specification).  Otherwise, this function
@@ -829,7 +833,7 @@ EXESS_CONST_API ExessDateTime
 exess_add_datetime_duration(ExessDateTime s, ExessDuration d);
 
 /**
-   Read an xsd:dateTime string after any leading whitespace.
+   Read a `dateTime` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -840,7 +844,7 @@ exess_read_datetime(ExessDateTime* EXESS_NONNULL out,
                     const char* EXESS_NONNULL    str);
 
 /**
-   Write a canonical xsd:datetime string.
+   Write a canonical `datetime` string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -859,7 +863,7 @@ exess_write_datetime(ExessDateTime        value,
    @defgroup exess_timezone Timezones
 
    Date and time values can have a timezone qualifier suffix.  Note that
-   timezone is not a datatype, one only exists as a part of another value.
+   timezone isn't a datatype, one only exists as a part of another value.
 
    Canonical form starts with a sign, followed by two-digit hour and minute
    offsets separated by a colon, like "-06:00" and "+02:30".  The zero offset,
@@ -904,14 +908,14 @@ exess_timezone(int8_t hours, int8_t minutes);
 /**
    @}
    @defgroup exess_date Date
-   An xsd:date is a year, month, and day, with optional timezone.
+   A `date` is a year, month, and day, with optional timezone.
    @{
 */
 
-/// The maximum length of an xsd:date string from exess_write_date(), 18
+/// The maximum length of a `date` string from exess_write_date(), 18
 #define EXESS_MAX_DATE_LENGTH 18
 
-/// Date (xsd:date)
+/// Date
 typedef struct {
   int16_t       year;  ///< Year
   uint8_t       month; ///< Month: [1, 12]
@@ -922,7 +926,7 @@ typedef struct {
 /**
    Compare two dates.
 
-   Note that comparison of dates is not always determinate.  The comparison of
+   Note that comparison of dates isn't always determinate.  The comparison of
    two dates works the same way as the comparison of two datetimes with
    equivalent times, except adjusted according to the timezone if necessary.
    See exess_compare_datetime() for details.
@@ -934,7 +938,7 @@ EXESS_CONST_API int
 exess_compare_date(ExessDate lhs, ExessDate rhs);
 
 /**
-   Read an xsd:date string after any leading whitespace.
+   Read a `date` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -944,7 +948,7 @@ EXESS_API ExessResult
 exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:date string.
+   Write a canonical `date` string.
 
    The output is always in canonical form, like `2001-04-12` or
    `-2001-10-26+02:00`.
@@ -963,15 +967,15 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
    @}
    @defgroup exess_time Time
 
-   An xsd:time is a time of day, with optional timezone.
+   A `time` is a time of day, with optional timezone.
 
    @{
 */
 
-/// The maximum length of an xsd:time string from exess_write_time(), 24
+/// The maximum length of a `time` string from exess_write_time(), 24
 #define EXESS_MAX_TIME_LENGTH 24
 
-/// Time (xsd:time)
+/// Time
 typedef struct {
   ExessTimezone zone;       ///< Time zone
   uint8_t       hour;       ///< Hour: [0, 23]
@@ -983,7 +987,7 @@ typedef struct {
 /**
    Compare two times.
 
-   Note that comparison of times is not always determinate.  The comparison of
+   Note that comparison of times isn't always determinate.  The comparison of
    two times works the same way as the comparison of two datetimes with an
    arbitrary date, see exess_compare_datetime() for details.
 
@@ -994,7 +998,7 @@ EXESS_CONST_API int
 exess_compare_time(ExessTime lhs, ExessTime rhs);
 
 /**
-   Read an xsd:time string after any leading whitespace.
+   Read an `time` string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
@@ -1004,7 +1008,7 @@ EXESS_API ExessResult
 exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:time string.
+   Write a canonical `time` string.
 
    The output is always in canonical form, like "12:15" or "02:00Z".
 
@@ -1027,7 +1031,7 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
    @defgroup exess_base64 Base64
-   An xsd:base64Binary is arbitrary binary data in base64 encoding.
+   A `base64Binary` is arbitrary binary data in base64 encoding.
    @{
 */
 
@@ -1058,7 +1062,7 @@ exess_decoded_base64_size(size_t length);
    When this is called, `out` must point to a buffer of at least `out_size`
    bytes.  The returned result contains the exact size of the decoded data,
    which may be smaller than `out_size`.  Only these first bytes are written,
-   the rest of the buffer is not modified.
+   the rest of the buffer isn't modified.
 
    @param out_size The size of `out` in bytes.
    @param out Buffer where the decoded binary data will be written.
@@ -1073,7 +1077,7 @@ exess_read_base64(size_t                    out_size,
                   const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:base64Binary string.
+   Write a canonical `base64Binary` string.
 
    The data is always written in canonical form, as a multiple of 4 characters
    with no whitespace and 1 or 2 trailing "=" characters as padding if
@@ -1096,7 +1100,7 @@ exess_write_base64(size_t                    data_size,
 /**
    @}
    @defgroup exess_hex Hex
-   An xsd:hexBinary is arbitrary binary data in hexadecimal encoding.
+   A `hexBinary` is arbitrary binary data in hexadecimal encoding.
    @{
 */
 
@@ -1126,7 +1130,7 @@ exess_decoded_hex_size(size_t length);
    When this is called, `out` must point to a buffer of at least `out_size`
    bytes.  The returned result contains the exact size of the decoded data,
    which may be smaller than `out_size`.  Only these first bytes are written,
-   the rest of the buffer is not modified.
+   the rest of the buffer isn't modified.
 
    @param out_size The size of `out` in bytes.
    @param out Buffer where the decoded binary data will be written.
@@ -1141,7 +1145,7 @@ exess_read_hex(size_t                    out_size,
                const char* EXESS_NONNULL str);
 
 /**
-   Write a canonical xsd:hexBinary string.
+   Write a canonical `hexBinary` string.
 
    The data is always written in canonical form, as an even number of uppercase
    hexadecimal digits with no whitespace.
@@ -1173,29 +1177,29 @@ exess_write_hex(size_t                    data_size,
 */
 typedef enum {
   EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
-  EXESS_BOOLEAN,              ///< xsd:boolean (see @ref exess_boolean)
-  EXESS_DECIMAL,              ///< xsd:decimal (see @ref exess_decimal)
-  EXESS_INTEGER,              ///< xsd:integer (see @ref exess_long)
-  EXESS_NON_POSITIVE_INTEGER, ///< xsd:nonPositiveInteger (see @ref exess_long)
-  EXESS_NEGATIVE_INTEGER,     ///< xsd:negativeInteger (see @ref exess_long)
-  EXESS_LONG,                 ///< xsd:long (see @ref exess_long)
-  EXESS_INT,                  ///< xsd:integer (see @ref exess_int)
-  EXESS_SHORT,                ///< xsd:short (see @ref exess_short)
-  EXESS_BYTE,                 ///< xsd:byte (see @ref exess_byte)
-  EXESS_NON_NEGATIVE_INTEGER, ///< xsd:nonNegativeInteger (see @ref exess_ulong)
-  EXESS_ULONG,                ///< xsd:unsignedLong (see @ref exess_ulong)
-  EXESS_UINT,                 ///< xsd:unsignedInt (see @ref exess_uint)
-  EXESS_USHORT,               ///< xsd:unsignedShort (see @ref exess_ushort)
-  EXESS_UBYTE,                ///< xsd:unsignedByte (see @ref exess_ubyte)
-  EXESS_POSITIVE_INTEGER,     ///< xsd:positiveInteger (see @ref exess_ulong)
-  EXESS_FLOAT,                ///< xsd:float (see @ref exess_float)
-  EXESS_DOUBLE,               ///< xsd:double (see @ref exess_double)
-  EXESS_DURATION,             ///< xsd:duration (see @ref exess_duration)
-  EXESS_DATETIME,             ///< xsd:dateTime (see @ref exess_datetime)
-  EXESS_TIME,                 ///< xsd:time (see @ref exess_time)
-  EXESS_DATE,                 ///< xsd:date (see @ref exess_date)
-  EXESS_HEX,                  ///< xsd:hexBinary (see @ref exess_hex)
-  EXESS_BASE64,               ///< xsd:base64Binary (see @ref exess_base64)
+  EXESS_BOOLEAN,              ///< `boolean` (see @ref exess_boolean)
+  EXESS_DECIMAL,              ///< `decimal` (see @ref exess_decimal)
+  EXESS_INTEGER,              ///< `integer` (see @ref exess_long)
+  EXESS_NON_POSITIVE_INTEGER, ///< `nonPositiveInteger` (see @ref exess_long)
+  EXESS_NEGATIVE_INTEGER,     ///< `negativeInteger` (see @ref exess_long)
+  EXESS_LONG,                 ///< `long` (see @ref exess_long)
+  EXESS_INT,                  ///< `integer` (see @ref exess_int)
+  EXESS_SHORT,                ///< `short` (see @ref exess_short)
+  EXESS_BYTE,                 ///< `byte` (see @ref exess_byte)
+  EXESS_NON_NEGATIVE_INTEGER, ///< `nonNegativeInteger` (see @ref exess_ulong)
+  EXESS_ULONG,                ///< `unsignedLong` (see @ref exess_ulong)
+  EXESS_UINT,                 ///< `unsignedInt` (see @ref exess_uint)
+  EXESS_USHORT,               ///< `unsignedShort` (see @ref exess_ushort)
+  EXESS_UBYTE,                ///< `unsignedByte` (see @ref exess_ubyte)
+  EXESS_POSITIVE_INTEGER,     ///< `positiveInteger` (see @ref exess_ulong)
+  EXESS_FLOAT,                ///< `float` (see @ref exess_float)
+  EXESS_DOUBLE,               ///< `double` (see @ref exess_double)
+  EXESS_DURATION,             ///< `duration` (see @ref exess_duration)
+  EXESS_DATETIME,             ///< `dateTime` (see @ref exess_datetime)
+  EXESS_TIME,                 ///< `time` (see @ref exess_time)
+  EXESS_DATE,                 ///< `date` (see @ref exess_date)
+  EXESS_HEX,                  ///< `hexBinary` (see @ref exess_hex)
+  EXESS_BASE64,               ///< `base64Binary` (see @ref exess_base64)
 } ExessDatatype;
 
 /**
@@ -1213,7 +1217,7 @@ exess_datatype_uri(ExessDatatype datatype);
 /**
    Return the datatype tag for a datatype URI.
 
-   @return A datatype tag, or #EXESS_NOTHING if the URI is not a supported
+   @return A datatype tag, or #EXESS_NOTHING if the URI isn't a supported
    datatype.
 */
 EXESS_PURE_API ExessDatatype
@@ -1407,8 +1411,8 @@ exess_compare_value(ExessDatatype             lhs_datatype,
    @return #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
    value is outside the range of the target type,
    #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
-   if the required coercion is not enabled, or #EXESS_UNSUPPORTED if conversion
-   between the types is not supported at all.
+   if the required coercion isn't enabled, or #EXESS_UNSUPPORTED if conversion
+   between the types isn't supported at all.
 */
 EXESS_API ExessResult
 exess_coerce_value(ExessCoercions            coercions,

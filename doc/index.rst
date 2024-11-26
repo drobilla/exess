@@ -2,7 +2,16 @@
 Exess
 #####
 
-Exess is a simple C library for reading and writing XSD_ datatypes.
+Exess is a simple C library for reading and writing values as strings.
+
+It provides portable implementations of most datatypes from the XSD_ specification,
+omitting some partial Gregorian calendar and XML-specific string datatypes.
+These formats are (explicitly or implicitly) compatible with many common data, markup, and programming languages.
+
+Exess doesn't depend on the current locale settings or any other static state.
+This makes it useful as a portable/type-safe replacement for the conversion functions in the standard library,
+and suitable for use in almost any context,
+including plugins, threads, and libraries.
 
 .. toctree::
 

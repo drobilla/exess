@@ -1,12 +1,12 @@
 Exess
 =====
 
-Exess is a simple C library for reading and writing [XSD][] datatypes.
+Exess is a simple portable C library for reading and writing values as strings.
 
-Exess provides portable, locale-independent, and standards-backed functions for
-converting common numeric and temporal datatypes to and from strings.
-Conversions are lossless wherever possible so, for example, a `float` written
-to a string will read back as exactly the original value on any system.
+Exess provides portable and locale-independent functions for converting common
+number, date, time, and binary datatypes to and from strings.  Conversions are
+lossless wherever possible so, for example, a `float` written to a string will
+read back as exactly the original value on any system.
 
 The API is lightweight and avoids allocation entirely, making it simple to use
 and suitable for constrained contexts like plugins or embedded systems.
