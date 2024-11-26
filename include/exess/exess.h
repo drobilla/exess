@@ -56,9 +56,7 @@ extern "C" {
 
 /**
    @defgroup exess_symbols Symbols
-
    Preprocessor symbols for convenience.
-
    @{
 */
 
@@ -147,6 +145,42 @@ exess_strerror(ExessStatus status);
 */
 
 /**
+   @defgroup exess_boolean Boolean
+
+   A `boolean` has only two possible values, canonically written as "false"
+   and "true".  The non-canonical forms "0" and "1" are also supported.
+
+   @{
+*/
+
+/// The maximum length of a canonical `boolean` string, 5
+#define EXESS_MAX_BOOLEAN_LENGTH 5
+
+/**
+   Read a `boolean` string after any leading whitespace.
+
+   @param out Set to the parsed value, or false on error.
+   @param str String input.
+   @return The `count` of characters read, and a `status` code.
+*/
+EXESS_API ExessResult
+exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+
+/**
+   Write a canonical `boolean` string.
+
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and `status`
+   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+*/
+EXESS_API ExessResult
+exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
+
+/**
+   @}
    @defgroup exess_decimal Decimal
 
    A `decimal` is a decimal number of arbitrary precision, but this
@@ -196,140 +230,6 @@ exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 */
 EXESS_API ExessResult
 exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
-
-/**
-   @}
-   @defgroup exess_double Double
-
-   A `double` is an IEEE-754 64-bit floating point number, written in
-   scientific notation.
-
-   Canonical form has no leading "+" sign, at most 1 leading or trailing zero
-   such that there is at least 1 digit on either side of the decimal point, and
-   always has an exponent, like "12.34E56", "-1.0E-2", and "-0.0E0".  The
-   special values negative infinity, positive infinity, and not-a-number are
-   written "-INF", "INF", and "NaN", respectively.
-
-   Non-canonical form allows a leading "+", any number of leading and trailing
-   zeros, any number of digits (including zero) on either side of the point,
-   and doesn't require an exponent or decimal point, like "+1E3", "1E+3",
-   ".5E3", "4.2", and "42".
-
-   @{
-*/
-
-/// The maximum length of a canonical `double` string, 24
-#define EXESS_MAX_DOUBLE_LENGTH 24
-
-/**
-   Read a `double` string after any leading whitespace.
-
-   Values beyond the range of `double` will produce `-INF` or `INF`.
-
-   @param out Set to the parsed value, or `NAN` on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
-*/
-EXESS_API ExessResult
-exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
-
-/**
-   Write a canonical `double` string.
-
-   Any `double` value is supported.  Reading the resulting string with
-   exess_read_double() will produce exactly `value`, except the extra bits in
-   NaNs aren't preserved.
-
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output and `status` #EXESS_SUCCESS,
-   or #EXESS_NO_SPACE if the buffer is too small.
-*/
-EXESS_API ExessResult
-exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
-
-/**
-   @}
-   @defgroup exess_float Float
-
-   A `float` is an IEEE-754 32-bit floating point number, written in
-   scientific notation.
-
-   The lexical form is the same as `double`, the only difference is that the
-   value space of `float` is smaller.  See @ref exess_double for details.
-
-   @{
-*/
-
-/// The maximum length of a canonical `float` string, 15
-#define EXESS_MAX_FLOAT_LENGTH 15
-
-/**
-   Read a `float` string after any leading whitespace.
-
-   Values beyond the range of `float` will produce `-INF` or `INF`.
-
-   @param out Set to the parsed value, or `NAN` on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
-*/
-EXESS_API ExessResult
-exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
-
-/**
-   Write a canonical `float` string.
-
-   Any `float` value is supported.  Reading the resulting string with
-   exess_read_float() will produce exactly `value`, except the extra bits in
-   NaNs aren't preserved.
-
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
-*/
-EXESS_API ExessResult
-exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
-
-/**
-   @}
-   @defgroup exess_boolean Boolean
-
-   A `boolean` has only two possible values, canonically written as "false"
-   and "true".  The non-canonical forms "0" and "1" are also supported.
-
-   @{
-*/
-
-/// The maximum length of a canonical `boolean` string, 5
-#define EXESS_MAX_BOOLEAN_LENGTH 5
-
-/**
-   Read a `boolean` string after any leading whitespace.
-
-   @param out Set to the parsed value, or false on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
-*/
-EXESS_API ExessResult
-exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
-
-/**
-   Write a canonical `boolean` string.
-
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
-*/
-EXESS_API ExessResult
-exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
    @}
@@ -661,6 +561,104 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
    @}
+   @defgroup exess_float Float
+
+   A `float` is an IEEE-754 32-bit floating point number, written in
+   scientific notation.
+
+   The lexical form is the same as `double`, the only difference is that the
+   value space of `float` is smaller.  See @ref exess_double for details.
+
+   @{
+*/
+
+/// The maximum length of a canonical `float` string, 15
+#define EXESS_MAX_FLOAT_LENGTH 15
+
+/**
+   Read a `float` string after any leading whitespace.
+
+   Values beyond the range of `float` will produce `-INF` or `INF`.
+
+   @param out Set to the parsed value, or `NAN` on error.
+   @param str String input.
+   @return The `count` of characters read, and a `status` code.
+*/
+EXESS_API ExessResult
+exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+
+/**
+   Write a canonical `float` string.
+
+   Any `float` value is supported.  Reading the resulting string with
+   exess_read_float() will produce exactly `value`, except the extra bits in
+   NaNs aren't preserved.
+
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and `status`
+   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+*/
+EXESS_API ExessResult
+exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
+
+/**
+   @}
+   @defgroup exess_double Double
+
+   A `double` is an IEEE-754 64-bit floating point number, written in
+   scientific notation.
+
+   Canonical form has no leading "+" sign, at most 1 leading or trailing zero
+   such that there is at least 1 digit on either side of the decimal point, and
+   always has an exponent, like "12.34E56", "-1.0E-2", and "-0.0E0".  The
+   special values negative infinity, positive infinity, and not-a-number are
+   written "-INF", "INF", and "NaN", respectively.
+
+   Non-canonical form allows a leading "+", any number of leading and trailing
+   zeros, any number of digits (including zero) on either side of the point,
+   and doesn't require an exponent or decimal point, like "+1E3", "1E+3",
+   ".5E3", "4.2", and "42".
+
+   @{
+*/
+
+/// The maximum length of a canonical `double` string, 24
+#define EXESS_MAX_DOUBLE_LENGTH 24
+
+/**
+   Read a `double` string after any leading whitespace.
+
+   Values beyond the range of `double` will produce `-INF` or `INF`.
+
+   @param out Set to the parsed value, or `NAN` on error.
+   @param str String input.
+   @return The `count` of characters read, and a `status` code.
+*/
+EXESS_API ExessResult
+exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+
+/**
+   Write a canonical `double` string.
+
+   Any `double` value is supported.  Reading the resulting string with
+   exess_read_double() will produce exactly `value`, except the extra bits in
+   NaNs aren't preserved.
+
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output and `status` #EXESS_SUCCESS,
+   or #EXESS_NO_SPACE if the buffer is too small.
+*/
+EXESS_API ExessResult
+exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
+
+/**
+   @}
    @}
    @defgroup exess_time_and_date Time and Date
    @{
@@ -907,6 +905,63 @@ exess_timezone(int8_t hours, int8_t minutes);
 
 /**
    @}
+   @defgroup exess_time Time
+   A `time` is a time of day, with optional timezone.
+   @{
+*/
+
+/// The maximum length of a `time` string from exess_write_time(), 24
+#define EXESS_MAX_TIME_LENGTH 24
+
+/// Time
+typedef struct {
+  ExessTimezone zone;       ///< Time zone
+  uint8_t       hour;       ///< Hour: [0, 23]
+  uint8_t       minute;     ///< Minute: [0, 59]
+  uint8_t       second;     ///< Second: [0, 59]
+  uint32_t      nanosecond; ///< Nanosecond: [0, 999999999]
+} ExessTime;
+
+/**
+   Compare two times.
+
+   Note that comparison of times isn't always determinate.  The comparison of
+   two times works the same way as the comparison of two datetimes with an
+   arbitrary date, see exess_compare_datetime() for details.
+
+   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
+   respectively.
+*/
+EXESS_CONST_API int
+exess_compare_time(ExessTime lhs, ExessTime rhs);
+
+/**
+   Read an `time` string after any leading whitespace.
+
+   @param out Set to the parsed value, or zero on error.
+   @param str String input.
+   @return The `count` of characters read, and a `status` code.
+*/
+EXESS_API ExessResult
+exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+
+/**
+   Write a canonical `time` string.
+
+   The output is always in canonical form, like "12:15" or "02:00Z".
+
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_API ExessResult
+exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
+
+/**
+   @}
    @defgroup exess_date Date
    A `date` is a year, month, and day, with optional timezone.
    @{
@@ -962,65 +1017,6 @@ exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
 */
 EXESS_API ExessResult
 exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
-
-/**
-   @}
-   @defgroup exess_time Time
-
-   A `time` is a time of day, with optional timezone.
-
-   @{
-*/
-
-/// The maximum length of a `time` string from exess_write_time(), 24
-#define EXESS_MAX_TIME_LENGTH 24
-
-/// Time
-typedef struct {
-  ExessTimezone zone;       ///< Time zone
-  uint8_t       hour;       ///< Hour: [0, 23]
-  uint8_t       minute;     ///< Minute: [0, 59]
-  uint8_t       second;     ///< Second: [0, 59]
-  uint32_t      nanosecond; ///< Nanosecond: [0, 999999999]
-} ExessTime;
-
-/**
-   Compare two times.
-
-   Note that comparison of times isn't always determinate.  The comparison of
-   two times works the same way as the comparison of two datetimes with an
-   arbitrary date, see exess_compare_datetime() for details.
-
-   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
-   respectively.
-*/
-EXESS_CONST_API int
-exess_compare_time(ExessTime lhs, ExessTime rhs);
-
-/**
-   Read an `time` string after any leading whitespace.
-
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
-*/
-EXESS_API ExessResult
-exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
-
-/**
-   Write a canonical `time` string.
-
-   The output is always in canonical form, like "12:15" or "02:00Z".
-
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
-   small, or #EXESS_BAD_VALUE if the value is invalid.
-*/
-EXESS_API ExessResult
-exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
    @}
