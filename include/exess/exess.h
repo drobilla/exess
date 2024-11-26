@@ -1200,7 +1200,56 @@ typedef enum {
   EXESS_DATE,                 ///< `date` (see @ref exess_date)
   EXESS_HEX,                  ///< `hexBinary` (see @ref exess_hex)
   EXESS_BASE64,               ///< `base64Binary` (see @ref exess_base64)
+
+// #define EXESS_DATATYPE_HIERARCHICAL 1
+#ifdef EXESS_DATATYPE_HIERARCHICAL
+  EXESS_NOTHING = 0U, ///< Sentinel for unknown datatypes or errors
+  /* EXESS_STRING               = 0x0800U */
+  /* EXESS_NORMALIZED_STRING    = 0x0C00U */
+  /* EXESS_TOKEN                = 0x0D00U */
+  /* EXESS_LANGUAGE             = 0x0D40U */
+  EXESS_BOOLEAN = 0x1000U, ///< @ref exess_boolean
+  EXESS_DECIMAL = 0x1800U, ///< @ref exess_decimal
+
+  EXESS_INTEGER = 0x1C00U, ///< @ref exess_long
+
+  EXESS_NON_POSITIVE_INTEGER = 0x1D00U, ///< @ref exess_long
+  EXESS_NEGATIVE_INTEGER     = 0x1D40U, ///< @ref exess_long
+
+  EXESS_LONG  = 0x1E40U, ///< @ref exess_long
+  EXESS_INT   = 0x1E80U, ///< @ref exess_int
+  EXESS_SHORT = 0x1EC0U, ///< @ref exess_short
+  EXESS_BYTE  = 0x1F00U, ///< @ref exess_byte
+
+  EXESS_NON_NEGATIVE_INTEGER = 0x1F40U, ///< @ref exess_ulong
+
+  EXESS_ULONG  = 0x1F50U, ///< @ref exess_ulong
+  EXESS_UINT   = 0x1F54U, ///< @ref exess_uint
+  EXESS_USHORT = 0x1F58U, ///< @ref exess_ushort
+  EXESS_UBYTE  = 0x1F5CU, ///< @ref exess_ubyte
+
+  EXESS_POSITIVE_INTEGER = 0x1F60U, ///< @ref exess_ulong
+
+  EXESS_FLOAT    = 0x2000U, ///< @ref exess_float
+  EXESS_DOUBLE   = 0x2800U, ///< @ref exess_double
+  EXESS_DURATION = 0x3000U, ///< @ref exess_duration
+  EXESS_DATETIME = 0x3800U, ///< @ref exess_datetime
+  EXESS_TIME     = 0x4000U, ///< @ref exess_time
+  EXESS_DATE     = 0x4800U, ///< @ref exess_date
+  /* EXESS_GYEARMONTH           = 0x5000U, */
+  /* EXESS_GYEAR                = 0x5800U, */
+  /* EXESS_GMONTHDAY            = 0x6000U, */
+  /* EXESS_GDAY                 = 0x6800U, */
+  /* EXESS_GMONTH               = 0x7000U, */
+  EXESS_HEX    = 0x7800U, ///< @ref exess_hex
+  EXESS_BASE64 = 0x8000U, ///< @ref exess_base64
+/* EXESS_ANYURI               = 0x8800U */
+/* EXESS_QNAME                = 0x9000U */
+/* EXESS_NOTATION             = 0x9800U */
+#endif
 } ExessDatatype;
+
+/* #define EXESS_PRIMITIVE_MASK 0xF800 */
 
 /**
    Return the URI for a supported datatype.
