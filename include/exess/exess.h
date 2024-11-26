@@ -1175,8 +1175,6 @@ typedef enum {
   EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
   EXESS_BOOLEAN,              ///< xsd:boolean (see @ref exess_boolean)
   EXESS_DECIMAL,              ///< xsd:decimal (see @ref exess_decimal)
-  EXESS_DOUBLE,               ///< xsd:double (see @ref exess_double)
-  EXESS_FLOAT,                ///< xsd:float (see @ref exess_float)
   EXESS_INTEGER,              ///< xsd:integer (see @ref exess_long)
   EXESS_NON_POSITIVE_INTEGER, ///< xsd:nonPositiveInteger (see @ref exess_long)
   EXESS_NEGATIVE_INTEGER,     ///< xsd:negativeInteger (see @ref exess_long)
@@ -1190,6 +1188,8 @@ typedef enum {
   EXESS_USHORT,               ///< xsd:unsignedShort (see @ref exess_ushort)
   EXESS_UBYTE,                ///< xsd:unsignedByte (see @ref exess_ubyte)
   EXESS_POSITIVE_INTEGER,     ///< xsd:positiveInteger (see @ref exess_ulong)
+  EXESS_FLOAT,                ///< xsd:float (see @ref exess_float)
+  EXESS_DOUBLE,               ///< xsd:double (see @ref exess_double)
   EXESS_DURATION,             ///< xsd:duration (see @ref exess_duration)
   EXESS_DATETIME,             ///< xsd:dateTime (see @ref exess_datetime)
   EXESS_TIME,                 ///< xsd:time (see @ref exess_time)

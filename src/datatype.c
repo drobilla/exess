@@ -14,8 +14,6 @@ static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
   NULL,                               //
   EXESS_XSD_URI "boolean",            //
   EXESS_XSD_URI "decimal",            //
-  EXESS_XSD_URI "double",             //
-  EXESS_XSD_URI "float",              //
   EXESS_XSD_URI "integer",            //
   EXESS_XSD_URI "nonPositiveInteger", //
   EXESS_XSD_URI "negativeInteger",    //
@@ -29,6 +27,8 @@ static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
   EXESS_XSD_URI "unsignedShort",      //
   EXESS_XSD_URI "unsignedByte",       //
   EXESS_XSD_URI "positiveInteger",    //
+  EXESS_XSD_URI "float",              //
+  EXESS_XSD_URI "double",             //
   EXESS_XSD_URI "duration",           //
   EXESS_XSD_URI "datetime",           //
   EXESS_XSD_URI "time",               //
@@ -42,8 +42,6 @@ static const size_t exess_max_lengths[] = {
   0, // Unknown
   EXESS_MAX_BOOLEAN_LENGTH,
   0, // decimal
-  EXESS_MAX_DOUBLE_LENGTH,
-  EXESS_MAX_FLOAT_LENGTH,
   0, // integer
   0, // nonPositiveInteger
   0, // negativeInteger
@@ -57,6 +55,8 @@ static const size_t exess_max_lengths[] = {
   EXESS_MAX_USHORT_LENGTH,
   EXESS_MAX_UBYTE_LENGTH,
   0, // positiveInteger
+  EXESS_MAX_FLOAT_LENGTH,
+  EXESS_MAX_DOUBLE_LENGTH,
   EXESS_MAX_DURATION_LENGTH,
   EXESS_MAX_DATETIME_LENGTH,
   EXESS_MAX_TIME_LENGTH,
@@ -70,8 +70,6 @@ static const size_t exess_value_sizes[] = {
   0, // Unknown
   sizeof(bool),
   sizeof(double),
-  sizeof(double),
-  sizeof(float),
   sizeof(int64_t),
   sizeof(int64_t),
   sizeof(int64_t),
@@ -85,6 +83,8 @@ static const size_t exess_value_sizes[] = {
   sizeof(uint16_t),
   sizeof(uint8_t),
   sizeof(uint64_t),
+  sizeof(float),
+  sizeof(double),
   sizeof(ExessDuration),
   sizeof(ExessDateTime),
   sizeof(ExessTime),
