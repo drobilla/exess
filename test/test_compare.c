@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef bool (*ComparisonPredicate)(int);
 
@@ -35,8 +36,8 @@ check_comparison(const ExessDatatype       lhs_datatype,
                  const char* const         rhs_string,
                  const ComparisonPredicate pred)
 {
-  ExessValue lhs = {false};
-  ExessValue rhs = {false};
+  EXESS_ALIGN uint8_t lhs[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
+  EXESS_ALIGN uint8_t rhs[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
 
   const ExessVariableResult l =
     exess_read_value(lhs_datatype, sizeof(lhs), &lhs, lhs_string);

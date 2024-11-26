@@ -22,9 +22,9 @@ check_conversions(const ExessDatatype  from_datatype,
                   const char* const    to_string,
                   const bool           round_trip)
 {
-  ExessValue value            = {false};
-  ExessValue coerced          = {false};
-  char       coerced_str[328] = {42};
+  EXESS_ALIGN uint8_t value[EXESS_MAX_FIXED_VALUE_SIZE]   = {0};
+  EXESS_ALIGN uint8_t coerced[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
+  char                coerced_str[328]                    = {42};
 
   // Read original value
   const ExessVariableResult vr =
@@ -52,8 +52,8 @@ check_conversions(const ExessDatatype  from_datatype,
   assert(!strcmp(coerced_str, to_string));
 
   if (round_trip) {
-    ExessValue tripped          = {false};
-    char       tripped_str[328] = {42};
+    EXESS_ALIGN uint8_t tripped[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
+    char                tripped_str[328]                    = {42};
 
     // Coerce the value back to the original type
     const ExessResult tripped_r = exess_coerce_value(coercions,
@@ -106,8 +106,8 @@ check_failure(const ExessDatatype from_datatype,
               const ExessDatatype to_datatype,
               const ExessStatus   expected_status)
 {
-  ExessValue value   = {false};
-  ExessValue coerced = {false};
+  EXESS_ALIGN uint8_t value[EXESS_MAX_FIXED_VALUE_SIZE]   = {0};
+  EXESS_ALIGN uint8_t coerced[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
 
   // Read original value
   const ExessVariableResult vr =

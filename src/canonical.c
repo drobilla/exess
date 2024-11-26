@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /// Return true iff `c` is "+" or "-"
 static inline bool
@@ -204,7 +205,7 @@ write_bounded(const char* const   str,
               const size_t        buf_size,
               char* const         buf)
 {
-  ExessValue value = {false};
+  EXESS_ALIGN uint8_t value[EXESS_MAX_FIXED_VALUE_SIZE] = {0};
 
   const ExessVariableResult vr =
     exess_read_value(datatype, sizeof(value), &value, str);

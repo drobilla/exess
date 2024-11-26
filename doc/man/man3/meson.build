@@ -78,7 +78,6 @@ man_links = {
   'exess_value.3': [
     'ExessCoercion.3',
     'ExessCoercions.3',
-    'ExessValue.3',
     'exess_compare_value.3',
     'exess_read_value.3',
     'exess_coerce_value.3',
