@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+typedef bool (*ComparisonPredicate)(int);
+
 static bool
 less(const int cmp)
 {
@@ -27,11 +29,11 @@ greater(const int cmp)
 }
 
 static void
-check_comparison(const ExessDatatype lhs_datatype,
-                 const char* const   lhs_string,
-                 const ExessDatatype rhs_datatype,
-                 const char* const   rhs_string,
-                 bool (*pred)(int))
+check_comparison(const ExessDatatype       lhs_datatype,
+                 const char* const         lhs_string,
+                 const ExessDatatype       rhs_datatype,
+                 const char* const         rhs_string,
+                 const ComparisonPredicate pred)
 {
   ExessValue lhs = {false};
   ExessValue rhs = {false};
