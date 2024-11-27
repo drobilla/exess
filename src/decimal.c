@@ -78,7 +78,7 @@ decimal_string_length(const ExessFloatingDecimal decimal)
 }
 
 static size_t
-copy_digits(char* const dest, const char* const src, const size_t n)
+copy_chars(char* const dest, const char* const src, const size_t n)
 {
   memcpy(dest, src, n);
   return n;
@@ -91,8 +91,8 @@ set_zeros(char* const dest, const size_t n)
   return n;
 }
 
-static ExessResult
-read_decimal_number(double* const out, const char* const str)
+ExessResult
+exess_read_decimal(double* const out, const char* const str)
 {
   *out = (double)NAN;
 
@@ -110,23 +110,13 @@ read_decimal_number(double* const out, const char* const str)
     *out = decimal_to_double(in);
   }
 
-  return result(r.status, i + r.count);
-}
-
-ExessResult
-exess_read_decimal(double* const out, const char* const str)
-{
-  const size_t      i = skip_whitespace(str);
-  const ExessResult r = read_decimal_number(out, str + i);
-
   return end_read(r.status, str, i + r.count);
 }
 
-static ExessResult
-write_floating_decimal(const ExessFloatingDecimal decimal,
-                       const size_t               buf_size,
-                       char* const                buf)
+ExessResult
+exess_write_decimal(const double value, const size_t buf_size, char* const buf)
 {
+  const ExessFloatingDecimal decimal = measure_double(value);
   if (!buf) {
     return result(EXESS_SUCCESS, decimal_string_length(decimal));
   }
@@ -160,35 +150,25 @@ write_floating_decimal(const ExessFloatingDecimal decimal,
   }
 
   if (metrics.point_loc == EXESS_POINT_AFTER) {
-    i += copy_digits(buf + i, decimal.digits, decimal.n_digits);
+    i += copy_chars(buf + i, decimal.digits, decimal.n_digits);
     i += set_zeros(buf + i, metrics.n_zeros_before);
-    buf[i++] = '.';
-    buf[i++] = '0';
+    i += copy_chars(buf + i, ".0", 2U);
   } else if (metrics.point_loc == EXESS_POINT_BEFORE) {
-    buf[i++] = '0';
-    buf[i++] = '.';
+    i += copy_chars(buf + i, "0.", 2U);
     i += set_zeros(buf + i, metrics.n_zeros_after);
-    i += copy_digits(buf + i, decimal.digits, decimal.n_digits);
+    i += copy_chars(buf + i, decimal.digits, decimal.n_digits);
   } else {
     assert(metrics.point_loc == EXESS_POINT_BETWEEN);
     assert(decimal.expt >= -1);
 
     const size_t n_before = (size_t)decimal.expt + 1U;
-    const size_t n_after  = decimal.n_digits - n_before;
+    i += copy_chars(buf + i, decimal.digits, n_before);
 
-    i += copy_digits(buf + i, decimal.digits, n_before);
     buf[i++] = '.';
-    memcpy(buf + i, decimal.digits + n_before, n_after);
-    i += n_after;
+
+    const size_t n_after = decimal.n_digits - n_before;
+    i += copy_chars(buf + i, decimal.digits + n_before, n_after);
   }
 
   return end_write(EXESS_SUCCESS, buf_size, buf, i);
-}
-
-ExessResult
-exess_write_decimal(const double value, const size_t n, char* const buf)
-{
-  const ExessFloatingDecimal decimal = measure_double(value);
-
-  return write_floating_decimal(decimal, n, buf);
 }
