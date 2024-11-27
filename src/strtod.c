@@ -6,7 +6,7 @@
 #include <exess/exess.h>
 
 #include "bigint.h"
-#include "decimal.h"
+#include "floating_decimal.h"
 #include "ieee_float.h"
 #include "int_math.h"
 #include "macros.h"
@@ -51,7 +51,7 @@ skip_zeros(const char* const str)
 }
 
 ExessResult
-parse_decimal(ExessDecimalDouble* const out, const char* const str)
+parse_decimal(ExessFloatingDecimal* const out, const char* const str)
 {
   // Read leading sign if present
   const char* s    = str;
@@ -115,7 +115,7 @@ parse_decimal(ExessDecimalDouble* const out, const char* const str)
 }
 
 ExessResult
-parse_double(ExessDecimalDouble* const out, const char* const str)
+parse_double(ExessFloatingDecimal* const out, const char* const str)
 {
   // Handle non-numeric special cases
 
@@ -326,7 +326,7 @@ read_fraction(size_t n_digits, const char* const digits)
 }
 
 double
-parsed_double_to_double(const ExessDecimalDouble in)
+decimal_to_double(const ExessFloatingDecimal in)
 {
   static const int      n_exact_pow10        = sizeof(POW10) / sizeof(POW10[0]);
   static const unsigned max_exact_int_digits = 15;   // Digits that fit exactly

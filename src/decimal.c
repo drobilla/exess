@@ -1,13 +1,11 @@
 // Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "decimal.h"
-#include "digits.h"
+#include "floating_decimal.h"
 #include "read_utils.h"
 #include "result.h"
 #include "string_utils.h"
 #include "strtod.h"
-#include "warnings.h"
 #include "write_utils.h"
 
 #include <exess/exess.h>
@@ -31,7 +29,7 @@ typedef struct {
 } DecimalMetrics;
 
 static DecimalMetrics
-decimal_metrics(const ExessDecimalDouble count)
+decimal_metrics(const ExessFloatingDecimal count)
 {
   const int expt =
     count.expt >= 0 ? (count.expt - (int)count.n_digits + 1) : count.expt;
@@ -53,64 +51,8 @@ decimal_metrics(const ExessDecimalDouble count)
   return metrics;
 }
 
-static ExessNumberKind
-number_kind(const double d)
-{
-  EXESS_DISABLE_CONVERSION_WARNINGS
-  const int  fpclass     = fpclassify(d);
-  const bool is_negative = signbit(d);
-  EXESS_RESTORE_WARNINGS
-
-  switch (fpclass) {
-  case FP_ZERO:
-    return is_negative ? EXESS_NEGATIVE_ZERO : EXESS_POSITIVE_ZERO;
-  case FP_INFINITE:
-    return is_negative ? EXESS_NEGATIVE_INFINITY : EXESS_POSITIVE_INFINITY;
-  case FP_NORMAL:
-  case FP_SUBNORMAL:
-    return is_negative ? EXESS_NEGATIVE : EXESS_POSITIVE;
-  default:
-    break;
-  }
-
-  return EXESS_NAN;
-}
-
-static ExessDecimalDouble
-measure_decimal(const double d, const unsigned max_precision)
-{
-  ExessDecimalDouble value = {number_kind(d), 0, 0, {0}};
-
-  if (value.kind != EXESS_NEGATIVE && value.kind != EXESS_POSITIVE) {
-    return value;
-  }
-
-  // Get decimal digits
-  const ExessDigitCount count =
-    generate_digits(fabs(d), max_precision, value.digits);
-
-  assert(count.count == 1 || value.digits[count.count - 1] != '0');
-
-  value.n_digits = count.count;
-  value.expt     = count.expt;
-
-  return value;
-}
-
-ExessDecimalDouble
-measure_float(const float f)
-{
-  return measure_decimal((double)f, FLT_DECIMAL_DIG);
-}
-
-ExessDecimalDouble
-measure_double(const double d)
-{
-  return measure_decimal(d, DBL_DECIMAL_DIG);
-}
-
 static size_t
-decimal_double_string_length(const ExessDecimalDouble decimal)
+decimal_string_length(const ExessFloatingDecimal decimal)
 {
   switch (decimal.kind) {
   case EXESS_NEGATIVE:
@@ -162,10 +104,10 @@ read_decimal_number(double* const out, const char* const str)
   }
 
   // Parse digits and convert to double if successful
-  ExessDecimalDouble in = {EXESS_NAN, 0U, 0, {0}};
-  const ExessResult  r  = parse_decimal(&in, str + i);
+  ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
+  const ExessResult    r  = parse_decimal(&in, str + i);
   if (!r.status) {
-    *out = parsed_double_to_double(in);
+    *out = decimal_to_double(in);
   }
 
   return result(r.status, i + r.count);
@@ -181,12 +123,12 @@ exess_read_decimal(double* const out, const char* const str)
 }
 
 static ExessResult
-write_decimal_double(const ExessDecimalDouble decimal,
-                     const size_t             buf_size,
-                     char* const              buf)
+write_floating_decimal(const ExessFloatingDecimal decimal,
+                       const size_t               buf_size,
+                       char* const                buf)
 {
   if (!buf) {
-    return result(EXESS_SUCCESS, decimal_double_string_length(decimal));
+    return result(EXESS_SUCCESS, decimal_string_length(decimal));
   }
 
   size_t i = 0;
@@ -246,7 +188,7 @@ write_decimal_double(const ExessDecimalDouble decimal,
 ExessResult
 exess_write_decimal(const double value, const size_t n, char* const buf)
 {
-  const ExessDecimalDouble decimal = measure_double(value);
+  const ExessFloatingDecimal decimal = measure_double(value);
 
-  return write_decimal_double(decimal, n, buf);
+  return write_floating_decimal(decimal, n, buf);
 }

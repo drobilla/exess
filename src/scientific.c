@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "scientific.h"
-#include "decimal.h"
+#include "floating_decimal.h"
 #include "int_math.h"
 #include "result.h"
 #include "write_utils.h"
@@ -13,7 +13,7 @@
 #include <string.h>
 
 size_t
-scientific_string_length(const ExessDecimalDouble value)
+scientific_string_length(const ExessFloatingDecimal value)
 {
   switch (value.kind) {
   case EXESS_NEGATIVE:
@@ -43,9 +43,9 @@ scientific_string_length(const ExessDecimalDouble value)
 }
 
 ExessResult
-write_scientific(const ExessDecimalDouble value,
-                 const size_t             n,
-                 char* const              buf)
+write_scientific(const ExessFloatingDecimal value,
+                 const size_t               n,
+                 char* const                buf)
 {
   size_t i = 0;
 

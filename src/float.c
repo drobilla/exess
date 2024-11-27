@@ -1,7 +1,7 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "decimal.h"
+#include "floating_decimal.h"
 #include "result.h"
 #include "scientific.h"
 
@@ -24,7 +24,7 @@ exess_read_float(float* const out, const char* const str)
 ExessResult
 exess_write_float(const float value, const size_t buf_size, char* const buf)
 {
-  const ExessDecimalDouble decimal = measure_float(value);
+  const ExessFloatingDecimal decimal = measure_float(value);
 
   return buf ? write_scientific(decimal, buf_size, buf)
              : result(EXESS_SUCCESS, scientific_string_length(decimal));

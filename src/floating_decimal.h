@@ -1,8 +1,8 @@
 // Copyright 2019-2023 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SRC_DECIMAL_H
-#define EXESS_SRC_DECIMAL_H
+#ifndef EXESS_SRC_FLOATING_DECIMAL_H
+#define EXESS_SRC_FLOATING_DECIMAL_H
 
 // Define C11 numeric constants if the compiler hasn't already
 #ifndef FLT_DECIMAL_DIG
@@ -29,12 +29,12 @@ typedef struct {
   int             expt;                        ///< Power of 10 exponent
   unsigned        n_digits;                    ///< Number of significant digits
   char            digits[DBL_DECIMAL_DIG + 2]; ///< Significant digits
-} ExessDecimalDouble;
+} ExessFloatingDecimal;
 
-ExessDecimalDouble
+ExessFloatingDecimal
 measure_float(float f);
 
-ExessDecimalDouble
+ExessFloatingDecimal
 measure_double(double d);
 
-#endif // EXESS_SRC_DECIMAL_H
+#endif // EXESS_SRC_FLOATING_DECIMAL_H

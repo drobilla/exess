@@ -1,7 +1,7 @@
 // Copyright 2019-2021 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "decimal.h"
+#include "floating_decimal.h"
 #include "read_utils.h"
 #include "result.h"
 #include "scientific.h"
@@ -18,12 +18,12 @@ exess_read_double(double* const out, const char* const str)
 {
   *out = (double)NAN;
 
-  const size_t       i  = skip_whitespace(str);
-  ExessDecimalDouble in = {EXESS_NAN, 0U, 0, {0}};
-  const ExessResult  r  = parse_double(&in, str + i);
+  const size_t         i  = skip_whitespace(str);
+  ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
+  const ExessResult    r  = parse_double(&in, str + i);
 
   if (!r.status) {
-    *out = parsed_double_to_double(in);
+    *out = decimal_to_double(in);
   }
 
   return result(r.status, i + r.count);
@@ -32,7 +32,7 @@ exess_read_double(double* const out, const char* const str)
 ExessResult
 exess_write_double(const double value, const size_t buf_size, char* const buf)
 {
-  const ExessDecimalDouble decimal = measure_double(value);
+  const ExessFloatingDecimal decimal = measure_double(value);
 
   const ExessResult r =
     buf ? write_scientific(decimal, buf_size, buf)
