@@ -10,6 +10,7 @@
 #include "ieee_float.h"
 #include "int_math.h"
 #include "macros.h"
+#include "read_utils.h"
 #include "result.h"
 #include "soft_float.h"
 #include "string_utils.h"
@@ -24,94 +25,68 @@
 /// Number of digits always represented exactly by an unsigned 64-bit integer
 static const int uint64_digits10 = 19;
 
-static int
-read_sign(const char** const sptr)
+static size_t
+skip_leading_zeros(ExessFloatingDecimal* const out,
+                   const char* const           str,
+                   bool* const                 after_point)
 {
-  if (**sptr == '-') {
-    ++(*sptr);
-    return -1;
+  *after_point = false;
+
+  for (size_t i = 0;; ++i) {
+    if (str[i] == '.' && !*after_point) {
+      *after_point = true;
+    } else if (str[i] == '0') {
+      out->expt -= *after_point;
+    } else {
+      return i;
+    }
   }
-
-  if (**sptr == '+') {
-    ++(*sptr);
-  }
-
-  return 1;
-}
-
-static int
-skip_zeros(const char* const str)
-{
-  int n = 0;
-  while (str[n] == '0') {
-    ++n;
-  }
-
-  return n;
 }
 
 ExessResult
 parse_decimal(ExessFloatingDecimal* const out, const char* const str)
 {
   // Read leading sign if present
-  const char* s    = str;
-  const int   sign = read_sign(&s);
-
-  out->kind = (sign < 0) ? EXESS_NEGATIVE : EXESS_POSITIVE;
+  int    sign = 0;
+  size_t i    = read_sign(&sign, str);
 
   // Check that the first character is valid
-  if (*s != '.' && !is_digit(*s)) {
-    return result(EXESS_EXPECTED_DIGIT, (size_t)(s - str));
+  if (str[i] != '.' && !is_digit(str[i])) {
+    return result(EXESS_EXPECTED_DIGIT, i);
   }
 
-  // Skip leading zeros before decimal point
-  const int n_leading_before = skip_zeros(s);
-  s += n_leading_before;
+  // Skip any leading zeros
+  bool after_point = (str[i] == '.');
+  i += skip_leading_zeros(out, &str[i], &after_point);
 
-  // Skip leading zeros after decimal point
-  int  n_leading_after = 0;           // Zeros skipped after decimal point
-  bool after_point     = (*s == '.'); // We're after the decimal point
-  if (after_point) {
-    n_leading_after = skip_zeros(++s);
-    s += n_leading_after;
-  }
-
-  // Read significant digits of the mantissa into a 64-bit integer
-  uint64_t frac    = 0; // Fraction value (ignoring decimal point)
-  int      n_after = 0; // Number of digits after decimal point
-  for (; out->n_digits < DBL_DECIMAL_DIG + 1; ++s) {
-    if (is_digit(*s)) {
-      frac = (frac * 10) + (unsigned)(*s - '0');
-      n_after += after_point;
-      out->digits[out->n_digits++] = *s;
-    } else if (*s == '.' && !after_point) {
+  // Read significant digits of the mantissa
+  for (; out->n_digits < DBL_DECIMAL_DIG + 1; ++i) {
+    if (is_digit(str[i])) {
+      out->expt -= after_point;
+      out->digits[out->n_digits++] = str[i];
+    } else if (str[i] == '.' && !after_point) {
       after_point = true;
     } else {
       break;
     }
   }
 
-  // Skip extra digits
-  int n_extra_before = 0;
-  for (;; ++s) {
-    if (*s == '.' && !after_point) {
+  // Skip any extra digits
+  for (;; ++i) {
+    if (str[i] == '.' && !after_point) {
       after_point = true;
-    } else if (is_digit(*s)) {
-      n_extra_before += !after_point;
+    } else if (is_digit(str[i])) {
+      out->expt += !after_point;
     } else {
       break;
     }
   }
 
-  // Calculate final output exponent
-  out->expt = n_extra_before - n_after - n_leading_after;
+  out->kind = (sign < 0)
+                ? (out->n_digits ? EXESS_NEGATIVE : EXESS_NEGATIVE_ZERO)
+                : (out->n_digits ? EXESS_POSITIVE : EXESS_POSITIVE_ZERO);
 
-  // Update the kind if necessary to handle zero cases
-  out->kind = out->n_digits                   ? out->kind
-              : (out->kind == EXESS_NEGATIVE) ? EXESS_NEGATIVE_ZERO
-                                              : EXESS_POSITIVE_ZERO;
-
-  return result(EXESS_SUCCESS, (size_t)(s - str));
+  return result(EXESS_SUCCESS, i);
 }
 
 ExessResult
@@ -145,21 +120,21 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
     return r;
   }
 
-  const char* s = str + r.count;
+  size_t i = r.count;
 
   // Read exponent
   int abs_expt  = 0;
   int expt_sign = 1;
-  if (*s == 'e' || *s == 'E') {
-    ++s;
+  if (str[i] == 'e' || str[i] == 'E') {
+    ++i;
 
-    if (!is_sign(*s) && !is_digit(*s)) {
-      return result(EXESS_EXPECTED_DIGIT, (size_t)(s - str));
+    if (!is_sign(str[i]) && !is_digit(str[i])) {
+      return result(EXESS_EXPECTED_DIGIT, i);
     }
 
-    expt_sign = read_sign(&s);
-    while (is_digit(*s)) {
-      abs_expt = (abs_expt * 10) + (*s++ - '0');
+    i += read_sign(&expt_sign, &str[i]);
+    while (is_digit(str[i])) {
+      abs_expt = (abs_expt * 10) + (str[i++] - '0');
     }
   }
 
@@ -171,7 +146,7 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
                                                 : EXESS_POSITIVE_ZERO;
   }
 
-  return result(EXESS_SUCCESS, (size_t)(s - str));
+  return result(EXESS_SUCCESS, i);
 }
 
 static uint64_t

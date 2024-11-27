@@ -22,6 +22,9 @@ read_two_digit_number(uint8_t*    out,
                       uint8_t     max_value,
                       const char* str);
 
+size_t
+read_sign(int* sign, const char* str);
+
 EXESS_PURE_FUNC ExessResult
 end_read(ExessStatus status, const char* str, size_t i);
 

@@ -20,12 +20,7 @@ exess_read_long(int64_t* const out, const char* const str)
   // Read leading sign if present
   size_t i    = skip_whitespace(str);
   int    sign = 1;
-  if (str[i] == '-') {
-    sign = -1;
-    ++i;
-  } else if (str[i] == '+') {
-    ++i;
-  }
+  i += read_sign(&sign, &str[i]);
 
   // Read digits
   uint64_t    magnitude = 0;

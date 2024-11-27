@@ -51,6 +51,18 @@ read_two_digit_number(uint8_t* const    out,
   return result(EXESS_SUCCESS, i);
 }
 
+size_t
+read_sign(int* const sign, const char* const str)
+{
+  if (*str == '-') {
+    *sign = -1;
+    return 1U;
+  }
+
+  *sign = 1;
+  return (*str == '+') ? 1U : 0U;
+}
+
 ExessResult
 end_read(const ExessStatus status, const char* str, const size_t i)
 {
