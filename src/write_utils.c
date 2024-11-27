@@ -28,7 +28,7 @@ write_string(const size_t      len,
 {
   if (buf && buf_size >= i + len + 1) {
     memcpy(buf + i, str, len);
-    buf[i + len] = 0;
+    buf[i + len] = '\0';
   }
 
   return len;

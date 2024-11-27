@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -32,20 +32,14 @@ read_two_digit_number(uint8_t* const    out,
                       const uint8_t     max_value,
                       const char* const str)
 {
-  size_t i = 0;
-
   // Read digits
-  size_t d = 0;
-  for (; d < 2; ++d, ++i) {
-    if (is_digit(str[i])) {
-      *out = (uint8_t)((*out * 10) + (str[i] - '0'));
-    } else {
-      break;
-    }
+  size_t i = 0;
+  for (; i < 2 && is_digit(str[i]); ++i) {
+    *out = (uint8_t)((*out * 10) + (str[i] - '0'));
   }
 
   // Ensure there are exactly the expected number of digits
-  if (d != 2) {
+  if (i != 2) {
     return result(EXESS_EXPECTED_DIGIT, i);
   }
 

@@ -49,4 +49,11 @@ is_base64(const int c)
   return is_alpha(c) || is_digit(c) || c == '+' || c == '/' || c == '=';
 }
 
+/// SIGN ::= "+" | "-"
+static inline bool
+is_sign(const int c)
+{
+  return c == '+' || c == '-';
+}
+
 #endif // EXESS_SRC_STRING_UTILS_H

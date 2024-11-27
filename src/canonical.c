@@ -11,13 +11,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/// Return true iff `c` is "+" or "-"
-static inline bool
-is_sign(const int c)
-{
-  return c == '+' || c == '-';
-}
-
 /// Return true iff `c` is "0"
 static inline bool
 is_zero(const int c)

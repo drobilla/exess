@@ -153,7 +153,7 @@ parse_double(ExessDecimalDouble* const out, const char* const str)
   if (*s == 'e' || *s == 'E') {
     ++s;
 
-    if (*s != '-' && *s != '+' && !is_digit(*s)) {
+    if (!is_sign(*s) && !is_digit(*s)) {
       return result(EXESS_EXPECTED_DIGIT, (size_t)(s - str));
     }
 

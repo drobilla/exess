@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "scientific.h"
@@ -49,7 +49,8 @@ write_scientific(const ExessDecimalDouble value,
 {
   size_t i = 0;
 
-  if (n < 4) {
+  if (n <= (value.kind == EXESS_NEGATIVE) + value.n_digits + 1) {
+    buf[0] = '\0';
     return result(EXESS_NO_SPACE, 0);
   }
 
@@ -69,11 +70,6 @@ write_scientific(const ExessDecimalDouble value,
     return write_special(3, "INF", n, buf);
   case EXESS_NAN:
     return write_special(3, "NaN", n, buf);
-  }
-
-  if (n - i <= value.n_digits + 1) {
-    buf[0] = '\0';
-    return result(EXESS_NO_SPACE, 0);
   }
 
   // Write mantissa, with decimal point after the first (normal form)

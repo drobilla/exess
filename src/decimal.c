@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "decimal.h"
@@ -154,18 +154,16 @@ read_decimal_number(double* const out, const char* const str)
 {
   *out = (double)NAN;
 
-  if (str[0] == '+' || str[0] == '-') {
-    if (str[1] != '.' && !is_digit(str[1])) {
-      return result(EXESS_EXPECTED_DIGIT, 1);
-    }
-  } else if (str[0] != '.' && !is_digit(str[0])) {
-    return result(EXESS_EXPECTED_DIGIT, 0);
+  // Skip whitespace and check for an optional sign then a digit
+  const size_t i     = skip_whitespace(str);
+  const size_t first = i + is_sign(str[i]);
+  if (str[first] != '.' && !is_digit(str[first])) {
+    return end_read(EXESS_EXPECTED_DIGIT, str, first);
   }
 
-  const size_t       i  = skip_whitespace(str);
+  // Parse digits and convert to double if successful
   ExessDecimalDouble in = {EXESS_NAN, 0U, 0, {0}};
   const ExessResult  r  = parse_decimal(&in, str + i);
-
   if (!r.status) {
     *out = parsed_double_to_double(in);
   }
