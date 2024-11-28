@@ -145,18 +145,15 @@ carry_set_day(ExessDateTime e, int day)
 {
   while (day < 1 || day > days_in_month(e.year, e.month)) {
     if (day < 1) {
-      if (e.month == 1) {
+      if (--e.month == 0) {
         if (e.year == INT16_MIN) {
           return infinite_past(e.is_utc);
         }
 
         --e.year;
         e.month = 12;
-        day += days_in_month(e.year, e.month);
-      } else {
-        --e.month;
-        day += days_in_month(e.year, e.month);
       }
+      day += days_in_month(e.year, e.month);
     } else {
       day -= days_in_month(e.year, e.month);
       if (++e.month > 12) {

@@ -284,7 +284,7 @@ exess_write_duration(const ExessDuration value,
   }
 
   // Write duration prefix
-  if (value.months < 0 || value.seconds < 0 || value.nanoseconds < 0) {
+  if (is_negative) {
     i += write_string(2, "-P", buf_size, buf, i);
   } else {
     i += write_char('P', buf_size, buf, i);
