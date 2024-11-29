@@ -259,6 +259,24 @@ write_int_field(ExessResult*   r,
   return r->count;
 }
 
+static size_t
+write_seconds(ExessResult*   r,
+              const uint8_t  abs_seconds,
+              const uint32_t abs_nanoseconds,
+              const size_t   buf_size,
+              char* const    buf,
+              const size_t   i)
+{
+  *r = write_digits(abs_seconds, buf_size, buf, i);
+
+  size_t len = r->count;
+  if (!r->status && abs_nanoseconds) {
+    len += write_nanoseconds(abs_nanoseconds, buf_size, buf, i + len);
+  }
+
+  return len + write_char('S', buf_size, buf, i + len);
+}
+
 ExessResult
 exess_write_duration(const ExessDuration value,
                      const size_t        buf_size,
@@ -284,11 +302,8 @@ exess_write_duration(const ExessDuration value,
   }
 
   // Write duration prefix
-  if (is_negative) {
-    i += write_string(2, "-P", buf_size, buf, i);
-  } else {
-    i += write_char('P', buf_size, buf, i);
-  }
+  i += is_negative ? write_char('-', buf_size, buf, i) : 0U;
+  i += write_char('P', buf_size, buf, i);
 
   const uint32_t abs_years   = (uint32_t)(abs(value.months) / 12);
   const uint32_t abs_months  = (uint32_t)(abs(value.months) % 12);
@@ -310,16 +325,8 @@ exess_write_duration(const ExessDuration value,
     i += write_char('T', buf_size, buf, i);
     i += write_int_field(&r, abs_hours, 'H', buf_size, buf, i);
     i += write_int_field(&r, abs_minutes, 'M', buf_size, buf, i);
-
-    if (abs_seconds != 0 || abs_nanoseconds != 0) {
-      r = write_digits(abs_seconds, buf_size, buf, i);
-      i += r.count;
-
-      if (!r.status && abs_nanoseconds > 0) {
-        i += write_nanoseconds(abs_nanoseconds, buf_size, buf, i);
-      }
-
-      i += write_char('S', buf_size, buf, i);
+    if (abs_seconds + abs_nanoseconds) {
+      i += write_seconds(&r, abs_seconds, abs_nanoseconds, buf_size, buf, i);
     }
   }
 
