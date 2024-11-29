@@ -141,11 +141,6 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
   // Calculate final output exponent
   out->expt += expt_sign * abs_expt;
 
-  if (out->n_digits == 0) {
-    out->kind = out->kind < EXESS_POSITIVE_ZERO ? EXESS_NEGATIVE_ZERO
-                                                : EXESS_POSITIVE_ZERO;
-  }
-
   return result(EXESS_SUCCESS, i);
 }
 
@@ -341,11 +336,11 @@ decimal_to_double(const ExessFloatingDecimal in)
   }
 
   if (in.n_digits < max_exact_int_digits) {
-    if (in.expt < 0 && -in.expt < n_exact_pow10) {
-      return sign * ((double)frac / (double)POW10[-in.expt]);
-    }
-
-    if (in.expt >= 0 && in.expt < n_exact_pow10) {
+    if (in.expt < 0) {
+      if (-in.expt < n_exact_pow10) {
+        return sign * ((double)frac / (double)POW10[-in.expt]);
+      }
+    } else if (in.expt < n_exact_pow10) {
       return sign * ((double)frac * (double)POW10[in.expt]);
     }
   }
