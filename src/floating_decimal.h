@@ -14,13 +14,13 @@
 
 /// A "kind" of floating point number
 typedef enum {
-  EXESS_NEGATIVE,
+  EXESS_NAN,
   EXESS_NEGATIVE_INFINITY,
+  EXESS_POSITIVE_INFINITY,
   EXESS_NEGATIVE_ZERO,
   EXESS_POSITIVE_ZERO,
+  EXESS_NEGATIVE,
   EXESS_POSITIVE,
-  EXESS_POSITIVE_INFINITY,
-  EXESS_NAN,
 } ExessNumberKind;
 
 /// A floating point double stored as a decimal string

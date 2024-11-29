@@ -12,23 +12,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+  size_t      length;
+  const char* string;
+} SpecialCase;
+
+static const SpecialCase special_cases[] = {{3U, "NaN"},
+                                            {4U, "-INF"},
+                                            {3U, "INF"},
+                                            {6U, "-0.0E0"},
+                                            {5U, "0.0E0"}};
+
 size_t
 scientific_string_length(const ExessFloatingDecimal value)
 {
-  switch (value.kind) {
-  case EXESS_NEGATIVE:
-    break;
-  case EXESS_NEGATIVE_INFINITY:
-    return 4;
-  case EXESS_NEGATIVE_ZERO:
-    return 6;
-  case EXESS_POSITIVE_ZERO:
-    return 5;
-  case EXESS_POSITIVE:
-    break;
-  case EXESS_POSITIVE_INFINITY:
-  case EXESS_NAN:
-    return 3;
+  if (value.kind < EXESS_NEGATIVE) {
+    return special_cases[value.kind].length;
   }
 
   const unsigned n_expt_digits =
@@ -54,22 +53,15 @@ write_scientific(const ExessFloatingDecimal value,
     return result(EXESS_NO_SPACE, 0);
   }
 
-  switch (value.kind) {
-  case EXESS_NEGATIVE:
+  if (value.kind < EXESS_NEGATIVE) {
+    return write_special(special_cases[value.kind].length,
+                         special_cases[value.kind].string,
+                         n,
+                         buf);
+  }
+
+  if (value.kind == EXESS_NEGATIVE) {
     buf[i++] = '-';
-    break;
-  case EXESS_NEGATIVE_INFINITY:
-    return write_special(4, "-INF", n, buf);
-  case EXESS_NEGATIVE_ZERO:
-    return write_special(6, "-0.0E0", n, buf);
-  case EXESS_POSITIVE_ZERO:
-    return write_special(5, "0.0E0", n, buf);
-  case EXESS_POSITIVE:
-    break;
-  case EXESS_POSITIVE_INFINITY:
-    return write_special(3, "INF", n, buf);
-  case EXESS_NAN:
-    return write_special(3, "NaN", n, buf);
   }
 
   // Write mantissa, with decimal point after the first (normal form)

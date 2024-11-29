@@ -303,26 +303,16 @@ decimal_to_double(const ExessFloatingDecimal in)
   static const int      max_decimal_power    = 309;  // Max finite power
   static const int      min_decimal_power    = -324; // Min non-zero power
 
+  static const double special_values[] = {
+    (double)NAN, (double)-INFINITY, (double)INFINITY, -0.0, 0.0};
+
   // Return early for edge cases
-  switch (in.kind) {
-  case EXESS_NEGATIVE:
-    break;
-  case EXESS_NEGATIVE_INFINITY:
-    return (double)-INFINITY;
-  case EXESS_NEGATIVE_ZERO:
-    return -0.0;
-  case EXESS_POSITIVE_ZERO:
-    return 0.0;
-  case EXESS_POSITIVE:
-    break;
-  case EXESS_POSITIVE_INFINITY:
-    return (double)INFINITY;
-  case EXESS_NAN:
-    return (double)NAN;
+  if (in.kind < EXESS_NEGATIVE) {
+    return special_values[in.kind];
   }
 
   const uint64_t frac         = read_fraction(in.n_digits, in.digits);
-  const int      sign         = in.kind >= EXESS_POSITIVE_ZERO ? 1 : -1;
+  const int      sign         = in.kind == EXESS_POSITIVE ? 1 : -1;
   const int      result_power = (int)in.n_digits + in.expt;
 
   // Return early for simple exact cases

@@ -54,20 +54,16 @@ decimal_metrics(const ExessFloatingDecimal count)
 static size_t
 decimal_string_length(const ExessFloatingDecimal decimal)
 {
-  switch (decimal.kind) {
-  case EXESS_NEGATIVE:
-    break;
-  case EXESS_NEGATIVE_INFINITY:
-    return 0;
-  case EXESS_NEGATIVE_ZERO:
-    return 4;
-  case EXESS_POSITIVE_ZERO:
-    return 3;
-  case EXESS_POSITIVE:
-    break;
-  case EXESS_POSITIVE_INFINITY:
-  case EXESS_NAN:
-    return 0;
+  if (decimal.kind < EXESS_NEGATIVE_ZERO) {
+    return 0U; // Invalid value
+  }
+
+  if (decimal.kind == EXESS_NEGATIVE_ZERO) {
+    return 4U; // "-0.0"
+  }
+
+  if (decimal.kind == EXESS_POSITIVE_ZERO) {
+    return 3U; // "0.0"
   }
 
   const DecimalMetrics metrics = decimal_metrics(decimal);
@@ -126,21 +122,20 @@ exess_write_decimal(const double value, const size_t buf_size, char* const buf)
     return end_write(EXESS_NO_SPACE, buf_size, buf, 0);
   }
 
-  switch (decimal.kind) {
-  case EXESS_NEGATIVE:
-    buf[i++] = '-';
-    break;
-  case EXESS_NEGATIVE_INFINITY:
+  if (decimal.kind < EXESS_NEGATIVE_ZERO) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
-  case EXESS_NEGATIVE_ZERO:
+  }
+
+  if (decimal.kind == EXESS_NEGATIVE_ZERO) {
     return write_special(4, "-0.0", buf_size, buf);
-  case EXESS_POSITIVE_ZERO:
+  }
+
+  if (decimal.kind == EXESS_POSITIVE_ZERO) {
     return write_special(3, "0.0", buf_size, buf);
-  case EXESS_POSITIVE:
-    break;
-  case EXESS_POSITIVE_INFINITY:
-  case EXESS_NAN:
-    return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
+  }
+
+  if (decimal.kind == EXESS_NEGATIVE) {
+    buf[i++] = '-';
   }
 
   const DecimalMetrics metrics = decimal_metrics(decimal);
