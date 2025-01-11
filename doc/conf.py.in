@@ -1,13 +1,14 @@
-# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 # Project information
 project = "Exess"
-copyright = "2021-2024, David Robillard"
+copyright = "2021-2025, David Robillard"
 author = "David Robillard"
 release = "@EXESS_VERSION@"
 version = "@EXESS_VERSION@"
 desc = "A simple C library for reading and writing XSD datatypes"
+today = "Jan 11, 2025"
 
 # General configuration
 exclude_patterns = ["xml"]
