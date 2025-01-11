@@ -34,8 +34,6 @@ exess_timezone(const int8_t hours, const int8_t minutes)
 ExessResult
 read_timezone(ExessTimezone* const out, const char* const str)
 {
-  ExessResult r = {EXESS_SUCCESS, 0U};
-
   *out = EXESS_LOCAL;
 
   // Handle UTC special case
@@ -56,8 +54,8 @@ read_timezone(ExessTimezone* const out, const char* const str)
   ++i;
 
   // Read hour digits
-  uint8_t hh = 0U;
-  r          = read_two_digit_number(&hh, 0U, 14U, str + i);
+  uint8_t     hh = 0U;
+  ExessResult r  = read_two_digit_number(&hh, 0U, 14U, str + i);
   if (r.status) {
     return result(r.status, i + r.count);
   }
