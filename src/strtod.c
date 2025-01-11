@@ -50,33 +50,26 @@ parse_decimal(ExessFloatingDecimal* const out, const char* const str)
   int    sign = 0;
   size_t i    = read_sign(&sign, str);
 
+  // Skip any leading zeros (before and after decimal point)
+  bool after_point = false;
+  i += skip_leading_zeros(out, &str[i], &after_point);
+
   // Check that the first character is valid
-  if (str[i] != '.' && !is_digit(str[i])) {
+  if (!after_point && !is_digit(str[i])) {
     return result(EXESS_EXPECTED_DIGIT, i);
   }
 
-  // Skip any leading zeros
-  bool after_point = (str[i] == '.');
-  i += skip_leading_zeros(out, &str[i], &after_point);
-
   // Read significant digits of the mantissa
-  for (; out->n_digits < DBL_DECIMAL_DIG + 1; ++i) {
+  for (;; ++i) {
     if (is_digit(str[i])) {
-      out->expt -= after_point;
-      out->digits[out->n_digits++] = str[i];
+      if (out->n_digits < DBL_DECIMAL_DIG + 1) { // Significant digit
+        out->expt -= after_point;
+        out->digits[out->n_digits++] = str[i];
+      } else { // Insignificant digit
+        out->expt += !after_point;
+      }
     } else if (str[i] == '.' && !after_point) {
       after_point = true;
-    } else {
-      break;
-    }
-  }
-
-  // Skip any extra digits
-  for (;; ++i) {
-    if (str[i] == '.' && !after_point) {
-      after_point = true;
-    } else if (is_digit(str[i])) {
-      out->expt += !after_point;
     } else {
       break;
     }
