@@ -56,9 +56,7 @@ extern "C" {
 
 /**
    @defgroup exess_symbols Symbols
-
    Preprocessor symbols for convenience.
-
    @{
 */
 
@@ -142,6 +140,9 @@ exess_strerror(ExessStatus status);
 
 /**
    @}
+   @defgroup exess_fixed Fixed Type API
+   Statically type-safe API for working with values of a known fixed type.
+   @{
    @defgroup exess_numbers Numbers
    @{
 */
@@ -668,6 +669,53 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /**
+   @defgroup exess_timezone Timezone Offsets
+
+   Some time and date values can have a timezone qualifier suffix.  A timezone
+   isn't a datatype unto itsef, but only exists as a part of another value.
+
+   Canonical form starts with a sign, followed by two-digit hour and minute
+   offsets separated by a colon, like "-06:00" and "+02:30".  The zero offset,
+   UTC, is written "Z".
+
+   Non-canonical form also allows writing UTC as "-00:00" or "+00:00".
+
+   This implementation only supports a resolution of 15 minutes, that is, only
+   offsets at 0, 15, 30, and 45 minutes within an hour.
+
+   @{
+*/
+
+/**
+   A time zone offset in quarter hours.
+
+   This is stored in a single byte for compactness in other structures.  Valid
+   values are from -56 to 56 inclusive.
+*/
+typedef int8_t ExessTimezone;
+
+/// Sentinel value for local time (127)
+#define EXESS_LOCAL ((ExessTimezone)INT8_MAX)
+
+/// Sentinel value for UTC time (0)
+#define EXESS_UTC ((ExessTimezone)0U)
+
+/**
+   Construct a time zone offset from hours and minutes.
+
+   This is a convenience constructor that handles the conversion from hours and
+   minutes to the quarter-hour offset used in exess.  The sign of both values
+   must be the same.  Hours can be from -14 to 14 inclusive, and minutes can
+   only be -45, -30, -15, 0, 15, 30, or 45.
+
+   @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
+   parameters are invalid or not supported.
+*/
+EXESS_CONST_API ExessTimezone
+exess_timezone(int8_t hours, int8_t minutes);
+
+/**
+   @}
    @defgroup exess_duration Duration
 
    An xsd:duration is a positive or negative duration of time, written in ISO
@@ -856,53 +904,6 @@ exess_write_datetime(ExessDateTime        value,
 
 /**
    @}
-   @defgroup exess_timezone Timezones
-
-   Date and time values can have a timezone qualifier suffix.  Note that
-   timezone is not a datatype, one only exists as a part of another value.
-
-   Canonical form starts with a sign, followed by two-digit hour and minute
-   offsets separated by a colon, like "-06:00" and "+02:30".  The zero offset,
-   UTC, is written "Z".
-
-   Non-canonical form also allows writing UTC as "-00:00" or "+00:00".
-
-   This implementation only supports a resolution of 15 minutes, that is, only
-   offsets at 0, 15, 30, and 45 minutes within an hour.
-
-   @{
-*/
-
-/**
-   A time zone offset in quarter hours.
-
-   This is stored in a single byte for compactness in other structures.  Valid
-   values are from -56 to 56 inclusive.
-*/
-typedef int8_t ExessTimezone;
-
-/// Sentinel value for local time (127)
-#define EXESS_LOCAL ((ExessTimezone)INT8_MAX)
-
-/// Sentinel value for UTC time (0)
-#define EXESS_UTC ((ExessTimezone)0U)
-
-/**
-   Construct a time zone offset from hours and minutes.
-
-   This is a convenience constructor that handles the conversion from hours and
-   minutes to the quarter-hour offset used in exess.  The sign of both values
-   must be the same.  Hours can be from -14 to 14 inclusive, and minutes can
-   only be -45, -30, -15, 0, 15, 30, or 45.
-
-   @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
-   parameters are invalid or not supported.
-*/
-EXESS_CONST_API ExessTimezone
-exess_timezone(int8_t hours, int8_t minutes);
-
-/**
-   @}
    @defgroup exess_date Date
    An xsd:date is a year, month, and day, with optional timezone.
    @{
@@ -962,9 +963,7 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    @}
    @defgroup exess_time Time
-
    An xsd:time is a time of day, with optional timezone.
-
    @{
 */
 
@@ -1163,6 +1162,10 @@ exess_write_hex(size_t                    data_size,
 /**
    @}
    @}
+   @}
+   @defgroup exess_dynamic Dynamic Type API
+   API for working with general values of a type given at runtime.
+   @{
    @defgroup exess_datatypes Datatypes
    Runtime integer tags for supported datatypes with conversion to/from URIs.
    @{
@@ -1261,32 +1264,7 @@ exess_value_size(ExessDatatype datatype);
 
 /**
    @}
-   @defgroup exess_canon Canonical Form
-   Rewriting generic strings in canonical form.
-   @{
-*/
-
-/**
-   Rewrite a supported xsd datatype in canonical form.
-
-   @param value Input value string.
-   @param datatype Datatype of value.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and a `status` code.  The
-   status may be an error from reading or writing, but the `count` always
-   refers to the number of characters written.
-*/
-EXESS_API ExessResult
-exess_write_canonical(const char* EXESS_NONNULL value,
-                      ExessDatatype             datatype,
-                      size_t                    buf_size,
-                      char* EXESS_NULLABLE      buf);
-
-/**
-   @}
-   @defgroup exess_value Value
+   @defgroup exess_value Generic Values
    A generic interface for reading and writing binary values.
    @{
 */
@@ -1323,6 +1301,96 @@ typedef union {
   ExessDate     as_date;                       ///< #EXESS_DATE
   uint8_t       as_blob[EXESS_MAX_VALUE_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
 } ExessValue;
+
+/**
+   Compare two values.
+
+   @return Less than, equal to, or greater than zero if the left-hand value is
+   less than, equal to, or greater than the right-hand value, respectively
+   (like `strcmp`).
+*/
+EXESS_PURE_API int
+exess_compare_value(ExessDatatype             lhs_datatype,
+                    size_t                    lhs_size,
+                    const void* EXESS_NONNULL lhs_value,
+                    ExessDatatype             rhs_datatype,
+                    size_t                    rhs_size,
+                    const void* EXESS_NONNULL rhs_value);
+
+/**
+   Read any supported datatype from a string.
+
+   Note that `out` must be suitably aligned for the datatype being read, it
+   will be dereferenced directly as a pointer to the value type.  A buffer
+   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
+
+   @param datatype The datatype to read the string as.
+   @param out_size The size of `out` in bytes.
+   @param out Set to the parsed value on success.
+   @param str String input.
+
+   @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
+   and a `status` code.
+*/
+EXESS_API ExessVariableResult
+exess_read_value(ExessDatatype             datatype,
+                 size_t                    out_size,
+                 void* EXESS_NONNULL       out,
+                 const char* EXESS_NONNULL str);
+
+/**
+   Write any supported datatype to a canonical string.
+
+   Note that `value` must be suitably aligned for the datatype being written,
+   it will be dereferenced directly as a pointer to the value type.  A buffer
+   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
+
+   @param datatype The datatype of `value`.
+   @param value_size The size of `value` in bytes.
+   @param value Value to write.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and `status`
+   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+*/
+EXESS_API ExessResult
+exess_write_value(ExessDatatype             datatype,
+                  size_t                    value_size,
+                  const void* EXESS_NONNULL value,
+                  size_t                    buf_size,
+                  char* EXESS_NULLABLE      buf);
+/**
+   @}
+   @defgroup exess_canon Canonical Form
+   Rewriting generic strings in canonical form.
+   @{
+*/
+
+/**
+   Rewrite a supported xsd datatype in canonical form.
+
+   @param value Input value string.
+   @param datatype Datatype of value.
+   @param buf_size The size of `buf` in bytes.
+   @param buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and a `status` code.  The
+   status may be an error from reading or writing, but the `count` always
+   refers to the number of characters written.
+*/
+EXESS_API ExessResult
+exess_write_canonical(const char* EXESS_NONNULL value,
+                      ExessDatatype             datatype,
+                      size_t                    buf_size,
+                      char* EXESS_NULLABLE      buf);
+
+/**
+   @}
+   @defgroup exess_coercion Coercion
+   Coercing values to different datatypes.
+   @{
+*/
 
 /**
    Coercion flags.
@@ -1373,22 +1441,6 @@ typedef uint32_t ExessCoercions;
 
 /// Readability macro for using no lossy coercions (a zero #ExessCoercions)
 #define EXESS_LOSSLESS 0U
-
-/**
-   Compare two values.
-
-   @return Less than, equal to, or greater than zero if the left-hand value is
-   less than, equal to, or greater than the right-hand value, respectively
-   (like `strcmp`).
-*/
-EXESS_PURE_API int
-exess_compare_value(ExessDatatype             lhs_datatype,
-                    size_t                    lhs_size,
-                    const void* EXESS_NONNULL lhs_value,
-                    ExessDatatype             rhs_datatype,
-                    size_t                    rhs_size,
-                    const void* EXESS_NONNULL rhs_value);
-
 /**
    Coerce a value to another datatype if possible.
 
@@ -1420,50 +1472,7 @@ exess_coerce_value(ExessCoercions            coercions,
                    void* EXESS_NONNULL       out);
 
 /**
-   Read any supported datatype from a string.
-
-   Note that `out` must be suitably aligned for the datatype being read, it
-   will be dereferenced directly as a pointer to the value type.  A buffer
-   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
-
-   @param datatype The datatype to read the string as.
-   @param out_size The size of `out` in bytes.
-   @param out Set to the parsed value on success.
-   @param str String input.
-
-   @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
-   and a `status` code.
-*/
-EXESS_API ExessVariableResult
-exess_read_value(ExessDatatype             datatype,
-                 size_t                    out_size,
-                 void* EXESS_NONNULL       out,
-                 const char* EXESS_NONNULL str);
-
-/**
-   Write any supported datatype to a canonical string.
-
-   Note that `value` must be suitably aligned for the datatype being written,
-   it will be dereferenced directly as a pointer to the value type.  A buffer
-   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
-
-   @param datatype The datatype of `value`.
-   @param value_size The size of `value` in bytes.
-   @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
-
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
-*/
-EXESS_API ExessResult
-exess_write_value(ExessDatatype             datatype,
-                  size_t                    value_size,
-                  const void* EXESS_NONNULL value,
-                  size_t                    buf_size,
-                  char* EXESS_NULLABLE      buf);
-
-/**
+   @}
    @}
    @}
 */
