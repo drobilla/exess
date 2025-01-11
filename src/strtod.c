@@ -94,24 +94,25 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
 {
   // Handle non-numeric special cases
 
-  if (!strcmp(str, "NaN")) {
-    out->kind = EXESS_NAN;
-    return result(EXESS_SUCCESS, 3U);
-  }
+  typedef struct {
+    ExessNumberKind kind;
+    unsigned        length;
+    const char*     string;
+  } SpecialCase;
 
-  if (!strcmp(str, "-INF")) {
-    out->kind = EXESS_NEGATIVE_INFINITY;
-    return result(EXESS_SUCCESS, 4U);
-  }
+  static const SpecialCase special_cases[] = {
+    {EXESS_NAN, 3U, "NaN"},
+    {EXESS_NEGATIVE_INFINITY, 4U, "-INF"},
+    {EXESS_POSITIVE_INFINITY, 3U, "INF"},
+    {EXESS_POSITIVE_INFINITY, 4U, "+INF"},
+    {EXESS_NAN, 0U, ""},
+  };
 
-  if (!strcmp(str, "INF")) {
-    out->kind = EXESS_POSITIVE_INFINITY;
-    return result(EXESS_SUCCESS, 3U);
-  }
-
-  if (!strcmp(str, "+INF")) {
-    out->kind = EXESS_POSITIVE_INFINITY;
-    return result(EXESS_SUCCESS, 4U);
+  for (const SpecialCase* c = special_cases; c->length; ++c) {
+    if (!strcmp(str, c->string)) {
+      out->kind = c->kind;
+      return result(EXESS_SUCCESS, c->length);
+    }
   }
 
   // Read mantissa as a decimal
