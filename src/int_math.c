@@ -36,8 +36,8 @@ exess_clz64(const uint64_t i)
 #if USE_BUILTIN_CLZLL
   return (unsigned)__builtin_clzll(i);
 #else
-  return i & 0xFFFFFFFF00000000 ? exess_clz32((uint32_t)(i >> 32U))
-                                : 32U + exess_clz32(i & 0xFFFFFFFF);
+  return (i & 0xFFFFFFFF00000000) ? exess_clz32((uint32_t)(i >> 32U))
+                                  : 32U + exess_clz32(i & 0xFFFFFFFF);
 #endif
 }
 
