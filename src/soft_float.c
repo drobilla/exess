@@ -131,18 +131,18 @@ soft_float_exact_pow10(const int expt)
 }
 
 ExessSoftFloat
-soft_float_pow10_under(const int exponent, int* pow10_exponent)
+soft_float_pow10_under(const int max_exponent, int* pow10_exponent)
 {
-  assert(exponent >= min_dec_expt);
-  assert(exponent < max_dec_expt + dec_expt_step);
+  assert(max_exponent >= min_dec_expt);
+  assert(max_exponent < max_dec_expt + dec_expt_step);
 
   const int cache_offset = -min_dec_expt;
-  const int index        = (exponent + cache_offset) / dec_expt_step;
+  const int index        = (max_exponent + cache_offset) / dec_expt_step;
 
   *pow10_exponent = min_dec_expt + index * dec_expt_step;
 
-  assert(*pow10_exponent <= exponent);
-  assert(exponent < *pow10_exponent + dec_expt_step);
+  assert(*pow10_exponent <= max_exponent);
+  assert(max_exponent < *pow10_exponent + dec_expt_step);
 
   return soft_pow10[index];
 }
