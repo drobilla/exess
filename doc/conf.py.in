@@ -3,7 +3,7 @@
 
 # Project information
 project = "Exess"
-copyright = "2021-2025, David Robillard"
+copyright = "2021-2025 David Robillard <d@drobilla.net>"
 author = "David Robillard"
 release = "@EXESS_VERSION@"
 version = "@EXESS_VERSION@"
@@ -56,7 +56,7 @@ if tags.has("singlehtml"):
     html_theme_options.update(
         {
             "globaltoc_collapse": False,
-            "globaltoc_maxdepth": 3,
+            "globaltoc_maxdepth": 4,
             "nosidebar": False,
             "page_width": "80em",
         }
@@ -120,7 +120,7 @@ else:
 # EPub output
 
 epub_show_urls = "no"
-epub_description = "A simple C library for reading and writing XSD datatypes."
+epub_description = desc
 epub_title = "Exess @EXESS_VERSION@ Documentation"
 epub_basename = "Exess-@EXESS_VERSION@"
 epub_css_files = ["epubstyle.css"]
@@ -154,7 +154,7 @@ groups = {
     "value": "Generic Values",
 }
 
-man_author = "David Robillard <d@drobilla.net>"
+man_author = None
 man_pages = [("index", "exess", "Exess", man_author, 3)]
 
 for group, title in groups.items():

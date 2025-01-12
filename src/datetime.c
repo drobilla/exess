@@ -139,7 +139,7 @@ add_field(const int32_t  lhs,
    Note that the algorithm in the spec first clamps here, but we don't because
    no such datetime should exist (exess_read_datetime refuses to read them).
    This might return the infinite past or future.
-  */
+*/
 EXESS_CONST_FUNC static ExessDateTime
 carry_set_day(ExessDateTime e, int day)
 {

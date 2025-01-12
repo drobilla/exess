@@ -1,18 +1,26 @@
+.. default-domain:: c
+.. highlight:: c
+
 ###########
 Description
 ###########
 
-.. default-domain:: c
-.. highlight:: c
+Exess is a simple C library for reading and writing values as strings.
 
-Exess provides locale-independent functions for converting standard number, date, and time datatypes to and from strings.
-Conversions are lossless wherever possible so,
-for example,
-a ``float`` written as a string can be read back as the exact original value on any system.
+It provides portable locale-independent functions for converting basic number, date, time, and binary datatypes to and from strings.
+Conversions are lossless where possible, so, for example,
+a ``float`` written to a string will read back as exactly the original value on any system.
 
-The supported datatypes are defined by the XML Schema specification,
-although they (along with exess itself) are useful in general,
-and compatible with many other standards.
+The supported datatypes,
+defined by the XSD_ specification,
+are explicitly compatible with many standards (like XML, RDF, and ISO 8601),
+and incidentally or partially compatible with many others (like C and JSON).
+
+The library is straightforward to use and has minimal requirements.
+It doesn't depend on an allocator,
+the current locale,
+or any other shared mutable state,
+making it safe to use in almost any context.
 
 *****
 Usage
@@ -33,8 +41,21 @@ The API can then be used by including ``exess/exess.h``:
 
    #include <exess/exess.h>
 
-If build system support is unavailable,
+If package support isn't available,
 arguments like ``-I/usr/include/exess-0 -lexess-0`` must be added to the compiler command manually.
+
+*********
+Datatypes
+*********
+
+Most of the datatypes from the XSD_ specification are implemented.
+The fully supported primitive datatypes are :ref:`boolean<exess_boolean>`, :ref:`float <exess_float>`, :ref:`double <exess_double>`, :ref:`duration <exess_duration>`, :ref:`dateTime <exess_dateTime>`, :ref:`time <exess_time>`, :ref:`date <exess_date>`, :ref:`hexBinary <exess_hex>`, and :ref:`base64Binary <exess_base64>`.
+All of the derived datatypes for fixed-size numbers (which correspond to C integer types) are also fully supported: :ref:`long <exess_long>`, :ref:`int <exess_int>`, :ref:`short <exess_short>`, :ref:`byte <exess_byte>`, :ref:`unsignedLong <exess_ulong>`, :ref:`unsignedInt <exess_uint>`, :ref:`unsignedShort <exess_ushort>`, and :ref:`unsignedByte <exess_ubyte>`
+
+The variably-sized :ref:`decimal <exess_decimal>` and ``integer`` are supported to an extent, but values are limited to those that can be stored in a ``double`` or ``int64_t``, respectively.
+The library also understands the variably-sized ``integer`` derived datatypes ``nonPositiveInteger``, ``negativeInteger``, ``nonNegativeInteger``, and ``positiveInteger``,
+although since these are functionally equivalent to ``integer``,
+they don't have their own API functions and are only relevant for some higher-level functionality like value coercion.
 
 **************
 Reading Values
@@ -144,8 +165,8 @@ Values are stored in the largest corresponding native type:
 If the value doesn't fit,
 then :func:`exess_read_value` will return an :enumerator:`EXESS_OUT_OF_RANGE` error.
 
-Writing Canonical Form
-======================
+Canonical Writing
+=================
 
 Since values are always written in canonical form,
 strings can be converted to canonical form by first reading, then writing again.
@@ -169,3 +190,4 @@ avoiding value conversion, machine limits, and the need for a temporary value bu
 
 .. _meson: https://mesonbuild.com/
 .. _pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/
+.. _xsd: https://www.w3.org/TR/xmlschema-2/

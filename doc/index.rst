@@ -2,8 +2,6 @@
 Exess
 #####
 
-Exess is a simple C library for reading and writing XSD_ datatypes.
-
 .. toctree::
 
    description

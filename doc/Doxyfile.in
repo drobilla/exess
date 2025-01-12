@@ -1,8 +1,8 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-PROJECT_NAME           = Exess
-PROJECT_BRIEF          = "A library for reading and writing XSD datatypes"
+PROJECT_NAME  = Exess
+PROJECT_BRIEF = "A library for reading and writing values as strings"
 
 QUIET                  = YES
 WARN_AS_ERROR          = YES
