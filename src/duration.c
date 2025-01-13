@@ -56,116 +56,87 @@ set_field(ExessDuration* const out,
 }
 
 static ExessResult
-read_date(ExessDuration* const out, const Field field, const char* const str)
+read_date(ExessDuration* const out, const char* const str)
 {
-  uint32_t    value = 0;
-  ExessResult r     = exess_read_uint(&value, str);
-  if (r.status > EXESS_EXPECTED_END) {
-    return r;
+  size_t      i          = 0U;
+  ExessStatus st         = EXESS_SUCCESS;
+  unsigned    last_field = 0U;
+
+  while (!st && last_field <= DAY && str[i] != 'T' && !is_end(str[i])) {
+    // Read the unsigned integer value
+    uint32_t          value = 0U;
+    const ExessResult r     = exess_read_uint(&value, str + i);
+    i += r.count;
+    if (r.status > EXESS_EXPECTED_END) {
+      return result(r.status, i);
+    }
+
+    // Read Y, M, or D field tag
+    const Field field = (str[i] == 'Y')   ? YEAR
+                        : (str[i] == 'M') ? MONTH
+                        : (str[i] == 'D') ? DAY
+                                          : SECOND;
+    if (field == SECOND) {
+      return result(EXESS_EXPECTED_DATE_TAG, i);
+    }
+
+    // Set the field value and advance
+    st         = set_field(out, (Field)last_field, field, value);
+    last_field = field;
+    ++i;
   }
 
-  size_t i = r.count;
-  switch (str[i]) {
-  case 'Y':
-    r.status = set_field(out, field, YEAR, value);
-    if (r.status) {
-      return r;
-    }
-
-    ++i;
-    if (str[i] != 'T' && !is_end(str[i])) {
-      r = read_date(out, MONTH, str + i);
-      i += r.count;
-    }
-    break;
-
-  case 'M':
-    r.status = set_field(out, field, MONTH, value);
-    if (r.status) {
-      return r;
-    }
-
-    ++i;
-    if (str[i] != 'T' && !is_end(str[i])) {
-      r = read_date(out, DAY, str + i);
-      i += r.count;
-    }
-    break;
-
-  case 'D':
-    r.status = set_field(out, field, DAY, value);
-    if (r.status) {
-      return r;
-    }
-
-    ++i;
-    break;
-
-  default:
-    return result(EXESS_EXPECTED_DATE_TAG, i);
-  }
-
-  return result(r.status, i);
+  return i > 0 ? result(st, i) : result(EXESS_EXPECTED_DIGIT, i);
 }
 
 static ExessResult
-read_time(ExessDuration* const out, const Field field, const char* const str)
+read_time(ExessDuration* const out, const char* const str)
 {
-  uint32_t    value = 0;
-  ExessResult r     = exess_read_uint(&value, str);
-  if (r.status > EXESS_EXPECTED_END) {
-    return r;
-  }
+  size_t      i          = 0U;
+  ExessStatus st         = EXESS_SUCCESS;
+  unsigned    last_field = 0U;
 
-  size_t      i    = r.count;
-  ExessResult next = {EXESS_SUCCESS, 0};
-  switch (str[i]) {
-  case '.': {
-    if (!is_digit(str[++i])) {
-      return result(EXESS_EXPECTED_DIGIT, i);
+  while (!st && last_field <= SECOND && !is_end(str[i])) {
+    // Read the unsigned integer value
+    uint32_t          value = 0U;
+    const ExessResult r     = exess_read_uint(&value, str + i);
+    i += r.count;
+    if (r.status > EXESS_EXPECTED_END) {
+      return result(r.status, i);
     }
 
-    uint32_t nanoseconds = 0;
+    Field field = YEAR;
+    if (str[i] == '.') {
+      uint32_t nanoseconds = 0U;
+      if (!is_digit(str[++i])) {
+        return result(EXESS_EXPECTED_DIGIT, i);
+      }
 
-    r = read_nanoseconds(&nanoseconds, str + i);
-    i += r.count;
+      const ExessResult s = read_nanoseconds(&nanoseconds, str + i);
+      i += s.count;
+      if (!st && str[i] != 'S') {
+        return result(EXESS_EXPECTED_TIME_TAG, i);
+      }
 
-    if (str[i] != 'S') {
+      field            = SECOND;
+      out->nanoseconds = (int32_t)nanoseconds;
+    } else if (str[i] == 'H') {
+      field = HOUR;
+    } else if (str[i] == 'M') {
+      field = MINUTE;
+    } else if (str[i] == 'S') {
+      field = SECOND;
+    } else {
       return result(EXESS_EXPECTED_TIME_TAG, i);
     }
 
-    r.status         = set_field(out, field, SECOND, value);
-    out->nanoseconds = (int32_t)nanoseconds;
-    break;
+    // Set the field value and advance
+    st         = set_field(out, (Field)last_field, field, value);
+    last_field = (unsigned)field;
+    ++i;
   }
 
-  case 'H':
-    r.status = set_field(out, field, HOUR, value);
-    if (!is_end(str[i + 1])) {
-      next = read_time(out, MINUTE, str + i + 1);
-    }
-    break;
-
-  case 'M':
-    r.status = set_field(out, field, MINUTE, value);
-    if (!is_end(str[i + 1])) {
-      next = read_time(out, SECOND, str + i + 1);
-    }
-    break;
-
-  case 'S':
-    r.status = set_field(out, field, SECOND, value);
-    break;
-
-  default:
-    return result(EXESS_EXPECTED_TIME_TAG, i);
-  }
-
-  if (r.status) {
-    return r;
-  }
-
-  return result(next.status, i + 1 + next.count);
+  return i > 0 ? result(st, i) : result(EXESS_EXPECTED_DIGIT, i);
 }
 
 static int
@@ -200,9 +171,8 @@ exess_read_duration(ExessDuration* const out, const char* const str)
   }
 
   ++i;
-
   if (str[i] != 'T') {
-    ExessResult r = read_date(out, YEAR, str + i);
+    ExessResult r = read_date(out, str + i);
     if (r.status) {
       return result(r.status, i + r.count);
     }
@@ -217,7 +187,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
   if (str[i] == 'T') {
     ++i;
 
-    ExessResult r = read_time(out, HOUR, str + i);
+    ExessResult r = read_time(out, str + i);
     if (r.status) {
       return result(r.status, i + r.count);
     }

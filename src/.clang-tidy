@@ -6,7 +6,6 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -hicpp-multiway-paths-covered,
   -llvm-header-guard,
-  -misc-no-recursion,
   -readability-avoid-nested-conditional-operator,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold

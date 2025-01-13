@@ -295,19 +295,11 @@ exess_bigint_compare(const ExessBigint* lhs, const ExessBigint* rhs)
   return 0;
 }
 
-int
-exess_bigint_plus_compare(const ExessBigint* l,
-                          const ExessBigint* p,
-                          const ExessBigint* c)
+static int
+exess_bigint_plus_compare_internal(const ExessBigint* const l,
+                                   const ExessBigint* const p,
+                                   const ExessBigint* const c)
 {
-  assert(exess_bigint_is_clamped(l));
-  assert(exess_bigint_is_clamped(p));
-  assert(exess_bigint_is_clamped(c));
-
-  if (l->n_bigits < p->n_bigits) {
-    return exess_bigint_plus_compare(p, l, c);
-  }
-
   if (l->n_bigits + 1 < c->n_bigits) {
     return -1;
   }
@@ -340,6 +332,20 @@ exess_bigint_plus_compare(const ExessBigint* l,
   }
 
   return borrow ? -1 : 0;
+}
+
+int
+exess_bigint_plus_compare(const ExessBigint* const l,
+                          const ExessBigint* const p,
+                          const ExessBigint* const c)
+{
+  assert(exess_bigint_is_clamped(l));
+  assert(exess_bigint_is_clamped(p));
+  assert(exess_bigint_is_clamped(c));
+
+  return (l->n_bigits < p->n_bigits)
+           ? exess_bigint_plus_compare_internal(p, l, c)
+           : exess_bigint_plus_compare_internal(l, p, c);
 }
 
 static unsigned

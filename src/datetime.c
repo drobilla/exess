@@ -70,29 +70,30 @@ compare_datetime_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
   return cmp;
 }
 
-int
-exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
+static ExessDateTime
+to_utc(const ExessDateTime s, const ExessDuration offset)
+{
+  ExessDateTime r = exess_add_datetime_duration(s, offset);
+  r.is_utc        = true;
+  return r;
+}
+
+static int
+compare_datetime_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
-
-  if (lhs.is_utc == rhs.is_utc) {
-    // Simple case, both are either UTC or local
-    return compare_datetime_determinate(lhs, rhs);
-  }
 
   static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
   static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
 
   if (lhs.is_utc) {
-    ExessDateTime r_minus = exess_add_datetime_duration(rhs, minus_14h);
-    r_minus.is_utc        = true;
-    if (exess_compare_datetime(lhs, r_minus) < 0) {
+    const ExessDateTime r_minus = to_utc(rhs, minus_14h);
+    if (compare_datetime_determinate(lhs, r_minus) < 0) {
       return -1;
     }
 
-    ExessDateTime r_plus = exess_add_datetime_duration(rhs, plus_14h);
-    r_plus.is_utc        = true;
-    if (exess_compare_datetime(lhs, r_plus) > 0) {
+    const ExessDateTime r_plus = to_utc(rhs, plus_14h);
+    if (compare_datetime_determinate(lhs, r_plus) > 0) {
       return 1;
     }
 
@@ -100,20 +101,25 @@ exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
     return 1;
   }
 
-  ExessDateTime l_plus = exess_add_datetime_duration(lhs, plus_14h);
-  l_plus.is_utc        = true;
-  if (exess_compare_datetime(l_plus, rhs) < 0) {
+  const ExessDateTime l_plus = to_utc(lhs, plus_14h);
+  if (compare_datetime_determinate(l_plus, rhs) < 0) {
     return -1;
   }
 
-  ExessDateTime l_minus = exess_add_datetime_duration(lhs, minus_14h);
-  l_minus.is_utc        = true;
-  if (exess_compare_datetime(l_minus, rhs) > 0) {
+  const ExessDateTime l_minus = to_utc(lhs, minus_14h);
+  if (compare_datetime_determinate(l_minus, rhs) > 0) {
     return 1;
   }
 
   // Indeterminate, arbitrarily put local time first
   return -1;
+}
+
+int
+exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
+{
+  return (lhs.is_utc == rhs.is_utc) ? compare_datetime_determinate(lhs, rhs)
+                                    : compare_datetime_partial(lhs, rhs);
 }
 
 static int32_t

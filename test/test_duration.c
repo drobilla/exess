@@ -109,33 +109,33 @@ test_read_duration(void)
 
   // Out of range fields
   check_read(
-    "P2147483647Y", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P2147483647Y", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "P2147483647M", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P2147483647M", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "P2147483647D", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P2147483647D", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "PT2147483647H", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "PT2147483647H", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "PT2147483647M", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "PT2147483647M", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "PT2147483647S", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "PT2147483647S", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
 
   // Garbage
   check_read("P-20M", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P20MT", EXESS_EXPECTED_DIGIT, 5, 0, 20, 0, 0, 0, 0, 0, false);
   check_read("P1YM5D", EXESS_EXPECTED_DIGIT, 3, 1, 0, 0, 0, 0, 0, 0, false);
   check_read("P15.5Y", EXESS_EXPECTED_DATE_TAG, 3, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read("P1D2H", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 1, 0, 0, 0, 0, false);
+  check_read("P1D2H", EXESS_EXPECTED_DATE_TAG, 4, 0, 0, 1, 0, 0, 0, 0, false);
   check_read("1Y2M", EXESS_EXPECTED_DURATION, 0, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read("P2M1Y", EXESS_BAD_ORDER, 4, 0, 2, 0, 0, 0, 0, 0, false);
-  check_read("P2D1Y", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 2, 0, 0, 0, 0, false);
-  check_read("P2D1M", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 2, 0, 0, 0, 0, false);
+  check_read("P2M1Y", EXESS_BAD_ORDER, 5, 0, 2, 0, 0, 0, 0, 0, false);
+  check_read("P2D1Y", EXESS_BAD_ORDER, 5, 0, 0, 2, 0, 0, 0, 0, false);
+  check_read("P2D1M", EXESS_BAD_ORDER, 5, 0, 0, 2, 0, 0, 0, 0, false);
   check_read("P", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT15.5H", EXESS_EXPECTED_TIME_TAG, 6, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read("PT2M1H", EXESS_BAD_ORDER, 5, 0, 0, 0, 0, 2, 0, 0, false);
-  check_read("PT2S1H", EXESS_EXPECTED_END, 4, 0, 0, 0, 0, 0, 2, 0, false);
-  check_read("PT2S1M", EXESS_EXPECTED_END, 4, 0, 0, 0, 0, 0, 2, 0, false);
+  check_read("PT2M1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 2, 0, 0, false);
+  check_read("PT2S1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);
+  check_read("PT2S1M", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);
   check_read("PT15.S", EXESS_EXPECTED_DIGIT, 5, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P1Q", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT1Q", EXESS_EXPECTED_TIME_TAG, 3, 0, 0, 0, 0, 0, 0, 0, false);
