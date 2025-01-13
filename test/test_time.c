@@ -101,6 +101,18 @@ test_read_time(void)
   check_read("13:20:00junk", EXESS_EXPECTED_SIGN, 13, 20, 0, 0, 0, 0, false, 8);
   check_read("13:20:00Zjunk", EXESS_EXPECTED_END, 13, 20, 0, 0, 0, 0, true, 9);
 
+  // Too many nanosecond digits (expecting a timezone after 9 digits)
+  check_read("01:02:03.123456789123",
+             EXESS_EXPECTED_SIGN,
+             1,
+             2,
+             3,
+             123456789,
+             0,
+             0,
+             false,
+             18);
+
   // Garbage
   check_read("13.20.00", EXESS_EXPECTED_COLON, 13, 0, 0, 0, 0, 0, false, 2);
   check_read("13:20:", EXESS_EXPECTED_DIGIT, 13, 20, 0, 0, 0, 0, false, 6);

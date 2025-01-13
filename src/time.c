@@ -55,13 +55,18 @@ exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 ExessResult
 read_nanoseconds(uint32_t* const out, const char* const str)
 {
-  size_t i               = 0;
-  char   frac_digits[10] = {'0', '0', '0', '0', '0', '0', '0', '0', '0', 0};
-  for (unsigned j = 0U; j < 9U && is_digit(str[i]); ++j) {
-    frac_digits[j] = str[i++];
+  // Read available digits
+  size_t i = 0U;
+  for (; i < 9U && is_digit(str[i]); ++i) {
+    *out = (*out * 10U) + (uint32_t)(str[i] - '0');
   }
 
-  return result(exess_read_uint(out, frac_digits).status, i);
+  // "Read" imagined trailing zeros to reach 9 digit magnitude
+  for (size_t j = i; j < 9U; ++j) {
+    *out *= 10U;
+  }
+
+  return result(i > 0 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
 }
 
 ExessResult
