@@ -185,7 +185,7 @@ test_round_trip(void)
 
   for (int8_t h = -13; h < 13; ++h) {
     for (int8_t q = 0; q < 4; ++q) {
-      const ExessTimezone value = {(int8_t)(4 * h + q)};
+      const ExessTimezone value = {(int8_t)((4 * h) + q)};
 
       check_round_trip(value);
     }

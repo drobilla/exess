@@ -21,7 +21,7 @@ static inline uint8_t
 days_in_month(const int16_t year, const uint8_t month)
 {
   return month == 2U ? (is_leap_year(year) ? 29U : 28U)
-                     : (uint8_t)(30U + (month + (month / 8U)) % 2U);
+                     : (uint8_t)(30U + ((month + (month / 8U)) % 2U));
 }
 
 /// Read YYYY-MM-DD date numbers without a timezone

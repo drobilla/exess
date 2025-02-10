@@ -339,7 +339,7 @@ decimal_to_double(const ExessFloatingDecimal in)
 
   // Not sure, guess is either the number or its predecessor (rare slow path)
   // Compare it with the buffer using bigints to find out which
-  const ExessSoftFloat upper = {guess.f * 2 + 1, guess.e - 1};
+  const ExessSoftFloat upper = {(guess.f * 2) + 1, guess.e - 1};
   const int            cmp   = compare_buffer(in.digits, in.expt, upper);
   const bool round_up        = (cmp > 0) || (cmp == 0 && (guess.f & 1U) != 0);
 

@@ -28,7 +28,7 @@ exess_timezone(const int8_t hours, const int8_t minutes)
     return EXESS_LOCAL;
   }
 
-  return (int8_t)(4 * hours + minutes / 15);
+  return (int8_t)((4 * hours) + (minutes / 15));
 }
 
 ExessResult
@@ -86,7 +86,7 @@ read_timezone(ExessTimezone* const out, const char* const str)
   }
 
   // Convert to quarter hours
-  const int8_t quarters = (int8_t)(4 * hour + minute / 15);
+  const int8_t quarters = (int8_t)((4 * hour) + (minute / 15));
   if (quarters < -56 || quarters > 56) {
     return result(EXESS_OUT_OF_RANGE, i);
   }

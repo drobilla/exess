@@ -13,7 +13,7 @@
 typedef uint64_t Hugit;
 
 static const uint32_t bigit_mask = ~(uint32_t)0;
-static const uint64_t carry_mask = (uint64_t) ~(uint32_t)0 << 32U;
+static const uint64_t carry_mask = (uint64_t)~(uint32_t)0 << 32U;
 
 typedef struct {
   unsigned bigits;
@@ -435,7 +435,7 @@ exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs)
 static unsigned
 exess_bigint_leading_zeros(const ExessBigint* num)
 {
-  return 32 * (BIGINT_MAX_BIGITS - num->n_bigits) +
+  return (32 * (BIGINT_MAX_BIGITS - num->n_bigits)) +
          exess_clz32(num->bigits[num->n_bigits - 1]);
 }
 
@@ -541,7 +541,7 @@ exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
 
     lhs->bigits[lhs->n_bigits - 1] = l0 % r0;
     lhs->n_bigits -= (lhs->bigits[lhs->n_bigits - 1] == 0);
-    return result + l0 / r0;
+    return result + (l0 / r0);
   }
 
   // Both now have the same number of digits, finish with subtraction

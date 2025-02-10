@@ -42,10 +42,10 @@ set_field(ExessDuration* const out,
     out->seconds = (int32_t)(24L * 60L * 60L * lrint(value));
     break;
   case HOUR:
-    out->seconds = (int32_t)(out->seconds + 60L * 60L * lrint(value));
+    out->seconds = (int32_t)(out->seconds + (60L * 60L * lrint(value)));
     break;
   case MINUTE:
-    out->seconds = (int32_t)(out->seconds + 60L * lrint(value));
+    out->seconds = (int32_t)(out->seconds + (60L * lrint(value)));
     break;
   case SECOND:
     out->seconds = (int32_t)(out->seconds + lrint(value));

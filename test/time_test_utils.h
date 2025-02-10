@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INIT_ZONE(hour, minute) (4 * (hour) + (minute) / 15)
+#define INIT_ZONE(hour, minute) ((4 * (hour)) + ((minute) / 15))
 
 static inline ExessTimezone
 random_timezone(uint32_t* rng)
@@ -24,7 +24,7 @@ random_timezone(uint32_t* rng)
 
   const int8_t minute = (int8_t)((hour < 0 ? -1 : 1) * (int32_t)(*rng % 60));
 
-  const ExessTimezone zone = {(int8_t)(4 * hour + minute / 15)};
+  const ExessTimezone zone = {(int8_t)((4 * hour) + (minute / 15))};
   return zone;
 }
 
