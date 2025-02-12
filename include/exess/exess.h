@@ -657,7 +657,7 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    @defgroup exess_timezone Timezone Offsets
 
    Some time and date values can have a timezone qualifier suffix.  A timezone
-   isn't a datatype unto itsef, but only exists as a part of another value.
+   isn't a datatype unto itself, but only exists as a part of another value.
 
    Canonical form starts with a sign, followed by two-digit hour and minute
    offsets separated by a colon, like "-06:00" and "+02:30".  The zero offset,

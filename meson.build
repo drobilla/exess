@@ -202,7 +202,7 @@ exess_dep = declare_dependency(
   link_with: libexess,
 )
 
-# Generage pkg-config file for external dependants
+# Generate pkg-config file for external dependants
 pkg.generate(
   libexess,
   description: 'Simple library for reading and writing XSD datatypes',
