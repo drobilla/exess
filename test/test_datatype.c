@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 static void
@@ -87,6 +88,15 @@ test_value_size(void)
   assert(exess_value_size(EXESS_DATE) == sizeof(ExessDate));
   assert(exess_value_size(EXESS_HEX) == 0U);
   assert(exess_value_size(EXESS_BASE64) == 0U);
+
+  bool found_maximum = false;
+  for (unsigned i = 0U; i < (unsigned)EXESS_BASE64; ++i) {
+    const size_t size = exess_value_size((ExessDatatype)i);
+    assert(size <= EXESS_MAX_FIXED_SIZE); // Ensure limit is large enough
+    found_maximum = found_maximum || size == EXESS_MAX_FIXED_SIZE;
+  }
+
+  assert(found_maximum); // Ensure limit is minimal
 }
 
 int

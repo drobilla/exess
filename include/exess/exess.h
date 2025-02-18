@@ -1266,7 +1266,7 @@ exess_value_size(ExessDatatype datatype);
    This is the size of #ExessValue, which is larger than the size of all the
    supported numeric and time-based datatypes.
 */
-#define EXESS_MAX_VALUE_SIZE 16U
+#define EXESS_MAX_FIXED_SIZE 12U
 
 /**
    A union that can hold any supported fixed-sized value.
@@ -1290,7 +1290,7 @@ typedef union {
   ExessDateTime as_datetime;                   ///< #EXESS_DATETIME
   ExessTime     as_time;                       ///< #EXESS_TIME
   ExessDate     as_date;                       ///< #EXESS_DATE
-  uint8_t       as_blob[EXESS_MAX_VALUE_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
+  uint8_t       as_blob[EXESS_MAX_FIXED_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
 } ExessValue;
 
 /**

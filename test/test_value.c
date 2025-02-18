@@ -14,8 +14,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#define MAX_VALUE_SIZE 32u
-
 static const ExessDuration duration = {14,
                                        (3 * 24 * 60 * 60) + (4 * 60 * 60) +
                                          (5 * 60) + 6,
@@ -26,17 +24,6 @@ static const ExessTime     time     = {EXESS_UTC, 1, 2, 3, 0};
 static const ExessDate     date     = {2001, 2, 3, EXESS_UTC};
 
 static void
-test_size(void)
-{
-  assert(sizeof(ExessValue) == EXESS_MAX_VALUE_SIZE);
-
-  assert(sizeof(ExessDuration) <= EXESS_MAX_VALUE_SIZE);
-  assert(sizeof(ExessDateTime) <= EXESS_MAX_VALUE_SIZE);
-  assert(sizeof(ExessTime) <= EXESS_MAX_VALUE_SIZE);
-  assert(sizeof(ExessDate) <= EXESS_MAX_VALUE_SIZE);
-}
-
-static void
 check_read(void*               value,
            const ExessDatatype datatype,
            const char* const   string,
@@ -44,7 +31,7 @@ check_read(void*               value,
            const size_t        expected_read_count)
 {
   const ExessVariableResult r =
-    exess_read_value(datatype, MAX_VALUE_SIZE, value, string);
+    exess_read_value(datatype, EXESS_MAX_FIXED_SIZE, value, string);
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
@@ -288,7 +275,6 @@ test_write_value(void)
 int
 main(void)
 {
-  test_size();
   test_read_value();
   test_write_value();
 
