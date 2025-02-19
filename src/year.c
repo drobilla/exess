@@ -50,7 +50,7 @@ read_year_number(int16_t* const out, const char* const str)
     if (magnitude == min_magnitude) {
       *out = INT16_MIN;
     } else {
-      *out = (int16_t) - (int16_t)magnitude;
+      *out = (int16_t)(-(int16_t)magnitude);
     }
   }
 

@@ -12,8 +12,8 @@
 
 typedef uint64_t Hugit;
 
-static const uint32_t bigit_mask = ~(uint32_t)0;
-static const uint64_t carry_mask = (uint64_t)~(uint32_t)0 << 32U;
+static const uint32_t bigit_mask = ~0U;
+static const uint64_t carry_mask = (uint64_t)~0U << 32U;
 
 typedef struct {
   unsigned bigits;

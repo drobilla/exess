@@ -81,7 +81,7 @@ coerce_to_long(int64_t* const       out,
     return EXESS_SUCCESS;
 
   case EXESS_BYTE:
-    *out = (int64_t) * (const int8_t*)in;
+    *out = (int64_t)(*(const int8_t*)in);
     return EXESS_SUCCESS;
 
   case EXESS_NON_NEGATIVE_INTEGER:
