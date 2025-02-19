@@ -9,7 +9,6 @@
 
 #include <exess/exess.h>
 
-#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -33,22 +32,22 @@ set_field(ExessDuration* const out,
 
   switch (field) {
   case YEAR:
-    out->months = (int32_t)(12L * lrint(value));
+    out->months = 12 * (int32_t)value;
     break;
   case MONTH:
-    out->months = (int32_t)(out->months + lrint(value));
+    out->months = out->months + (int32_t)value;
     break;
   case DAY:
-    out->seconds = (int32_t)(24L * 60L * 60L * lrint(value));
+    out->seconds = 24 * 60 * 60 * (int32_t)value;
     break;
   case HOUR:
-    out->seconds = (int32_t)(out->seconds + (60L * 60L * lrint(value)));
+    out->seconds = out->seconds + (60 * 60 * (int32_t)value);
     break;
   case MINUTE:
-    out->seconds = (int32_t)(out->seconds + (60L * lrint(value)));
+    out->seconds = out->seconds + (60 * (int32_t)value);
     break;
   case SECOND:
-    out->seconds = (int32_t)(out->seconds + lrint(value));
+    out->seconds = out->seconds + (int32_t)value;
     break;
   }
 
