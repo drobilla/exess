@@ -14,11 +14,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum { YEAR, MONTH, DAY, HOUR, MINUTE, SECOND } Field;
+typedef enum { NONE, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND } Field;
 
 static ExessStatus
 set_field(ExessDuration* const out,
-          const Field          current_field,
+          const Field          last_field,
           const Field          field,
           const uint64_t       value)
 {
@@ -26,12 +26,12 @@ set_field(ExessDuration* const out,
     return EXESS_OUT_OF_RANGE;
   }
 
-  if (field < current_field) {
+  if (field <= last_field) {
     return EXESS_BAD_ORDER;
   }
 
-  static const uint64_t factors[6] = {
-    12UL, 1UL, 24UL * 60UL * 60UL, 60UL * 60UL, 60UL, 1UL};
+  static const uint64_t factors[7] = {
+    0UL, 12UL, 1UL, 24UL * 60UL * 60UL, 60UL * 60UL, 60UL, 1UL};
 
   const uint64_t factor = factors[field];
   int32_t* const target = (field < DAY) ? &out->months : &out->seconds;
@@ -66,8 +66,8 @@ read_duration_date(ExessDuration* const out, const char* const str)
     const Field field = (str[i] == 'Y')   ? YEAR
                         : (str[i] == 'M') ? MONTH
                         : (str[i] == 'D') ? DAY
-                                          : SECOND;
-    if (field == SECOND) {
+                                          : NONE;
+    if (!field) {
       return result(EXESS_EXPECTED_DATE_TAG, i);
     }
 
@@ -87,7 +87,7 @@ read_duration_time(ExessDuration* const out, const char* const str)
   ExessStatus st         = EXESS_SUCCESS;
   unsigned    last_field = 0U;
 
-  while (!st && last_field <= SECOND) {
+  while (!st && last_field < SECOND) {
     // Read the unsigned integer value
     uint64_t          value = 0U;
     const ExessResult r     = read_digits(&value, str + i);

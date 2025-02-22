@@ -142,8 +142,15 @@ test_read_duration(void)
              0,
              false);
 
+  // Repeated fields
+  check_read("P1Y2Y", EXESS_BAD_ORDER, 5, 1, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1M2M", EXESS_BAD_ORDER, 5, 0, 1, 0, 0, 0, 0, 0, false);
+  check_read("PT1H2H", EXESS_BAD_ORDER, 6, 0, 0, 0, 1, 0, 0, 0, false);
+  check_read("PT1M2M", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 1, 0, 0, false);
+
   // Trailing garbage
   check_read("P1YM5D", EXESS_SUCCESS, 3, 1, 0, 0, 0, 0, 0, 0, false);
+  check_read("PT1S2", EXESS_SUCCESS, 4, 0, 0, 0, 0, 0, 1, 0, false);
 
   // Out of range fields
   check_read("P18446744073709551616Y",
@@ -188,8 +195,6 @@ test_read_duration(void)
   check_read(
     "PT15.5H", EXESS_EXPECTED_SECOND_TAG, 6, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT2M1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 2, 0, 0, false);
-  check_read("PT2S1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);
-  check_read("PT2S1M", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);
   check_read("PT15.S", EXESS_EXPECTED_DIGIT, 5, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P1Q", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT1Q", EXESS_EXPECTED_TIME_TAG, 3, 0, 0, 0, 0, 0, 0, 0, false);
