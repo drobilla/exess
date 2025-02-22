@@ -103,15 +103,11 @@ read_time(ExessTime* const out, const char* const str)
     return result(EXESS_OUT_OF_RANGE, i);
   }
 
-  // Read timezone if present
-  if (!is_end(str[i])) {
-    r = read_timezone(&out->zone, str + i);
-    i += r.count;
-  } else {
-    out->zone = EXESS_LOCAL;
-  }
+  // Read timezone offset if present
+  r = read_optional_timezone(&out->zone, str + i);
+  i += r.count;
 
-  return end_read(r.status, str, i);
+  return result(r.status, i);
 }
 
 ExessResult

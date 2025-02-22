@@ -8,7 +8,6 @@ exess_strerror(const ExessStatus status)
 {
   static const char* const strings[] = {
     "Success",
-    "Expected end of value",
     "Expected \"false\", \"true\", \"0\" or \"1\"",
     "Expected an integer value",
     "Expected a duration starting with 'P'",

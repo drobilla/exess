@@ -9,5 +9,5 @@ Checks: >
   -readability-avoid-nested-conditional-operator,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
-    value: '19'
+    value: '20'
 InheritParentConfig: true

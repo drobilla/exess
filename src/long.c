@@ -25,7 +25,7 @@ exess_read_long(int64_t* const out, const char* const str)
   // Read digits
   uint64_t    magnitude = 0;
   ExessResult r         = read_digits(&magnitude, str + i);
-  if (r.status > EXESS_EXPECTED_END) {
+  if (r.status) {
     return result(r.status, i + r.count);
   }
 
@@ -37,7 +37,7 @@ exess_read_long(int64_t* const out, const char* const str)
     }
 
     *out = (int64_t)magnitude;
-    return end_read(EXESS_SUCCESS, str, i);
+    return result(EXESS_SUCCESS, i);
   }
 
   const uint64_t min_magnitude = (uint64_t)(-(INT64_MIN + 1)) + 1;
@@ -51,7 +51,7 @@ exess_read_long(int64_t* const out, const char* const str)
     *out = -(int64_t)magnitude;
   }
 
-  return end_read(r.status, str, i);
+  return result(r.status, i);
 }
 
 static size_t

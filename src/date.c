@@ -34,15 +34,14 @@ exess_read_date(ExessDate* const out, const char* const str)
   ExessResult r = read_date_numbers(out, str + i);
 
   i += r.count;
-  if (r.status || is_end(str[i])) {
-    out->zone = EXESS_LOCAL;
-    return result(r.status, i);
+
+  // Read timezone if present
+  if (!r.status) {
+    r = read_optional_timezone(&out->zone, str + i);
+    i += r.count;
   }
 
-  // Read timezone
-  r = read_timezone(&out->zone, str + i);
-
-  return result(r.status, i + r.count);
+  return result(r.status, i);
 }
 
 ExessResult

@@ -28,13 +28,13 @@ read_year_number(int16_t* const out, const char* const str)
   }
 
   // Read digits
-  uint64_t    magnitude = 0;
-  ExessResult r         = read_digits(&magnitude, str + i);
-  if (r.status > EXESS_EXPECTED_END) {
-    return result(r.status, i + r.count);
-  }
+  uint64_t          magnitude = 0;
+  const ExessResult r         = read_digits(&magnitude, str + i);
 
   i += r.count;
+  if (r.status) {
+    return result(r.status, i + r.count);
+  }
 
   if (sign > 0) {
     if (magnitude > (uint16_t)INT16_MAX) {

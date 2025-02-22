@@ -37,7 +37,7 @@ read_digits(uint64_t* const out, const char* const str)
     *out = next;
   }
 
-  return end_read(EXESS_SUCCESS, str, i);
+  return result(EXESS_SUCCESS, i);
 }
 
 ExessResult
@@ -56,7 +56,7 @@ exess_read_ulong(uint64_t* const out, const char* const str)
       ++j;
     }
 
-    return end_read((j == i) ? EXESS_EXPECTED_ZERO : EXESS_SUCCESS, str, j);
+    return result((j == i) ? EXESS_EXPECTED_ZERO : EXESS_SUCCESS, j);
   }
 
   ExessResult r = read_digits(out, str + i);

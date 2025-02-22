@@ -118,6 +118,9 @@ test_read_date(void)
   check_read("2001-11-31", EXESS_OUT_OF_RANGE, 2001, 11, 31, 0, 0, false, 10);
   check_read("2001-12-32", EXESS_OUT_OF_RANGE, 2001, 12, 32, 0, 0, false, 10);
 
+  // Trailing garbage
+  check_read("2004-04-12A", EXESS_SUCCESS, 2004, 4, 12, 0, 0, false, 10);
+
   // Garbage
   check_read("f", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, false, 0);
   check_read("99-04-12", EXESS_EXPECTED_DIGIT, 99, 0, 0, 0, 0, false, 2);
@@ -126,7 +129,6 @@ test_read_date(void)
   check_read("04-12-2004", EXESS_EXPECTED_DIGIT, 4, 0, 0, 0, 0, false, 2);
   check_read("2001-10", EXESS_EXPECTED_DASH, 2001, 10, 0, 0, 0, false, 7);
   check_read("01-10-26", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, false, 2);
-  check_read("2004-04-12A", EXESS_EXPECTED_SIGN, 2004, 4, 12, 0, 0, false, 10);
 }
 
 static void

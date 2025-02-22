@@ -96,7 +96,7 @@ exess_read_decimal(double* const out, const char* const str)
   const size_t i     = skip_whitespace(str);
   const size_t first = i + is_sign(str[i]);
   if (str[first] != '.' && !is_digit(str[first])) {
-    return end_read(EXESS_EXPECTED_DIGIT, str, first);
+    return result(EXESS_EXPECTED_DIGIT, first);
   }
 
   // Parse digits and convert to double if successful
@@ -106,7 +106,7 @@ exess_read_decimal(double* const out, const char* const str)
     *out = decimal_to_double(in);
   }
 
-  return end_read(r.status, str, i + r.count);
+  return result(r.status, i + r.count);
 }
 
 ExessResult

@@ -12,14 +12,15 @@
 #define EXESS_MAX_TIMEZONE_LENGTH 6
 
 /**
-   Read a timezone string after any leading whitespace.
+   Read an optional timezone offset suffix.
 
    @param out Set to the parsed value, or false on error.
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
 ExessResult
-read_timezone(ExessTimezone* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
+                       const char* EXESS_NONNULL    str);
 
 /**
    Write a canonical timezone suffix.

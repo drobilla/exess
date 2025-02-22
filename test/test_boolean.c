@@ -44,10 +44,10 @@ test_read_boolean(void)
   check_read("\t\n\r 1 ", EXESS_SUCCESS, true, 5);
 
   // Trailing garbage
-  check_read("falsely", EXESS_EXPECTED_END, false, 5);
-  check_read("truely", EXESS_EXPECTED_END, true, 4);
-  check_read("0no", EXESS_EXPECTED_END, false, 1);
-  check_read("1yes", EXESS_EXPECTED_END, true, 1);
+  check_read("falsely", EXESS_SUCCESS, false, 5);
+  check_read("truely", EXESS_SUCCESS, true, 4);
+  check_read("0no", EXESS_SUCCESS, false, 1);
+  check_read("1yes", EXESS_SUCCESS, true, 1);
 
   // Garbage
   check_read("twue", EXESS_EXPECTED_BOOLEAN, false, 0);

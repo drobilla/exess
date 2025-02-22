@@ -37,7 +37,7 @@ check(const ExessDatatype datatype,
     assert(!buf[0]);
   }
 
-  assert((r.status && r.status != EXESS_EXPECTED_END) ||
+  assert(r.status ||
          exess_write_canonical(value, datatype, 0, NULL).write_count ==
            r.write_count);
 }
@@ -146,8 +146,8 @@ test_decimal(void)
         25,
         "-36893488147419103232.123");
 
-  check(EXESS_DECIMAL, 6, " -1234extra", EXESS_EXPECTED_END, 0, "");
-  check(EXESS_DECIMAL, 5, " 1234extra", EXESS_EXPECTED_END, 0, "");
+  check(EXESS_DECIMAL, 6, " -1234extra", EXESS_SUCCESS, 7, "-1234.0");
+  check(EXESS_DECIMAL, 5, " 1234extra", EXESS_SUCCESS, 6, "1234.0");
 
   check(EXESS_DECIMAL, 1, " f", EXESS_EXPECTED_DIGIT, 0, "");
   check(EXESS_DECIMAL, 0, "", EXESS_EXPECTED_DIGIT, 0, "");

@@ -13,7 +13,7 @@ exess_read_uint(uint32_t* const out, const char* const str)
 {
   uint64_t          long_out = 0;
   const ExessResult r        = exess_read_ulong(&long_out, str);
-  if (r.status && r.status != EXESS_EXPECTED_END) {
+  if (r.status) {
     return r;
   }
 

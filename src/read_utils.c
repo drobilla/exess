@@ -19,13 +19,6 @@ skip_whitespace(const char* const str)
   return i;
 }
 
-bool
-is_end(const char c)
-{
-  return c == '\0' || c == ' ' || c == '\f' || c == '\n' || c == '\r' ||
-         c == '\t' || c == '\v';
-}
-
 ExessResult
 read_two_digit_number(uint8_t* const    out,
                       const uint8_t     min_value,
@@ -61,10 +54,4 @@ read_sign(int* const sign, const char* const str)
 
   *sign = 1;
   return (*str == '+') ? 1U : 0U;
-}
-
-ExessResult
-end_read(const ExessStatus status, const char* str, const size_t i)
-{
-  return result((status || is_end(str[i])) ? status : EXESS_EXPECTED_END, i);
 }

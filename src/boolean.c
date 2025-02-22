@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
+#include "result.h"
 #include "write_utils.h"
 
 #include <exess/exess.h>
@@ -19,22 +20,22 @@ exess_read_boolean(bool* const out, const char* const str)
 
   switch (str[i]) {
   case '0':
-    return end_read(EXESS_SUCCESS, str, i + 1);
+    return result(EXESS_SUCCESS, i + 1);
 
   case '1':
     *out = true;
-    return end_read(EXESS_SUCCESS, str, i + 1);
+    return result(EXESS_SUCCESS, i + 1);
 
   case 't':
     if (!strncmp(str + i, "true", 4)) {
       *out = true;
-      return end_read(EXESS_SUCCESS, str, i + 4U);
+      return result(EXESS_SUCCESS, i + 4U);
     }
     break;
 
   case 'f':
     if (!strncmp(str + i, "false", 5)) {
-      return end_read(EXESS_SUCCESS, str, i + 5U);
+      return result(EXESS_SUCCESS, i + 5U);
     }
     break;
 
@@ -42,7 +43,7 @@ exess_read_boolean(bool* const out, const char* const str)
     break;
   }
 
-  return end_read(r.status, str, r.count);
+  return result(r.status, r.count);
 }
 
 ExessResult

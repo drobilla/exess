@@ -98,8 +98,9 @@ test_read_time(void)
   check_read("13:20:45\v", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);
 
   // Trailing garbage
-  check_read("13:20:00junk", EXESS_EXPECTED_SIGN, 13, 20, 0, 0, 0, 0, false, 8);
-  check_read("13:20:00Zjunk", EXESS_EXPECTED_END, 13, 20, 0, 0, 0, 0, true, 9);
+  check_read("13:20:00junk", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 8);
+  check_read("13:20:00Zjunk", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, true, 9);
+  check_read("13:20:00A", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 8);
 
   // Too many nanosecond digits (expecting a timezone after 9 digits)
   check_read("01:02:03.123456789123",
@@ -124,7 +125,6 @@ test_read_time(void)
   check_read("25:25:10", EXESS_OUT_OF_RANGE, 25, 0, 0, 0, 0, 0, false, 2);
   check_read("-10:00:00", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, 0, false, 0);
   check_read("1:20:10", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, false, 1);
-  check_read("13:20:00A", EXESS_EXPECTED_SIGN, 13, 20, 0, 0, 0, 0, false, 8);
   check_read("13:20:00.", EXESS_EXPECTED_DIGIT, 13, 20, 0, 0, 0, 0, false, 9);
   check_read("24:01:00", EXESS_OUT_OF_RANGE, 24, 1, 0, 0, 0, 0, false, 5);
   check_read("24:00:01", EXESS_OUT_OF_RANGE, 24, 0, 1, 0, 0, 0, false, 8);

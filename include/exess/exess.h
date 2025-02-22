@@ -80,7 +80,6 @@ extern "C" {
 /// Status code to describe errors or other relevant situations
 typedef enum {
   EXESS_SUCCESS,                ///< Success
-  EXESS_EXPECTED_END,           ///< Expected end of value
   EXESS_EXPECTED_BOOLEAN,       ///< Expected "false", "true", "0" or "1"
   EXESS_EXPECTED_INTEGER,       ///< Expected an integer value
   EXESS_EXPECTED_DURATION,      ///< Expected a duration starting with 'P'

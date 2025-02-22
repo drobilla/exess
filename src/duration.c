@@ -52,13 +52,14 @@ read_duration_date(ExessDuration* const out, const char* const str)
   ExessStatus st         = EXESS_SUCCESS;
   unsigned    last_field = 0U;
 
-  while (!st && last_field < DAY && str[i] != 'T' && !is_end(str[i])) {
+  while (!st && last_field < DAY && str[i] != 'T') {
     // Read the unsigned integer value
     uint64_t          value = 0U;
     const ExessResult r     = read_digits(&value, str + i);
     i += r.count;
-    if (r.status > EXESS_EXPECTED_END) {
-      return result(r.status, i);
+    if (r.status) {
+      st = r.count ? r.status : EXESS_SUCCESS;
+      break;
     }
 
     // Read Y, M, or D field tag
@@ -86,13 +87,14 @@ read_duration_time(ExessDuration* const out, const char* const str)
   ExessStatus st         = EXESS_SUCCESS;
   unsigned    last_field = 0U;
 
-  while (!st && last_field <= SECOND && !is_end(str[i])) {
+  while (!st && last_field <= SECOND) {
     // Read the unsigned integer value
     uint64_t          value = 0U;
     const ExessResult r     = read_digits(&value, str + i);
     i += r.count;
-    if (r.status > EXESS_EXPECTED_END) {
-      return result(r.status, i);
+    if (r.status) {
+      st = r.count ? r.status : EXESS_SUCCESS;
+      break;
     }
 
     Field field = YEAR;
@@ -104,7 +106,7 @@ read_duration_time(ExessDuration* const out, const char* const str)
 
       const ExessResult s = read_nanoseconds(&nanoseconds, str + i);
       i += s.count;
-      if (!st && str[i] != 'S') {
+      if (str[i] != 'S') {
         return result(EXESS_EXPECTED_SECOND_TAG, i);
       }
 
@@ -168,10 +170,6 @@ exess_read_duration(ExessDuration* const out, const char* const str)
     }
 
     i += r.count;
-
-    if (!is_end(str[i]) && str[i] != 'T') {
-      return result(EXESS_EXPECTED_TIME_SEP, i);
-    }
   }
 
   if (str[i] == 'T') {
@@ -191,7 +189,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
     out->nanoseconds = -out->nanoseconds;
   }
 
-  return end_read(EXESS_SUCCESS, str, i);
+  return result(EXESS_SUCCESS, i);
 }
 
 static size_t

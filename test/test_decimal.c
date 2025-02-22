@@ -76,9 +76,9 @@ test_read_decimal(void)
   check_read("1.2345678901234567890", EXESS_SUCCESS, 1.2345678901234568, 21);
 
   // Special values
-  check_read("-0.0E0", EXESS_EXPECTED_END, -0.0, 4);
-  check_read("0.0E0", EXESS_EXPECTED_END, 0.0, 3);
-  check_read("+0.0E0", EXESS_EXPECTED_END, 0.0, 4);
+  check_read("-0.0E0", EXESS_SUCCESS, -0.0, 4);
+  check_read("0.0E0", EXESS_SUCCESS, 0.0, 3);
+  check_read("+0.0E0", EXESS_SUCCESS, 0.0, 4);
 
   // No exponent
   check_read("1", EXESS_SUCCESS, 1.0, 1);

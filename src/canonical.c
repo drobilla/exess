@@ -57,11 +57,6 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
   const size_t end =
     scan(is_digit, str, skip(is_point, str, point)); // Last digit
 
-  const ExessResult r = end_read(EXESS_SUCCESS, str, end);
-  if (r.status) {
-    return vresult(r.status, r.count, 0);
-  }
-
   // Ignore trailing zeros
   size_t last = end;
   if (str[point] == '.') {

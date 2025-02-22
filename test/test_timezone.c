@@ -109,9 +109,11 @@ test_read_timezone(void)
   check_read("-13:60", EXESS_OUT_OF_RANGE, 0, 0, false, 6);
   check_read("+13:60", EXESS_OUT_OF_RANGE, 0, 0, false, 6);
 
+  // Trailing garbage
+  check_read("05:00", EXESS_SUCCESS, 0, 0, false, 0);
+
   // Garbage
   check_read("+05:01", EXESS_UNSUPPORTED, 0, 0, false, 6);
-  check_read("05:00", EXESS_EXPECTED_SIGN, 0, 0, false, 0);
   check_read("+5:00", EXESS_EXPECTED_DIGIT, 0, 0, false, 2);
   check_read("+5:0", EXESS_EXPECTED_DIGIT, 0, 0, false, 2);
   check_read("+5:", EXESS_EXPECTED_DIGIT, 0, 0, false, 2);

@@ -142,11 +142,36 @@ test_read_duration(void)
              0,
              false);
 
+  // Trailing garbage
+  check_read("P1YM5D", EXESS_SUCCESS, 3, 1, 0, 0, 0, 0, 0, 0, false);
+
+  // Out of range fields
+  check_read("P18446744073709551616Y",
+             EXESS_OUT_OF_RANGE,
+             20,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             false);
+  check_read("PT18446744073709551616H",
+             EXESS_OUT_OF_RANGE,
+             21,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             false);
+
   // Garbage
   check_read("P-20M", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P20MT", EXESS_EXPECTED_DIGIT, 5, 0, 20, 0, 0, 0, 0, 0, false);
-  check_read("P1DX", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 1, 0, 0, 0, 0, false);
-  check_read("P1YM5D", EXESS_EXPECTED_DIGIT, 3, 1, 0, 0, 0, 0, 0, 0, false);
   check_read("P15.5Y", EXESS_EXPECTED_DATE_TAG, 3, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P1.5Y", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P1.5M", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
@@ -155,10 +180,10 @@ test_read_duration(void)
     "PT1.5H", EXESS_EXPECTED_SECOND_TAG, 5, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
     "PT1.5M", EXESS_EXPECTED_SECOND_TAG, 5, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read("P1D2H", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 1, 0, 0, 0, 0, false);
+  check_read("P1D2H", EXESS_SUCCESS, 3, 0, 0, 1, 0, 0, 0, 0, false);
   check_read("1Y2M", EXESS_EXPECTED_DURATION, 0, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P2M1Y", EXESS_BAD_ORDER, 5, 0, 2, 0, 0, 0, 0, 0, false);
-  check_read("P2D1Y", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 2, 0, 0, 0, 0, false);
+  check_read("P2D1Y", EXESS_SUCCESS, 3, 0, 0, 2, 0, 0, 0, 0, false);
   check_read("P", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
     "PT15.5H", EXESS_EXPECTED_SECOND_TAG, 6, 0, 0, 0, 0, 0, 0, 0, false);

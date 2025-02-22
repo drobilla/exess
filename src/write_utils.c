@@ -40,7 +40,7 @@ end_write(const ExessStatus status,
           char* const       buf,
           const size_t      i)
 {
-  ExessResult r = {status, status > EXESS_EXPECTED_END ? 0 : i};
+  ExessResult r = {status, status ? 0 : i};
 
   if (buf) {
     if (!status && i >= buf_size) {

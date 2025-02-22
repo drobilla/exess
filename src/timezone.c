@@ -32,7 +32,7 @@ exess_timezone(const int8_t hours, const int8_t minutes)
 }
 
 ExessResult
-read_timezone(ExessTimezone* const out, const char* const str)
+read_optional_timezone(ExessTimezone* const out, const char* const str)
 {
   *out = EXESS_LOCAL;
 
@@ -43,12 +43,12 @@ read_timezone(ExessTimezone* const out, const char* const str)
     return result(EXESS_SUCCESS, i + 1);
   }
 
-  // Read leading sign (required)
+  // Read leading sign
   int sign = 1;
   if (str[i] == '-') {
     sign = -1;
   } else if (str[i] != '+') {
-    return result(EXESS_EXPECTED_SIGN, i);
+    return result(EXESS_SUCCESS, i);
   }
 
   ++i;

@@ -77,10 +77,21 @@ For example:
 
 If there was a syntax error,
 the status code indicates the specific problem.
-If a value was read but didn't end at whitespace or the end of the string,
-the status :enumerator:`EXESS_EXPECTED_END` is returned.
-This indicates that there is trailing garbage in the string,
-so the parse may be incomplete or incorrect depending on the context.
+
+Note that read functions may simply stop at unexpected characters.
+This allows reading fragments from within some higher-level language,
+but leaves the caller responsible for checking that the read ended where expected.
+Proper error detection requires checking the returned count as well,
+for example:
+
+.. code-block:: c
+
+   bool is_null_terminated_int(const char* string) {
+     int32_t     v = 0;
+     ExessResult r = exess_read_int(&v, string);
+
+     return !r.status && !string[r.count];
+   }
 
 **************
 Writing Values
