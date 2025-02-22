@@ -81,7 +81,7 @@ test_round_trip(const ExessNumTestOptions opts)
       assert(!exess_read_int(&parsed_value, buf).status);
       assert(parsed_value == i);
 
-      print_num_test_progress((uint64_t)(i - (int64_t)INT32_MIN), UINT32_MAX);
+      print_num_test_progress((uint64_t)(i - opts.low), (uint64_t)opts.high);
     }
   } else {
     fprintf(stderr, "Testing xsd:int randomly with seed %u\n", opts.seed);

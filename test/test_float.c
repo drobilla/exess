@@ -190,7 +190,7 @@ test_round_trip(const ExessNumTestOptions opts)
       const float value = float_from_rep((uint32_t)i);
 
       check_round_trip(value);
-      print_num_test_progress((uint64_t)(i - (int64_t)INT32_MIN), UINT32_MAX);
+      print_num_test_progress((uint64_t)(i - opts.low), (uint64_t)opts.high);
     }
   } else {
     fprintf(stderr, "Testing xsd:float randomly with seed %u\n", opts.seed);
