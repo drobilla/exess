@@ -46,7 +46,7 @@ skip(bool (*pred)(const int), const char* const str, const size_t i)
 static ExessVariableResult
 write_decimal(const char* const str, const size_t buf_size, char* const buf)
 {
-  const size_t sign    = scan(is_space, str, 0);   // Sign
+  const size_t sign    = skip_whitespace(str);     // Sign
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (str[leading] != '.' && !is_digit(str[leading])) {
     return vresult(EXESS_EXPECTED_DIGIT, sign, 0);
@@ -108,7 +108,7 @@ write_integer(const ExessDatatype datatype,
               const size_t        buf_size,
               char* const         buf)
 {
-  const size_t sign = scan(is_space, str, 0); // Sign
+  const size_t sign = skip_whitespace(str); // Sign
 
   if ((str[sign] == '-' && (datatype == EXESS_NON_NEGATIVE_INTEGER ||
                             datatype == EXESS_POSITIVE_INTEGER)) ||
@@ -181,14 +181,14 @@ write_date_time(const char* const str, const size_t buf_size, char* const buf)
 static ExessVariableResult
 write_hex(const char* const str, const size_t buf_size, char* const buf)
 {
-  size_t i = 0;
+  size_t i = skip_whitespace(str);
   size_t o = 0;
 
   for (; str[i]; ++i) {
     if (is_hexdig(str[i])) {
       o += write_char(str[i], buf_size, buf, o);
-    } else if (!is_space(str[i])) {
-      return vresult(EXESS_EXPECTED_HEX, i, o);
+    } else {
+      break;
     }
   }
 
@@ -206,7 +206,7 @@ write_base64(const char* const str, const size_t buf_size, char* const buf)
     if (is_base64(str[i])) {
       o += write_char(str[i], buf_size, buf, o);
     } else if (!is_space(str[i])) {
-      return vresult(EXESS_EXPECTED_BASE64, i, o);
+      break;
     }
   }
 

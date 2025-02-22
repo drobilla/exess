@@ -59,14 +59,14 @@ static void
 test_whitespace(void)
 {
   check(8, "Zm9vYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(9, " Zm9vYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(9, "Z\fm9vYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(9, "Zm\n9vYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(9, "Zm9\rvYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "\tZm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Z\nm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm\r9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm9 vYmFy", EXESS_SUCCESS, 6, "foobar");
   check(9, "Zm9v\tYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(9, "Zm9vY\vmFy", EXESS_SUCCESS, 6, "foobar");
-  check(14, " \f\n\r\t\vZm9vYmFy", EXESS_SUCCESS, 6, "foobar");
-  check(14, "Zm9vYmFy \f\n\r\t\v", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm9vY\nmFy", EXESS_SUCCESS, 6, "foobar");
+  check(12, "\t\n\r Zm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(12, "Zm9vYmFy\t\n\r ", EXESS_SUCCESS, 6, "foobar");
 }
 
 static void

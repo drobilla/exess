@@ -79,8 +79,7 @@ test_read_duration(void)
 {
   // No input
   check_read("", EXESS_EXPECTED_DURATION, 0, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read(
-    " \f\n\r\t\v", EXESS_EXPECTED_DURATION, 6, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("\t\n\r ", EXESS_EXPECTED_DURATION, 4, 0, 0, 0, 0, 0, 0, 0, false);
 
   // Good values
 
@@ -97,10 +96,10 @@ test_read_duration(void)
     "PT1M30.5S", EXESS_SUCCESS, 9, 0, 0, 0, 0, 1, 30, 500000000, false);
 
   // Leading and trailing whitespace
-  check_read(" \f\n\r\t\vP1Y", EXESS_SUCCESS, 9, 1, 0, 0, 0, 0, 0, 0, false);
-  check_read("P1MT2H \f\n\r\t\v", EXESS_SUCCESS, 6, 0, 1, 0, 2, 0, 0, 0, false);
-  check_read(" \f\n\r\t\vP1Y", EXESS_SUCCESS, 9, 1, 0, 0, 0, 0, 0, 0, false);
-  check_read("P1YT2H \f\n\r\t\v", EXESS_SUCCESS, 6, 1, 0, 0, 2, 0, 0, 0, false);
+  check_read("\t\n\r P1Y", EXESS_SUCCESS, 7, 1, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1MT2H\t\n\r ", EXESS_SUCCESS, 6, 0, 1, 0, 2, 0, 0, 0, false);
+  check_read("\t\n\r P1Y", EXESS_SUCCESS, 7, 1, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1YT2H\t\n\r ", EXESS_SUCCESS, 6, 1, 0, 0, 2, 0, 0, 0, false);
 
   // Non-canonical form
   check_read("P06D", EXESS_SUCCESS, 4, 0, 0, 6, 0, 0, 0, 0, false);

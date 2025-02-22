@@ -57,7 +57,7 @@ test_read_time(void)
 {
   // No value
   check_read("", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, 0, false, 0);
-  check_read(" \f\n\r\t\v", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, 0, false, 6);
+  check_read("\t\n\r ", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, 0, false, 4);
 
   // Good values
   check_read("13:20:00", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 8);
@@ -87,8 +87,7 @@ test_read_time(void)
              EXESS_MAX_TIME_LENGTH);
 
   // Non-canonical form
-  check_read(
-    " \f\n\r\t\v13:20:00 ", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 14);
+  check_read("\t\n\r 13:20:00 ", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, false, 12);
 
   // Trailing whitespace
   check_read("13:20:45 ", EXESS_SUCCESS, 13, 20, 45, 0, 0, 0, false, 8);

@@ -29,7 +29,7 @@ test_read_long(void)
 {
   // No input
   check_read("", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read(" \f\n\r\t\v", EXESS_EXPECTED_DIGIT, 0, 6);
+  check_read("\t\n\r ", EXESS_EXPECTED_DIGIT, 0, 4);
 
   // Canonical form
   check_read("-1", EXESS_SUCCESS, -1, 2);
@@ -39,11 +39,11 @@ test_read_long(void)
   check_read("-1234", EXESS_SUCCESS, -1234, 5);
 
   // Non-canonical form
-  check_read(" \f\n\r\t\v1234 ", EXESS_SUCCESS, 1234, 10);
-  check_read(" \f\n\r\t\v-1234 ", EXESS_SUCCESS, -1234, 11);
-  check_read(" \f\n\r\t\v+1234 ", EXESS_SUCCESS, 1234, 11);
-  check_read(" \f\n\r\t\v01234 ", EXESS_SUCCESS, 1234, 11);
-  check_read(" \f\n\r\t\v-01234 ", EXESS_SUCCESS, -1234, 12);
+  check_read("\t\n\r 1234 ", EXESS_SUCCESS, 1234, 8);
+  check_read("\t\n\r -1234 ", EXESS_SUCCESS, -1234, 9);
+  check_read("\t\n\r +1234 ", EXESS_SUCCESS, 1234, 9);
+  check_read("\t\n\r 01234 ", EXESS_SUCCESS, 1234, 9);
+  check_read("\t\n\r -01234 ", EXESS_SUCCESS, -1234, 10);
   check_read("-01", EXESS_SUCCESS, -1, 3);
   check_read("-0", EXESS_SUCCESS, 0, 2);
   check_read("-00", EXESS_SUCCESS, 0, 3);

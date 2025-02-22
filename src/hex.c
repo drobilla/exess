@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -32,14 +32,6 @@ decode_nibble(const char c)
   return UINT8_MAX;
 }
 
-static char
-next_char(const char* const str, size_t* const i)
-{
-  *i += skip_whitespace(str + *i);
-
-  return str[*i];
-}
-
 size_t
 exess_decoded_hex_size(const size_t length)
 {
@@ -49,24 +41,21 @@ exess_decoded_hex_size(const size_t length)
 ExessVariableResult
 exess_read_hex(const size_t out_size, void* const out, const char* const str)
 {
-  uint8_t* const uout = (uint8_t*)out;
-  size_t         i    = 0U;
-  size_t         o    = 0U;
+  uint8_t* const uout  = (uint8_t*)out;
+  const size_t   first = skip_whitespace(str);
+  size_t         i     = first;
+  size_t         o     = 0U;
 
   while (str[i]) {
-    const char hi_char = next_char(str, &i);
-    if (!hi_char) {
-      break;
-    }
-
-    const uint8_t hi = decode_nibble(hi_char);
+    const char    hi_char = str[i];
+    const uint8_t hi      = decode_nibble(hi_char);
     if (hi == UINT8_MAX) {
-      return vresult(EXESS_EXPECTED_HEX, i, o);
+      return vresult(i == first ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, i, o);
     }
 
     ++i;
 
-    const char lo_char = next_char(str, &i);
+    const char lo_char = str[i];
     if (!lo_char) {
       return vresult(EXESS_EXPECTED_HEX, i, o);
     }

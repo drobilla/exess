@@ -53,7 +53,7 @@ test_read_date(void)
 {
   // No input
   check_read("", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, false, 0);
-  check_read(" \f\n\r\t\v", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, false, 6);
+  check_read("\t\n\r ", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, false, 4);
 
   // Good values
   check_read("2004-04-12", EXESS_SUCCESS, 2004, 4, 12, 0, 0, false, 10);

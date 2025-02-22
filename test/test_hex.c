@@ -53,13 +53,12 @@ static void
 test_whitespace(void)
 {
   check(6, "666F6F", EXESS_SUCCESS, 3, "foo");
-  check(7, " 666F6F", EXESS_SUCCESS, 3, "foo");
-  check(7, "6\f66F6F", EXESS_SUCCESS, 3, "foo");
-  check(7, "66\n6F6F", EXESS_SUCCESS, 3, "foo");
-  check(7, "666\rF6F", EXESS_SUCCESS, 3, "foo");
-  check(7, "666F\t6F", EXESS_SUCCESS, 3, "foo");
-  check(12, " \f\n\r\t\v666F6F", EXESS_SUCCESS, 3, "foo");
-  check(12, "666F6F \f\n\r\t\v", EXESS_SUCCESS, 3, "foo");
+  check(10, "\t\n\r 666F6F", EXESS_SUCCESS, 3, "foo");
+  check(6, "666F6F\t\n\r ", EXESS_SUCCESS, 3, "foo");
+  check(1, "6\f66F6F", EXESS_EXPECTED_HEX, 0, NULL);
+  check(2, "66\n6F6F", EXESS_SUCCESS, 1, "f");
+  check(3, "666\rF6F", EXESS_EXPECTED_HEX, 1, "f");
+  check(4, "666F\t6F", EXESS_SUCCESS, 2, "fo");
 }
 
 static void
@@ -74,8 +73,6 @@ test_syntax_errors(void)
   check(1, "6!", EXESS_EXPECTED_HEX, 0, NULL);
   check(1, "6^", EXESS_EXPECTED_HEX, 0, NULL);
   check(1, "6", EXESS_EXPECTED_HEX, 0, NULL);
-  check(2, "66G6", EXESS_EXPECTED_HEX, 1, "f");
-  check(3, "66 G6", EXESS_EXPECTED_HEX, 1, "f");
 }
 
 static void

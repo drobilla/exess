@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_STRING_UTILS_H
@@ -13,12 +13,11 @@ in_range(const int c, const int min, const int max)
   return (c >= min && c <= max);
 }
 
-/// Return true if `c` is a whitespace character
+/// Return true if `c` is a whitespace character according to XSD
 static inline bool
 is_space(const int c)
 {
-  return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
-         c == '\v';
+  return c == '\t' || c == '\n' || c == '\r' || c == ' ';
 }
 
 /// ALPHA ::= [A-Za-z]

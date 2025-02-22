@@ -36,7 +36,7 @@ test_read_decimal(void)
 {
   // No value
   check_read("", EXESS_EXPECTED_DIGIT, (double)NAN, 0);
-  check_read(" \f\n\r\t\v", EXESS_EXPECTED_DIGIT, (double)NAN, 6);
+  check_read("\t\n\r ", EXESS_EXPECTED_DIGIT, (double)NAN, 4);
 
   // Basic values
   check_read("1.2", EXESS_SUCCESS, 1.2, 3);
@@ -44,7 +44,7 @@ test_read_decimal(void)
   check_read("10.0", EXESS_SUCCESS, 10.0, 4);
 
   // Non-canonical form
-  check_read(" \f\n\r\t\v42.24 ", EXESS_SUCCESS, 42.24, 11);
+  check_read("\t\n\r 42.24 ", EXESS_SUCCESS, 42.24, 9);
   check_read("12.", EXESS_SUCCESS, 12., 3);
   check_read(".34", EXESS_SUCCESS, 0.34, 3);
   check_read("+.56", EXESS_SUCCESS, 0.56, 4);

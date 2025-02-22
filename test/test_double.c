@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -70,7 +70,7 @@ test_read_double(void)
   check_read("-4.5", EXESS_SUCCESS, -4.5, 4);
 
   // Leading whitespace
-  check_read(" \f\n\r\t\v1.2", EXESS_SUCCESS, 1.2, 9);
+  check_read("\t\n\r 1.2", EXESS_SUCCESS, 1.2, 7);
 
   // Garbage
   check_read("true", EXESS_EXPECTED_DIGIT, (double)NAN, 0);

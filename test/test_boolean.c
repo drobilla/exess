@@ -29,7 +29,7 @@ test_read_boolean(void)
 {
   // No input
   check_read("", EXESS_EXPECTED_BOOLEAN, false, 0);
-  check_read(" \f\n\r\t\v", EXESS_EXPECTED_BOOLEAN, false, 6);
+  check_read("\t\n\r ", EXESS_EXPECTED_BOOLEAN, false, 4);
 
   // Canonical form
   check_read("false", EXESS_SUCCESS, false, 5);
@@ -38,10 +38,10 @@ test_read_boolean(void)
   // Non-canonical form
   check_read("0", EXESS_SUCCESS, false, 1);
   check_read("1", EXESS_SUCCESS, true, 1);
-  check_read(" \f\n\r\t\vfalse ", EXESS_SUCCESS, false, 11);
-  check_read(" \f\n\r\t\vtrue ", EXESS_SUCCESS, true, 10);
-  check_read(" \f\n\r\t\v0 ", EXESS_SUCCESS, false, 7);
-  check_read(" \f\n\r\t\v1 ", EXESS_SUCCESS, true, 7);
+  check_read("\t\n\r false ", EXESS_SUCCESS, false, 9);
+  check_read("\t\n\r true ", EXESS_SUCCESS, true, 8);
+  check_read("\t\n\r 0 ", EXESS_SUCCESS, false, 5);
+  check_read("\t\n\r 1 ", EXESS_SUCCESS, true, 5);
 
   // Trailing garbage
   check_read("falsely", EXESS_EXPECTED_END, false, 5);

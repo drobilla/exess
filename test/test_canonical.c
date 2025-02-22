@@ -30,8 +30,13 @@ check(const ExessDatatype datatype,
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
   assert(r.write_count == expected_write_count);
-  assert(expected_write_count == strlen(buf));
-  assert(!strcmp(buf, expected_string));
+  if (expected_write_count > 0) {
+    assert(expected_write_count == strlen(buf));
+    assert(!strcmp(buf, expected_string));
+  } else {
+    assert(!buf[0]);
+  }
+
   assert((r.status && r.status != EXESS_EXPECTED_END) ||
          exess_write_canonical(value, datatype, 0, NULL).write_count ==
            r.write_count);
@@ -41,7 +46,7 @@ static void
 test_decimal(void)
 {
   check(EXESS_DECIMAL, 0, "", EXESS_EXPECTED_DIGIT, 0, "");
-  check(EXESS_DECIMAL, 6, " \f\n\r\t\v", EXESS_EXPECTED_DIGIT, 0, "");
+  check(EXESS_DECIMAL, 4, "\t\n\r ", EXESS_EXPECTED_DIGIT, 0, "");
 
   check(EXESS_DECIMAL, 5, " -001 ", EXESS_SUCCESS, 4, "-1.0");
   check(EXESS_DECIMAL, 5, " -000 ", EXESS_SUCCESS, 4, "-0.0");
@@ -152,7 +157,7 @@ static void
 test_integer(void)
 {
   check(EXESS_INTEGER, 0, "", EXESS_EXPECTED_DIGIT, 0, "");
-  check(EXESS_INTEGER, 6, " \f\n\r\t\v", EXESS_EXPECTED_DIGIT, 0, "");
+  check(EXESS_INTEGER, 4, "\t\n\r ", EXESS_EXPECTED_DIGIT, 0, "");
 
   // Integer
 
@@ -416,13 +421,15 @@ test_date_time(void)
 static void
 test_binary(void)
 {
-  check(EXESS_HEX, 14, " D EA  D B3 3F", EXESS_SUCCESS, 8, "DEADB33F");
-  check(EXESS_HEX, 0, "invalid", EXESS_EXPECTED_HEX, 0, "");
-  check(EXESS_HEX, 5, "1A2B3", EXESS_EXPECTED_HEX, 0, "");
-  check(EXESS_HEX, 1, "1", EXESS_EXPECTED_HEX, 0, "");
-  check(EXESS_HEX, 0, "", EXESS_EXPECTED_HEX, 0, "");
+  check(EXESS_HEX, 8, "DEADB33F", EXESS_SUCCESS, 8, "DEADB33F");
+  check(EXESS_HEX, 12, "\t\n\r DEADB33F", EXESS_SUCCESS, 8, "DEADB33F");
+  check(EXESS_HEX, 2, " D EA  D B3 3F", EXESS_EXPECTED_HEX, 0, NULL);
+  check(EXESS_HEX, 0, "invalid", EXESS_EXPECTED_HEX, 0, NULL);
+  check(EXESS_HEX, 5, "1A2B3", EXESS_EXPECTED_HEX, 0, NULL);
+  check(EXESS_HEX, 1, "1", EXESS_EXPECTED_HEX, 0, NULL);
+  check(EXESS_HEX, 0, "", EXESS_EXPECTED_HEX, 0, NULL);
 
-  check(EXESS_BASE64, 14, " Z\fm\n9\rv\tY\vmFy", EXESS_SUCCESS, 8, "Zm9vYmFy");
+  check(EXESS_BASE64, 14, "\tZ\nm\r9 v\tY\nmFy", EXESS_SUCCESS, 8, "Zm9vYmFy");
   check(EXESS_BASE64, 0, "!nvalid", EXESS_EXPECTED_BASE64, 0, "");
   check(EXESS_BASE64, 1, "Z", EXESS_EXPECTED_BASE64, 0, "");
   check(EXESS_BASE64, 2, "Zm", EXESS_EXPECTED_BASE64, 0, "");
