@@ -55,7 +55,7 @@ set_field(ExessDuration* const out,
 }
 
 static ExessResult
-read_date(ExessDuration* const out, const char* const str)
+read_duration_date(ExessDuration* const out, const char* const str)
 {
   size_t      i          = 0U;
   ExessStatus st         = EXESS_SUCCESS;
@@ -89,7 +89,7 @@ read_date(ExessDuration* const out, const char* const str)
 }
 
 static ExessResult
-read_time(ExessDuration* const out, const char* const str)
+read_duration_time(ExessDuration* const out, const char* const str)
 {
   size_t      i          = 0U;
   ExessStatus st         = EXESS_SUCCESS;
@@ -171,7 +171,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
 
   ++i;
   if (str[i] != 'T') {
-    ExessResult r = read_date(out, str + i);
+    ExessResult r = read_duration_date(out, str + i);
     if (r.status) {
       return result(r.status, i + r.count);
     }
@@ -186,7 +186,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
   if (str[i] == 'T') {
     ++i;
 
-    ExessResult r = read_time(out, str + i);
+    ExessResult r = read_duration_time(out, str + i);
     if (r.status) {
       return result(r.status, i + r.count);
     }

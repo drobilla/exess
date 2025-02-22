@@ -46,12 +46,10 @@ read_nanoseconds(uint32_t* const out, const char* const str)
 }
 
 ExessResult
-exess_read_time(ExessTime* const out, const char* const str)
+read_time(ExessTime* const out, const char* const str)
 {
-  memset(out, 0, sizeof(*out));
-
   // Read hour
-  size_t      i = skip_whitespace(str);
+  size_t      i = 0;
   ExessResult r = read_two_digit_number(&out->hour, 0, 24, str + i);
   if (r.status) {
     return result(r.status, i + r.count);
@@ -100,6 +98,18 @@ exess_read_time(ExessTime* const out, const char* const str)
   }
 
   return end_read(r.status, str, i);
+}
+
+ExessResult
+exess_read_time(ExessTime* const out, const char* const str)
+{
+  memset(out, 0, sizeof(*out));
+
+  size_t      i = skip_whitespace(str);
+  ExessResult r = read_time(out, str + i);
+
+  r.count += i;
+  return r;
 }
 
 size_t
