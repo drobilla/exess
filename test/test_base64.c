@@ -12,22 +12,21 @@
 #include <string.h>
 
 static void
-check_read(const char* const string,
-           const ExessStatus expected_status,
-           const size_t      expected_value_length,
-           const char* const expected_value,
-           const size_t      expected_value_size,
-           const size_t      expected_count)
+check(const size_t      expected_read_count,
+      const char* const string,
+      const ExessStatus expected_status,
+      const size_t      expected_write_count,
+      const char* const expected_value)
 {
   char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
   ExessVariableResult r = exess_read_base64(sizeof(buf), buf, string);
   assert(r.status == expected_status);
-  assert(r.read_count == expected_count);
-  assert(r.status || r.write_count == expected_value_size);
+  assert(r.read_count == expected_read_count);
+  assert(r.write_count == expected_write_count);
   assert(r.write_count > 0 || buf[0] == 1);
-  if (expected_value_length > 0) {
-    assert(!strncmp(buf, expected_value, expected_value_length));
+  if (expected_write_count > 0) {
+    assert(!strncmp(buf, expected_value, expected_write_count));
     assert(r.write_count <= exess_decoded_base64_size(strlen(string)));
   }
 }
@@ -59,36 +58,36 @@ test_rfc4648_cases(void)
 static void
 test_whitespace(void)
 {
-  check_read("Zm9vYmFy", EXESS_SUCCESS, 6, "foobar", 6, 8);
-  check_read(" Zm9vYmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read("Z\fm9vYmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read("Zm\n9vYmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read("Zm9\rvYmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read("Zm9v\tYmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read("Zm9vY\vmFy", EXESS_SUCCESS, 6, "foobar", 6, 9);
-  check_read(" \f\n\r\t\vZm9vYmFy", EXESS_SUCCESS, 6, "foobar", 6, 14);
-  check_read("Zm9vYmFy \f\n\r\t\v", EXESS_SUCCESS, 6, "foobar", 6, 14);
+  check(8, "Zm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, " Zm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Z\fm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm\n9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm9\rvYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm9v\tYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(9, "Zm9vY\vmFy", EXESS_SUCCESS, 6, "foobar");
+  check(14, " \f\n\r\t\vZm9vYmFy", EXESS_SUCCESS, 6, "foobar");
+  check(14, "Zm9vYmFy \f\n\r\t\v", EXESS_SUCCESS, 6, "foobar");
 }
 
 static void
 test_syntax_errors(void)
 {
-  check_read("Z", EXESS_EXPECTED_BASE64, 0, NULL, 0, 1);
-  check_read("ZZ", EXESS_EXPECTED_BASE64, 0, NULL, 0, 2);
-  check_read("ZZZ", EXESS_EXPECTED_BASE64, 0, NULL, 0, 3);
+  check(1, "Z", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(2, "ZZ", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(3, "ZZZ", EXESS_EXPECTED_BASE64, 0, NULL);
 
-  check_read("=ZZZ", EXESS_BAD_VALUE, 0, NULL, 0, 4);
-  check_read("Z=ZZ", EXESS_BAD_VALUE, 0, NULL, 0, 4);
-  check_read("ZZ=Z", EXESS_BAD_VALUE, 0, NULL, 0, 4);
+  check(4, "=ZZZ", EXESS_BAD_VALUE, 0, NULL);
+  check(4, "Z=ZZ", EXESS_BAD_VALUE, 0, NULL);
+  check(4, "ZZ=Z", EXESS_BAD_VALUE, 0, NULL);
 
-  check_read("!m9vYmFy", EXESS_EXPECTED_BASE64, 0, NULL, 0, 0);
-  check_read("Z!9vYmFy", EXESS_EXPECTED_BASE64, 0, NULL, 0, 1);
-  check_read("Zm!vYmFy", EXESS_EXPECTED_BASE64, 0, NULL, 0, 2);
-  check_read("Zm9!YmFy", EXESS_EXPECTED_BASE64, 0, NULL, 0, 3);
-  check_read("Zm9v!mFy", EXESS_EXPECTED_BASE64, 0, NULL, 3, 4);
-  check_read("Zm9vY!Fy", EXESS_EXPECTED_BASE64, 0, NULL, 3, 5);
-  check_read("Zm9vYm!y", EXESS_EXPECTED_BASE64, 0, NULL, 3, 6);
-  check_read("Zm9vYmF!", EXESS_EXPECTED_BASE64, 0, NULL, 3, 7);
+  check(0, "!m9vYmFy", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(1, "Z!9vYmFy", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(2, "Zm!vYmFy", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(3, "Zm9!YmFy", EXESS_EXPECTED_BASE64, 0, NULL);
+  check(4, "Zm9v!mFy", EXESS_EXPECTED_BASE64, 3, "foo");
+  check(5, "Zm9vY!Fy", EXESS_EXPECTED_BASE64, 3, "foo");
+  check(6, "Zm9vYm!y", EXESS_EXPECTED_BASE64, 3, "foo");
+  check(7, "Zm9vYmF!", EXESS_EXPECTED_BASE64, 3, "foo");
 }
 
 static void

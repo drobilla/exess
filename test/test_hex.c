@@ -12,22 +12,21 @@
 #include <string.h>
 
 static void
-check_read(const char* const string,
-           const ExessStatus expected_status,
-           const size_t      expected_value_length,
-           const char* const expected_value,
-           const size_t      expected_value_size,
-           const size_t      expected_count)
+check(const size_t      expected_read_count,
+      const char* const string,
+      const ExessStatus expected_status,
+      const size_t      expected_write_count,
+      const char* const expected_value)
 {
   char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
   ExessVariableResult r = exess_read_hex(sizeof(buf), buf, string);
   assert(r.status == expected_status);
-  assert(r.read_count == expected_count);
-  assert(r.status || r.write_count == expected_value_size);
+  assert(r.read_count == expected_read_count);
+  assert(r.write_count == expected_write_count);
   assert(r.write_count > 0 || buf[0] == 1);
-  if (expected_value_length > 0) {
-    assert(!strncmp(buf, expected_value, expected_value_length));
+  if (expected_write_count > 0) {
+    assert(!strncmp(buf, expected_value, expected_write_count));
     assert(r.write_count <= exess_decoded_hex_size(strlen(string)));
   }
 }
@@ -53,30 +52,30 @@ test_lowercase(void)
 static void
 test_whitespace(void)
 {
-  check_read("666F6F", EXESS_SUCCESS, 3, "foo", 3, 6);
-  check_read(" 666F6F", EXESS_SUCCESS, 3, "foo", 3, 7);
-  check_read("6\f66F6F", EXESS_SUCCESS, 3, "foo", 3, 7);
-  check_read("66\n6F6F", EXESS_SUCCESS, 3, "foo", 3, 7);
-  check_read("666\rF6F", EXESS_SUCCESS, 3, "foo", 3, 7);
-  check_read("666F\t6F", EXESS_SUCCESS, 3, "foo", 3, 7);
-  check_read(" \f\n\r\t\v666F6F", EXESS_SUCCESS, 3, "foo", 3, 12);
-  check_read("666F6F \f\n\r\t\v", EXESS_SUCCESS, 3, "foo", 3, 12);
+  check(6, "666F6F", EXESS_SUCCESS, 3, "foo");
+  check(7, " 666F6F", EXESS_SUCCESS, 3, "foo");
+  check(7, "6\f66F6F", EXESS_SUCCESS, 3, "foo");
+  check(7, "66\n6F6F", EXESS_SUCCESS, 3, "foo");
+  check(7, "666\rF6F", EXESS_SUCCESS, 3, "foo");
+  check(7, "666F\t6F", EXESS_SUCCESS, 3, "foo");
+  check(12, " \f\n\r\t\v666F6F", EXESS_SUCCESS, 3, "foo");
+  check(12, "666F6F \f\n\r\t\v", EXESS_SUCCESS, 3, "foo");
 }
 
 static void
 test_syntax_errors(void)
 {
-  check_read("G6", EXESS_EXPECTED_HEX, 0, NULL, 0, 1);
-  check_read("g6", EXESS_EXPECTED_HEX, 0, NULL, 0, 1);
-  check_read("!6", EXESS_EXPECTED_HEX, 0, NULL, 0, 1);
-  check_read("^6", EXESS_EXPECTED_HEX, 0, NULL, 0, 1);
-  check_read("6G", EXESS_EXPECTED_HEX, 0, NULL, 0, 2);
-  check_read("6g", EXESS_EXPECTED_HEX, 0, NULL, 0, 2);
-  check_read("6!", EXESS_EXPECTED_HEX, 0, NULL, 0, 2);
-  check_read("6^", EXESS_EXPECTED_HEX, 0, NULL, 0, 2);
-  check_read("6", EXESS_EXPECTED_HEX, 0, NULL, 0, 1);
-  check_read("66G6", EXESS_EXPECTED_HEX, 0, NULL, 1, 3);
-  check_read("66 G6", EXESS_EXPECTED_HEX, 0, NULL, 1, 4);
+  check(0, "G6", EXESS_EXPECTED_HEX, 0, NULL);
+  check(0, "g6", EXESS_EXPECTED_HEX, 0, NULL);
+  check(0, "!6", EXESS_EXPECTED_HEX, 0, NULL);
+  check(0, "^6", EXESS_EXPECTED_HEX, 0, NULL);
+  check(1, "6G", EXESS_EXPECTED_HEX, 0, NULL);
+  check(1, "6g", EXESS_EXPECTED_HEX, 0, NULL);
+  check(1, "6!", EXESS_EXPECTED_HEX, 0, NULL);
+  check(1, "6^", EXESS_EXPECTED_HEX, 0, NULL);
+  check(1, "6", EXESS_EXPECTED_HEX, 0, NULL);
+  check(2, "66G6", EXESS_EXPECTED_HEX, 1, "f");
+  check(3, "66 G6", EXESS_EXPECTED_HEX, 1, "f");
 }
 
 static void

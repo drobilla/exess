@@ -59,24 +59,24 @@ exess_read_hex(const size_t out_size, void* const out, const char* const str)
       break;
     }
 
-    ++i;
-
     const uint8_t hi = decode_nibble(hi_char);
     if (hi == UINT8_MAX) {
       return vresult(EXESS_EXPECTED_HEX, i, o);
     }
+
+    ++i;
 
     const char lo_char = next_char(str, &i);
     if (!lo_char) {
       return vresult(EXESS_EXPECTED_HEX, i, o);
     }
 
-    ++i;
-
     const uint8_t lo = decode_nibble(lo_char);
     if (lo == UINT8_MAX) {
       return vresult(EXESS_EXPECTED_HEX, i, o);
     }
+
+    ++i;
 
     if (o >= out_size) {
       return vresult(EXESS_NO_SPACE, i, o);
