@@ -45,8 +45,21 @@ exess_read_ulong(uint64_t* const out, const char* const str)
 {
   *out = 0;
 
-  const size_t i = skip_whitespace(str);
-  ExessResult  r = read_digits(out, str + i);
+  // Skip leading whitespace and read sign if present
+  size_t i    = skip_whitespace(str);
+  int    sign = 1;
+  i += read_sign(&sign, &str[i]);
+
+  if (sign == -1) {
+    size_t j = i;
+    while (str[j] == '0') {
+      ++j;
+    }
+
+    return end_read((j == i) ? EXESS_EXPECTED_ZERO : EXESS_SUCCESS, str, j);
+  }
+
+  ExessResult r = read_digits(out, str + i);
 
   r.count += i;
   return r;

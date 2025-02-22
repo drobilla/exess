@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -37,9 +37,13 @@ test_read_ulong(void)
 
   // Non-canonical form
   check_read(" \f\n\r\t\v1234 ", EXESS_SUCCESS, 1234, 10);
+  check_read(" \f\n\r\t\v+1234 ", EXESS_SUCCESS, 1234, 11);
   check_read(" \f\n\r\t\v01234 ", EXESS_SUCCESS, 1234, 11);
+  check_read("+1234", EXESS_SUCCESS, 1234, 5);
   check_read("01234", EXESS_SUCCESS, 1234, 5);
   check_read("00", EXESS_SUCCESS, 0, 2);
+  check_read("+0", EXESS_SUCCESS, 0, 2);
+  check_read("-0", EXESS_SUCCESS, 0, 2);
 
   // Limits
   check_read("0", EXESS_SUCCESS, 0, 1);
@@ -53,17 +57,15 @@ test_read_ulong(void)
   check_read("1234extra", EXESS_EXPECTED_END, 1234, 4);
 
   // Garbage
-  check_read(" \f\n\r\t\v+1234 ", EXESS_EXPECTED_DIGIT, 0, 6);
-  check_read("+1234", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read("+0", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read("+", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read("-", EXESS_EXPECTED_DIGIT, 0, 0);
+  check_read("+", EXESS_EXPECTED_DIGIT, 0, 1);
+  check_read("-", EXESS_EXPECTED_ZERO, 0, 1);
+  check_read("-1", EXESS_EXPECTED_ZERO, 0, 1);
   check_read("true", EXESS_EXPECTED_DIGIT, 0, 0);
   check_read("false", EXESS_EXPECTED_DIGIT, 0, 0);
   check_read("zero", EXESS_EXPECTED_DIGIT, 0, 0);
   check_read("NaN", EXESS_EXPECTED_DIGIT, 0, 0);
   check_read("INF", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read("-INF", EXESS_EXPECTED_DIGIT, 0, 0);
+  check_read("-INF", EXESS_EXPECTED_ZERO, 0, 1);
 }
 
 static void

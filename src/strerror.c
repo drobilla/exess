@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -14,6 +14,7 @@ exess_strerror(const ExessStatus status)
     "Expected a duration starting with 'P'",
     "Expected '-' or '+'",
     "Expected a digit",
+    "Expected '0'",
     "Expected ':'",
     "Expected '-'",
     "Expected 'T'",

@@ -86,6 +86,7 @@ typedef enum {
   EXESS_EXPECTED_DURATION,      ///< Expected a duration starting with 'P'
   EXESS_EXPECTED_SIGN,          ///< Expected '-' or '+'
   EXESS_EXPECTED_DIGIT,         ///< Expected a digit
+  EXESS_EXPECTED_ZERO,          ///< Expected '0'
   EXESS_EXPECTED_COLON,         ///< Expected ':'
   EXESS_EXPECTED_DASH,          ///< Expected '-'
   EXESS_EXPECTED_TIME_SEP,      ///< Expected 'T'
@@ -500,8 +501,8 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
    Canonical form has no leading "+" sign and no leading zeros (except for the
    number "0"), like "0", and "1234".
 
-   Non-canonical form allows any number of leading zeros, like "01" and
-   "0001234".
+   Non-canonical form allows a leading "+", a leading "-" for zero, and
+   any number of leading zeros, like "01" and "0001234".
 
    @{
 */

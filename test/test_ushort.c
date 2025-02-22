@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -35,8 +35,9 @@ test_read_ushort(void)
   check_read("65536", EXESS_OUT_OF_RANGE, 0, 5);
 
   // Garbage
-  check_read("-1", EXESS_EXPECTED_DIGIT, 0, 0);
-  check_read("+", EXESS_EXPECTED_DIGIT, 0, 0);
+  check_read("E", EXESS_EXPECTED_DIGIT, 0, 0);
+  check_read("-1", EXESS_EXPECTED_ZERO, 0, 1);
+  check_read("+", EXESS_EXPECTED_DIGIT, 0, 1);
 }
 
 static void

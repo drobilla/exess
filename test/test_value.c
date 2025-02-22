@@ -125,7 +125,8 @@ test_read_value(void)
   }
   {
     uint64_t a_ulong = 0U;
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "-1", EXESS_EXPECTED_DIGIT, 0);
+    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "E", EXESS_EXPECTED_DIGIT, 0);
+    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "-1", EXESS_EXPECTED_ZERO, 1);
     check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "0", EXESS_OUT_OF_RANGE, 1);
     check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "18", EXESS_SUCCESS, 2);
     assert(a_ulong == 18U);
