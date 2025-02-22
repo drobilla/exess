@@ -67,7 +67,7 @@ man_links = {
     'exess_strerror.3',
   ],
 
-  'exess_symbols.3': ['EXESS_XSD_URI.3'],
+  'exess_symbols.3': ['EXESS_XSD_URI.3', 'ExessOrder.3'],
 
   'exess_time.3': [
     'ExessTime.3',

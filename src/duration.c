@@ -131,19 +131,58 @@ read_duration_time(ExessDuration* const out, const char* const str)
   return i > 0 ? result(st, i) : result(EXESS_EXPECTED_DIGIT, i);
 }
 
-static int
-compare_field(const int32_t lhs, const int32_t rhs)
+static ExessOrder
+compare_duration_partial(const ExessDuration lhs, const ExessDuration rhs)
 {
-  return lhs < rhs ? -1 : lhs == rhs ? 0 : 1;
+  // See https://www.w3.org/TR/xmlschema11-2/#duration
+
+  static const ExessDateTime a = {1696, 9, 1, EXESS_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime b = {1697, 2, 1, EXESS_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime c = {1903, 3, 1, EXESS_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime d = {1903, 7, 1, EXESS_LOCAL, 0, 0, 0, 0};
+
+  const ExessOrder cmp = exess_compare_date_time(
+    exess_add_date_time_duration(a, lhs), exess_add_date_time_duration(a, rhs));
+
+  if (cmp == exess_compare_date_time(exess_add_date_time_duration(b, lhs),
+                                     exess_add_date_time_duration(b, rhs)) &&
+      cmp == exess_compare_date_time(exess_add_date_time_duration(c, lhs),
+                                     exess_add_date_time_duration(c, rhs)) &&
+      cmp == exess_compare_date_time(exess_add_date_time_duration(d, lhs),
+                                     exess_add_date_time_duration(d, rhs))) {
+    return cmp;
+  }
+
+  return (lhs.months < rhs.months)     ? EXESS_ORDER_MAYBE_LESS
+         : (rhs.months < lhs.months)   ? EXESS_ORDER_MAYBE_GREATER
+         : (lhs.seconds < rhs.seconds) ? EXESS_ORDER_MAYBE_LESS
+                                       : EXESS_ORDER_MAYBE_GREATER;
 }
 
-int
+ExessOrder
 exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
 {
-  int cmp = compare_field(lhs.months, rhs.months);
-  cmp     = cmp ? cmp : compare_field(lhs.seconds, rhs.seconds);
-  cmp     = cmp ? cmp : compare_field(lhs.nanoseconds, rhs.nanoseconds);
-  return cmp;
+  // Exactly equal
+  if (lhs.months == rhs.months && lhs.seconds == rhs.seconds &&
+      lhs.nanoseconds == rhs.nanoseconds) {
+    return EXESS_ORDER_EQUAL;
+  }
+
+  // Totally ordered yearMonthDuration
+  if (!lhs.seconds && !lhs.nanoseconds && !rhs.seconds && !rhs.nanoseconds) {
+    return (lhs.months < rhs.months) ? EXESS_ORDER_STRICTLY_LESS
+                                     : EXESS_ORDER_STRICTLY_GREATER;
+  }
+
+  // Totally ordered dayTimeDuration
+  if (!lhs.months && !rhs.months) {
+    return (lhs.seconds < rhs.seconds)           ? EXESS_ORDER_STRICTLY_LESS
+           : (rhs.seconds < lhs.seconds)         ? EXESS_ORDER_STRICTLY_GREATER
+           : (lhs.nanoseconds < rhs.nanoseconds) ? EXESS_ORDER_STRICTLY_LESS
+                                                 : EXESS_ORDER_STRICTLY_GREATER;
+  }
+
+  return compare_duration_partial(lhs, rhs);
 }
 
 ExessResult

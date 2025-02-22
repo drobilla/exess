@@ -7,34 +7,36 @@
 #include <stdint.h>
 #include <string.h>
 
-static int
+static ExessOrder
 compare_datatypes(const ExessDatatype lhs_datatype,
                   const ExessDatatype rhs_datatype)
 {
   const char* const lhs_name = exess_datatype_name(lhs_datatype);
   const char* const rhs_name = exess_datatype_name(rhs_datatype);
-
-  return !lhs_name ? -1 : !rhs_name ? 1 : strcmp(lhs_name, rhs_name);
+  return !lhs_name                          ? EXESS_ORDER_MAYBE_LESS
+         : !rhs_name                        ? EXESS_ORDER_MAYBE_GREATER
+         : (strcmp(lhs_name, rhs_name) < 0) ? EXESS_ORDER_MAYBE_LESS
+                                            : EXESS_ORDER_MAYBE_GREATER;
 }
 
-static int
+static ExessOrder
 compare_blob(const size_t      lhs_size,
              const void* const lhs_value,
              const size_t      rhs_size,
              const void* const rhs_value)
 {
-  if (lhs_size != rhs_size) {
-    const bool   shorter_lhs = lhs_size < rhs_size;
-    const size_t cmp_size    = shorter_lhs ? lhs_size : rhs_size;
-    const int    cmp         = memcmp(lhs_value, rhs_value, cmp_size);
+  const bool   shorter_lhs = lhs_size < rhs_size;
+  const size_t cmp_size    = shorter_lhs ? lhs_size : rhs_size;
+  const int    cmp         = memcmp(lhs_value, rhs_value, cmp_size);
 
-    return cmp < 0 ? -1 : cmp > 0 ? 1 : shorter_lhs ? -1 : 1;
-  }
-
-  return memcmp(lhs_value, rhs_value, lhs_size);
+  return cmp < 0                  ? EXESS_ORDER_MAYBE_LESS
+         : cmp > 0                ? EXESS_ORDER_MAYBE_GREATER
+         : shorter_lhs            ? EXESS_ORDER_MAYBE_LESS
+         : (lhs_size == rhs_size) ? EXESS_ORDER_EQUAL
+                                  : EXESS_ORDER_MAYBE_GREATER;
 }
 
-int
+ExessOrder
 exess_compare_value(const ExessDatatype lhs_datatype,
                     const size_t        lhs_size,
                     const void* const   lhs_value,
@@ -46,7 +48,10 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return compare_datatypes(lhs_datatype, rhs_datatype);
   }
 
-#define COMPARE(lhs, rhs) ((lhs) < (rhs)) ? (-1) : ((lhs) > (rhs)) ? 1 : 0
+#define COMPARE(lhs, rhs)                          \
+  ((lhs) < (rhs))   ? EXESS_ORDER_STRICTLY_LESS    \
+  : ((rhs) < (lhs)) ? EXESS_ORDER_STRICTLY_GREATER \
+                    : EXESS_ORDER_EQUAL
 
   switch (lhs_datatype) {
   case EXESS_NOTHING:
@@ -103,5 +108,5 @@ exess_compare_value(const ExessDatatype lhs_datatype,
 
 #undef COMPARE
 
-  return 0;
+  return EXESS_ORDER_EQUAL;
 }

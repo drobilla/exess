@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <string.h>
 
-int
+ExessOrder
 exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 {
   const ExessDateTime lhs_datetime = {

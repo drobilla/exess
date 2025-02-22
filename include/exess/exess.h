@@ -56,12 +56,28 @@ extern "C" {
 
 /**
    @defgroup exess_symbols Symbols
-   Preprocessor symbols for convenience.
+   Basic preprocessor symbols and enumerations.
    @{
 */
 
 /// The base URI of XML Schema
 #define EXESS_XSD_URI "http://www.w3.org/2001/XMLSchema#"
+
+/**
+   The result of comparing two values.
+
+   This follows the usual strcmp() convention, but includes a distinction
+   between comparable values that are strictly less/greater than one another,
+   and incomparable values that are arbitrarily chosen to be less/greater than
+   one another by this implementation.
+*/
+typedef enum {
+  EXESS_ORDER_STRICTLY_LESS    = -2, ///< Comparable, first is lesser
+  EXESS_ORDER_MAYBE_LESS       = -1, ///< Incomparable, first may be lesser
+  EXESS_ORDER_EQUAL            = 0,  ///< Equal values
+  EXESS_ORDER_MAYBE_GREATER    = 1,  ///< Incomparable, first may be greater
+  EXESS_ORDER_STRICTLY_GREATER = 2,  ///< Comparable, first is greater
+} ExessOrder;
 
 /**
    @}
@@ -748,22 +764,26 @@ typedef struct {
 /**
    Compare two durations.
 
-   Note that `duration` literals aren't totally ordered in general, since they
-   can include all fields of a date, and the relation between those fields
-   (such as the number of days in a month) varies.
+   Loosely speaking, a duration is considered less than another if it's a
+   shorter duration of time.  However, note that two durations may not be
+   comparable, since the relation between fields, such as the number of days in
+   a month, varies at different times.  Strictly speaking, two durations are
+   comparable if adding them to any `dateTime` would produce results with the
+   same ordering.
 
    The #ExessDuration representation condenses all fields into two values:
-   (integer) months and (decimal) seconds.  This comparison considers a month
-   to be greater than any number of seconds, so any two #ExessDuration can be
-   compared, but the ordering may not be the same as "actual" time duration
-   depending on calendar details.
+   months and seconds.  When the two values are incomparable, a month is
+   considered greater than any number of seconds.
 
-   A duration is less than another if it's a shorter duration of time.
+   Values with only months, or only seconds, are always comparable.
+   Applications are encouraged to always use such values and never carry
+   seconds into months or vice-versa.
 
-   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
-   respectively.
+   @return Less than, equal to, or greater than zero if `lhs` is less than,
+   equal to, or greater than `rhs`, respectively.  Comparable and incomparable
+   cases may also be distinguished, see #ExessOrder for details.
 */
-EXESS_CONST_API int
+EXESS_CONST_API ExessOrder
 exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
 
 /**
@@ -834,16 +854,15 @@ typedef struct {
 /**
    Compare two dateTimes.
 
-   Note that dateTimes aren't totally ordered since the order between UTC and
-   local times can be indeterminate.  When comparing UTC and local times, if
-   there is a difference of more than 14 hours, then the comparison is
-   determinate (according to the XSD specification).  Otherwise, this function
-   will arbitrarily order the local time first.
+   Note that local and zoned dateTimes times may not be comparable.  When the
+   values aren't comparable, this function arbitrarily chooses the local time
+   to be lesser.
 
-   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
-   respectively.
+   @return Less than, equal to, or greater than zero if `lhs` is less than,
+   equal to, or greater than `rhs`, respectively.  Comparable and incomparable
+   cases may also be distinguished, see #ExessOrder for details.
 */
-EXESS_CONST_API int
+EXESS_CONST_API ExessOrder
 exess_compare_date_time(ExessDateTime lhs, ExessDateTime rhs);
 
 /**
@@ -925,15 +944,14 @@ typedef struct {
 /**
    Compare two dates.
 
-   Note that comparison of dates isn't always determinate.  The comparison of
-   two dates works the same way as the comparison of two dateTimes with
-   equivalent times, except adjusted according to the timezone if necessary.
-   See exess_compare_date_time() for details.
+   Note that local and zoned dates may not be comparable.  See
+   exess_compare_date_time() for details.
 
-   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
-   respectively.
+   @return Less than, equal to, or greater than zero if `lhs` is less than,
+   equal to, or greater than `rhs`, respectively.  Comparable and incomparable
+   cases may also be distinguished, see #ExessOrder for details.
 */
-EXESS_CONST_API int
+EXESS_CONST_API ExessOrder
 exess_compare_date(ExessDate lhs, ExessDate rhs);
 
 /**
@@ -994,14 +1012,14 @@ typedef struct {
 /**
    Compare two times.
 
-   Note that comparison of times isn't always determinate.  The comparison of
-   two times works the same way as the comparison of two dateTimes with an
-   arbitrary date, see exess_compare_date_time() for details.
+   Note that local and zoned times may not be comparable.  See
+   exess_compare_date_time() for details.
 
-   @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
-   respectively.
+   @return Less than, equal to, or greater than zero if `lhs` is less than,
+   equal to, or greater than `rhs`, respectively.  Comparable and incomparable
+   cases may also be distinguished, see #ExessOrder for details.
 */
-EXESS_CONST_API int
+EXESS_CONST_API ExessOrder
 exess_compare_time(ExessTime lhs, ExessTime rhs);
 
 /**
@@ -1332,10 +1350,11 @@ typedef union {
    Compare two values.
 
    @return Less than, equal to, or greater than zero if the left-hand value is
-   less than, equal to, or greater than the right-hand value, respectively
-   (like `strcmp`).
+   less than, equal to, or greater than the right-hand value, respectively.
+   Comparable and incomparable cases may also be distinguished, see #ExessOrder
+   for details.
 */
-EXESS_PURE_API int
+EXESS_PURE_API ExessOrder
 exess_compare_value(ExessDatatype             lhs_datatype,
                     size_t                    lhs_size,
                     const void* EXESS_NONNULL lhs_value,

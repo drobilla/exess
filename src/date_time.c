@@ -47,22 +47,25 @@ quotient(const int32_t a, const int32_t low, const int32_t high)
   return (a - low) / (high - low);
 }
 
-static int
+static ExessOrder
 compare_field(const unsigned lhs, const unsigned rhs)
 {
-  return lhs < rhs ? -1 : lhs == rhs ? 0 : 1;
+  return lhs < rhs    ? EXESS_ORDER_STRICTLY_LESS
+         : lhs == rhs ? EXESS_ORDER_EQUAL
+                      : EXESS_ORDER_STRICTLY_GREATER;
 }
 
-static int
-compare_date_time_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
+static ExessOrder
+compare_date_time_total(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   if (lhs.year != rhs.year) {
-    return lhs.year < rhs.year ? -1 : 1;
+    return lhs.year < rhs.year ? EXESS_ORDER_STRICTLY_LESS
+                               : EXESS_ORDER_STRICTLY_GREATER;
   }
 
   const ExessDateTime lhz = exess_date_time_to_utc(lhs);
   const ExessDateTime rhz = exess_date_time_to_utc(rhs);
-  int                 cmp = compare_field(lhz.month, rhz.month);
+  ExessOrder          cmp = compare_field(lhz.month, rhz.month);
 
   cmp = cmp ? cmp : compare_field(lhz.day, rhz.day);
   cmp = cmp ? cmp : compare_field(lhz.hour, rhz.hour);
@@ -87,7 +90,7 @@ exess_date_time_to_utc(const ExessDateTime datetime)
   return to_utc(datetime, offset);
 }
 
-static int
+static ExessOrder
 compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
@@ -96,41 +99,43 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
   static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
   static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
 
+  ExessOrder order = EXESS_ORDER_EQUAL;
+
   if (lhs.zone != EXESS_LOCAL) {
-    const ExessDateTime r_minus = to_utc(rhs, minus_14h);
-    if (compare_date_time_determinate(lhs, r_minus) < 0) {
-      return -1;
+    order = compare_date_time_total(lhs, to_utc(rhs, minus_14h));
+    if (order < 0) {
+      return order;
     }
 
-    const ExessDateTime r_plus = to_utc(rhs, plus_14h);
-    if (compare_date_time_determinate(lhs, r_plus) > 0) {
-      return 1;
+    order = compare_date_time_total(lhs, to_utc(rhs, plus_14h));
+    if (order > 0) {
+      return order;
     }
 
-    // Indeterminate, arbitrarily put local time first
-    return 1;
+    // Incomparable, arbitrarily put local time first
+    return EXESS_ORDER_MAYBE_GREATER;
   }
 
-  const ExessDateTime l_plus = to_utc(lhs, plus_14h);
-  if (compare_date_time_determinate(l_plus, rhs) < 0) {
-    return -1;
+  order = compare_date_time_total(to_utc(lhs, plus_14h), rhs);
+  if (order < 0) {
+    return order;
   }
 
-  const ExessDateTime l_minus = to_utc(lhs, minus_14h);
-  if (compare_date_time_determinate(l_minus, rhs) > 0) {
-    return 1;
+  order = compare_date_time_total(to_utc(lhs, minus_14h), rhs);
+  if (order > 0) {
+    return order;
   }
 
-  // Indeterminate, arbitrarily put local time first
-  return -1;
+  // Incomparable, arbitrarily put local time first
+  return EXESS_ORDER_MAYBE_LESS;
 }
 
-int
+ExessOrder
 exess_compare_date_time(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   return ((lhs.zone == rhs.zone) ||
           (lhs.zone != EXESS_LOCAL && rhs.zone != EXESS_LOCAL))
-           ? compare_date_time_determinate(lhs, rhs)
+           ? compare_date_time_total(lhs, rhs)
            : compare_date_time_partial(lhs, rhs);
 }
 

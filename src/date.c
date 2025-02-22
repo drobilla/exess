@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-int
+ExessOrder
 exess_compare_date(const ExessDate lhs, const ExessDate rhs)
 {
   const ExessDateTime lhs_datetime = {
