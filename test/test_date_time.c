@@ -331,7 +331,6 @@ test_read_date_time(void)
              exess_timezone(-8, 0));
 
   // Midnight
-
   check_read("2001-02-03T24:00:00",
              EXESS_SUCCESS,
              19,
@@ -349,62 +348,35 @@ test_read_date_time(void)
   check_read("2004-04-12T13:00",
              EXESS_EXPECTED_COLON,
              16,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             EXESS_LOCAL);
-
-  check_read("2004-04-1213:20:00",
-             EXESS_EXPECTED_TIME_SEP,
-             10,
-             0,
-             0,
-             0,
-             0,
+             2004,
+             4,
+             12,
+             13,
              0,
              0,
              0,
              EXESS_LOCAL);
 
-  check_read("99-04-12T13:00",
-             EXESS_EXPECTED_DIGIT,
-             2,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             EXESS_LOCAL);
+  check_read(
+    "2004-04-121", EXESS_EXPECTED_TIME_SEP, 10, 2004, 4, 12, 0, 0, 0, 0, 0);
 
-  check_read("2004-04-12",
-             EXESS_EXPECTED_TIME_SEP,
-             10,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             0,
-             EXESS_LOCAL);
+  check_read(
+    "99-04-12T13:00", EXESS_EXPECTED_DIGIT, 2, 99, 0, 0, 0, 0, 0, 0, 0);
+
+  check_read(
+    "2004-04-12", EXESS_EXPECTED_TIME_SEP, 10, 2004, 4, 12, 0, 0, 0, 0, 0);
 
   check_read("2004-04-12-05:00",
              EXESS_EXPECTED_TIME_SEP,
              10,
+             2004,
+             4,
+             12,
              0,
              0,
              0,
              0,
-             0,
-             0,
-             0,
-             EXESS_LOCAL);
+             0);
 }
 
 static void

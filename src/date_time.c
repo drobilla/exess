@@ -9,8 +9,8 @@
 
 #include <exess/exess.h>
 
-#include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 static inline ExessDateTime
 infinite_future(const ExessTimezone zone)
@@ -247,13 +247,15 @@ exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
 ExessResult
 exess_read_date_time(ExessDateTime* const out, const char* const str)
 {
-  out->year  = 0;
-  out->month = 0;
-  out->day   = 0;
+  memset(out, 0, sizeof(*out));
 
   // Read date
   ExessDate         date = {0, 0U, 0U, EXESS_LOCAL};
   const ExessResult dr   = read_date_numbers(&date, str);
+
+  out->year  = date.year;
+  out->month = date.month;
+  out->day   = date.day;
   if (dr.status) {
     return dr;
   }
@@ -268,22 +270,17 @@ exess_read_date_time(ExessDateTime* const out, const char* const str)
   // Read time
   ExessTime         time = {EXESS_LOCAL, 0U, 0U, 0U, 0U};
   const ExessResult tr   = read_time(&time, str + i);
+
+  out->zone       = time.zone;
+  out->hour       = time.hour;
+  out->minute     = time.minute;
+  out->second     = time.second;
+  out->nanosecond = time.nanosecond;
+  i += tr.count;
   if (tr.status) {
-    return result(tr.status, i + tr.count);
+    return result(tr.status, i);
   }
 
-  i += tr.count;
-
-  const ExessDateTime datetime = {date.year,
-                                  date.month,
-                                  date.day,
-                                  time.zone,
-                                  time.hour,
-                                  time.minute,
-                                  time.second,
-                                  time.nanosecond};
-
-  *out = datetime;
   return result(EXESS_SUCCESS, i);
 }
 
