@@ -61,7 +61,7 @@ read_date(ExessDuration* const out, const char* const str)
   ExessStatus st         = EXESS_SUCCESS;
   unsigned    last_field = 0U;
 
-  while (!st && last_field <= DAY && str[i] != 'T' && !is_end(str[i])) {
+  while (!st && last_field < DAY && str[i] != 'T' && !is_end(str[i])) {
     // Read the unsigned integer value
     uint32_t          value = 0U;
     const ExessResult r     = exess_read_uint(&value, str + i);
