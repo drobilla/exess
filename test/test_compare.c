@@ -29,11 +29,11 @@ greater(const int cmp)
 }
 
 static void
-check_comparison(const ExessDatatype       lhs_datatype,
-                 const char* const         lhs_string,
-                 const ExessDatatype       rhs_datatype,
-                 const char* const         rhs_string,
-                 const ComparisonPredicate pred)
+check_cross_type_comparison(const ExessDatatype       lhs_datatype,
+                            const char* const         lhs_string,
+                            const ExessDatatype       rhs_datatype,
+                            const char* const         rhs_string,
+                            const ComparisonPredicate pred)
 {
   ExessValue lhs = {false};
   ExessValue rhs = {false};
@@ -51,42 +51,51 @@ check_comparison(const ExessDatatype       lhs_datatype,
 }
 
 static void
+check_comparison(const ExessDatatype       datatype,
+                 const char* const         lhs_string,
+                 const char* const         rhs_string,
+                 const ComparisonPredicate pred)
+{
+  check_cross_type_comparison(datatype, lhs_string, datatype, rhs_string, pred);
+}
+
+static void
 check_comparisons(const ExessDatatype datatype,
                   const char* const   low,
                   const char* const   mid,
                   const char* const   high)
 {
-  check_comparison(datatype, low, datatype, mid, less);
-  check_comparison(datatype, mid, datatype, mid, equal);
-  check_comparison(datatype, high, datatype, mid, greater);
+  check_comparison(datatype, low, mid, less);
+  check_comparison(datatype, mid, mid, equal);
+  check_comparison(datatype, high, mid, greater);
 }
 
 static void
 test_compare(void)
 {
   // Cross-type and nothing
-  check_comparison(EXESS_NOTHING, "", EXESS_NOTHING, "", equal);
-  check_comparison(EXESS_NOTHING, "", EXESS_INT, "0", less);
-  check_comparison(EXESS_INT, "0", EXESS_NOTHING, "", greater);
-  check_comparison(EXESS_BOOLEAN, "true", EXESS_INT, "0", less);
-  check_comparison(EXESS_TIME, "12:00:00", EXESS_INT, "42", greater);
+  check_cross_type_comparison(EXESS_NOTHING, "", EXESS_NOTHING, "", equal);
+  check_cross_type_comparison(EXESS_NOTHING, "", EXESS_INT, "0", less);
+  check_cross_type_comparison(EXESS_INT, "0", EXESS_NOTHING, "", greater);
+  check_cross_type_comparison(EXESS_BOOLEAN, "true", EXESS_INT, "0", less);
+  check_cross_type_comparison(EXESS_TIME, "12:00:00", EXESS_INT, "42", greater);
 
   // All boolean cases
-  check_comparison(EXESS_BOOLEAN, "false", EXESS_BOOLEAN, "true", less);
-  check_comparison(EXESS_BOOLEAN, "false", EXESS_BOOLEAN, "1", less);
-  check_comparison(EXESS_BOOLEAN, "0", EXESS_BOOLEAN, "true", less);
-  check_comparison(EXESS_BOOLEAN, "0", EXESS_BOOLEAN, "1", less);
-  check_comparison(EXESS_BOOLEAN, "false", EXESS_BOOLEAN, "false", equal);
-  check_comparison(EXESS_BOOLEAN, "false", EXESS_BOOLEAN, "0", equal);
-  check_comparison(EXESS_BOOLEAN, "0", EXESS_BOOLEAN, "0", equal);
-  check_comparison(EXESS_BOOLEAN, "0", EXESS_BOOLEAN, "false", equal);
-  check_comparison(EXESS_BOOLEAN, "true", EXESS_BOOLEAN, "true", equal);
-  check_comparison(EXESS_BOOLEAN, "true", EXESS_BOOLEAN, "1", equal);
-  check_comparison(EXESS_BOOLEAN, "1", EXESS_BOOLEAN, "1", equal);
-  check_comparison(EXESS_BOOLEAN, "1", EXESS_BOOLEAN, "true", equal);
-  check_comparison(EXESS_BOOLEAN, "true", EXESS_BOOLEAN, "false", greater);
-  check_comparison(EXESS_BOOLEAN, "true", EXESS_BOOLEAN, "0", greater);
-  check_comparison(EXESS_BOOLEAN, "1", EXESS_BOOLEAN, "0", greater);
+  check_comparison(EXESS_BOOLEAN, "false", "true", less);
+  check_comparison(EXESS_BOOLEAN, "false", "1", less);
+  check_comparison(EXESS_BOOLEAN, "0", "true", less);
+  check_comparison(EXESS_BOOLEAN, "0", "1", less);
+  check_comparison(EXESS_BOOLEAN, "false", "false", equal);
+  check_comparison(EXESS_BOOLEAN, "false", "0", equal);
+  check_comparison(EXESS_BOOLEAN, "0", "0", equal);
+  check_comparison(EXESS_BOOLEAN, "0", "false", equal);
+  check_comparison(EXESS_BOOLEAN, "true", "true", equal);
+  check_comparison(EXESS_BOOLEAN, "true", "1", equal);
+  check_comparison(EXESS_BOOLEAN, "1", "1", equal);
+  check_comparison(EXESS_BOOLEAN, "1", "true", equal);
+  check_comparison(EXESS_BOOLEAN, "true", "false", greater);
+  check_comparison(EXESS_BOOLEAN, "true", "0", greater);
+  check_comparison(EXESS_BOOLEAN, "1", "0", greater);
 
   // Numbers
   check_comparisons(EXESS_DECIMAL, "-9.0", "0.0", "9.0");
@@ -118,16 +127,10 @@ test_compare(void)
   // DateTime
 
   // Equality
-  check_comparison(EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14",
-                   EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14",
-                   equal);
-  check_comparison(EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14Z",
-                   EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14Z",
-                   equal);
+  check_comparison(
+    EXESS_DATE_TIME, "2001-02-03T12:13:14", "2001-02-03T12:13:14", equal);
+  check_comparison(
+    EXESS_DATE_TIME, "2001-02-03T12:13:14Z", "2001-02-03T12:13:14Z", equal);
 
   // All local
   check_comparisons(EXESS_DATE_TIME,
@@ -202,47 +205,30 @@ test_compare(void)
                     "2001-02-03T12:13:14",
                     "2001-02-04T02:13:15Z",
                     "2001-02-04T16:13:16");
-  check_comparison(EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14Z",
-                   EXESS_DATE_TIME,
-                   "2001-02-03T12:13:14",
-                   greater);
+  check_comparison(
+    EXESS_DATE_TIME, "2001-02-03T12:13:14Z", "2001-02-03T12:13:14", greater);
 
   // Local and UTC determinate (example from spec)
-  check_comparison(EXESS_DATE_TIME,
-                   "2000-01-15T12:00:00",
-                   EXESS_DATE_TIME,
-                   "2000-01-16T12:00:00Z",
-                   less);
+  check_comparison(
+    EXESS_DATE_TIME, "2000-01-15T12:00:00", "2000-01-16T12:00:00Z", less);
 
   // Local and UTC indeterminate (examples from spec, local is first here)
-  check_comparison(EXESS_DATE_TIME,
-                   "2000-01-01T12:00:00",
-                   EXESS_DATE_TIME,
-                   "1999-12-31T23:00:00Z",
-                   less);
-  check_comparison(EXESS_DATE_TIME,
-                   "2000-01-16T12:00:00",
-                   EXESS_DATE_TIME,
-                   "2000-01-16T12:00:00Z",
-                   less);
-  check_comparison(EXESS_DATE_TIME,
-                   "2000-01-16T00:00:00",
-                   EXESS_DATE_TIME,
-                   "2000-01-16T12:00:00Z",
-                   less);
+  check_comparison(
+    EXESS_DATE_TIME, "2000-01-01T12:00:00", "1999-12-31T23:00:00Z", less);
+  check_comparison(
+    EXESS_DATE_TIME, "2000-01-16T12:00:00", "2000-01-16T12:00:00Z", less);
+  check_comparison(
+    EXESS_DATE_TIME, "2000-01-16T00:00:00", "2000-01-16T12:00:00Z", less);
 
   // Time
 
   // Equality
-  check_comparison(EXESS_TIME, "12:13:14", EXESS_TIME, "12:13:14", equal);
-  check_comparison(EXESS_TIME, "12:13:14Z", EXESS_TIME, "12:13:14Z", equal);
-  check_comparison(EXESS_TIME, "12:13:14", EXESS_TIME, "12:13:14", equal);
-  check_comparison(
-    EXESS_TIME, "12:13:14+00:00", EXESS_TIME, "12:13:14+00:00", equal);
-  check_comparison(EXESS_TIME, "12:13:14", EXESS_TIME, "12:13:14", equal);
-  check_comparison(
-    EXESS_TIME, "12:13:14-00:00", EXESS_TIME, "12:13:14-00:00", equal);
+  check_comparison(EXESS_TIME, "12:13:14", "12:13:14", equal);
+  check_comparison(EXESS_TIME, "12:13:14Z", "12:13:14Z", equal);
+  check_comparison(EXESS_TIME, "12:13:14", "12:13:14", equal);
+  check_comparison(EXESS_TIME, "12:13:14+00:00", "12:13:14+00:00", equal);
+  check_comparison(EXESS_TIME, "12:13:14", "12:13:14", equal);
+  check_comparison(EXESS_TIME, "12:13:14-00:00", "12:13:14-00:00", equal);
 
   // All local
   check_comparisons(EXESS_TIME, "12:13:14.15", "12:13:14.16", "12:13:14.17");
@@ -264,29 +250,27 @@ test_compare(void)
 
   // Local and UTC determinate
   check_comparisons(EXESS_TIME, "12:13:14", "02:13:15Z", "16:13:16");
-  check_comparison(EXESS_TIME, "12:13:14Z", EXESS_TIME, "12:13:14", greater);
+  check_comparison(EXESS_TIME, "12:13:14Z", "12:13:14", greater);
 
   // Local and UTC determinate
-  check_comparison(EXESS_TIME, "01:00:00Z", EXESS_TIME, "15:00:01", less);
-  check_comparison(EXESS_TIME, "15:00:00Z", EXESS_TIME, "01:00:00", greater);
-  check_comparison(EXESS_TIME, "15:00:01", EXESS_TIME, "01:00:00Z", greater);
-  check_comparison(EXESS_TIME, "01:00:00", EXESS_TIME, "15:00:00Z", less);
+  check_comparison(EXESS_TIME, "01:00:00Z", "15:00:01", less);
+  check_comparison(EXESS_TIME, "15:00:00Z", "01:00:00", greater);
+  check_comparison(EXESS_TIME, "15:00:01", "01:00:00Z", greater);
+  check_comparison(EXESS_TIME, "01:00:00", "15:00:00Z", less);
 
   // Local and UTC indeterminate (local is first here)
-  check_comparison(EXESS_TIME, "12:00:00", EXESS_TIME, "12:00:00Z", less);
-  check_comparison(EXESS_TIME, "00:00:00", EXESS_TIME, "12:00:00Z", less);
-  check_comparison(EXESS_TIME, "12:00:00Z", EXESS_TIME, "12:00:00", greater);
-  check_comparison(EXESS_TIME, "00:00:00Z", EXESS_TIME, "12:00:00", greater);
+  check_comparison(EXESS_TIME, "12:00:00", "12:00:00Z", less);
+  check_comparison(EXESS_TIME, "00:00:00", "12:00:00Z", less);
+  check_comparison(EXESS_TIME, "12:00:00Z", "12:00:00", greater);
+  check_comparison(EXESS_TIME, "00:00:00Z", "12:00:00", greater);
 
   // Date
 
   // Equality
-  check_comparison(EXESS_DATE, "2001-02-03", EXESS_DATE, "2001-02-03", equal);
-  check_comparison(EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03Z", equal);
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03+00:00", equal);
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03-00:00", equal);
+  check_comparison(EXESS_DATE, "2001-02-03", "2001-02-03", equal);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03Z", equal);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03+00:00", equal);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03-00:00", equal);
 
   // All local
   check_comparisons(EXESS_DATE, "2001-02-03", "2001-02-04", "2001-02-05");
@@ -305,29 +289,25 @@ test_compare(void)
   // Local and UTC
   check_comparisons(EXESS_DATE, "2001-02-03Z", "2001-02-04", "2001-02-04Z");
   check_comparisons(EXESS_DATE, "2001-02-03Z", "2001-02-04", "2001-02-05Z");
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03", greater);
-  check_comparison(EXESS_DATE, "2001-02-03", EXESS_DATE, "2001-02-03Z", less);
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03+01:00", greater);
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03-01:00", less);
-  check_comparison(
-    EXESS_DATE, "2001-02-03Z", EXESS_DATE, "2001-02-03+14:00", greater);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03", greater);
+  check_comparison(EXESS_DATE, "2001-02-03", "2001-02-03Z", less);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03+01:00", greater);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03-01:00", less);
+  check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03+14:00", greater);
 
   // Binary
   check_comparisons(EXESS_HEX, "010203", "010204", "010205");
   check_comparisons(EXESS_HEX, "0102", "010204", "010205");
   check_comparisons(EXESS_HEX, "0102", "010204", "0103");
   check_comparisons(EXESS_HEX, "01", "0101", "010101");
-  check_comparison(EXESS_HEX, "01", EXESS_HEX, "01", equal);
-  check_comparison(EXESS_HEX, "02", EXESS_HEX, "01", greater);
-  check_comparison(EXESS_HEX, "01", EXESS_HEX, "02", less);
-  check_comparison(EXESS_HEX, "09", EXESS_HEX, "0102", greater);
-  check_comparison(EXESS_HEX, "0102", EXESS_HEX, "010304", less);
-  check_comparison(EXESS_HEX, "0101", EXESS_HEX, "01", greater);
+  check_comparison(EXESS_HEX, "01", "01", equal);
+  check_comparison(EXESS_HEX, "02", "01", greater);
+  check_comparison(EXESS_HEX, "01", "02", less);
+  check_comparison(EXESS_HEX, "09", "0102", greater);
+  check_comparison(EXESS_HEX, "0102", "010304", less);
+  check_comparison(EXESS_HEX, "0101", "01", greater);
   check_comparisons(EXESS_BASE64, "Zg==", "Zm8=", "Zm9v");
-  check_comparison(EXESS_BASE64, "Zm9v", EXESS_BASE64, "Zm9v", equal);
+  check_comparison(EXESS_BASE64, "Zm9v", "Zm9v", equal);
 }
 
 int
