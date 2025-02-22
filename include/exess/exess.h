@@ -133,12 +133,11 @@ typedef struct {
 } ExessResult;
 
 /**
-   Result returned from a read function for variably-sized values.
+   Result returned from a function that reads and writes.
 
-   This is like #ExessResult but includes separate read and write counts.
-   This allows the caller to know both how many bytes were read from the input
-   (for advancing an input cursor), and how many bytes were written to the
-   output (to know how large the value is).
+   This is like #ExessResult but includes separate read and write counts.  This
+   allows the caller to know both how many bytes were read from the input and
+   how many bytes were written to the output.
 */
 typedef struct {
   ExessStatus status;      ///< Status code
@@ -147,7 +146,7 @@ typedef struct {
 } ExessVariableResult;
 
 /**
-   Return a string describing a status code in plain English.
+   Return a string describing a status code in plain language.
 
    The returned string is always one sentence, with an uppercase first
    character, and no trailing period.
@@ -192,8 +191,10 @@ exess_strerror(ExessStatus status);
 /**
    Read a `decimal` string after any leading whitespace.
 
-   Values beyond the range of `decimal` will produce `-INF` or `INF`, and
-   return an error because these aren't valid decimal values.
+   Values too large (in absolute terms) to store will produce infinity, values
+   too small will produce zero, and insignificant digits may be discarded.
+   Note that this is a limitation of this implementation and `decimal` itself
+   has unlimited precision, so this may result in data loss.
 
    @param out Set to the parsed value, or NaN on error.
    @param str String input.
@@ -242,7 +243,10 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `double` string after any leading whitespace.
 
-   Values beyond the range of `double` will produce `-INF` or `INF`.
+   Values too large (in absolute terms) to store will produce infinity, values
+   too small will produce zero, and insignificant digits may be discarded.
+   Note that these cases are considered successful since the value space of
+   `double` has limited precision by definition.
 
    @param out Set to the parsed value, or `NAN` on error.
    @param str String input.
@@ -287,7 +291,10 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `float` string after any leading whitespace.
 
-   Values beyond the range of `float` will produce `-INF` or `INF`.
+   Values too large (in absolute terms) to store will produce infinity, values
+   too small will produce zero, and insignificant digits may be discarded.
+   Note that these cases are considered successful since the value space of
+   `float` has limited precision by definition.
 
    @param out Set to the parsed value, or `NAN` on error.
    @param str String input.
@@ -926,7 +933,15 @@ exess_write_date_time(ExessDateTime        value,
 /**
    @}
    @defgroup exess_date date
+
    A `date` is a year, month, and day, with an optional timezone offset.
+
+   Strings have the form YYYY-MM-DD with an optional timezone suffix, at least
+   4 year digits (negative or positive), and exactly 2 digits for both month
+   and day.  For example, "2001-02-03" or "2001-02-03-06:00".
+
+   Canonical form has no leading zeros for the year.
+
    @{
 */
 
@@ -990,9 +1005,11 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
    seconds may be a decimal value, for example, "12:13:14", "12:13:14.56", or
    "12:13:14.56-07:00".
 
-   Note that, unlike dateTime, midnight at the end of the day (like "24:00:00")
-   is a valid lexical form, but not a valid value.  Such forms will be read as
-   the value 00:00:00.
+   Canonical form only includes a decimal point if the number of seconds isn't
+   an integer.  This implementation supports up to nanosecond resolution.  Note
+   that midnight at the end of the day (like "24:00:00") is a valid lexical
+   form, but unlike `dateTime`, 24 isn't a valid hour value.  Such forms will
+   be read as 00:00:00.
 
    @{
 */
@@ -1056,7 +1073,17 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /**
    @defgroup exess_base64 base64Binary
+
    A `base64Binary` is arbitrary binary data in base64 encoding.
+
+   Strings consist of characters from the base64 alphabet ([0-9], [A-Z], [a-z],
+   "+", "/", and "=") with whitespace (tab, newline, carriage return, or space)
+   allowed anywhere.  Strings are padded to a multiple of four non-whitespace
+   characters with with trailing "=" characters.  For example, the base64
+   encoding of the string "data" is "ZGF0YQo=".
+
+   Canonical form contains no whitespace.
+
    @{
 */
 
@@ -1125,7 +1152,13 @@ exess_write_base64(size_t                    data_size,
 /**
    @}
    @defgroup exess_hex hexBinary
+
    A `hexBinary` is arbitrary binary data in hexadecimal encoding.
+
+   Strings consist of an even number of hexadecimal characters ([0-9], [A-F],
+   and [a-f]).  Note that, unlike `base64Binary`, whitespace between characters
+   isn't allowed.
+
    @{
 */
 
@@ -1405,6 +1438,7 @@ exess_write_value(ExessDatatype             datatype,
                   const void* EXESS_NONNULL value,
                   size_t                    buf_size,
                   char* EXESS_NULLABLE      buf);
+
 /**
    @}
    @defgroup exess_canon Canonical Form
