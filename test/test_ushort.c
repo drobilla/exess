@@ -46,7 +46,7 @@ check_write(const uint16_t    value,
             const size_t      buf_size,
             const char* const expected_string)
 {
-  char buf[EXESS_MAX_USHORT_LENGTH + 1] = {1, 2, 3, 4, 5, 0};
+  char buf[EXESS_MAX_USHORT_LENGTH + 1] = {1, 2, 3, 4, 5, 6};
 
   assert(buf_size <= sizeof(buf));
 

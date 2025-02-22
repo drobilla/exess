@@ -5,6 +5,7 @@
 
 #include "double_test_utils.h"
 #include "float_test_utils.h"
+#include "write_test_utils.h"
 
 #include <exess/exess.h>
 
@@ -165,7 +166,7 @@ test_read_value(void)
     assert(a_time.nanosecond == 250000000);
   }
   {
-    char                      a_blob[] = {0, 0, 0};
+    char                      a_blob[] = {1, 2, 3};
     const ExessVariableResult r =
       exess_read_value(EXESS_HEX, sizeof(a_blob), a_blob, "666F6F");
 
@@ -175,7 +176,7 @@ test_read_value(void)
     assert(!strncmp(a_blob, "foo", sizeof(a_blob)));
   }
   {
-    char                      a_blob[] = {0, 0, 0};
+    char                      a_blob[] = {1, 2, 3};
     const ExessVariableResult r =
       exess_read_value(EXESS_BASE64, sizeof(a_blob), a_blob, "Zm9v");
 
@@ -195,6 +196,7 @@ check_write(const ExessDatatype datatype,
             const char* const   expected_string)
 {
   char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
@@ -206,6 +208,8 @@ check_write(const ExessDatatype datatype,
   if (buf_size > 0) {
     assert(r.count == strlen(buf));
     assert(!strcmp(buf, expected_string));
+  } else {
+    assert(buf[0] == 1);
   }
 }
 
@@ -231,7 +235,7 @@ test_write_value(void)
   const ExessTime     a_time     = time;
   const ExessDate     a_date     = date;
 
-  check_write(EXESS_NOTHING, sizeof(a_bool), &a_bool, EXESS_BAD_VALUE, 0, "");
+  check_write(EXESS_NOTHING, sizeof(a_bool), &a_bool, EXESS_BAD_VALUE, 0, NULL);
 
   check_write(EXESS_BOOLEAN, sizeof(a_bool), &a_bool, EXESS_SUCCESS, 5, "true");
 

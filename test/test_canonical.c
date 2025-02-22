@@ -3,6 +3,8 @@
 
 #undef NDEBUG
 
+#include "write_test_utils.h"
+
 #include <exess/exess.h>
 
 #include <assert.h>
@@ -16,7 +18,8 @@ check_write(const ExessDatatype datatype,
             const size_t        buf_size,
             const char* const   expected_string)
 {
-  char buf[328] = {42};
+  char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 

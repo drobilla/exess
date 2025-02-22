@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -6,6 +6,7 @@
 #include "double_test_utils.h"
 #include "int_test_utils.h"
 #include "num_test_utils.h"
+#include "write_test_utils.h"
 
 #include <exess/exess.h>
 
@@ -135,6 +136,7 @@ check_write(const double      value,
             const char* const expected_string)
 {
   char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
@@ -148,6 +150,8 @@ check_write(const double      value,
     if (expected_string[0]) {
       check_canonical(buf);
     }
+  } else {
+    assert((buf_size && !buf[0]) || (!buf_size && buf[0] == 1));
   }
 }
 
@@ -200,6 +204,7 @@ check_round_trip(const double value)
 {
   double parsed_value                      = 0.0;
   char   buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(!exess_write_decimal(value, sizeof(buf), buf).status);
   assert(!exess_read_decimal(&parsed_value, buf).status);

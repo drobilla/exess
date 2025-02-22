@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -19,12 +19,13 @@ check_read(const char* const string,
            const size_t      expected_value_size,
            const size_t      expected_count)
 {
-  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
   ExessVariableResult r = exess_read_base64(sizeof(buf), buf, string);
   assert(r.status == expected_status);
   assert(r.read_count == expected_count);
   assert(r.status || r.write_count == expected_value_size);
+  assert(r.write_count > 0 || buf[0] == 1);
   if (expected_value_length > 0) {
     assert(!strncmp(buf, expected_value, expected_value_length));
     assert(r.write_count <= exess_decoded_base64_size(strlen(string)));
@@ -34,7 +35,7 @@ check_read(const char* const string,
 static void
 test_rfc4648_cases(void)
 {
-  char buf[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+  char buf[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
   assert(!exess_write_base64(6, "foobar", sizeof(buf), buf).status);
   assert(!strcmp(buf, "Zm9vYmFy"));
@@ -93,24 +94,25 @@ test_syntax_errors(void)
 static void
 test_read_overflow(void)
 {
-  char buf[3] = {0, 0, 0};
+  char buf[3] = {1, 2, 3};
 
   ExessVariableResult r = exess_read_base64(0U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4);
   assert(r.write_count == 0);
+  assert(buf[0] == 1);
 
   r = exess_read_base64(1U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4U);
   assert(r.write_count == 0U);
-  assert(!buf[0]);
+  assert(buf[0] == 1);
 
   r = exess_read_base64(2U, buf, "Zm9v");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4U);
   assert(r.write_count == 0U);
-  assert(!buf[0]);
+  assert(buf[0] == 1);
 
   r = exess_read_base64(3U, buf, "Zm9v");
   assert(r.status == EXESS_SUCCESS);
@@ -125,11 +127,17 @@ test_write_overflow(void)
   char buf[5] = {1, 2, 3, 4, 5};
 
   assert(exess_write_base64(3, "foo", 0, buf).status == EXESS_NO_SPACE);
+  assert(buf[0] == 1);
   assert(exess_write_base64(3, "foo", 1, buf).status == EXESS_NO_SPACE);
+  assert(buf[0] == 1);
   assert(exess_write_base64(3, "foo", 2, buf).status == EXESS_NO_SPACE);
+  assert(buf[0] == 1);
   assert(exess_write_base64(3, "foo", 3, buf).status == EXESS_NO_SPACE);
+  assert(buf[0] == 1);
   assert(exess_write_base64(3, "foo", 4, buf).status == EXESS_NO_SPACE);
+  assert(buf[0] == 1);
   assert(exess_write_base64(3, "foo", 5, buf).status == EXESS_SUCCESS);
+  assert(!strncmp(buf, "Zm9v", 4));
 }
 
 static void

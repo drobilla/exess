@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -19,12 +19,13 @@ check_read(const char* const string,
            const size_t      expected_value_size,
            const size_t      expected_count)
 {
-  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
   ExessVariableResult r = exess_read_hex(sizeof(buf), buf, string);
   assert(r.status == expected_status);
   assert(r.read_count == expected_count);
   assert(r.status || r.write_count == expected_value_size);
+  assert(r.write_count > 0 || buf[0] == 1);
   if (expected_value_length > 0) {
     assert(!strncmp(buf, expected_value, expected_value_length));
     assert(r.write_count <= exess_decoded_hex_size(strlen(string)));
@@ -34,7 +35,7 @@ check_read(const char* const string,
 static void
 test_lowercase(void)
 {
-  char buf[6] = {0, 0, 0, 0, 0, 0};
+  char buf[6] = {1, 2, 3, 4, 5, 6};
 
   ExessVariableResult r = exess_read_hex(sizeof(buf), buf, "6A6B6C6D6E6F");
   assert(r.status == EXESS_SUCCESS);
@@ -81,22 +82,32 @@ test_syntax_errors(void)
 static void
 test_read_overflow(void)
 {
-  char buf[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
   ExessVariableResult r = exess_read_hex(0U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 2U);
   assert(r.write_count == 0U);
+  assert(buf[0] == 1);
 
   r = exess_read_hex(1U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4U);
   assert(r.write_count == 1U);
+  assert(buf[0] == 'f');
 
   r = exess_read_hex(2U, buf, "666F6F");
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 6U);
   assert(r.write_count == 2U);
+  assert(buf[0] == 'f');
+  assert(buf[1] == 'o');
+
+  r = exess_read_hex(3U, buf, "666F6F");
+  assert(r.status == EXESS_SUCCESS);
+  assert(r.read_count == 6U);
+  assert(r.write_count == 3U);
+  assert(!strncmp(buf, "foo", 3));
 }
 
 static void

@@ -1,7 +1,9 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
+
+#include "write_test_utils.h"
 
 #include <exess/exess.h>
 
@@ -22,9 +24,10 @@ check_conversions(const ExessDatatype  from_datatype,
                   const char* const    to_string,
                   const bool           round_trip)
 {
-  ExessValue value            = {false};
-  ExessValue coerced          = {false};
-  char       coerced_str[328] = {42};
+  ExessValue value                                     = {false};
+  ExessValue coerced                                   = {false};
+  char       coerced_str[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  init_out_buf(sizeof(coerced_str), coerced_str);
 
   // Read original value
   const ExessVariableResult vr =
@@ -52,8 +55,9 @@ check_conversions(const ExessDatatype  from_datatype,
   assert(!strcmp(coerced_str, to_string));
 
   if (round_trip) {
-    ExessValue tripped          = {false};
-    char       tripped_str[328] = {42};
+    ExessValue tripped                                   = {false};
+    char       tripped_str[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+    init_out_buf(sizeof(tripped_str), tripped_str);
 
     // Coerce the value back to the original type
     const ExessResult tripped_r = exess_coerce_value(coercions,

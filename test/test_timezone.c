@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -132,7 +132,7 @@ check_write(const ExessTimezone value,
   // The timezone interface is not public, so we test it via time
   char buf[EXESS_MAX_TIME_LENGTH + 1] = {1,  2,  3,  4,  5,  6,  7,  8,  9,
                                          10, 11, 12, 13, 14, 15, 16, 17, 18,
-                                         19, 20, 21, 22, 23, 24, 0};
+                                         19, 20, 21, 22, 23, 24, 25};
 
   assert(buf_size <= sizeof(buf) - 8);
 
@@ -168,7 +168,9 @@ static void
 check_round_trip(const ExessTimezone value)
 {
   ExessTime parsed_time                    = {EXESS_LOCAL, 0, 0, 0, 0};
-  char      buf[EXESS_MAX_TIME_LENGTH + 1] = {42};
+  char      buf[EXESS_MAX_TIME_LENGTH + 1] = {1,  2,  3,  4,  5,  6,  7,  8,  9,
+                                              10, 11, 12, 13, 14, 15, 16, 17, 18,
+                                              19, 20, 21, 22, 23, 24, 25};
 
   const ExessTime time = {value, 12, 0, 0, 0};
 

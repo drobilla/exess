@@ -5,6 +5,7 @@
 
 #include "int_test_utils.h"
 #include "num_test_utils.h"
+#include "write_test_utils.h"
 
 #include <exess/exess.h>
 
@@ -177,6 +178,7 @@ check_write(const ExessDuration value,
             const char* const   expected_string)
 {
   char buf[EXESS_MAX_DURATION_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
@@ -251,7 +253,8 @@ static void
 check_round_trip(const ExessDuration value)
 {
   ExessDuration parsed_value                       = {0, 0, 0};
-  char          buf[EXESS_MAX_DURATION_LENGTH + 1] = {0};
+  char          buf[EXESS_MAX_DURATION_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(exess_write_duration(value, 0, NULL).count <=
          EXESS_MAX_DURATION_LENGTH);

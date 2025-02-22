@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -49,7 +49,7 @@ check_write(const int32_t     value,
             const size_t      buf_size,
             const char* const expected_string)
 {
-  char buf[EXESS_MAX_INT_LENGTH + 1] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0};
+  char buf[EXESS_MAX_INT_LENGTH + 1] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
   assert(buf_size <= sizeof(buf));
 

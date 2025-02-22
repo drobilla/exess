@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -45,7 +45,7 @@ check_write(const int8_t      value,
             const size_t      buf_size,
             const char* const expected_string)
 {
-  char buf[EXESS_MAX_BYTE_LENGTH + 1] = {1, 2, 3, 4, 0};
+  char buf[EXESS_MAX_BYTE_LENGTH + 1] = {1, 2, 3, 4, 5};
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_byte(value, buf_size, buf);

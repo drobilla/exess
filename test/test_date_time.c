@@ -3,6 +3,8 @@
 
 #undef NDEBUG
 
+#include "write_test_utils.h"
+
 #include <exess/exess.h>
 
 #include <assert.h>
@@ -49,7 +51,9 @@ check_add(const char* const datetime_string,
   assert(!r.status);
 
   const ExessDateTime result = exess_add_date_time_duration(datetime, duration);
-  char                buf[EXESS_MAX_DATE_TIME_LENGTH] = {0};
+
+  char buf[EXESS_MAX_DATE_TIME_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   r = exess_write_date_time(result, sizeof(buf), buf);
   assert(!r.status);
@@ -188,7 +192,9 @@ check_to_utc(const char* const datetime_string, const char* const result_string)
   assert(!r.status);
 
   const ExessDateTime result = exess_date_time_to_utc(datetime);
-  char                buf[EXESS_MAX_DATE_TIME_LENGTH] = {0};
+
+  char buf[EXESS_MAX_DATE_TIME_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   r = exess_write_date_time(result, sizeof(buf), buf);
   assert(!r.status);
@@ -407,9 +413,8 @@ check_write(const ExessDateTime value,
             const size_t        buf_size,
             const char* const   expected_string)
 {
-  char buf[EXESS_MAX_DATE_TIME_LENGTH + 1] = {
-    1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38};
+  char buf[EXESS_MAX_DATE_TIME_LENGTH + 1] = {42};
+  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
