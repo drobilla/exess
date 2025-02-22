@@ -190,4 +190,4 @@ avoiding value conversion, machine limits, and the need for a temporary value bu
 
 .. _meson: https://mesonbuild.com/
 .. _pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/
-.. _xsd: https://www.w3.org/TR/xmlschema-2/
+.. _xsd: https://www.w3.org/TR/xmlschema11-2/

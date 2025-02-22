@@ -82,6 +82,7 @@ static int
 compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
+  // and https://www.w3.org/TR/xmlschema11-2/#theSevenPropertyModel
 
   static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
   static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
@@ -180,10 +181,9 @@ carry_set_day(ExessDateTime e, int day)
 ExessDateTime
 exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
 {
-  /*
-    See <https://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes>.
-    This algorithm is modified to support subtraction when d is negative.
-  */
+  // See https://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes
+  // and https://www.w3.org/TR/xmlschema11-2/#sec-dt-arith
+  // This algorithm is modified here to support subtraction when d is negative
 
   static const int32_t giga = 1000000000;
 

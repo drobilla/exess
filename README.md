@@ -80,4 +80,4 @@ Documentation
 
  -- David Robillard <d@drobilla.net>
 
-[XSD]: https://www.w3.org/TR/xmlschema-2/
+[XSD]: https://www.w3.org/TR/xmlschema11-2/

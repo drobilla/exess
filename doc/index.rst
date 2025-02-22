@@ -12,7 +12,7 @@ Exess
    See Also
    ********
 
-   This manual is split into pages that describe groups of related symbols,
+   The reference portion of this manual is split into pages that describe groups of related symbols,
    for example,
    :manpage:`exess_int(3)` describes both the read and write functions for ``int32_t``.
    Aliases are also provided for individual functions,
@@ -42,6 +42,8 @@ Exess
    Standards
    *********
 
+   *W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes* https://www.w3.org/TR/xmlschema11-2/
+
    *XML Schema Part 2: Datatypes Second Edition* https://www.w3.org/TR/xmlschema-2/
 
 .. only:: not man
@@ -50,4 +52,4 @@ Exess
 
       api/exess
 
-.. _XSD: https://www.w3.org/TR/xmlschema-2/
+.. _XSD: https://www.w3.org/TR/xmlschema11-2/
