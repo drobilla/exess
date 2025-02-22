@@ -343,6 +343,19 @@ test_read_date_time(void)
              0,
              EXESS_LOCAL);
 
+  // Too many nanosecond digits (expecting a timezone after 9 digits)
+  check_read("2001-02-03T04:05:06.123456789123",
+             EXESS_OUT_OF_RANGE,
+             29,
+             2001,
+             2,
+             3,
+             4,
+             5,
+             6,
+             123456789,
+             EXESS_LOCAL);
+
   // Garbage
 
   check_read("2004-04-12T13:00",

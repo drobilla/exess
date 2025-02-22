@@ -103,7 +103,7 @@ test_read_time(void)
 
   // Too many nanosecond digits (expecting a timezone after 9 digits)
   check_read("01:02:03.123456789123",
-             EXESS_EXPECTED_SIGN,
+             EXESS_OUT_OF_RANGE,
              1,
              2,
              3,

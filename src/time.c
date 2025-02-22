@@ -37,6 +37,10 @@ read_nanoseconds(uint32_t* const out, const char* const str)
     *out = (*out * 10U) + (uint32_t)(str[i] - '0');
   }
 
+  if (i == 9U && is_digit(str[i])) {
+    return result(EXESS_OUT_OF_RANGE, i);
+  }
+
   // "Read" imagined trailing zeros to reach 9 digit magnitude
   for (size_t j = i; j < 9U; ++j) {
     *out *= 10U;
