@@ -92,6 +92,7 @@ typedef enum {
   EXESS_EXPECTED_TIME_SEP,      ///< Expected 'T'
   EXESS_EXPECTED_TIME_TAG,      ///< Expected 'H', 'M', or 'S'
   EXESS_EXPECTED_DATE_TAG,      ///< Expected 'Y', 'M', or 'D'
+  EXESS_EXPECTED_SECOND_TAG,    ///< Expected 'S'
   EXESS_EXPECTED_HEX,           ///< Expected a hexadecimal character
   EXESS_EXPECTED_BASE64,        ///< Expected a base64 character
   EXESS_BAD_ORDER,              ///< Invalid field order

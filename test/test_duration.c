@@ -130,8 +130,17 @@ test_read_duration(void)
   check_read("PT35791395M", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
     "PT2147483647S", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read(
-    "PT0.1000000000S", EXESS_EXPECTED_TIME_TAG, 13, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("PT0.1000000000S",
+             EXESS_EXPECTED_SECOND_TAG,
+             13,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             0,
+             false);
 
   // Garbage
   check_read("P-20M", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
@@ -139,12 +148,20 @@ test_read_duration(void)
   check_read("P1DX", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 1, 0, 0, 0, 0, false);
   check_read("P1YM5D", EXESS_EXPECTED_DIGIT, 3, 1, 0, 0, 0, 0, 0, 0, false);
   check_read("P15.5Y", EXESS_EXPECTED_DATE_TAG, 3, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1.5Y", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1.5M", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("P1.5D", EXESS_EXPECTED_DATE_TAG, 2, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read(
+    "PT1.5H", EXESS_EXPECTED_SECOND_TAG, 5, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read(
+    "PT1.5M", EXESS_EXPECTED_SECOND_TAG, 5, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P1D2H", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 1, 0, 0, 0, 0, false);
   check_read("1Y2M", EXESS_EXPECTED_DURATION, 0, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("P2M1Y", EXESS_BAD_ORDER, 5, 0, 2, 0, 0, 0, 0, 0, false);
   check_read("P2D1Y", EXESS_EXPECTED_TIME_SEP, 3, 0, 0, 2, 0, 0, 0, 0, false);
   check_read("P", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read("PT15.5H", EXESS_EXPECTED_TIME_TAG, 6, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read(
+    "PT15.5H", EXESS_EXPECTED_SECOND_TAG, 6, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT2M1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 2, 0, 0, false);
   check_read("PT2S1H", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);
   check_read("PT2S1M", EXESS_BAD_ORDER, 6, 0, 0, 0, 0, 0, 2, 0, false);

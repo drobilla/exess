@@ -105,7 +105,7 @@ read_duration_time(ExessDuration* const out, const char* const str)
       const ExessResult s = read_nanoseconds(&nanoseconds, str + i);
       i += s.count;
       if (!st && str[i] != 'S') {
-        return result(EXESS_EXPECTED_TIME_TAG, i);
+        return result(EXESS_EXPECTED_SECOND_TAG, i);
       }
 
       field            = SECOND;

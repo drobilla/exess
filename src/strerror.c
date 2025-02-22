@@ -20,6 +20,7 @@ exess_strerror(const ExessStatus status)
     "Expected 'T'",
     "Expected 'H', 'M', or 'S'",
     "Expected 'Y', 'M', or 'D'",
+    "Expected 'S'",
     "Expected a hexadecimal character",
     "Expected a base64 character",
     "Invalid field order",
