@@ -54,11 +54,10 @@ Dependencies
 None, except the C standard library.
 More precisely, exess uses only the following functions from the standard library:
 
+  * `ceil`
   * `ldexp`
   * `llrint`
   * `llrintf`
-  * `log10`
-  * `lrint`
   * `memcmp`
   * `memcpy`
   * `memset`

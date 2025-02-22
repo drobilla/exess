@@ -1,10 +1,11 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "digits.h"
 
 #include "bigint.h"
 #include "ieee_float.h"
+#include "int_math.h"
 #include "soft_float.h"
 #include "warnings.h"
 
@@ -184,6 +185,24 @@ double_lower_boundary_is_closer(const double d)
   return !is_subnormal && mant == 0;
 }
 
+/// Return an estimate for the decimal power of value, undershot by at most 1
+static int
+approximate_power(const ExessSoftFloat value)
+{
+  /* See "Printing Floating-Point Numbers Quickly and Accurately" by Robert
+     G. Burger and R. Kent Dybvig.  The trick of undershooting by 0.69 comes
+     from the implementation by Ryan Juckett, see
+     https://ryanjuckett.com/printing-floating-point-numbers-part-2-dragon4/
+  */
+
+  static const double log10_2 = 0.30102999566398119521373889472449;
+
+  const double f_msb_index = 64U - exess_clz64(value.f);
+  const double power       = ceil(((f_msb_index + value.e) * log10_2) - 0.69);
+
+  return (int)power;
+}
+
 ExessDigitCount
 generate_digits(const double d, const unsigned max_digits, char* const buf)
 {
@@ -192,7 +211,7 @@ generate_digits(const double d, const unsigned max_digits, char* const buf)
   EXESS_RESTORE_WARNINGS
 
   const ExessSoftFloat value           = soft_float_from_double(d);
-  const int            power           = (int)lrint(log10(d));
+  const int            power           = approximate_power(value);
   const bool           is_even         = !(value.f & 1U);
   const bool           lower_is_closer = double_lower_boundary_is_closer(d);
 
