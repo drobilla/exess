@@ -1,9 +1,41 @@
-# Copyright 2021-2023 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 c_exess_rst = custom_target(
   'exess.rst',
   command: [sphinxygen, '-f', '@INPUT0@', '@OUTDIR@'],
   input: [c_index_xml],
-  output: 'exess.rst',
+  output: [
+    'exess.rst',
+    'exess_base64.rst',
+    'exess_binary.rst',
+    'exess_boolean.rst',
+    'exess_byte.rst',
+    'exess_canon.rst',
+    'exess_coercion.rst',
+    'exess_datatypes.rst',
+    'exess_date.rst',
+    'exess_datetime.rst',
+    'exess_decimal.rst',
+    'exess_double.rst',
+    'exess_duration.rst',
+    'exess_dynamic.rst',
+    'exess_fixed.rst',
+    'exess_float.rst',
+    'exess_hex.rst',
+    'exess_int.rst',
+    'exess_long.rst',
+    'exess_numbers.rst',
+    'exess_short.rst',
+    'exess_status.rst',
+    'exess_symbols.rst',
+    'exess_time.rst',
+    'exess_time_and_date.rst',
+    'exess_timezone.rst',
+    'exess_ubyte.rst',
+    'exess_uint.rst',
+    'exess_ulong.rst',
+    'exess_ushort.rst',
+    'exess_value.rst',
+  ]
 )

@@ -144,7 +144,7 @@ groups = {
     "ubyte": "Unsigned Byte Strings",
     "duration": "Duration Strings",
     "datetime": "Datetime Strings",
-    "timezone": "Timezone Strings",
+    "timezone": "Timezone Offsets",
     "date": "Date Strings",
     "time": "Time Strings",
     "base64": "Base64 Binary Strings",
@@ -152,6 +152,7 @@ groups = {
     "datatypes": "Datatypes",
     "canon": "Canonical Form",
     "value": "Generic Values",
+    "coercion": "Datatype Coercion",
 }
 
 man_author = None

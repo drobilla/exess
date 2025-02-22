@@ -35,6 +35,9 @@ Exess
    Datatypes
       :manpage:`exess_datatypes(3)`, :manpage:`exess_canon(3)`, :manpage:`exess_value(3)`
 
+   Coercion
+      :manpage:`exess_coercion(3)`
+
    *********
    Standards
    *********

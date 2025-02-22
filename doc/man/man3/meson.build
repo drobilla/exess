@@ -1,4 +1,4 @@
-# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 # Generated man pages to any links/aliases to create for that page
@@ -60,7 +60,13 @@ man_links = {
   'exess_int.3': ['exess_read_int.3', 'exess_write_int.3'],
   'exess_long.3': ['exess_read_long.3', 'exess_write_long.3'],
   'exess_short.3': ['exess_read_short.3', 'exess_write_short.3'],
-  'exess_status.3': ['ExessResult.3', 'ExessStatus.3', 'exess_strerror.3'],
+  'exess_status.3': [
+    'ExessResult.3',
+    'ExessStatus.3',
+    'ExessVariableResult.3',
+    'exess_strerror.3',
+  ],
+
   'exess_symbols.3': ['EXESS_XSD_URI.3'],
 
   'exess_time.3': [
@@ -77,13 +83,16 @@ man_links = {
   'exess_ushort.3': ['exess_read_ushort.3', 'exess_write_ushort.3'],
 
   'exess_value.3': [
-    'ExessCoercion.3',
-    'ExessCoercions.3',
     'ExessValue.3',
     'exess_compare_value.3',
     'exess_read_value.3',
-    'exess_coerce_value.3',
     'exess_write_value.3',
+  ],
+
+  'exess_coercion.3': [
+    'ExessCoercion.3',
+    'ExessCoercions.3',
+    'exess_coerce_value.3',
   ],
 }
 
