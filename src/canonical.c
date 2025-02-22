@@ -43,25 +43,27 @@ skip(bool (*pred)(const int), const char* const str, const size_t i)
   return i + (pred(str[i]) ? 1 : 0);
 }
 
-static ExessResult
+static ExessVariableResult
 write_decimal(const char* const str, const size_t buf_size, char* const buf)
 {
-  size_t i = 0;
-
-  const size_t sign    = scan(is_space, str, i);   // Sign
+  const size_t sign    = scan(is_space, str, 0);   // Sign
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (str[leading] != '.' && !is_digit(str[leading])) {
-    return result(EXESS_EXPECTED_DIGIT, sign);
+    return vresult(EXESS_EXPECTED_DIGIT, sign, 0);
   }
 
   const size_t first = scan(is_zero, str, leading); // First non-zero
   const size_t point = scan(is_digit, str, first);  // Decimal point
-  size_t last = scan(is_digit, str, skip(is_point, str, point)); // Last digit
-  const size_t end = scan(is_space, str, last); // Last non-space
+  const size_t end =
+    scan(is_digit, str, skip(is_point, str, point)); // Last digit
 
-  const ExessStatus st = is_end(str[end]) ? EXESS_SUCCESS : EXESS_EXPECTED_END;
+  const ExessResult r = end_read(EXESS_SUCCESS, str, end);
+  if (r.status) {
+    return vresult(r.status, r.count, 0);
+  }
 
   // Ignore trailing zeros
+  size_t last = end;
   if (str[point] == '.') {
     while (str[last - 1] == '0') {
       --last;
@@ -77,7 +79,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
   // Handle zero as a special case (no non-zero digits to copy)
   if (first == last) {
     o += write_string(3, "0.0", buf_size, buf, o);
-    return result(EXESS_SUCCESS, o);
+    return vresult(EXESS_SUCCESS, end, o);
   }
 
   // Add leading zero if needed to have at least one digit before the point
@@ -96,45 +98,48 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
     o += write_char('0', buf_size, buf, o);
   }
 
-  return result(st, o);
+  const ExessResult w = end_write(EXESS_SUCCESS, buf_size, buf, o);
+  return vresult(w.status, end, o);
 }
 
-static ExessResult
+static ExessVariableResult
 write_integer(const ExessDatatype datatype,
               const char* const   str,
               const size_t        buf_size,
               char* const         buf)
 {
   const size_t sign = scan(is_space, str, 0); // Sign
-  if (str[sign] == '-' && (datatype == EXESS_NON_NEGATIVE_INTEGER ||
-                           datatype == EXESS_POSITIVE_INTEGER)) {
-    return result(EXESS_BAD_VALUE, sign);
+
+  if ((str[sign] == '-' && (datatype == EXESS_NON_NEGATIVE_INTEGER ||
+                            datatype == EXESS_POSITIVE_INTEGER)) ||
+      (str[sign] == '+' && (datatype == EXESS_NON_POSITIVE_INTEGER ||
+                            datatype == EXESS_NEGATIVE_INTEGER)) ||
+      (str[sign] != '-' && (datatype == EXESS_NEGATIVE_INTEGER))) {
+    return vresult(EXESS_BAD_VALUE, sign, 0);
   }
 
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (!is_digit(str[leading])) {
-    return result(EXESS_EXPECTED_DIGIT, leading);
+    return vresult(EXESS_EXPECTED_DIGIT, leading, 0);
   }
 
   const size_t first = scan(is_zero, str, leading); // First non-zero
   const size_t last  = scan(is_digit, str, first);  // Last digit
-  const size_t end   = scan(is_space, str, last);   // Last non-space
-
-  ExessStatus st = is_end(str[end]) ? EXESS_SUCCESS : EXESS_EXPECTED_END;
 
   // Handle zero as a special case (no non-zero digits to copy)
   size_t o = 0;
   if (first == last) {
     if (datatype == EXESS_NEGATIVE_INTEGER ||
         datatype == EXESS_POSITIVE_INTEGER) {
-      return result(EXESS_BAD_VALUE, sign);
+      return vresult(EXESS_BAD_VALUE, sign, 0);
     }
 
     o += write_char('0', buf_size, buf, o);
-    return result(EXESS_SUCCESS, o);
+    return vresult(EXESS_SUCCESS, first, o);
   }
 
   // Add leading sign only if the number is negative
+  ExessStatus st = EXESS_SUCCESS;
   if (str[sign] == '-') {
     st = (datatype == EXESS_NON_NEGATIVE_INTEGER ||
           datatype == EXESS_POSITIVE_INTEGER)
@@ -144,16 +149,16 @@ write_integer(const ExessDatatype datatype,
     o += write_char('-', buf_size, buf, o);
   } else if (datatype == EXESS_NON_POSITIVE_INTEGER ||
              datatype == EXESS_NEGATIVE_INTEGER) {
-    return result(EXESS_BAD_VALUE, sign);
+    return vresult(EXESS_BAD_VALUE, first, sign);
   }
 
   // Add digits
   o += write_string(last - first, str + first, buf_size, buf, o);
 
-  return result(st, o);
+  return vresult(st, last, o);
 }
 
-static ExessResult
+static ExessVariableResult
 write_date_time(const char* const str, const size_t buf_size, char* const buf)
 {
   static const ExessDuration zero = {0, 0, 0};
@@ -161,17 +166,19 @@ write_date_time(const char* const str, const size_t buf_size, char* const buf)
   ExessDateTime     value = {0, 0, 0, 0, 0, 0, 0, 0};
   const ExessResult r     = exess_read_date_time(&value, str);
   if (r.status) {
-    return r;
+    return vresult(r.status, r.count, 0);
   }
 
   // Wrap 24:00 midnight to 00:00 on the next day
-  return exess_write_date_time(
+  const ExessResult w = exess_write_date_time(
     (value.hour == 24) ? exess_add_date_time_duration(value, zero) : value,
     buf_size,
     buf);
+
+  return vresult(w.status, r.count, w.count);
 }
 
-static ExessResult
+static ExessVariableResult
 write_hex(const char* const str, const size_t buf_size, char* const buf)
 {
   size_t i = 0;
@@ -181,14 +188,15 @@ write_hex(const char* const str, const size_t buf_size, char* const buf)
     if (is_hexdig(str[i])) {
       o += write_char(str[i], buf_size, buf, o);
     } else if (!is_space(str[i])) {
-      return result(EXESS_EXPECTED_HEX, o);
+      return vresult(EXESS_EXPECTED_HEX, i, o);
     }
   }
 
-  return result((o == 0 || o % 2 != 0) ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, o);
+  return vresult(
+    (o == 0 || o % 2 != 0) ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, i, o);
 }
 
-static ExessResult
+static ExessVariableResult
 write_base64(const char* const str, const size_t buf_size, char* const buf)
 {
   size_t i = 0;
@@ -198,18 +206,18 @@ write_base64(const char* const str, const size_t buf_size, char* const buf)
     if (is_base64(str[i])) {
       o += write_char(str[i], buf_size, buf, o);
     } else if (!is_space(str[i])) {
-      return result(EXESS_EXPECTED_BASE64, o);
+      return vresult(EXESS_EXPECTED_BASE64, i, o);
     }
   }
 
   if (o == 0 || o % 4 != 0) {
-    return result(EXESS_EXPECTED_BASE64, o);
+    return vresult(EXESS_EXPECTED_BASE64, i, o);
   }
 
-  return result(EXESS_SUCCESS, o);
+  return vresult(EXESS_SUCCESS, i, o);
 }
 
-static ExessResult
+static ExessVariableResult
 write_bounded(const char* const   str,
               const ExessDatatype datatype,
               const size_t        buf_size,
@@ -220,18 +228,22 @@ write_bounded(const char* const   str,
   const ExessVariableResult vr =
     exess_read_value(datatype, sizeof(value), &value, str);
 
-  return vr.status
-           ? result(vr.status, 0U)
-           : exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
+  if (vr.status) {
+    return vresult(vr.status, vr.read_count, 0U);
+  }
+
+  const ExessResult w =
+    exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
+  return vresult(w.status, vr.read_count, w.count);
 }
 
-ExessResult
+ExessVariableResult
 exess_write_canonical(const char* const   str,
                       const ExessDatatype datatype,
                       const size_t        buf_size,
                       char* const         buf)
 {
-  const ExessResult r =
+  const ExessVariableResult r =
     (datatype == EXESS_DECIMAL) ? write_decimal(str, buf_size, buf)
     : ((datatype == EXESS_INTEGER) ||
        (datatype == EXESS_NON_POSITIVE_INTEGER) ||
@@ -244,5 +256,6 @@ exess_write_canonical(const char* const   str,
     : (datatype == EXESS_BASE64)    ? write_base64(str, buf_size, buf)
                                  : write_bounded(str, datatype, buf_size, buf);
 
-  return end_write(r.status, buf_size, buf, r.count);
+  const ExessResult w = end_write(r.status, buf_size, buf, r.write_count);
+  return vresult(w.status, r.read_count, w.count);
 }

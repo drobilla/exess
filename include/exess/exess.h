@@ -1394,18 +1394,17 @@ exess_write_value(ExessDatatype             datatype,
 */
 
 /**
-   Rewrite a supported xsd datatype in canonical form.
+   Rewrite a supported datatype in canonical form.
 
    @param str Input value string.
    @param datatype Datatype of value.
    @param buf_size The size of `buf` in bytes.
    @param buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and a `status` code.  The
-   status may be an error from reading or writing, but the `count` always
-   refers to the number of characters written.
+   @return The `read_count` from `str`, `write_count` to `buf` (both in bytes),
+   and a `status` code.  The status may be an error from reading or writing.
 */
-EXESS_API ExessResult
+EXESS_API ExessVariableResult
 exess_write_canonical(const char* EXESS_NONNULL str,
                       ExessDatatype             datatype,
                       size_t                    buf_size,

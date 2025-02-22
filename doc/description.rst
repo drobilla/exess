@@ -176,8 +176,8 @@ For example, this will print ``12``:
 
 .. code-block:: c
 
-   char        s[4] = {0};
-   ExessResult r    = EXESS_SUCCESS;
+   char                s[4] = {0};
+   ExessVariableResult r    = {EXESS_SUCCESS, 0, 0};
 
    r = exess_write_canonical("+12", EXESS_INT, sizeof(s), s);
    if (!r.status) {
