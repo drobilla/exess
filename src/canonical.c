@@ -1,4 +1,4 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -154,6 +154,24 @@ write_integer(const ExessDatatype datatype,
 }
 
 static ExessResult
+write_date_time(const char* const str, const size_t buf_size, char* const buf)
+{
+  static const ExessDuration zero = {0, 0, 0};
+
+  ExessDateTime     value = {0, 0, 0, 0, 0, 0, 0, 0};
+  const ExessResult r     = exess_read_date_time(&value, str);
+  if (r.status) {
+    return r;
+  }
+
+  // Wrap 24:00 midnight to 00:00 on the next day
+  return exess_write_date_time(
+    (value.hour == 24) ? exess_add_date_time_duration(value, zero) : value,
+    buf_size,
+    buf);
+}
+
+static ExessResult
 write_hex(const char* const str, const size_t buf_size, char* const buf)
 {
   size_t i = 0;
@@ -221,8 +239,9 @@ exess_write_canonical(const char* const   str,
        (datatype == EXESS_NON_NEGATIVE_INTEGER) ||
        (datatype == EXESS_POSITIVE_INTEGER))
       ? write_integer(datatype, str, buf_size, buf)
-    : (datatype == EXESS_HEX)    ? write_hex(str, buf_size, buf)
-    : (datatype == EXESS_BASE64) ? write_base64(str, buf_size, buf)
+    : (datatype == EXESS_DATE_TIME) ? write_date_time(str, buf_size, buf)
+    : (datatype == EXESS_HEX)       ? write_hex(str, buf_size, buf)
+    : (datatype == EXESS_BASE64)    ? write_base64(str, buf_size, buf)
                                  : write_bounded(str, datatype, buf_size, buf);
 
   return end_write(r.status, buf_size, buf, r.count);

@@ -168,7 +168,7 @@ then :func:`exess_read_value` will return an :enumerator:`EXESS_OUT_OF_RANGE` er
 Canonical Writing
 =================
 
-Since values are always written in canonical form,
+Since values are usually written in canonical form,
 strings can be converted to canonical form by first reading, then writing again.
 If the parsed value itself isn't required,
 then :func:`exess_write_canonical` can be used to do this more efficiently.

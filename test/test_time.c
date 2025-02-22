@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -17,7 +17,7 @@
 static const ExessTime nozone   = {EXESS_LOCAL, 0, 0, 0, 0};
 static const ExessTime utc      = {EXESS_UTC, 12, 15, 1, 250000000};
 static const ExessTime zoned    = {INIT_ZONE(11, 30), 23, 59, 59, 1000000};
-static const ExessTime high     = {INIT_ZONE(11, 30), 24, 0, 0, 0};
+static const ExessTime high     = {INIT_ZONE(11, 30), 23, 59, 59, 999999999};
 static const ExessTime garbage1 = {INIT_ZONE(11, 30), 0, 0, 0, 1000000000};
 static const ExessTime garbage2 = {INIT_ZONE(11, 30), 0, 0, 60, 0};
 static const ExessTime garbage3 = {INIT_ZONE(11, 30), 0, 60, 0, 0};
@@ -25,6 +25,7 @@ static const ExessTime garbage4 = {INIT_ZONE(11, 30), 24, 0, 0, 1};
 static const ExessTime garbage5 = {INIT_ZONE(11, 30), 24, 0, 1, 0};
 static const ExessTime garbage6 = {INIT_ZONE(11, 30), 24, 1, 0, 0};
 static const ExessTime garbage7 = {INIT_ZONE(11, 30), 25, 0, 0, 0};
+static const ExessTime garbage8 = {INIT_ZONE(11, 30), 24, 0, 0, 0};
 
 static void
 check_read(const char* const string,
@@ -65,7 +66,7 @@ test_read_time(void)
   check_read("13:20:00-05:00", EXESS_SUCCESS, 13, 20, 0, 0, -5, 0, true, 14);
   check_read("13:20:00Z", EXESS_SUCCESS, 13, 20, 0, 0, 0, 0, true, 9);
   check_read("00:00:00", EXESS_SUCCESS, 0, 0, 0, 0, 0, 0, false, 8);
-  check_read("24:00:00", EXESS_SUCCESS, 24, 0, 0, 0, 0, 0, false, 8);
+  check_read("24:00:00", EXESS_SUCCESS, 0, 0, 0, 0, 0, 0, false, 8);
   check_read("21:32:52", EXESS_SUCCESS, 21, 32, 52, 0, 0, 0, false, 8);
   check_read("21:32:52+02:00", EXESS_SUCCESS, 21, 32, 52, 0, 2, 0, true, 14);
   check_read("19:32:52Z", EXESS_SUCCESS, 19, 32, 52, 0, 0, 0, true, 9);
@@ -74,9 +75,9 @@ test_read_time(void)
     "21:32:52.12679", EXESS_SUCCESS, 21, 32, 52, 126790000, 0, 0, false, 14);
 
   // Longest possible string
-  check_read("24:59:59.000000001-14:00",
+  check_read("23:59:59.000000001-14:00",
              EXESS_SUCCESS,
-             24,
+             23,
              59,
              59,
              1,
@@ -125,6 +126,21 @@ test_read_time(void)
   check_read("-10:00:00", EXESS_EXPECTED_DIGIT, 0, 0, 0, 0, 0, 0, false, 0);
   check_read("1:20:10", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, false, 1);
   check_read("13:20:00A", EXESS_EXPECTED_SIGN, 13, 20, 0, 0, 0, 0, false, 8);
+  check_read("13:20:00.", EXESS_EXPECTED_DIGIT, 13, 20, 0, 0, 0, 0, false, 9);
+  check_read("24:01:00", EXESS_OUT_OF_RANGE, 24, 1, 0, 0, 0, 0, false, 5);
+  check_read("24:00:01", EXESS_OUT_OF_RANGE, 24, 0, 1, 0, 0, 0, false, 8);
+  check_read(
+    "24:00:00.000000001", EXESS_OUT_OF_RANGE, 24, 0, 0, 1, 0, 0, false, 18);
+  check_read("24:00:00.000000001+02:00",
+             EXESS_OUT_OF_RANGE,
+             24,
+             0,
+             0,
+             1,
+             0,
+             0,
+             false,
+             18);
 }
 
 static void
@@ -152,7 +168,7 @@ test_write_time(void)
   check_write(nozone, EXESS_SUCCESS, 9, "00:00:00");
   check_write(utc, EXESS_SUCCESS, 13, "12:15:01.25Z");
   check_write(zoned, EXESS_SUCCESS, 19, "23:59:59.001+11:30");
-  check_write(high, EXESS_SUCCESS, 15, "24:00:00+11:30");
+  check_write(high, EXESS_SUCCESS, 25, "23:59:59.999999999+11:30");
 
   check_write(garbage1, EXESS_BAD_VALUE, 19, "");
   check_write(garbage2, EXESS_BAD_VALUE, 19, "");
@@ -161,6 +177,7 @@ test_write_time(void)
   check_write(garbage5, EXESS_BAD_VALUE, 19, "");
   check_write(garbage6, EXESS_BAD_VALUE, 19, "");
   check_write(garbage7, EXESS_BAD_VALUE, 19, "");
+  check_write(garbage8, EXESS_BAD_VALUE, 19, "");
 
   check_write(nozone, EXESS_NO_SPACE, 8, "");
   check_write(utc, EXESS_NO_SPACE, 12, "");

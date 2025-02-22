@@ -14,6 +14,9 @@ static const ExessDateTime utc     = {2001, 2, 3, EXESS_UTC, 4, 5, 6, 0};
 static const ExessDateTime lowest  = {INT16_MIN, 1, 1, -56, 0, 0, 0, 0};
 static const ExessDateTime highest = {INT16_MAX, 12, 31, 56, 24, 0, 0, 0};
 
+static const ExessDateTime longest =
+  {INT16_MIN, 12, 31, 56, 23, 59, 59, 999999999};
+
 static const ExessDateTime utc_min = {INT16_MIN, 1, 1, EXESS_UTC, 0, 0, 0, 0};
 static const ExessDateTime utc_max =
   {INT16_MAX, 12, 31, EXESS_UTC, 24, 0, 0, 0};
@@ -295,6 +298,8 @@ test_read_date_time(void)
              500000000,
              EXESS_LOCAL);
 
+  // Time zone offsets
+
   check_read("-32768-01-01T00:00:00.000000001+14:00",
              EXESS_SUCCESS,
              EXESS_MAX_DATE_TIME_LENGTH,
@@ -318,6 +323,21 @@ test_read_date_time(void)
              6,
              700000000,
              exess_timezone(-8, 0));
+
+  // Midnight
+
+  check_read("2001-02-03T24:00:00",
+             EXESS_SUCCESS,
+             19,
+             2001,
+             2,
+             3,
+             24,
+             0,
+             0,
+             0,
+             EXESS_LOCAL);
+
   // Garbage
 
   check_read("2004-04-12T13:00",
@@ -407,6 +427,8 @@ test_write_date_time(void)
   check_write(utc, EXESS_SUCCESS, 21, "2001-02-03T04:05:06Z");
   check_write(lowest, EXESS_SUCCESS, 28, "-32768-01-01T00:00:00-14:00");
   check_write(highest, EXESS_SUCCESS, 27, "32767-12-31T24:00:00+14:00");
+  check_write(
+    longest, EXESS_SUCCESS, 38, "-32768-12-31T23:59:59.999999999+14:00");
   check_write(nano, EXESS_SUCCESS, 36, "2001-01-01T00:00:00.000000001+14:00");
 
   check_write(garbage1, EXESS_BAD_VALUE, 38, "");

@@ -283,7 +283,11 @@ test_time(void)
 {
   check_write(EXESS_DURATION, " P0Y6M ", EXESS_SUCCESS, 4, "P6M");
   check_write(EXESS_DURATION, " P1Y6M0D ", EXESS_SUCCESS, 6, "P1Y6M");
-  check_write(EXESS_TIME, " 12:15:01+00:00 ", EXESS_SUCCESS, 14, "12:15:01Z");
+  check_write(EXESS_TIME, " 12:15:01+00:00 ", EXESS_SUCCESS, 10, "12:15:01Z");
+  check_write(EXESS_TIME, " 24:00:00 ", EXESS_SUCCESS, 9, "00:00:00");
+  check_write(EXESS_TIME, " 24:00:00Z ", EXESS_SUCCESS, 10, "00:00:00Z");
+  check_write(
+    EXESS_TIME, " 24:00:00+02:00 ", EXESS_SUCCESS, 15, "00:00:00+02:00");
   check_write(
     EXESS_DATE, " 02004-04-12+00:00 ", EXESS_SUCCESS, 12, "2004-04-12Z");
 }
@@ -291,6 +295,10 @@ test_time(void)
 static void
 test_date_time(void)
 {
+  // Read error
+  check_write(
+    EXESS_DATE_TIME, "99-01-01T12:00:00", EXESS_EXPECTED_DIGIT, 1, "");
+
   // Integer seconds
   check_write(EXESS_DATE_TIME,
               " 02001-02-03T04:05:06.0000 ",
@@ -325,6 +333,41 @@ test_date_time(void)
               EXESS_SUCCESS,
               21,
               "2001-02-03T04:46:59Z");
+
+  // Midnight at end of day
+  check_write(EXESS_DATE_TIME,
+              " 02001-02-03T24:00:00+00:00 ",
+              EXESS_SUCCESS,
+              21,
+              "2001-02-04T00:00:00Z");
+
+  // Midnight at end of February in a normal year
+  check_write(EXESS_DATE_TIME,
+              " 02001-02-28T24:00:00+00:00 ",
+              EXESS_SUCCESS,
+              21,
+              "2001-03-01T00:00:00Z");
+
+  // Midnight at end of the second last day of February in a leap year
+  check_write(EXESS_DATE_TIME,
+              " 02000-02-28T24:00:00+00:00 ",
+              EXESS_SUCCESS,
+              21,
+              "2000-02-29T00:00:00Z");
+
+  // Midnight at end February in a leap year
+  check_write(EXESS_DATE_TIME,
+              " 02000-02-29T24:00:00+00:00 ",
+              EXESS_SUCCESS,
+              21,
+              "2000-03-01T00:00:00Z");
+
+  // Happy new year!
+  check_write(EXESS_DATE_TIME,
+              " 02001-12-31T24:00:00+00:00 ",
+              EXESS_SUCCESS,
+              21,
+              "2002-01-01T00:00:00Z");
 }
 
 static void

@@ -267,7 +267,7 @@ exess_read_date_time(ExessDateTime* const out, const char* const str)
 
   // Read time
   ExessTime         time = {EXESS_LOCAL, 0U, 0U, 0U, 0U};
-  const ExessResult tr   = exess_read_time(&time, str + i);
+  const ExessResult tr   = read_time(&time, str + i);
   if (tr.status) {
     return result(tr.status, i + tr.count);
   }
@@ -299,7 +299,9 @@ exess_write_date_time(const ExessDateTime value,
 
   if (!in_range(value.month, 1, 12) || !in_range(value.day, 1, 31) ||
       !in_range(value.hour, 0, 24) || !in_range(value.minute, 0, 59) ||
-      !in_range(value.second, 0, 59) || value.nanosecond > 999999999) {
+      !in_range(value.second, 0, 59) || value.nanosecond > 999999999 ||
+      (value.hour == 24 &&
+       (value.minute || value.second || value.nanosecond))) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
   }
 

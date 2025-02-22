@@ -795,18 +795,18 @@ exess_write_duration(ExessDuration        value,
    @}
    @defgroup exess_date_time dateTime
 
-   A `dateTime` is a date and time in either UTC or local time.
+   A `dateTime` is a date and time, with an optional timezone offset.
 
    Strings have the form YYYY-MM-DDTHH:MM:SS with an optional timezone suffix,
    at least 4 year digits (negative or positive), and all other fields positive
    two-digit integers except seconds which may be a decimal.  For example,
-   "2001-02-03T12:13:14.56".
-
-   A local `dateTime` has no suffix, a datetime with a timezone is always in
-   UTC, and is written with a "Z" suffix, for example 2001-02-03T12:13:14Z.
+   "2001-02-03T12:13:14.56" or "2001-02-03T12:13:14.56-06:00"
 
    Canonical form only includes a decimal point if the number of seconds isn't
    an integer.  This implementation supports up to nanosecond resolution.
+   Midnight at the end of the day, like "1999-12-31T24:00:00" is a valid value,
+   equivalent to the start of the next day, like "2000-01-01T00:00:00", which
+   is the canonical form.
 
    @{
 */
@@ -817,15 +817,15 @@ exess_write_duration(ExessDuration        value,
 /**
    Date and time.
 
-   This representation follows the syntax, except the UTC flag is stored
+   This representation follows the syntax, except the timezone offset is stored
    between the date and time for more efficient packing.
 */
 typedef struct {
   int16_t       year;       ///< Year: any positive or negative value
   uint8_t       month;      ///< Month: [1, 12]
   uint8_t       day;        ///< Day: [1, 31]
-  ExessTimezone zone;       ///< True if this is UTC (not local) time
-  uint8_t       hour;       ///< Hour: [0, 23]
+  ExessTimezone zone;       ///< Timezone offset in quarter hours
+  uint8_t       hour;       ///< Hour: [0, 24]
   uint8_t       minute;     ///< Minute: [0, 59]
   uint8_t       second;     ///< Second: [0, 59]
   uint32_t      nanosecond; ///< Nanosecond: [0, 999999999]
@@ -849,8 +849,8 @@ exess_compare_date_time(ExessDateTime lhs, ExessDateTime rhs);
 /**
    Add a duration to a dateTime.
 
-   This advances or rewinds the dateTime by the given duration, depending on
-   whether the duration is positive or negative.
+   This advances or rewinds by the given duration, depending on whether the
+   duration is positive or negative.
 
    If underflow or overflow occur, then this will return an infinite value.  A
    positive infinity has all fields at maximum, and a negative infinity has all
@@ -886,7 +886,11 @@ exess_read_date_time(ExessDateTime* EXESS_NONNULL out,
                      const char* EXESS_NONNULL    str);
 
 /**
-   Write a canonical dateTime string.
+   Write a dateTime string.
+
+   The written string is in canonical form, except that midnight at the end of
+   the day (24:00:00) is written as-is.  Note that this differs from the other
+   write functions, which always write canonical form.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -903,7 +907,7 @@ exess_write_date_time(ExessDateTime        value,
 /**
    @}
    @defgroup exess_date date
-   A `date` is a year, month, and day, with optional timezone.
+   A `date` is a year, month, and day, with an optional timezone offset.
    @{
 */
 
@@ -915,7 +919,7 @@ typedef struct {
   int16_t       year;  ///< Year
   uint8_t       month; ///< Month: [1, 12]
   uint8_t       day;   ///< Day: [1, 31]
-  ExessTimezone zone;  ///< Timezone
+  ExessTimezone zone;  ///< Timezone offset in quarter hours
 } ExessDate;
 
 /**
@@ -961,7 +965,17 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    @}
    @defgroup exess_time time
-   A `time` is a time of day, with optional timezone.
+
+   A `time` is a time of day, with an optional timezone offset.
+
+   Strings have the form HH:MM:SS with an optional timezone suffix, where
+   seconds may be a decimal value, for example, "12:13:14", "12:13:14.56", or
+   "12:13:14.56-07:00".
+
+   Note that, unlike dateTime, midnight at the end of the day (like "24:00:00")
+   is a valid lexical form, but not a valid value.  Such forms will be read as
+   the value 00:00:00.
+
    @{
 */
 
@@ -970,7 +984,7 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
 
 /// Time
 typedef struct {
-  ExessTimezone zone;       ///< Timezone
+  ExessTimezone zone;       ///< Timezone offset in quarter hours
   uint8_t       hour;       ///< Hour: [0, 23]
   uint8_t       minute;     ///< Minute: [0, 59]
   uint8_t       second;     ///< Second: [0, 59]
@@ -1432,8 +1446,8 @@ typedef enum {
   /**
      Allow coercions that truncate significant parts of values.
 
-     Specifically, this allows coercing any number to boolean, dateTime to
-     date, and dateTime to time.
+     Specifically, this allows coercing any number to boolean, and dateTime to
+     date or time.
   */
   EXESS_TRUNCATE = 1U << 1U,
 } ExessCoercion;

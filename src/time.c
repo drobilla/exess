@@ -55,6 +55,8 @@ read_time(ExessTime* const out, const char* const str)
     return result(r.status, i + r.count);
   }
 
+  const bool midnight = out->hour == 24;
+
   // Read hour-minute delimiter
   i += r.count;
   if (str[i] != ':') {
@@ -63,7 +65,7 @@ read_time(ExessTime* const out, const char* const str)
 
   // Read minute
   ++i;
-  r = read_two_digit_number(&out->minute, 0, 59, str + i);
+  r = read_two_digit_number(&out->minute, 0, midnight ? 0 : 59, str + i);
   if (r.status) {
     return result(r.status, i + r.count);
   }
@@ -76,7 +78,7 @@ read_time(ExessTime* const out, const char* const str)
 
   // Read second
   ++i;
-  r = read_two_digit_number(&out->second, 0, 59, str + i);
+  r = read_two_digit_number(&out->second, 0, midnight ? 0 : 59, str + i);
   i += r.count;
   if (r.status) {
     return result(r.status, i);
@@ -87,6 +89,14 @@ read_time(ExessTime* const out, const char* const str)
     ++i;
     r = read_nanoseconds(&out->nanosecond, str + i);
     i += r.count;
+  }
+  if (r.status) {
+    return result(r.status, i);
+  }
+
+  // Ensure midnight has zero nanoseconds
+  if (midnight && out->nanosecond) {
+    return result(EXESS_OUT_OF_RANGE, i);
   }
 
   // Read timezone if present
@@ -107,6 +117,14 @@ exess_read_time(ExessTime* const out, const char* const str)
 
   size_t      i = skip_whitespace(str);
   ExessResult r = read_time(out, str + i);
+
+  if (out->hour == 24) {
+    if (out->minute || out->second || out->nanosecond) {
+      r.status = EXESS_OUT_OF_RANGE;
+    } else {
+      out->hour = 0;
+    }
+  }
 
   r.count += i;
   return r;
@@ -157,9 +175,7 @@ write_time(const ExessTime value,
            const size_t    offset)
 {
   if (value.hour > 24 || value.minute > 59 || value.second > 59 ||
-      value.nanosecond > 999999999 ||
-      (value.hour == 24 &&
-       (value.minute != 0 || value.second != 0 || value.nanosecond != 0))) {
+      value.nanosecond > 999999999) {
     return result(EXESS_BAD_VALUE, 0);
   }
 
@@ -181,6 +197,10 @@ write_time(const ExessTime value,
 ExessResult
 exess_write_time(const ExessTime value, const size_t buf_size, char* const buf)
 {
+  if (value.hour == 24) {
+    return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
+  }
+
   const ExessResult r = write_time(value, buf_size, buf, 0);
 
   return end_write(r.status, buf_size, buf, r.count);
