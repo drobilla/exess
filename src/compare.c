@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -11,12 +11,10 @@ static int
 compare_datatypes(const ExessDatatype lhs_datatype,
                   const ExessDatatype rhs_datatype)
 {
-  const char* const lhs_datatype_uri = exess_datatype_uri(lhs_datatype);
-  const char* const rhs_datatype_uri = exess_datatype_uri(rhs_datatype);
+  const char* const lhs_name = exess_datatype_name(lhs_datatype);
+  const char* const rhs_name = exess_datatype_name(rhs_datatype);
 
-  return !lhs_datatype_uri   ? -1
-         : !rhs_datatype_uri ? 1
-                             : strcmp(lhs_datatype_uri, rhs_datatype_uri);
+  return !lhs_name ? -1 : !rhs_name ? 1 : strcmp(lhs_name, rhs_name);
 }
 
 static int

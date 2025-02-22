@@ -18,6 +18,7 @@ man_links = {
     'ExessDatatype.3',
     'exess_datatype_from_uri.3',
     'exess_datatype_is_bounded.3',
+    'exess_datatype_name.3',
     'exess_datatype_uri.3',
     'exess_max_length.3',
     'exess_value_size.3',

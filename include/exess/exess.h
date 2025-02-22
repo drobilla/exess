@@ -1195,14 +1195,25 @@ typedef enum {
 /**
    Return the URI for a supported datatype.
 
-   This only returns URIs that start with
-   `http://www.w3.org/2001/XMLSchema#`.
+   This only returns URIs that start with "http://www.w3.org/2001/XMLSchema#".
 
    @param datatype Datatype tag.
    @return The URI of the datatype, or null for #EXESS_NOTHING.
 */
 EXESS_CONST_API const char* EXESS_NULLABLE
 exess_datatype_uri(ExessDatatype datatype);
+
+/**
+   Return the name of a supported datatype.
+
+   This returns the suffix of the URI that would be returned by
+   exess_datatype_uri().
+
+   @param datatype Datatype tag.
+   @return The name of the datatype, or null for #EXESS_NOTHING.
+*/
+EXESS_CONST_API const char* EXESS_NULLABLE
+exess_datatype_name(ExessDatatype datatype);
 
 /**
    Return the datatype tag for a datatype URI.

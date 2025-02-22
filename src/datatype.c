@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -8,6 +8,8 @@
 #include <string.h>
 
 #define N_DATATYPES 24
+
+static const size_t xsd_len = sizeof(EXESS_XSD_URI) - 1;
 
 /// The full URI for supported datatypes
 static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
@@ -100,11 +102,17 @@ exess_datatype_uri(const ExessDatatype datatype)
                                                                 : NULL;
 }
 
+const char*
+exess_datatype_name(const ExessDatatype datatype)
+{
+  const char* const uri = exess_datatype_uri(datatype);
+
+  return uri ? uri + xsd_len : NULL;
+}
+
 ExessDatatype
 exess_datatype_from_uri(const char* const uri)
 {
-  static const size_t xsd_len = sizeof(EXESS_XSD_URI) - 1;
-
   if (!strncmp(uri, EXESS_XSD_URI, xsd_len)) {
     const char* const name = uri + xsd_len;
     for (size_t i = 1; i < N_DATATYPES; ++i) {

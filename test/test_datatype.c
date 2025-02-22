@@ -15,12 +15,17 @@ test_datatype_uris(void)
 {
   assert(!exess_datatype_uri(EXESS_NOTHING));
   assert(!exess_datatype_uri((ExessDatatype)(EXESS_BASE64 + 1)));
+  assert(!exess_datatype_name(EXESS_NOTHING));
+  assert(!exess_datatype_name((ExessDatatype)(EXESS_BASE64 + 1)));
 
   for (unsigned i = 1; i <= EXESS_BASE64; ++i) {
     const char* const uri = exess_datatype_uri((ExessDatatype)i);
-
     assert(uri);
     assert(exess_datatype_from_uri(uri) == (ExessDatatype)i);
+
+    const char* const name = exess_datatype_name((ExessDatatype)i);
+    assert(name);
+    assert(name == uri + 33);
   }
 
   assert(exess_datatype_from_uri(EXESS_XSD_URI) == EXESS_NOTHING);
