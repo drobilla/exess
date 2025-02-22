@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -146,15 +146,15 @@ test_read_duration(void)
   check_read("PT-1M", EXESS_EXPECTED_DIGIT, 2, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("PT-1S", EXESS_EXPECTED_DIGIT, 2, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "P4294967296Y", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P4294967296Y", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "P4294967296M", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P4294967296M", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "P4294967296D", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
+    "P4294967296D", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "PT4294967296H", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "PT4294967296H", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
-    "PT4294967296M", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "PT4294967296M", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
   check_read("", EXESS_EXPECTED_DURATION, 0, 0, 0, 0, 0, 0, 0, 0, false);
 }
 

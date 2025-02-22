@@ -1,9 +1,10 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "year.h"
 #include "int_math.h"
 #include "macros.h"
+#include "read_utils.h"
 #include "result.h"
 #include "write_utils.h"
 
@@ -28,7 +29,7 @@ read_year_number(int16_t* const out, const char* const str)
 
   // Read digits
   uint64_t    magnitude = 0;
-  ExessResult r         = exess_read_ulong(&magnitude, str + i);
+  ExessResult r         = read_digits(&magnitude, str + i);
   if (r.status > EXESS_EXPECTED_END) {
     return result(r.status, i + r.count);
   }

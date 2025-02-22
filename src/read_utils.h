@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_READ_UTILS_H
@@ -24,6 +24,9 @@ read_two_digit_number(uint8_t*    out,
 
 size_t
 read_sign(int* sign, const char* str);
+
+ExessResult
+read_digits(uint64_t* out, const char* str);
 
 EXESS_PURE_FUNC ExessResult
 end_read(ExessStatus status, const char* str, size_t i);

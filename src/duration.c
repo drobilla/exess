@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -20,7 +20,7 @@ static ExessStatus
 set_field(ExessDuration* const out,
           const Field          current_field,
           const Field          field,
-          const uint32_t       value)
+          const uint64_t       value)
 {
   if (value >= INT32_MAX) {
     return EXESS_OUT_OF_RANGE;
@@ -63,8 +63,8 @@ read_date(ExessDuration* const out, const char* const str)
 
   while (!st && last_field < DAY && str[i] != 'T' && !is_end(str[i])) {
     // Read the unsigned integer value
-    uint32_t          value = 0U;
-    const ExessResult r     = exess_read_uint(&value, str + i);
+    uint64_t          value = 0U;
+    const ExessResult r     = read_digits(&value, str + i);
     i += r.count;
     if (r.status > EXESS_EXPECTED_END) {
       return result(r.status, i);
@@ -97,8 +97,8 @@ read_time(ExessDuration* const out, const char* const str)
 
   while (!st && last_field <= SECOND && !is_end(str[i])) {
     // Read the unsigned integer value
-    uint32_t          value = 0U;
-    const ExessResult r     = exess_read_uint(&value, str + i);
+    uint64_t          value = 0U;
+    const ExessResult r     = read_digits(&value, str + i);
     i += r.count;
     if (r.status > EXESS_EXPECTED_END) {
       return result(r.status, i);

@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -13,12 +13,10 @@
 #include <stdlib.h>
 
 ExessResult
-exess_read_ulong(uint64_t* const out, const char* const str)
+read_digits(uint64_t* const out, const char* const str)
 {
-  *out = 0;
-
   // Ensure the first character is a digit
-  size_t i = skip_whitespace(str);
+  size_t i = 0;
   if (!is_digit(str[i])) {
     return result(EXESS_EXPECTED_DIGIT, i);
   }
@@ -40,6 +38,18 @@ exess_read_ulong(uint64_t* const out, const char* const str)
   }
 
   return end_read(EXESS_SUCCESS, str, i);
+}
+
+ExessResult
+exess_read_ulong(uint64_t* const out, const char* const str)
+{
+  *out = 0;
+
+  const size_t i = skip_whitespace(str);
+  ExessResult  r = read_digits(out, str + i);
+
+  r.count += i;
+  return r;
 }
 
 ExessResult

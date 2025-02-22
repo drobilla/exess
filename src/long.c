@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "int_math.h"
@@ -17,14 +17,14 @@ exess_read_long(int64_t* const out, const char* const str)
 {
   *out = 0;
 
-  // Read leading sign if present
+  // Skip leading whitespace and read sign if present
   size_t i    = skip_whitespace(str);
   int    sign = 1;
   i += read_sign(&sign, &str[i]);
 
   // Read digits
   uint64_t    magnitude = 0;
-  ExessResult r         = exess_read_ulong(&magnitude, str + i);
+  ExessResult r         = read_digits(&magnitude, str + i);
   if (r.status > EXESS_EXPECTED_END) {
     return result(r.status, i + r.count);
   }
