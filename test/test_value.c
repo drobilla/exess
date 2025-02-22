@@ -1,4 +1,4 @@
-// Copyright 2021 David Robillard <d@drobilla.net>
+// Copyright 2021-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -19,7 +19,7 @@ static const ExessDuration duration = {14,
                                          (5 * 60) + 6,
                                        0};
 
-static const ExessDateTime datetime = {2001, 2, 3, false, 4, 5, 6, 0};
+static const ExessDateTime datetime = {2001, 2, 3, EXESS_LOCAL, 4, 5, 6, 0};
 static const ExessTime     time     = {EXESS_UTC, 1, 2, 3, 0};
 static const ExessDate     date     = {2001, 2, 3, EXESS_UTC};
 

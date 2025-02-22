@@ -465,6 +465,12 @@ test_date_time(void)
                 EXESS_TIME,
                 "04:05:06Z");
 
+  check_one_way(EXESS_DATE_TIME,
+                "2001-02-03T04:05:06+07:30",
+                EXESS_TRUNCATE,
+                EXESS_TIME,
+                "04:05:06+07:30");
+
   check_failure(
     EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_DATE, EXESS_WOULD_TRUNCATE);
 
@@ -479,6 +485,12 @@ test_date_time(void)
                 EXESS_TRUNCATE,
                 EXESS_DATE,
                 "2001-02-03Z");
+
+  check_one_way(EXESS_DATE_TIME,
+                "2001-02-03T04:05:06+07:30",
+                EXESS_TRUNCATE,
+                EXESS_DATE,
+                "2001-02-03+07:30");
 }
 
 static void

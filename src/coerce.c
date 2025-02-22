@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "result.h"
@@ -345,7 +345,7 @@ coerce_to_time(const ExessCoercions coercions,
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
 
-  const ExessTime time = {datetime.is_utc ? EXESS_UTC : EXESS_LOCAL,
+  const ExessTime time = {datetime.zone,
                           datetime.hour,
                           datetime.minute,
                           datetime.second,
@@ -371,10 +371,8 @@ coerce_to_date(const ExessCoercions coercions,
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
 
-  const ExessDate date = {datetime.year,
-                          datetime.month,
-                          datetime.day,
-                          datetime.is_utc ? EXESS_UTC : EXESS_LOCAL};
+  const ExessDate date = {
+    datetime.year, datetime.month, datetime.day, datetime.zone};
 
   *out = date;
   return result(EXESS_SUCCESS, sizeof(ExessDate));

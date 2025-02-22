@@ -811,7 +811,7 @@ exess_write_duration(ExessDuration        value,
 */
 
 /// The maximum length of a `dateTime` string from exess_write_date_time()
-#define EXESS_MAX_DATE_TIME_LENGTH 32
+#define EXESS_MAX_DATE_TIME_LENGTH 37
 
 /**
    Date and time.
@@ -820,14 +820,14 @@ exess_write_duration(ExessDuration        value,
    between the date and time for more efficient packing.
 */
 typedef struct {
-  int16_t  year;       ///< Year: any positive or negative value
-  uint8_t  month;      ///< Month: [1, 12]
-  uint8_t  day;        ///< Day: [1, 31]
-  uint8_t  is_utc;     ///< True if this is UTC (not local) time
-  uint8_t  hour;       ///< Hour: [0, 23]
-  uint8_t  minute;     ///< Minute: [0, 59]
-  uint8_t  second;     ///< Second: [0, 59]
-  uint32_t nanosecond; ///< Nanosecond: [0, 999999999]
+  int16_t       year;       ///< Year: any positive or negative value
+  uint8_t       month;      ///< Month: [1, 12]
+  uint8_t       day;        ///< Day: [1, 31]
+  ExessTimezone zone;       ///< True if this is UTC (not local) time
+  uint8_t       hour;       ///< Hour: [0, 23]
+  uint8_t       minute;     ///< Minute: [0, 59]
+  uint8_t       second;     ///< Second: [0, 59]
+  uint32_t      nanosecond; ///< Nanosecond: [0, 999999999]
 } ExessDateTime;
 
 /**
@@ -853,7 +853,7 @@ exess_compare_date_time(ExessDateTime lhs, ExessDateTime rhs);
 
    If underflow or overflow occur, then this will return an infinite value.  A
    positive infinity has all fields at maximum, and a negative infinity has all
-   fields at minimum, except `is_utc` which is preserved from the input (so
+   fields at minimum, except `zone` which is preserved from the input (so
    infinities are comparable with the values they came from).  Since 0 and 255
    are never valid months, these can be tested for by checking if the year and
    month are `INT16_MIN` and 0, or `INT16_MAX` and `INT8_MAX`.
@@ -863,6 +863,15 @@ exess_compare_date_time(ExessDateTime lhs, ExessDateTime rhs);
 */
 EXESS_CONST_API ExessDateTime
 exess_add_date_time_duration(ExessDateTime s, ExessDuration d);
+
+/**
+   Convert a dateTime to UTC.
+
+   @return The input converted to UTC if it has a timezone, otherwise the
+   unmodified input.
+*/
+EXESS_CONST_API ExessDateTime
+exess_date_time_to_utc(ExessDateTime datetime);
 
 /**
    Read a dateTime string after any leading whitespace.

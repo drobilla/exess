@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -19,35 +19,11 @@
 int
 exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 {
-  ExessDateTime lhs_datetime = {1970,
-                                1U,
-                                1U,
-                                lhs.zone != EXESS_LOCAL,
-                                lhs.hour,
-                                lhs.minute,
-                                lhs.second,
-                                lhs.nanosecond};
+  const ExessDateTime lhs_datetime = {
+    1972, 12U, 31U, lhs.zone, lhs.hour, lhs.minute, lhs.second, lhs.nanosecond};
 
-  ExessDateTime rhs_datetime = {1970,
-                                1U,
-                                1U,
-                                rhs.zone != EXESS_LOCAL,
-                                rhs.hour,
-                                rhs.minute,
-                                rhs.second,
-                                rhs.nanosecond};
-
-  if (lhs.zone != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {0U, -lhs.zone * 15 * 60, 0};
-
-    lhs_datetime = exess_add_date_time_duration(lhs_datetime, lhs_tz_duration);
-  }
-
-  if (rhs.zone != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {0U, -rhs.zone * 15 * 60, 0};
-
-    rhs_datetime = exess_add_date_time_duration(rhs_datetime, rhs_tz_duration);
-  }
+  const ExessDateTime rhs_datetime = {
+    1972, 12U, 31U, rhs.zone, rhs.hour, rhs.minute, rhs.second, rhs.nanosecond};
 
   return exess_compare_date_time(lhs_datetime, rhs_datetime);
 }

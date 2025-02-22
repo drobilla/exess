@@ -1,4 +1,4 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "date_utils.h"
@@ -9,17 +9,16 @@
 
 #include <exess/exess.h>
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
 static inline ExessDateTime
-infinite_future(const bool is_utc)
+infinite_future(const ExessTimezone zone)
 {
   const ExessDateTime r = {INT16_MAX,
                            UINT8_MAX,
                            UINT8_MAX,
-                           is_utc,
+                           zone,
                            UINT8_MAX,
                            UINT8_MAX,
                            UINT8_MAX,
@@ -29,9 +28,9 @@ infinite_future(const bool is_utc)
 }
 
 static inline ExessDateTime
-infinite_past(const bool is_utc)
+infinite_past(const ExessTimezone zone)
 {
-  const ExessDateTime r = {INT16_MIN, 0, 0, is_utc, 0, 0, 0, 0};
+  const ExessDateTime r = {INT16_MIN, 0, 0, zone, 0, 0, 0, 0};
 
   return r;
 }
@@ -61,12 +60,15 @@ compare_date_time_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
     return lhs.year < rhs.year ? -1 : 1;
   }
 
-  int cmp = compare_field(lhs.month, rhs.month);
-  cmp     = cmp ? cmp : compare_field(lhs.day, rhs.day);
-  cmp     = cmp ? cmp : compare_field(lhs.hour, rhs.hour);
-  cmp     = cmp ? cmp : compare_field(lhs.minute, rhs.minute);
-  cmp     = cmp ? cmp : compare_field(lhs.second, rhs.second);
-  cmp     = cmp ? cmp : compare_field(lhs.nanosecond, rhs.nanosecond);
+  const ExessDateTime lhz = exess_date_time_to_utc(lhs);
+  const ExessDateTime rhz = exess_date_time_to_utc(rhs);
+  int                 cmp = compare_field(lhz.month, rhz.month);
+
+  cmp = cmp ? cmp : compare_field(lhz.day, rhz.day);
+  cmp = cmp ? cmp : compare_field(lhz.hour, rhz.hour);
+  cmp = cmp ? cmp : compare_field(lhz.minute, rhz.minute);
+  cmp = cmp ? cmp : compare_field(lhz.second, rhz.second);
+  cmp = cmp ? cmp : compare_field(lhz.nanosecond, rhz.nanosecond);
   return cmp;
 }
 
@@ -74,8 +76,15 @@ static ExessDateTime
 to_utc(const ExessDateTime s, const ExessDuration offset)
 {
   ExessDateTime r = exess_add_date_time_duration(s, offset);
-  r.is_utc        = true;
+  r.zone          = EXESS_UTC;
   return r;
+}
+
+ExessDateTime
+exess_date_time_to_utc(const ExessDateTime datetime)
+{
+  const ExessDuration offset = {0U, -datetime.zone * 15 * 60, 0};
+  return to_utc(datetime, offset);
 }
 
 static int
@@ -87,7 +96,7 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
   static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
   static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
 
-  if (lhs.is_utc) {
+  if (lhs.zone != EXESS_LOCAL) {
     const ExessDateTime r_minus = to_utc(rhs, minus_14h);
     if (compare_date_time_determinate(lhs, r_minus) < 0) {
       return -1;
@@ -119,8 +128,10 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 int
 exess_compare_date_time(const ExessDateTime lhs, const ExessDateTime rhs)
 {
-  return (lhs.is_utc == rhs.is_utc) ? compare_date_time_determinate(lhs, rhs)
-                                    : compare_date_time_partial(lhs, rhs);
+  return ((lhs.zone == rhs.zone) ||
+          (lhs.zone != EXESS_LOCAL && rhs.zone != EXESS_LOCAL))
+           ? compare_date_time_determinate(lhs, rhs)
+           : compare_date_time_partial(lhs, rhs);
 }
 
 static int32_t
@@ -154,7 +165,7 @@ carry_set_day(ExessDateTime e, int day)
     if (day < 1) {
       if (--e.month == 0) {
         if (e.year == INT16_MIN) {
-          return infinite_past(e.is_utc);
+          return infinite_past(e.zone);
         }
 
         --e.year;
@@ -165,7 +176,7 @@ carry_set_day(ExessDateTime e, int day)
       day -= days_in_month(e.year, e.month);
       if (++e.month > 12) {
         if (e.year == INT16_MAX) {
-          return infinite_future(e.is_utc);
+          return infinite_future(e.zone);
         }
 
         ++e.year;
@@ -194,7 +205,7 @@ exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
   const int32_t d_minute = d.seconds / 60 % 60;
   const int32_t d_second = d.seconds % 60;
 
-  ExessDateTime e     = {0, 0U, 0U, s.is_utc, 0U, 0U, 0U, 0U};
+  ExessDateTime e     = {0, 0U, 0U, s.zone, 0U, 0U, 0U, 0U};
   int32_t       temp  = 0;
   int32_t       carry = 0;
 
@@ -212,11 +223,11 @@ exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
   temp  = s.year + d_year + carry;
   carry = 0;
   if (temp > INT16_MAX) {
-    return infinite_future(s.is_utc);
+    return infinite_future(s.zone);
   }
 
   if (temp < INT16_MIN) {
-    return infinite_past(s.is_utc);
+    return infinite_past(s.zone);
   }
 
   e.year = (int16_t)temp;
@@ -266,20 +277,13 @@ exess_read_date_time(ExessDateTime* const out, const char* const str)
   const ExessDateTime datetime = {date.year,
                                   date.month,
                                   date.day,
-                                  time.zone != EXESS_LOCAL,
+                                  time.zone,
                                   time.hour,
                                   time.minute,
                                   time.second,
                                   time.nanosecond};
 
-  if (datetime.is_utc) {
-    const ExessDuration tz_duration = {0U, -time.zone * 15 * 60, 0};
-
-    *out = exess_add_date_time_duration(datetime, tz_duration);
-  } else {
-    *out = datetime;
-  }
-
+  *out = datetime;
   return result(EXESS_SUCCESS, i);
 }
 
@@ -288,12 +292,10 @@ exess_write_date_time(const ExessDateTime value,
                       const size_t        buf_size,
                       char* const         buf)
 {
-  const ExessTimezone local = {EXESS_LOCAL};
-  const ExessDate     date  = {value.year, value.month, value.day, local};
-  const ExessTimezone zone  = {value.is_utc ? EXESS_UTC : EXESS_LOCAL};
+  const ExessDate date = {value.year, value.month, value.day, EXESS_LOCAL};
 
   const ExessTime time = {
-    zone, value.hour, value.minute, value.second, value.nanosecond};
+    value.zone, value.hour, value.minute, value.second, value.nanosecond};
 
   if (!in_range(value.month, 1, 12) || !in_range(value.day, 1, 31) ||
       !in_range(value.hour, 0, 24) || !in_range(value.minute, 0, 59) ||

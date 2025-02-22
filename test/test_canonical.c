@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -291,6 +291,13 @@ test_time(void)
 static void
 test_date_time(void)
 {
+  // Integer seconds
+  check_write(EXESS_DATE_TIME,
+              " 02001-02-03T04:05:06.0000 ",
+              EXESS_SUCCESS,
+              20,
+              "2001-02-03T04:05:06");
+
   // Local
   check_write(EXESS_DATE_TIME,
               " 02001-02-03T04:05:06.007 ",
@@ -298,75 +305,26 @@ test_date_time(void)
               26,
               "2001-02-03T04:05:06.007");
 
-  // Positive carry: minute => hour
+  // UTC
   check_write(EXESS_DATE_TIME,
-              " 02001-02-03T04:46:59-00:15 ",
+              " 02001-02-03T04:46:59Z ",
               EXESS_SUCCESS,
               21,
-              "2001-02-03T05:01:59Z");
+              "2001-02-03T04:46:59Z");
 
-  // Positive carry: minute => hour => day
+  // UTC redundant negative zero form
   check_write(EXESS_DATE_TIME,
-              " 02001-02-03T23:46:59-00:15 ",
+              " 02001-02-03T04:46:59-00:00 ",
               EXESS_SUCCESS,
               21,
-              "2001-02-04T00:01:59Z");
+              "2001-02-03T04:46:59Z");
 
-  // Positive carry: minute => hour => day => month (common year)
+  // UTC redundant positive zero form
   check_write(EXESS_DATE_TIME,
-              " 02001-02-28T23:46:59-00:15 ",
+              " 02001-02-03T04:46:59+00:00 ",
               EXESS_SUCCESS,
               21,
-              "2001-03-01T00:01:59Z");
-
-  // Positive carry: minute => hour => day => month (leap year)
-  check_write(EXESS_DATE_TIME,
-              " 02000-02-29T23:46:59-00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2000-03-01T00:01:59Z");
-
-  // Positive carry: minute => hour => day => month => year
-  check_write(EXESS_DATE_TIME,
-              " 02001-12-31T23:46:59-00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2002-01-01T00:01:59Z");
-
-  // Negative carry: minute => hour
-  check_write(EXESS_DATE_TIME,
-              " 02001-02-03T04:14:59+00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2001-02-03T03:59:59Z");
-
-  // Negative carry: minute => hour => day
-  check_write(EXESS_DATE_TIME,
-              " 02001-02-02T00:14:59+00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2001-02-01T23:59:59Z");
-
-  // Negative carry: minute => hour => day => month (common year)
-  check_write(EXESS_DATE_TIME,
-              " 02001-03-01T00:14:59+00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2001-02-28T23:59:59Z");
-
-  // Negative carry: minute => hour => day => month (leap year)
-  check_write(EXESS_DATE_TIME,
-              " 02000-03-01T00:14:59+00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2000-02-29T23:59:59Z");
-
-  // Negative carry: minute => hour => day => month => year
-  check_write(EXESS_DATE_TIME,
-              " 02001-01-01T00:14:59+00:15 ",
-              EXESS_SUCCESS,
-              21,
-              "2000-12-31T23:59:59Z");
+              "2001-02-03T04:46:59Z");
 }
 
 static void

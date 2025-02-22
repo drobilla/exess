@@ -1,4 +1,4 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "date_utils.h"
@@ -15,23 +15,11 @@
 int
 exess_compare_date(const ExessDate lhs, const ExessDate rhs)
 {
-  ExessDateTime lhs_datetime = {
-    lhs.year, lhs.month, lhs.day, lhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
+  const ExessDateTime lhs_datetime = {
+    lhs.year, lhs.month, lhs.day, lhs.zone, 0, 0, 0, 0};
 
-  ExessDateTime rhs_datetime = {
-    rhs.year, rhs.month, rhs.day, rhs.zone != EXESS_LOCAL, 0, 0, 0, 0};
-
-  if (lhs.zone != EXESS_LOCAL) {
-    const ExessDuration lhs_tz_duration = {0U, -lhs.zone * 15 * 60, 0};
-
-    lhs_datetime = exess_add_date_time_duration(lhs_datetime, lhs_tz_duration);
-  }
-
-  if (rhs.zone != EXESS_LOCAL) {
-    const ExessDuration rhs_tz_duration = {0U, -rhs.zone * 15 * 60, 0};
-
-    rhs_datetime = exess_add_date_time_duration(rhs_datetime, rhs_tz_duration);
-  }
+  const ExessDateTime rhs_datetime = {
+    rhs.year, rhs.month, rhs.day, rhs.zone, 0, 0, 0, 0};
 
   return exess_compare_date_time(lhs_datetime, rhs_datetime);
 }
