@@ -30,27 +30,18 @@ set_field(ExessDuration* const out,
     return EXESS_BAD_ORDER;
   }
 
-  switch (field) {
-  case YEAR:
-    out->months = 12 * (int32_t)value;
-    break;
-  case MONTH:
-    out->months = out->months + (int32_t)value;
-    break;
-  case DAY:
-    out->seconds = 24 * 60 * 60 * (int32_t)value;
-    break;
-  case HOUR:
-    out->seconds = out->seconds + (60 * 60 * (int32_t)value);
-    break;
-  case MINUTE:
-    out->seconds = out->seconds + (60 * (int32_t)value);
-    break;
-  case SECOND:
-    out->seconds = out->seconds + (int32_t)value;
-    break;
+  static const uint64_t factors[6] = {
+    12UL, 1UL, 24UL * 60UL * 60UL, 60UL * 60UL, 60UL, 1UL};
+
+  const uint64_t factor = factors[field];
+  int32_t* const target = (field < DAY) ? &out->months : &out->seconds;
+
+  const int64_t new_value = (int64_t)*target + (int64_t)(factor * value);
+  if (new_value >= INT32_MAX) {
+    return EXESS_OUT_OF_RANGE;
   }
 
+  *target = (int32_t)new_value;
   return EXESS_SUCCESS;
 }
 

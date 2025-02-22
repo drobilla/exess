@@ -107,19 +107,31 @@ test_read_duration(void)
   check_read(
     "P0Y0M01DT06H00M00S", EXESS_SUCCESS, 18, 0, 0, 1, 6, 0, 0, 0, false);
 
-  // Out of range fields
+  // Maximum field values
   check_read(
-    "P2147483647Y", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
+    "P178956970Y", EXESS_SUCCESS, 11, 178956970, 0, 0, 0, 0, 0, 0, false);
+  check_read(
+    "P2147483646M", EXESS_SUCCESS, 12, 0, 2147483646, 0, 0, 0, 0, 0, false);
+  check_read("P24855D", EXESS_SUCCESS, 7, 0, 0, 24855, 0, 0, 0, 0, false);
+  check_read("PT596523H", EXESS_SUCCESS, 9, 0, 0, 0, 596523, 0, 0, 0, false);
+  check_read(
+    "PT35791394M", EXESS_SUCCESS, 11, 0, 0, 0, 0, 35791394, 0, 0, false);
+  check_read(
+    "PT2147483646S", EXESS_SUCCESS, 13, 0, 0, 0, 0, 0, 2147483646, 0, false);
+  check_read(
+    "PT0.999999999S", EXESS_SUCCESS, 14, 0, 0, 0, 0, 0, 0, 999999999, false);
+
+  // Out of range fields
+  check_read("P178956971Y", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
     "P2147483647M", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read(
-    "P2147483647D", EXESS_OUT_OF_RANGE, 12, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read(
-    "PT2147483647H", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
-  check_read(
-    "PT2147483647M", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("P24856D", EXESS_OUT_OF_RANGE, 7, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("PT596524H", EXESS_OUT_OF_RANGE, 9, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read("PT35791395M", EXESS_OUT_OF_RANGE, 11, 0, 0, 0, 0, 0, 0, 0, false);
   check_read(
     "PT2147483647S", EXESS_OUT_OF_RANGE, 13, 0, 0, 0, 0, 0, 0, 0, false);
+  check_read(
+    "PT0.1000000000S", EXESS_EXPECTED_TIME_TAG, 13, 0, 0, 0, 0, 0, 0, 0, false);
 
   // Garbage
   check_read("P-20M", EXESS_EXPECTED_DIGIT, 1, 0, 0, 0, 0, 0, 0, 0, false);
