@@ -124,8 +124,7 @@ write_integer(const ExessDatatype datatype,
   // Handle zero as a special case (no non-zero digits to copy)
   size_t o = 0;
   if (first == last) {
-    if (datatype == EXESS_NEGATIVE_INTEGER ||
-        datatype == EXESS_POSITIVE_INTEGER) {
+    if (datatype == EXESS_POSITIVE_INTEGER) {
       return vresult(EXESS_BAD_VALUE, sign, 0);
     }
 
@@ -136,14 +135,8 @@ write_integer(const ExessDatatype datatype,
   // Add leading sign only if the number is negative
   ExessStatus st = EXESS_SUCCESS;
   if (str[sign] == '-') {
-    st = (datatype == EXESS_NON_NEGATIVE_INTEGER ||
-          datatype == EXESS_POSITIVE_INTEGER)
-           ? EXESS_BAD_VALUE
-           : EXESS_SUCCESS;
-
     o += write_char('-', buf_size, buf, o);
-  } else if (datatype == EXESS_NON_POSITIVE_INTEGER ||
-             datatype == EXESS_NEGATIVE_INTEGER) {
+  } else if (datatype == EXESS_NON_POSITIVE_INTEGER) {
     return vresult(EXESS_BAD_VALUE, first, sign);
   }
 

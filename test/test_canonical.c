@@ -213,6 +213,7 @@ test_integer(void)
 
   // NonPositiveInteger
 
+  check(EXESS_NON_POSITIVE_INTEGER, 2, " 0 ", EXESS_SUCCESS, 1, "0");
   check(EXESS_NON_POSITIVE_INTEGER, 5, " -001 ", EXESS_SUCCESS, 2, "-1");
   check(EXESS_NON_POSITIVE_INTEGER, 5, "  000 ", EXESS_SUCCESS, 1, "0");
   check(EXESS_NON_POSITIVE_INTEGER, 4, "  001 ", EXESS_BAD_VALUE, 0, "");
@@ -234,6 +235,7 @@ test_integer(void)
 
   // NegativeInteger
 
+  check(EXESS_NEGATIVE_INTEGER, 1, " 0 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_NEGATIVE_INTEGER, 5, " -001 ", EXESS_SUCCESS, 2, "-1");
   check(EXESS_NEGATIVE_INTEGER, 2, "  000 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_NEGATIVE_INTEGER, 2, "  001 ", EXESS_BAD_VALUE, 0, "");
@@ -255,6 +257,7 @@ test_integer(void)
 
   // NonNegativeInteger
 
+  check(EXESS_NON_NEGATIVE_INTEGER, 2, " 0 ", EXESS_SUCCESS, 1, "0");
   check(EXESS_NON_NEGATIVE_INTEGER, 1, " -001 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_NON_NEGATIVE_INTEGER, 5, "  000 ", EXESS_SUCCESS, 1, "0");
   check(EXESS_NON_NEGATIVE_INTEGER, 5, "  001 ", EXESS_SUCCESS, 1, "1");
@@ -276,6 +279,7 @@ test_integer(void)
 
   // PositiveInteger
 
+  check(EXESS_POSITIVE_INTEGER, 1, " 0 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_POSITIVE_INTEGER, 1, " -001 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_POSITIVE_INTEGER, 2, "  000 ", EXESS_BAD_VALUE, 0, "");
   check(EXESS_POSITIVE_INTEGER, 5, "  001 ", EXESS_SUCCESS, 1, "1");

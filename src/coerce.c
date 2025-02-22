@@ -5,6 +5,7 @@
 
 #include <exess/exess.h>
 
+#include <assert.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -396,7 +397,8 @@ coerce_to_signed(const ExessDatatype in_datatype,
     } else if (out_datatype == EXESS_SHORT) {
       *(int16_t*)out = (int16_t)value;
       r.count        = sizeof(int16_t);
-    } else if (out_datatype == EXESS_BYTE) {
+    } else {
+      assert(out_datatype == EXESS_BYTE);
       *(int8_t*)out = (int8_t)value;
       r.count       = sizeof(int8_t);
     }
@@ -422,7 +424,8 @@ coerce_to_unsigned(const ExessDatatype in_datatype,
     } else if (out_datatype == EXESS_USHORT) {
       *(uint16_t*)out = (uint16_t)value;
       r.count         = sizeof(uint16_t);
-    } else if (out_datatype == EXESS_UBYTE) {
+    } else {
+      assert(out_datatype == EXESS_UBYTE);
       *(uint8_t*)out = (uint8_t)value;
       r.count        = sizeof(uint8_t);
     }

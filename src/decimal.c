@@ -4,7 +4,6 @@
 #include "floating_decimal.h"
 #include "read_utils.h"
 #include "result.h"
-#include "string_utils.h"
 #include "strtod.h"
 #include "write_utils.h"
 
@@ -92,14 +91,7 @@ exess_read_decimal(double* const out, const char* const str)
 {
   *out = (double)NAN;
 
-  // Skip whitespace and check for an optional sign then a digit
-  const size_t i     = skip_whitespace(str);
-  const size_t first = i + is_sign(str[i]);
-  if (str[first] != '.' && !is_digit(str[first])) {
-    return result(EXESS_EXPECTED_DIGIT, first);
-  }
-
-  // Parse digits and convert to double if successful
+  const size_t         i  = skip_whitespace(str);
   ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
   const ExessResult    r  = parse_decimal(&in, str + i);
   if (!r.status) {

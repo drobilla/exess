@@ -38,6 +38,8 @@ test_datatype_uris(void)
 static void
 test_datatype_is_bounded(void)
 {
+  assert(!exess_datatype_is_bounded((ExessDatatype)-1));
+
   assert(!exess_datatype_is_bounded(EXESS_NOTHING));
   assert(exess_datatype_is_bounded(EXESS_BOOLEAN));
   assert(!exess_datatype_is_bounded(EXESS_DECIMAL));

@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "strtod.h"
@@ -281,9 +281,8 @@ read_fraction(size_t n_digits, const char* const digits)
   uint64_t frac = 0;
 
   for (unsigned i = 0U; i < n_digits; ++i) {
-    if (is_digit(digits[i])) {
-      frac = (frac * 10U) + (unsigned)(digits[i] - '0');
-    }
+    assert(is_digit(digits[i]));
+    frac = (frac * 10U) + (unsigned)(digits[i] - '0');
   }
 
   return frac;

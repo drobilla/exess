@@ -205,6 +205,8 @@ test_unknown(void)
 static void
 test_decimal(void)
 {
+  check_from_to(EXESS_DECIMAL, "1.2", EXESS_DECIMAL, "1.2");
+
   check_from_to(EXESS_DOUBLE, "1.2E3", EXESS_DECIMAL, "1200.0");
   check_from_to(EXESS_LONG, "1200", EXESS_DECIMAL, "1200.0");
 
