@@ -792,7 +792,7 @@ exess_write_duration(ExessDuration        value,
                      char* EXESS_NULLABLE buf);
 /**
    @}
-   @defgroup exess_datetime dateTime
+   @defgroup exess_date_time dateTime
 
    A `dateTime` is a date and time in either UTC or local time.
 
@@ -801,7 +801,7 @@ exess_write_duration(ExessDuration        value,
    two-digit integers except seconds which may be a decimal.  For example,
    "2001-02-03T12:13:14.56".
 
-   A local datetime has no suffix, a datetime with a timezone is always in
+   A local `dateTime` has no suffix, a datetime with a timezone is always in
    UTC, and is written with a "Z" suffix, for example 2001-02-03T12:13:14Z.
 
    Canonical form only includes a decimal point if the number of seconds isn't
@@ -810,8 +810,8 @@ exess_write_duration(ExessDuration        value,
    @{
 */
 
-/// The maximum length of a `dateTime` string from exess_write_datetime()
-#define EXESS_MAX_DATETIME_LENGTH 32
+/// The maximum length of a `dateTime` string from exess_write_date_time()
+#define EXESS_MAX_DATE_TIME_LENGTH 32
 
 /**
    Date and time.
@@ -831,9 +831,9 @@ typedef struct {
 } ExessDateTime;
 
 /**
-   Compare two datetimes.
+   Compare two dateTimes.
 
-   Note that datetimes aren't totally ordered since the order between UTC and
+   Note that dateTimes aren't totally ordered since the order between UTC and
    local times can be indeterminate.  When comparing UTC and local times, if
    there is a difference of more than 14 hours, then the comparison is
    determinate (according to the XSD specification).  Otherwise, this function
@@ -843,12 +843,12 @@ typedef struct {
    respectively.
 */
 EXESS_CONST_API int
-exess_compare_datetime(ExessDateTime lhs, ExessDateTime rhs);
+exess_compare_date_time(ExessDateTime lhs, ExessDateTime rhs);
 
 /**
-   Add a duration to a datetime.
+   Add a duration to a dateTime.
 
-   This advances or rewinds the datetime by the given duration, depending on
+   This advances or rewinds the dateTime by the given duration, depending on
    whether the duration is positive or negative.
 
    If underflow or overflow occur, then this will return an infinite value.  A
@@ -862,21 +862,21 @@ exess_compare_datetime(ExessDateTime lhs, ExessDateTime rhs);
    overflow occurs.
 */
 EXESS_CONST_API ExessDateTime
-exess_add_datetime_duration(ExessDateTime s, ExessDuration d);
+exess_add_date_time_duration(ExessDateTime s, ExessDuration d);
 
 /**
-   Read a `dateTime` string after any leading whitespace.
+   Read a dateTime string after any leading whitespace.
 
    @param out Set to the parsed value, or zero on error.
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
 EXESS_API ExessResult
-exess_read_datetime(ExessDateTime* EXESS_NONNULL out,
-                    const char* EXESS_NONNULL    str);
+exess_read_date_time(ExessDateTime* EXESS_NONNULL out,
+                     const char* EXESS_NONNULL    str);
 
 /**
-   Write a canonical `dateTime` string.
+   Write a canonical dateTime string.
 
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
@@ -886,9 +886,9 @@ exess_read_datetime(ExessDateTime* EXESS_NONNULL out,
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
 EXESS_API ExessResult
-exess_write_datetime(ExessDateTime        value,
-                     size_t               buf_size,
-                     char* EXESS_NULLABLE buf);
+exess_write_date_time(ExessDateTime        value,
+                      size_t               buf_size,
+                      char* EXESS_NULLABLE buf);
 
 /**
    @}
@@ -912,9 +912,9 @@ typedef struct {
    Compare two dates.
 
    Note that comparison of dates isn't always determinate.  The comparison of
-   two dates works the same way as the comparison of two datetimes with
+   two dates works the same way as the comparison of two dateTimes with
    equivalent times, except adjusted according to the timezone if necessary.
-   See exess_compare_datetime() for details.
+   See exess_compare_date_time() for details.
 
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
@@ -971,8 +971,8 @@ typedef struct {
    Compare two times.
 
    Note that comparison of times isn't always determinate.  The comparison of
-   two times works the same way as the comparison of two datetimes with an
-   arbitrary date, see exess_compare_datetime() for details.
+   two times works the same way as the comparison of two dateTimes with an
+   arbitrary date, see exess_compare_date_time() for details.
 
    @return -1, 0, or 1 if `lhs` is less than, equal to, or greater than `rhs`,
    respectively.
@@ -1185,7 +1185,7 @@ typedef enum {
   EXESS_UBYTE,                ///< @ref exess_ubyte
   EXESS_POSITIVE_INTEGER,     ///< `positiveInteger` as @ref exess_ulong
   EXESS_DURATION,             ///< @ref exess_duration
-  EXESS_DATETIME,             ///< @ref exess_datetime
+  EXESS_DATE_TIME,            ///< @ref exess_date_time
   EXESS_TIME,                 ///< @ref exess_time
   EXESS_DATE,                 ///< @ref exess_date
   EXESS_HEX,                  ///< @ref exess_hex
@@ -1298,7 +1298,7 @@ typedef union {
   uint16_t      as_ushort;                     ///< #EXESS_USHORT
   uint8_t       as_ubyte;                      ///< #EXESS_UBYTE
   ExessDuration as_duration;                   ///< #EXESS_DURATION
-  ExessDateTime as_datetime;                   ///< #EXESS_DATETIME
+  ExessDateTime as_date_time;                  ///< #EXESS_DATE_TIME
   ExessTime     as_time;                       ///< #EXESS_TIME
   ExessDate     as_date;                       ///< #EXESS_DATE
   uint8_t       as_blob[EXESS_MAX_FIXED_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
@@ -1422,8 +1422,8 @@ typedef enum {
   /**
      Allow coercions that truncate significant parts of values.
 
-     Specifically, this allows coercing any number to boolean, datetime to
-     date, and datetime to time.
+     Specifically, this allows coercing any number to boolean, dateTime to
+     date, and dateTime to time.
   */
   EXESS_TRUNCATE = 1U << 1U,
 } ExessCoercion;

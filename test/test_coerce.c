@@ -245,7 +245,7 @@ test_boolean(void)
 
   // Not convertible to any time types
   check_failure(EXESS_BOOLEAN, "true", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_BOOLEAN, "true", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_BOOLEAN, "true", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BOOLEAN, "true", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BOOLEAN, "true", EXESS_DATE, EXESS_UNSUPPORTED);
 }
@@ -451,30 +451,30 @@ static void
 test_date_time(void)
 {
   check_failure(
-    EXESS_DATETIME, "2001-02-03T04:05:06", EXESS_TIME, EXESS_WOULD_TRUNCATE);
+    EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_TIME, EXESS_WOULD_TRUNCATE);
 
-  check_one_way(EXESS_DATETIME,
+  check_one_way(EXESS_DATE_TIME,
                 "2001-02-03T04:05:06",
                 EXESS_TRUNCATE,
                 EXESS_TIME,
                 "04:05:06");
 
-  check_one_way(EXESS_DATETIME,
+  check_one_way(EXESS_DATE_TIME,
                 "2001-02-03T04:05:06Z",
                 EXESS_TRUNCATE,
                 EXESS_TIME,
                 "04:05:06Z");
 
   check_failure(
-    EXESS_DATETIME, "2001-02-03T04:05:06", EXESS_DATE, EXESS_WOULD_TRUNCATE);
+    EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_DATE, EXESS_WOULD_TRUNCATE);
 
-  check_one_way(EXESS_DATETIME,
+  check_one_way(EXESS_DATE_TIME,
                 "2001-02-03T04:05:06",
                 EXESS_TRUNCATE,
                 EXESS_DATE,
                 "2001-02-03");
 
-  check_one_way(EXESS_DATETIME,
+  check_one_way(EXESS_DATE_TIME,
                 "2001-02-03T04:05:06Z",
                 EXESS_TRUNCATE,
                 EXESS_DATE,
@@ -485,47 +485,47 @@ static void
 test_number_to_time(void)
 {
   check_failure(EXESS_BOOLEAN, "true", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_BOOLEAN, "true", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_BOOLEAN, "true", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BOOLEAN, "true", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BOOLEAN, "true", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_LONG, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_LONG, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_LONG, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_LONG, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_LONG, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_INT, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_INT, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_INT, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_INT, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_INT, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_SHORT, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_SHORT, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_SHORT, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_SHORT, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_SHORT, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_BYTE, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_BYTE, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_BYTE, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BYTE, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_BYTE, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_ULONG, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_ULONG, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_ULONG, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_ULONG, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_ULONG, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_UINT, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_UINT, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_UINT, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_UINT, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_UINT, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_USHORT, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_USHORT, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_USHORT, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_USHORT, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_USHORT, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_UBYTE, "1", EXESS_DURATION, EXESS_UNSUPPORTED);
-  check_failure(EXESS_UBYTE, "1", EXESS_DATETIME, EXESS_UNSUPPORTED);
+  check_failure(EXESS_UBYTE, "1", EXESS_DATE_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_UBYTE, "1", EXESS_TIME, EXESS_UNSUPPORTED);
   check_failure(EXESS_UBYTE, "1", EXESS_DATE, EXESS_UNSUPPORTED);
 }
@@ -539,42 +539,43 @@ test_time_to_number(void)
   static const char* const date_str     = "2001-02-03";
 
   check_failure(EXESS_DURATION, duration_str, EXESS_BOOLEAN, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_BOOLEAN, EXESS_UNSUPPORTED);
+  check_failure(
+    EXESS_DATE_TIME, datetime_str, EXESS_BOOLEAN, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_BOOLEAN, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_BOOLEAN, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_INT, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_INT, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_INT, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_INT, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_INT, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_SHORT, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_SHORT, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_SHORT, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_SHORT, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_SHORT, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_BYTE, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_BYTE, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_BYTE, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_BYTE, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_BYTE, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_ULONG, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_ULONG, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_ULONG, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_ULONG, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_ULONG, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_UINT, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_UINT, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_UINT, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_UINT, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_UINT, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_USHORT, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_USHORT, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_USHORT, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_USHORT, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_USHORT, EXESS_UNSUPPORTED);
 
   check_failure(EXESS_DURATION, duration_str, EXESS_UBYTE, EXESS_UNSUPPORTED);
-  check_failure(EXESS_DATETIME, datetime_str, EXESS_UBYTE, EXESS_UNSUPPORTED);
+  check_failure(EXESS_DATE_TIME, datetime_str, EXESS_UBYTE, EXESS_UNSUPPORTED);
   check_failure(EXESS_TIME, time_str, EXESS_UBYTE, EXESS_UNSUPPORTED);
   check_failure(EXESS_DATE, date_str, EXESS_UBYTE, EXESS_UNSUPPORTED);
 }

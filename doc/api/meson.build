@@ -15,7 +15,7 @@ c_exess_rst = custom_target(
     'exess_coercion.rst',
     'exess_datatypes.rst',
     'exess_date.rst',
-    'exess_datetime.rst',
+    'exess_date_time.rst',
     'exess_decimal.rst',
     'exess_double.rst',
     'exess_duration.rst',

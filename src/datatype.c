@@ -32,7 +32,7 @@ static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
   EXESS_XSD_URI "unsignedByte",       //
   EXESS_XSD_URI "positiveInteger",    //
   EXESS_XSD_URI "duration",           //
-  EXESS_XSD_URI "datetime",           //
+  EXESS_XSD_URI "dateTime",           //
   EXESS_XSD_URI "time",               //
   EXESS_XSD_URI "date",               //
   EXESS_XSD_URI "hexBinary",          //
@@ -60,7 +60,7 @@ static const size_t exess_max_lengths[] = {
   EXESS_MAX_UBYTE_LENGTH,
   0, // positiveInteger
   EXESS_MAX_DURATION_LENGTH,
-  EXESS_MAX_DATETIME_LENGTH,
+  EXESS_MAX_DATE_TIME_LENGTH,
   EXESS_MAX_TIME_LENGTH,
   EXESS_MAX_DATE_LENGTH,
   0, // hexBinary

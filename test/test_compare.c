@@ -115,120 +115,120 @@ test_compare(void)
   check_comparisons(EXESS_DURATION, "-PT9S", "PT0S", "PT9S");
   check_comparisons(EXESS_DURATION, "-PT0.9S", "PT0.0S", "PT0.9S");
 
-  // Datetime
+  // DateTime
 
   // Equality
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2001-02-03T12:13:14",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2001-02-03T12:13:14",
                    equal);
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2001-02-03T12:13:14Z",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2001-02-03T12:13:14Z",
                    equal);
 
   // All local
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14.15",
                     "2001-02-03T12:13:14.16",
                     "2001-02-03T12:13:14.17");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-02-03T12:13:15",
                     "2001-02-03T12:13:16");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-02-03T12:14:14",
                     "2001-02-03T12:15:14");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-02-03T13:13:14",
                     "2001-02-03T14:13:14");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-02-04T12:13:14",
                     "2001-02-05T12:13:14");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-03-03T12:13:14",
                     "2001-04-03T12:13:14");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2002-02-03T12:13:14",
                     "2003-02-03T12:13:14");
 
   // All UTC
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14.15Z",
                     "2001-02-03T12:13:14.16Z",
                     "2001-02-03T12:13:14.17Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-03T12:13:15Z",
                     "2001-02-03T12:13:16Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-03T12:14:14Z",
                     "2001-02-03T12:15:14Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-03T13:13:14Z",
                     "2001-02-03T14:13:14Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-04T12:13:14Z",
                     "2001-02-05T12:13:14Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-03-03T12:13:14Z",
                     "2001-04-03T12:13:14Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2002-02-03T12:13:14Z",
                     "2003-02-03T12:13:14Z");
 
   // Local and UTC determinate
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-04T02:13:15",
                     "2001-02-04T16:13:15Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14Z",
                     "2001-02-04T12:13:14",
                     "2001-02-05T12:13:14Z");
-  check_comparisons(EXESS_DATETIME,
+  check_comparisons(EXESS_DATE_TIME,
                     "2001-02-03T12:13:14",
                     "2001-02-04T02:13:15Z",
                     "2001-02-04T16:13:16");
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2001-02-03T12:13:14Z",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2001-02-03T12:13:14",
                    greater);
 
   // Local and UTC determinate (example from spec)
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2000-01-15T12:00:00",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2000-01-16T12:00:00Z",
                    less);
 
   // Local and UTC indeterminate (examples from spec, local is first here)
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2000-01-01T12:00:00",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "1999-12-31T23:00:00Z",
                    less);
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2000-01-16T12:00:00",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2000-01-16T12:00:00Z",
                    less);
-  check_comparison(EXESS_DATETIME,
+  check_comparison(EXESS_DATE_TIME,
                    "2000-01-16T00:00:00",
-                   EXESS_DATETIME,
+                   EXESS_DATE_TIME,
                    "2000-01-16T12:00:00Z",
                    less);
 

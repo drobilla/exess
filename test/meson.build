@@ -50,7 +50,7 @@ public_tests = [
   'compare',
   'datatype',
   'date',
-  'datetime',
+  'date_time',
   'decimal',
   'double',
   'duration',

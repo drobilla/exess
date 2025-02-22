@@ -55,7 +55,7 @@ compare_field(const unsigned lhs, const unsigned rhs)
 }
 
 static int
-compare_datetime_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
+compare_date_time_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   if (lhs.year != rhs.year) {
     return lhs.year < rhs.year ? -1 : 1;
@@ -73,13 +73,13 @@ compare_datetime_determinate(const ExessDateTime lhs, const ExessDateTime rhs)
 static ExessDateTime
 to_utc(const ExessDateTime s, const ExessDuration offset)
 {
-  ExessDateTime r = exess_add_datetime_duration(s, offset);
+  ExessDateTime r = exess_add_date_time_duration(s, offset);
   r.is_utc        = true;
   return r;
 }
 
 static int
-compare_datetime_partial(const ExessDateTime lhs, const ExessDateTime rhs)
+compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
 
@@ -88,12 +88,12 @@ compare_datetime_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 
   if (lhs.is_utc) {
     const ExessDateTime r_minus = to_utc(rhs, minus_14h);
-    if (compare_datetime_determinate(lhs, r_minus) < 0) {
+    if (compare_date_time_determinate(lhs, r_minus) < 0) {
       return -1;
     }
 
     const ExessDateTime r_plus = to_utc(rhs, plus_14h);
-    if (compare_datetime_determinate(lhs, r_plus) > 0) {
+    if (compare_date_time_determinate(lhs, r_plus) > 0) {
       return 1;
     }
 
@@ -102,12 +102,12 @@ compare_datetime_partial(const ExessDateTime lhs, const ExessDateTime rhs)
   }
 
   const ExessDateTime l_plus = to_utc(lhs, plus_14h);
-  if (compare_datetime_determinate(l_plus, rhs) < 0) {
+  if (compare_date_time_determinate(l_plus, rhs) < 0) {
     return -1;
   }
 
   const ExessDateTime l_minus = to_utc(lhs, minus_14h);
-  if (compare_datetime_determinate(l_minus, rhs) > 0) {
+  if (compare_date_time_determinate(l_minus, rhs) > 0) {
     return 1;
   }
 
@@ -116,10 +116,10 @@ compare_datetime_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 }
 
 int
-exess_compare_datetime(const ExessDateTime lhs, const ExessDateTime rhs)
+exess_compare_date_time(const ExessDateTime lhs, const ExessDateTime rhs)
 {
-  return (lhs.is_utc == rhs.is_utc) ? compare_datetime_determinate(lhs, rhs)
-                                    : compare_datetime_partial(lhs, rhs);
+  return (lhs.is_utc == rhs.is_utc) ? compare_date_time_determinate(lhs, rhs)
+                                    : compare_date_time_partial(lhs, rhs);
 }
 
 static int32_t
@@ -143,7 +143,7 @@ add_field(const int32_t  lhs,
    Set the day, carrying into into months and years as necessary.
 
    Note that the algorithm in the spec first clamps here, but we don't because
-   no such datetime should exist (exess_read_datetime refuses to read them).
+   no such dateTime should exist (exess_read_date_time refuses to read them).
    This might return the infinite past or future.
 */
 EXESS_CONST_FUNC static ExessDateTime
@@ -178,7 +178,7 @@ carry_set_day(ExessDateTime e, int day)
 }
 
 ExessDateTime
-exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
+exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
 {
   /*
     See <https://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes>.
@@ -234,7 +234,7 @@ exess_add_datetime_duration(const ExessDateTime s, const ExessDuration d)
 }
 
 ExessResult
-exess_read_datetime(ExessDateTime* const out, const char* const str)
+exess_read_date_time(ExessDateTime* const out, const char* const str)
 {
   out->year  = 0;
   out->month = 0;
@@ -275,7 +275,7 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
   if (datetime.is_utc) {
     const ExessDuration tz_duration = {0U, -time.zone * 15 * 60, 0};
 
-    *out = exess_add_datetime_duration(datetime, tz_duration);
+    *out = exess_add_date_time_duration(datetime, tz_duration);
   } else {
     *out = datetime;
   }
@@ -284,9 +284,9 @@ exess_read_datetime(ExessDateTime* const out, const char* const str)
 }
 
 ExessResult
-exess_write_datetime(const ExessDateTime value,
-                     const size_t        buf_size,
-                     char* const         buf)
+exess_write_date_time(const ExessDateTime value,
+                      const size_t        buf_size,
+                      char* const         buf)
 {
   const ExessTimezone local = {EXESS_LOCAL};
   const ExessDate     date  = {value.year, value.month, value.day, local};

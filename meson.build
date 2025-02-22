@@ -146,7 +146,7 @@ sources = files(
   'src/datatype.c',
   'src/date.c',
   'src/date_utils.c',
-  'src/datetime.c',
+  'src/date_time.c',
   'src/decimal.c',
   'src/digits.c',
   'src/double.c',

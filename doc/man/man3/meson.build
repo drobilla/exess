@@ -31,12 +31,12 @@ man_links = {
     'exess_write_date.3',
   ],
 
-  'exess_datetime.3': [
+  'exess_date_time.3': [
     'ExessDateTime.3',
-    'exess_compare_datetime.3',
-    'exess_add_datetime_duration.3',
-    'exess_read_datetime.3',
-    'exess_write_datetime.3',
+    'exess_compare_date_time.3',
+    'exess_add_date_time_duration.3',
+    'exess_read_date_time.3',
+    'exess_write_date_time.3',
   ],
 
   'exess_decimal.3': ['exess_read_decimal.3', 'exess_write_decimal.3'],

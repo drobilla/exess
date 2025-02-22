@@ -57,7 +57,7 @@ test_datatype_is_bounded(void)
   assert(exess_datatype_is_bounded(EXESS_UBYTE));
   assert(!exess_datatype_is_bounded(EXESS_POSITIVE_INTEGER));
   assert(exess_datatype_is_bounded(EXESS_DURATION));
-  assert(exess_datatype_is_bounded(EXESS_DATETIME));
+  assert(exess_datatype_is_bounded(EXESS_DATE_TIME));
   assert(exess_datatype_is_bounded(EXESS_TIME));
   assert(exess_datatype_is_bounded(EXESS_DATE));
   assert(!exess_datatype_is_bounded(EXESS_HEX));
@@ -88,7 +88,7 @@ test_value_size(void)
   assert(exess_value_size(EXESS_UBYTE) == sizeof(uint8_t));
   assert(exess_value_size(EXESS_POSITIVE_INTEGER) == sizeof(uint64_t));
   assert(exess_value_size(EXESS_DURATION) == sizeof(ExessDuration));
-  assert(exess_value_size(EXESS_DATETIME) == sizeof(ExessDateTime));
+  assert(exess_value_size(EXESS_DATE_TIME) == sizeof(ExessDateTime));
   assert(exess_value_size(EXESS_TIME) == sizeof(ExessTime));
   assert(exess_value_size(EXESS_DATE) == sizeof(ExessDate));
   assert(exess_value_size(EXESS_HEX) == 0U);

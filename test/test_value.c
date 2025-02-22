@@ -132,8 +132,11 @@ test_read_value(void)
   }
   {
     ExessDateTime a_datetime = datetime;
-    check_read(
-      &a_datetime, EXESS_DATETIME, "2001-01-02T12:15:01.25", EXESS_SUCCESS, 22);
+    check_read(&a_datetime,
+               EXESS_DATE_TIME,
+               "2001-01-02T12:15:01.25",
+               EXESS_SUCCESS,
+               22);
 
     assert(a_datetime.year == 2001);
     assert(a_datetime.month == 1);
@@ -256,7 +259,7 @@ test_write_value(void)
               15,
               "P1Y2M3DT4H5M6S");
 
-  check_write(EXESS_DATETIME,
+  check_write(EXESS_DATE_TIME,
               sizeof(a_datetime),
               &a_datetime,
               EXESS_SUCCESS,

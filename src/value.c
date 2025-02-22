@@ -83,8 +83,8 @@ exess_read_value(const ExessDatatype datatype,
     return fixed(exess_read_duration((ExessDuration*)out, str),
                  sizeof(ExessDuration));
 
-  case EXESS_DATETIME:
-    return fixed(exess_read_datetime((ExessDateTime*)out, str),
+  case EXESS_DATE_TIME:
+    return fixed(exess_read_date_time((ExessDateTime*)out, str),
                  sizeof(ExessDateTime));
 
   case EXESS_TIME:
@@ -146,8 +146,8 @@ exess_write_value(const ExessDatatype datatype,
     return exess_write_ulong(*(const uint64_t*)value, buf_size, buf);
   case EXESS_DURATION:
     return exess_write_duration(*(const ExessDuration*)value, buf_size, buf);
-  case EXESS_DATETIME:
-    return exess_write_datetime(*(const ExessDateTime*)value, buf_size, buf);
+  case EXESS_DATE_TIME:
+    return exess_write_date_time(*(const ExessDateTime*)value, buf_size, buf);
   case EXESS_TIME:
     return exess_write_time(*(const ExessTime*)value, buf_size, buf);
   case EXESS_DATE:

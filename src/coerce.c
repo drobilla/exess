@@ -120,7 +120,7 @@ coerce_to_long(int64_t* const       out,
   }
 
   case EXESS_DURATION:
-  case EXESS_DATETIME:
+  case EXESS_DATE_TIME:
   case EXESS_TIME:
   case EXESS_DATE:
   case EXESS_HEX:
@@ -335,7 +335,7 @@ coerce_to_time(const ExessCoercions coercions,
                const void* const    in,
                ExessTime* const     out)
 {
-  if (in_datatype != EXESS_DATETIME) {
+  if (in_datatype != EXESS_DATE_TIME) {
     return result(EXESS_UNSUPPORTED, 0U);
   }
 
@@ -361,7 +361,7 @@ coerce_to_date(const ExessCoercions coercions,
                const void* const    in,
                ExessDate* const     out)
 {
-  if (in_datatype != EXESS_DATETIME) {
+  if (in_datatype != EXESS_DATE_TIME) {
     return result(EXESS_UNSUPPORTED, 0U);
   }
 
@@ -524,7 +524,7 @@ exess_coerce_value(const ExessCoercions coercions,
       coercions, in_datatype, in, 1U, (uint64_t*)out);
 
   case EXESS_DURATION:
-  case EXESS_DATETIME:
+  case EXESS_DATE_TIME:
     break;
 
   case EXESS_TIME:

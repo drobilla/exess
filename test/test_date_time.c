@@ -37,16 +37,16 @@ check_add(const char* const datetime_string,
   ExessDateTime datetime = {0, 0U, 0U, false, 0U, 0U, 0U, 0U};
   ExessDuration duration = {0U, 0U, 0U};
 
-  ExessResult r = exess_read_datetime(&datetime, datetime_string);
+  ExessResult r = exess_read_date_time(&datetime, datetime_string);
   assert(!r.status);
 
   r = exess_read_duration(&duration, duration_string);
   assert(!r.status);
 
-  const ExessDateTime result  = exess_add_datetime_duration(datetime, duration);
+  const ExessDateTime result = exess_add_date_time_duration(datetime, duration);
   char                buf[28] = {0};
 
-  r = exess_write_datetime(result, sizeof(buf), buf);
+  r = exess_write_date_time(result, sizeof(buf), buf);
   assert(!r.status);
   assert(!strcmp(buf, result_string));
 }
@@ -117,24 +117,24 @@ test_add(void)
   static const ExessDuration plus_second      = {0, 1, 0};
   static const ExessDuration plus_nanosecond  = {0, 0, 1};
 
-  check_is_underflow(exess_add_datetime_duration(lowest, minus_month), false);
-  check_is_underflow(exess_add_datetime_duration(lowest, minus_second), false);
-  check_is_underflow(exess_add_datetime_duration(lowest, minus_nanosecond),
+  check_is_underflow(exess_add_date_time_duration(lowest, minus_month), false);
+  check_is_underflow(exess_add_date_time_duration(lowest, minus_second), false);
+  check_is_underflow(exess_add_date_time_duration(lowest, minus_nanosecond),
                      false);
 
-  check_is_underflow(exess_add_datetime_duration(utc_min, minus_month), true);
-  check_is_underflow(exess_add_datetime_duration(utc_min, minus_second), true);
-  check_is_underflow(exess_add_datetime_duration(utc_min, minus_nanosecond),
+  check_is_underflow(exess_add_date_time_duration(utc_min, minus_month), true);
+  check_is_underflow(exess_add_date_time_duration(utc_min, minus_second), true);
+  check_is_underflow(exess_add_date_time_duration(utc_min, minus_nanosecond),
                      true);
 
-  check_is_overflow(exess_add_datetime_duration(highest, plus_month), false);
-  check_is_overflow(exess_add_datetime_duration(highest, plus_second), false);
-  check_is_overflow(exess_add_datetime_duration(highest, plus_nanosecond),
+  check_is_overflow(exess_add_date_time_duration(highest, plus_month), false);
+  check_is_overflow(exess_add_date_time_duration(highest, plus_second), false);
+  check_is_overflow(exess_add_date_time_duration(highest, plus_nanosecond),
                     false);
 
-  check_is_overflow(exess_add_datetime_duration(utc_max, plus_month), true);
-  check_is_overflow(exess_add_datetime_duration(utc_max, plus_second), true);
-  check_is_overflow(exess_add_datetime_duration(utc_max, plus_nanosecond),
+  check_is_overflow(exess_add_date_time_duration(utc_max, plus_month), true);
+  check_is_overflow(exess_add_date_time_duration(utc_max, plus_second), true);
+  check_is_overflow(exess_add_date_time_duration(utc_max, plus_nanosecond),
                     true);
 }
 
@@ -181,7 +181,7 @@ check_read(const char* const string,
 {
   ExessDateTime value = {0, 0, 0, false, 0, 0, 0, 0};
 
-  const ExessResult r = exess_read_datetime(&value, string);
+  const ExessResult r = exess_read_date_time(&value, string);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value.year == expected_year);
@@ -195,7 +195,7 @@ check_read(const char* const string,
 }
 
 static void
-test_read_datetime(void)
+test_read_date_time(void)
 {
   // Simple values
 
@@ -219,7 +219,7 @@ test_read_datetime(void)
 
   check_read("-32768-01-01T00:00:00.000000001Z",
              EXESS_SUCCESS,
-             EXESS_MAX_DATETIME_LENGTH,
+             EXESS_MAX_DATE_TIME_LENGTH,
              -32768,
              1,
              1,
@@ -416,21 +416,21 @@ check_write(const ExessDateTime value,
             const size_t        buf_size,
             const char* const   expected_string)
 {
-  char buf[EXESS_MAX_DATETIME_LENGTH + 1] = {
+  char buf[EXESS_MAX_DATE_TIME_LENGTH + 1] = {
     1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16,
     17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32};
 
   assert(buf_size <= sizeof(buf));
 
-  const ExessResult r = exess_write_datetime(value, buf_size, buf);
+  const ExessResult r = exess_write_date_time(value, buf_size, buf);
   assert(r.status == expected_status);
   assert(r.count == strlen(buf));
   assert(!strcmp(buf, expected_string));
-  assert(r.status || exess_write_datetime(value, 0, NULL).count == r.count);
+  assert(r.status || exess_write_date_time(value, 0, NULL).count == r.count);
 }
 
 static void
-test_write_datetime(void)
+test_write_date_time(void)
 {
   check_write(local, EXESS_SUCCESS, 20, "2001-02-03T04:05:06");
   check_write(utc, EXESS_SUCCESS, 21, "2001-02-03T04:05:06Z");
@@ -457,7 +457,7 @@ test_write_datetime(void)
 
   // Check that nothing is written when there isn't enough space
   char              c = 42;
-  const ExessResult r = exess_write_datetime(highest, 0, &c);
+  const ExessResult r = exess_write_date_time(highest, 0, &c);
   assert(c == 42);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.count == 0);
@@ -468,8 +468,8 @@ main(void)
 {
   test_add();
   test_calendar();
-  test_read_datetime();
-  test_write_datetime();
+  test_read_date_time();
+  test_write_date_time();
 
   return 0;
 }

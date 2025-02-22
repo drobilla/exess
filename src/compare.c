@@ -84,9 +84,9 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return exess_compare_duration(*(const ExessDuration*)lhs_value,
                                   *(const ExessDuration*)rhs_value);
 
-  case EXESS_DATETIME:
-    return exess_compare_datetime(*(const ExessDateTime*)lhs_value,
-                                  *(const ExessDateTime*)rhs_value);
+  case EXESS_DATE_TIME:
+    return exess_compare_date_time(*(const ExessDateTime*)lhs_value,
+                                   *(const ExessDateTime*)rhs_value);
 
   case EXESS_TIME:
     return exess_compare_time(*(const ExessTime*)lhs_value,

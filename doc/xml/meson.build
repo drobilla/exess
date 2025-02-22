@@ -32,7 +32,7 @@ c_index_xml = custom_target(
     'group__exess__coercion.xml',
     'group__exess__datatypes.xml',
     'group__exess__date.xml',
-    'group__exess__datetime.xml',
+    'group__exess__date__time.xml',
     'group__exess__decimal.xml',
     'group__exess__double.xml',
     'group__exess__duration.xml',

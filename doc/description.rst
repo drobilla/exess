@@ -49,7 +49,7 @@ Datatypes
 *********
 
 Most of the datatypes from the XSD_ specification are implemented.
-The fully supported primitive datatypes are :ref:`boolean<exess_boolean>`, :ref:`float <exess_float>`, :ref:`double <exess_double>`, :ref:`duration <exess_duration>`, :ref:`dateTime <exess_dateTime>`, :ref:`time <exess_time>`, :ref:`date <exess_date>`, :ref:`hexBinary <exess_hex>`, and :ref:`base64Binary <exess_base64>`.
+The fully supported primitive datatypes are :ref:`boolean<exess_boolean>`, :ref:`float <exess_float>`, :ref:`double <exess_double>`, :ref:`duration <exess_duration>`, :ref:`dateTime <exess_date_time>`, :ref:`time <exess_time>`, :ref:`date <exess_date>`, :ref:`hexBinary <exess_hex>`, and :ref:`base64Binary <exess_base64>`.
 All of the derived datatypes for fixed-size numbers (which correspond to C integer types) are also fully supported: :ref:`long <exess_long>`, :ref:`int <exess_int>`, :ref:`short <exess_short>`, :ref:`byte <exess_byte>`, :ref:`unsignedLong <exess_ulong>`, :ref:`unsignedInt <exess_uint>`, :ref:`unsignedShort <exess_ushort>`, and :ref:`unsignedByte <exess_ubyte>`
 
 The variably-sized :ref:`decimal <exess_decimal>` and ``integer`` are supported to an extent, but values are limited to those that can be stored in a ``double`` or ``int64_t``, respectively.
