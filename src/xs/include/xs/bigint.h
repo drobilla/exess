@@ -1,8 +1,8 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SRC_BIGINT_H
-#define EXESS_SRC_BIGINT_H
+#ifndef XS_BIGINT_H
+#define XS_BIGINT_H
 
 #include "attributes.h"
 
@@ -91,4 +91,4 @@ exess_bigint_plus_compare(const ExessBigint* l,
 uint32_t
 exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs);
 
-#endif // EXESS_SRC_BIGINT_H
+#endif // XS_BIGINT_H

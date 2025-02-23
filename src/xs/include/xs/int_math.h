@@ -1,8 +1,8 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SRC_INTMATH_H
-#define EXESS_SRC_INTMATH_H
+#ifndef XS_INT_MATH_H
+#define XS_INT_MATH_H
 
 #include "attributes.h"
 
@@ -50,4 +50,4 @@ exess_ilog10(uint64_t i);
 EXESS_I_CONST_FUNC uint8_t
 exess_num_digits(uint64_t i);
 
-#endif // EXESS_SRC_INTMATH_H
+#endif // XS_INT_MATH_H

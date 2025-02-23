@@ -3,11 +3,11 @@
 
 #include <exess/exess.h>
 
-#include "int_math.h"
 #include "read_utils.h"
 #include "result.h"
 #include "string_utils.h"
 #include "write_utils.h"
+#include "xs/int_math.h"
 
 #include <stdint.h>
 #include <stdlib.h>

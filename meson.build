@@ -66,7 +66,6 @@ elif cc.get_id() == 'gcc'
 elif cc.get_id() == 'msvc'
   if warning_level == 'everything'
     c_suppressions += [
-      '/wd4464', # relative include path contains '..'
       '/wd4710', # function not inlined
       '/wd4711', # function selected for automatic inline expansion
       '/wd4820', # padding added after data member
@@ -137,7 +136,6 @@ c_headers = files('include/exess/exess.h')
 
 sources = files(
   'src/base64.c',
-  'src/bigint.c',
   'src/boolean.c',
   'src/byte.c',
   'src/canonical.c',
@@ -145,8 +143,8 @@ sources = files(
   'src/compare.c',
   'src/datatype.c',
   'src/date.c',
-  'src/date_utils.c',
   'src/date_time.c',
+  'src/date_utils.c',
   'src/decimal.c',
   'src/digits.c',
   'src/double.c',
@@ -155,7 +153,6 @@ sources = files(
   'src/floating_decimal.c',
   'src/hex.c',
   'src/int.c',
-  'src/int_math.c',
   'src/long.c',
   'src/read_utils.c',
   'src/scientific.c',
@@ -171,6 +168,8 @@ sources = files(
   'src/ushort.c',
   'src/value.c',
   'src/write_utils.c',
+  'src/xs/bigint.c',
+  'src/xs/int_math.c',
   'src/year.c',
 )
 

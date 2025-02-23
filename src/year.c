@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: ISC
 
 #include "year.h"
-#include "int_math.h"
 #include "macros.h"
 #include "read_utils.h"
 #include "result.h"
 #include "write_utils.h"
+#include "xs/int_math.h"
 
 #include <exess/exess.h>
 
