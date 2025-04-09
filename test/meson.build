@@ -80,6 +80,7 @@ foreach unit : public_tests
       files('test_@0@.c'.format(unit)),
       c_args: extra_c_args + c_suppressions + test_suppressions,
       dependencies: [m_dep, exess_dep],
+      implicit_include_directories: false,
     ),
     suite: 'public',
   )
@@ -91,6 +92,7 @@ foreach unit : number_tests
     files('test_@0@.c'.format(unit)),
     c_args: extra_c_args + c_suppressions + test_suppressions,
     dependencies: [m_dep, exess_dep],
+    implicit_include_directories: false,
   )
 
   # Run default randomized test (like the others run above)
@@ -111,6 +113,7 @@ test_short = executable(
   files('test_short.c'),
   c_args: extra_c_args + c_suppressions + test_suppressions,
   dependencies: [m_dep, exess_dep],
+  implicit_include_directories: false,
 )
 
 test('short', test_short, suite: 'public')
@@ -157,6 +160,7 @@ if get_option('default_library') == 'shared'
       'test_int_math',
       files('../src/int_math.c', 'test_int_math.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
+      implicit_include_directories: false,
     ),
     suite: 'private',
   )
@@ -167,6 +171,7 @@ if get_option('default_library') == 'shared'
       'test_bigint',
       files('../src/bigint.c', '../src/int_math.c', 'test_bigint.c'),
       c_args: extra_c_args + c_suppressions + test_suppressions,
+      implicit_include_directories: false,
     ),
     suite: 'private',
   )
@@ -192,6 +197,7 @@ else
         files('test_@0@.c'.format(unit)),
         c_args: extra_c_args + c_suppressions + test_suppressions,
         dependencies: exess_static_dep,
+        implicit_include_directories: false,
       ),
       suite: 'private',
     )
@@ -237,6 +243,7 @@ test(
     files('headers/test_headers.c'),
     c_args: extra_c_args + header_suppressions,
     dependencies: exess_dep,
+    implicit_include_directories: false,
   ),
   suite: 'public',
 )
