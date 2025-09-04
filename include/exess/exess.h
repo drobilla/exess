@@ -186,7 +186,7 @@ exess_strerror(ExessStatus status);
 */
 
 /// The maximum length of a `decimal` string from exess_write_decimal()
-#define EXESS_MAX_DECIMAL_LENGTH 327
+#define EXESS_MAX_DECIMAL_LENGTH 327U
 
 /**
    Read a `decimal` string after any leading whitespace.
@@ -238,7 +238,7 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `double` string
-#define EXESS_MAX_DOUBLE_LENGTH 24
+#define EXESS_MAX_DOUBLE_LENGTH 24U
 
 /**
    Read a `double` string after any leading whitespace.
@@ -286,7 +286,7 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `float` string
-#define EXESS_MAX_FLOAT_LENGTH 15
+#define EXESS_MAX_FLOAT_LENGTH 15U
 
 /**
    Read a `float` string after any leading whitespace.
@@ -331,7 +331,7 @@ exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `boolean` string
-#define EXESS_MAX_BOOLEAN_LENGTH 5
+#define EXESS_MAX_BOOLEAN_LENGTH 5U
 
 /**
    Read a `boolean` string after any leading whitespace.
@@ -374,7 +374,7 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `long` string
-#define EXESS_MAX_LONG_LENGTH 20
+#define EXESS_MAX_LONG_LENGTH 20U
 
 /**
    Read a `long` string after any leading whitespace.
@@ -412,7 +412,7 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `int` string
-#define EXESS_MAX_INT_LENGTH 11
+#define EXESS_MAX_INT_LENGTH 11U
 
 /**
    Read an `int` string after any leading whitespace.
@@ -450,7 +450,7 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `short` string
-#define EXESS_MAX_SHORT_LENGTH 6
+#define EXESS_MAX_SHORT_LENGTH 6U
 
 /**
    Read a `short` string after any leading whitespace.
@@ -488,7 +488,7 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `byte` string
-#define EXESS_MAX_BYTE_LENGTH 4
+#define EXESS_MAX_BYTE_LENGTH 4U
 
 /**
    Read a `byte` string after any leading whitespace.
@@ -531,7 +531,7 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `unsignedLong` string
-#define EXESS_MAX_ULONG_LENGTH 20
+#define EXESS_MAX_ULONG_LENGTH 20U
 
 /**
    Read an `unsignedLong` string after any leading whitespace.
@@ -569,7 +569,7 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `unsignedInt` string
-#define EXESS_MAX_UINT_LENGTH 10
+#define EXESS_MAX_UINT_LENGTH 10U
 
 /**
    Read an `unsignedInt` string after any leading whitespace.
@@ -607,7 +607,7 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `unsignedShort` string
-#define EXESS_MAX_USHORT_LENGTH 5
+#define EXESS_MAX_USHORT_LENGTH 5U
 
 /**
    Read an `unsignedShort` string after any leading whitespace.
@@ -645,7 +645,7 @@ exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a canonical `unsignedByte` string
-#define EXESS_MAX_UBYTE_LENGTH 3
+#define EXESS_MAX_UBYTE_LENGTH 3U
 
 /**
    Read an `unsignedByte` string after any leading whitespace.
@@ -748,7 +748,7 @@ exess_timezone(int8_t hours, int8_t minutes);
 */
 
 /// The maximum length of a `duration` string from exess_write_duration()
-#define EXESS_MAX_DURATION_LENGTH 41
+#define EXESS_MAX_DURATION_LENGTH 41U
 
 /**
    Duration of time.
@@ -839,7 +839,7 @@ exess_write_duration(ExessDuration        value,
 */
 
 /// The maximum length of a `dateTime` string from exess_write_date_time()
-#define EXESS_MAX_DATE_TIME_LENGTH 37
+#define EXESS_MAX_DATE_TIME_LENGTH 37U
 
 /**
    Date and time.
@@ -946,7 +946,7 @@ exess_write_date_time(ExessDateTime        value,
 */
 
 /// The maximum length of a `date` string from exess_write_date()
-#define EXESS_MAX_DATE_LENGTH 18
+#define EXESS_MAX_DATE_LENGTH 18U
 
 /// Date
 typedef struct {
@@ -1015,7 +1015,7 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 
 /// The maximum length of a `time` string from exess_write_time()
-#define EXESS_MAX_TIME_LENGTH 24
+#define EXESS_MAX_TIME_LENGTH 24U
 
 /// Time
 typedef struct {
