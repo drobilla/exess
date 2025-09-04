@@ -1323,7 +1323,7 @@ exess_datatype_is_bounded(ExessDatatype datatype);
 
    @return A string length in bytes, or zero.
 */
-EXESS_CONST_API size_t
+EXESS_CONST_API uint8_t
 exess_max_length(ExessDatatype datatype);
 
 /**
@@ -1336,7 +1336,7 @@ exess_max_length(ExessDatatype datatype);
    @return The size in bytes required by a value, or zero if there is no such
    limit.
 */
-EXESS_CONST_API size_t
+EXESS_CONST_API uint8_t
 exess_value_size(ExessDatatype datatype);
 
 /**

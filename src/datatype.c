@@ -40,7 +40,7 @@ static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
 };
 
 /// The maximum length of the string representation of datatypes
-static const size_t exess_max_lengths[] = {
+static const uint8_t exess_max_lengths[] = {
   0, // Unknown
   EXESS_MAX_BOOLEAN_LENGTH,
   0, // decimal
@@ -68,7 +68,7 @@ static const size_t exess_max_lengths[] = {
 };
 
 /// The size of the binary value representation of datatypes
-static const size_t exess_value_sizes[] = {
+static const uint8_t exess_value_sizes[] = {
   0, // Unknown
   sizeof(bool),
   sizeof(double),
@@ -128,16 +128,16 @@ exess_datatype_from_uri(const char* const uri)
 bool
 exess_datatype_is_bounded(const ExessDatatype datatype)
 {
-  return exess_max_length(datatype) > 0;
+  return !!exess_max_length(datatype);
 }
 
-size_t
+uint8_t
 exess_max_length(const ExessDatatype datatype)
 {
   return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0U;
 }
 
-size_t
+uint8_t
 exess_value_size(const ExessDatatype datatype)
 {
   return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0U;
