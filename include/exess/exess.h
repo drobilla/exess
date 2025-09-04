@@ -1267,6 +1267,9 @@ typedef enum {
   EXESS_BASE64,               ///< @ref exess_base64
 } ExessDatatype;
 
+/// The unsigned value of the largest #ExessDatatype enumerator
+#define EXESS_MAX_DATATYPE 23U
+
 /**
    Return the URI for a supported datatype.
 

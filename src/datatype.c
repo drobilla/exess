@@ -7,12 +7,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#define N_DATATYPES 24
-
-static const size_t xsd_len = sizeof(EXESS_XSD_URI) - 1;
+static const size_t xsd_len = sizeof(EXESS_XSD_URI) - 1U;
 
 /// The full URI for supported datatypes
-static const char* EXESS_NONNULL const uris[N_DATATYPES + 1] = {
+static const char* EXESS_NONNULL const uris[EXESS_MAX_DATATYPE + 1U] = {
   NULL,                               //
   EXESS_XSD_URI "boolean",            //
   EXESS_XSD_URI "decimal",            //
@@ -115,7 +113,7 @@ exess_datatype_from_uri(const char* const uri)
 {
   if (!strncmp(uri, EXESS_XSD_URI, xsd_len)) {
     const char* const name = uri + xsd_len;
-    for (size_t i = 1; i < N_DATATYPES; ++i) {
+    for (unsigned i = 1U; i <= EXESS_MAX_DATATYPE; ++i) {
       if (!strcmp(name, uris[i] + xsd_len)) {
         return (ExessDatatype)i;
       }
@@ -134,11 +132,11 @@ exess_datatype_is_bounded(const ExessDatatype datatype)
 uint8_t
 exess_max_length(const ExessDatatype datatype)
 {
-  return (datatype < N_DATATYPES) ? exess_max_lengths[datatype] : 0U;
+  return (datatype <= EXESS_MAX_DATATYPE) ? exess_max_lengths[datatype] : 0U;
 }
 
 uint8_t
 exess_value_size(const ExessDatatype datatype)
 {
-  return (datatype < N_DATATYPES) ? exess_value_sizes[datatype] : 0U;
+  return (datatype <= EXESS_MAX_DATATYPE) ? exess_value_sizes[datatype] : 0U;
 }
