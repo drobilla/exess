@@ -1296,11 +1296,25 @@ exess_datatype_name(ExessDatatype datatype);
 /**
    Return the datatype tag for a datatype URI.
 
-   @return A datatype tag, or #EXESS_NOTHING if the URI isn't a supported
-   datatype.
+   The `uri` is the absolute URI for a supported datatype, like
+   "http://www.w3.org/2001/XMLSchema#unsignedLong" or
+   "http://www.w3.org/2001/XMLSchema#dateTime".
+
+   @return A datatype tag, or #EXESS_NOTHING if no such datatype is known.
 */
 EXESS_PURE_API ExessDatatype
 exess_datatype_from_uri(const char* EXESS_NONNULL uri);
+
+/**
+   Return the datatype tag for a datatype name.
+
+   The `name` is the camel-case name of a supported datatype, like
+   "unsignedLong" or "dateTime".
+
+   @return A datatype tag, or #EXESS_NOTHING if no such datatype is known.
+*/
+EXESS_PURE_API ExessDatatype
+exess_datatype_from_name(const char* EXESS_NONNULL name);
 
 /**
    Return whether a datatype has an upper bound on value sizes.

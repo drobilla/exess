@@ -26,13 +26,21 @@ test_datatype_uris(void)
     const char* const name = exess_datatype_name((ExessDatatype)i);
     assert(name);
     assert(name == uri + 33);
+    assert(exess_datatype_from_name(name) == (ExessDatatype)i);
   }
 
-  assert(exess_datatype_from_uri(EXESS_XSD_URI) == EXESS_NOTHING);
-  assert(exess_datatype_from_uri(EXESS_XSD_URI "unknown") == EXESS_NOTHING);
-  assert(exess_datatype_from_uri("garbage") == EXESS_NOTHING);
-  assert(exess_datatype_from_uri("http://example.org/very/long/unknown/uri") ==
-         EXESS_NOTHING);
+  assert(!exess_datatype_from_uri(EXESS_XSD_URI));
+  assert(!exess_datatype_from_uri(EXESS_XSD_URI "unknown"));
+  assert(!exess_datatype_from_uri(EXESS_XSD_URI "dateTimetrailing"));
+  assert(!exess_datatype_from_uri("garbage"));
+  assert(!exess_datatype_from_uri("http://example.org/very/long/unknown/uri"));
+
+  assert(!exess_datatype_from_name(""));
+  assert(!exess_datatype_from_name("unknown"));
+  assert(!exess_datatype_from_name("dateTimetrailing"));
+  assert(!exess_datatype_from_name("garbage"));
+  assert(!exess_datatype_from_name("http://example.org/uri"));
+  assert(!exess_datatype_from_name(EXESS_XSD_URI));
 }
 
 static void

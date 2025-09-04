@@ -109,18 +109,23 @@ exess_datatype_name(const ExessDatatype datatype)
 }
 
 ExessDatatype
-exess_datatype_from_uri(const char* const uri)
+exess_datatype_from_name(const char* const name)
 {
-  if (!strncmp(uri, EXESS_XSD_URI, xsd_len)) {
-    const char* const name = uri + xsd_len;
-    for (unsigned i = 1U; i <= EXESS_MAX_DATATYPE; ++i) {
-      if (!strcmp(name, uris[i] + xsd_len)) {
-        return (ExessDatatype)i;
-      }
+  for (unsigned i = 1U; i <= EXESS_MAX_DATATYPE; ++i) {
+    if (!strcmp(name, uris[i] + xsd_len)) {
+      return (ExessDatatype)i;
     }
   }
 
   return EXESS_NOTHING;
+}
+
+ExessDatatype
+exess_datatype_from_uri(const char* const uri)
+{
+  return !strncmp(uri, EXESS_XSD_URI, xsd_len)
+           ? exess_datatype_from_name(uri + xsd_len)
+           : EXESS_NOTHING;
 }
 
 bool
