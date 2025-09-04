@@ -317,11 +317,8 @@ test_round_trip(const ExessNumTestOptions opts)
 {
   fprintf(stderr, "Testing xsd:duration randomly with seed %u\n", opts.seed);
 
-  const uint64_t n_tests =
-    (opts.n_tests >= 4096U) ? (opts.n_tests / 16U) : 256U;
-
   uint32_t rng = opts.seed;
-  for (size_t i = 0; i < n_tests; ++i) {
+  for (size_t i = 0; i < opts.n_tests; ++i) {
     rng = lcg32(rng);
 
     const int32_t months = (int32_t)rng;
@@ -338,15 +335,17 @@ test_round_trip(const ExessNumTestOptions opts)
     const ExessDuration value = {months, seconds, nanoseconds};
     check_round_trip(value);
 
-    print_num_test_progress(i, n_tests);
+    print_num_test_progress(i, opts.n_tests);
   }
 }
 
 int
 main(int argc, char** argv)
 {
-  const ExessNumTestOptions opts =
+  ExessNumTestOptions opts =
     parse_num_test_options(argc, argv, 16384U, 0U, INT32_MAX);
+
+  opts.n_tests = (opts.n_tests >= 4096U) ? (opts.n_tests / 16U) : 256U;
 
   if (!opts.error) {
     test_read_duration();
