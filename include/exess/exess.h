@@ -703,10 +703,10 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 */
 typedef int8_t ExessTimezone;
 
-/// Sentinel value for local time (127)
-#define EXESS_LOCAL ((ExessTimezone)INT8_MAX)
+/// Sentinel value for local time
+#define EXESS_LOCAL ((ExessTimezone)127U)
 
-/// Sentinel value for UTC time (0)
+/// Sentinel value for UTC time
 #define EXESS_UTC ((ExessTimezone)0U)
 
 /**
