@@ -1,12 +1,16 @@
-# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 Checks: >
   *,
   -*-macro-to-enum,
+  -*-magic-numbers,
   -altera-*,
+  -bugprone-easily-swappable-parameters,
+  -llvm-header-guard,
   -llvmlibc-*,
   -misc-include-cleaner,
+  -readability-avoid-nested-conditional-operator,
   -readability-identifier-length,
 CheckOptions:
   - key:   hicpp-uppercase-literal-suffix.NewSuffixes

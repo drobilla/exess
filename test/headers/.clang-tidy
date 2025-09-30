@@ -1,14 +1,15 @@
-# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# Copyright 2021-2025 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 Checks: >
   *,
   -*-macro-to-enum,
   -altera-struct-pack-align,
-  -readability-identifier-length,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
     value: '0'
+  - key:   readability-identifier-length.IgnoredParameterNames
+    value: '^(d)|(in)|(s)$'
 FormatStyle: file
 HeaderFilterRegex: '.*'
 WarningsAsErrors: '*'

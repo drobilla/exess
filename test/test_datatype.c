@@ -14,8 +14,11 @@ static void
 test_datatype_uris(void)
 {
   assert(!exess_datatype_uri(EXESS_NOTHING));
+
+  // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange)
   assert(!exess_datatype_uri((ExessDatatype)(EXESS_BASE64 + 1)));
-  assert(!exess_datatype_name(EXESS_NOTHING));
+
+  // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange)
   assert(!exess_datatype_name((ExessDatatype)(EXESS_BASE64 + 1)));
 
   for (unsigned i = 1; i <= EXESS_BASE64; ++i) {
@@ -46,6 +49,7 @@ test_datatype_uris(void)
 static void
 test_datatype_is_bounded(void)
 {
+  // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange)
   assert(!exess_datatype_is_bounded((ExessDatatype)-1));
 
   assert(!exess_datatype_is_bounded(EXESS_NOTHING));
@@ -77,6 +81,7 @@ test_datatype_is_bounded(void)
 static void
 test_value_size(void)
 {
+  // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange)
   assert(exess_value_size((ExessDatatype)-1) == 0U);
 
   assert(exess_value_size(EXESS_NOTHING) == 0U);
