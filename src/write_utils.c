@@ -56,20 +56,6 @@ end_write(const ExessStatus status,
   return r;
 }
 
-size_t
-write_two_digit_number(const uint8_t value,
-                       const size_t  buf_size,
-                       char* const   buf,
-                       const size_t  i)
-{
-  if (buf_size >= i + 1) {
-    buf[i]     = (char)((value >= 10) ? ('0' + (value / 10)) : '0');
-    buf[i + 1] = (char)('0' + (value % 10));
-  }
-
-  return 2;
-}
-
 ExessResult
 write_special(const size_t      string_length,
               const char* const string,

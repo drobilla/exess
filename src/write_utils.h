@@ -7,7 +7,6 @@
 #include <exess/exess.h>
 
 #include <stddef.h>
-#include <stdint.h>
 
 size_t
 write_char(char c, size_t buf_size, char* buf, size_t i);
@@ -17,12 +16,6 @@ write_string(size_t len, const char* str, size_t buf_size, char* buf, size_t i);
 
 ExessResult
 end_write(ExessStatus status, size_t buf_size, char* buf, size_t i);
-
-ExessResult
-write_digits(uint64_t value, size_t buf_size, char* buf, size_t i);
-
-size_t
-write_two_digit_number(uint8_t value, size_t buf_size, char* buf, size_t i);
 
 ExessResult
 write_special(size_t      string_length,

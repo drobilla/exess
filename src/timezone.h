@@ -9,7 +9,7 @@
 #include <stddef.h>
 
 /// The maximum length of a canonical timezone string, 6
-#define EXESS_MAX_TIMEZONE_LENGTH 6
+#define EXESS_MAX_TIMEZONE_LENGTH 6U
 
 /**
    Read an optional timezone offset suffix.

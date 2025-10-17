@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "int_math.h"
+#include "number_utils.h"
 #include "read_utils.h"
 #include "result.h"
 #include "write_utils.h"
