@@ -196,9 +196,9 @@ exess_strerror(ExessStatus status);
    Note that this is a limitation of this implementation and `decimal` itself
    has unlimited precision, so this may result in data loss.
 
-   @param out Set to the parsed value, or NaN on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or NaN on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -207,11 +207,11 @@ exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `decimal` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -248,9 +248,9 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    Note that these cases are considered successful since the value space of
    `double` has limited precision by definition.
 
-   @param out Set to the parsed value, or `NAN` on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or NaN on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -263,11 +263,11 @@ exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    NaNs aren't preserved.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output and `status` #EXESS_SUCCESS,
-   or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -296,9 +296,9 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    Note that these cases are considered successful since the value space of
    `float` has limited precision by definition.
 
-   @param out Set to the parsed value, or `NAN` on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or NaN on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -311,11 +311,11 @@ exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    NaNs aren't preserved.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -336,9 +336,9 @@ exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `boolean` string after any leading whitespace.
 
-   @param out Set to the parsed value, or false on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or false on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -347,11 +347,11 @@ exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `boolean` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -379,9 +379,9 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `long` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -390,11 +390,11 @@ exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `long` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -417,9 +417,9 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `int` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -428,11 +428,11 @@ exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `int` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -455,9 +455,9 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `short` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -466,11 +466,11 @@ exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `short` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -493,9 +493,9 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `byte` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -504,11 +504,11 @@ exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `byte` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -536,9 +536,9 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedLong` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -547,11 +547,11 @@ exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `unsignedLong` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -574,9 +574,9 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedInt` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -585,11 +585,11 @@ exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `unsignedInt` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -612,9 +612,9 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedShort` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -623,11 +623,11 @@ exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `unsignedShort` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -650,9 +650,9 @@ exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedByte` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -661,11 +661,11 @@ exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    Write a canonical `unsignedByte` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
@@ -796,9 +796,9 @@ exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
 /**
    Read a `duration` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_duration(ExessDuration* EXESS_NONNULL out,
@@ -808,8 +808,8 @@ exess_read_duration(ExessDuration* EXESS_NONNULL out,
    Write a canonical `duration` string.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
@@ -903,9 +903,9 @@ exess_date_time_to_utc(ExessDateTime datetime);
 /**
    Read a dateTime string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_date_time(ExessDateTime* EXESS_NONNULL out,
@@ -919,8 +919,8 @@ exess_read_date_time(ExessDateTime* EXESS_NONNULL out,
    write functions, which always write canonical form.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
@@ -972,9 +972,9 @@ exess_compare_date(ExessDate lhs, ExessDate rhs);
 /**
    Read a `date` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -986,8 +986,8 @@ exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    `-2001-10-26+02:00`.
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
@@ -1042,9 +1042,9 @@ exess_compare_time(ExessTime lhs, ExessTime rhs);
 /**
    Read a `time` string after any leading whitespace.
 
-   @param out Set to the parsed value, or zero on error.
-   @param str String input.
-   @return The `count` of characters read, and a `status` code.
+   @param[out] out Parsed value, or zero on error.
+   @param str String to read.
+   @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
 exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
@@ -1055,8 +1055,8 @@ exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
    The output is always in canonical form, like "12:15" or "02:00Z".
 
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
@@ -1094,8 +1094,8 @@ exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
    The returned value is an upper bound which is only exact for canonical
    strings.
 
-   @param length The number of input (text) bytes to decode.
-   @return The size of a decoded value in bytes.
+   @param length Number of input (text) bytes to decode.
+   @return The maximum size of a decoded value in bytes.
 */
 EXESS_CONST_API size_t
 exess_decoded_base64_size(size_t length);
@@ -1116,12 +1116,12 @@ exess_decoded_base64_size(size_t length);
    which may be smaller than `out_size`.  Only these first bytes are written,
    the rest of the buffer isn't modified.
 
-   @param out_size The size of `out` in bytes.
-   @param out Buffer where the decoded binary data will be written.
-   @param str String to parse.
+   @param out_size Size of `out` in bytes.
+   @param[out] out Decoded binary data.
+   @param str String to read.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
-   and a `status` code.
+   and a `status`.
 */
 EXESS_API ExessVariableResult
 exess_read_base64(size_t                    out_size,
@@ -1135,13 +1135,13 @@ exess_read_base64(size_t                    out_size,
    with no whitespace and 1 or 2 trailing "=" characters as padding if
    necessary.
 
-   @param data_size The size of `data` in bytes.
-   @param data Data to write to a string.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param data_size Size of `data` in bytes.
+   @param data Data to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_base64(size_t                    data_size,
@@ -1168,7 +1168,7 @@ exess_write_base64(size_t                    data_size,
    The returned value is an upper bound which is only exact for canonical
    strings.
 
-   @param length The number of input (text) bytes to decode.
+   @param length Number of input (text) bytes to decode.
    @return The size of a decoded value in bytes.
 */
 EXESS_CONST_API size_t
@@ -1190,12 +1190,12 @@ exess_decoded_hex_size(size_t length);
    which may be smaller than `out_size`.  Only these first bytes are written,
    the rest of the buffer isn't modified.
 
-   @param out_size The size of `out` in bytes.
-   @param out Buffer where the decoded binary data will be written.
+   @param out_size Size of `out` in bytes.
+   @param[out] out Decoded binary data.
    @param str String to parse.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
-   and a `status` code.
+   and a `status`.
 */
 EXESS_API ExessVariableResult
 exess_read_hex(size_t                    out_size,
@@ -1208,13 +1208,13 @@ exess_read_hex(size_t                    out_size,
    The data is always written in canonical form, as an even number of uppercase
    hexadecimal digits with no whitespace.
 
-   @param data_size The size of `data` in bytes.
-   @param data Data to write to a string.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param data_size Size of `data` in bytes.
+   @param data Data to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_hex(size_t                    data_size,
@@ -1237,9 +1237,7 @@ exess_write_hex(size_t                    data_size,
    @{
 */
 
-/**
-   An identifier for a supported datatype.
-*/
+/// A supported datatype, or zero
 typedef enum {
   EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
   EXESS_BOOLEAN,              ///< @ref exess_boolean
@@ -1271,7 +1269,7 @@ typedef enum {
 #define EXESS_MAX_DATATYPE 23U
 
 /**
-   Return the URI for a supported datatype.
+   Return the URI for a datatype, or null.
 
    This only returns URIs that start with "http://www.w3.org/2001/XMLSchema#".
 
@@ -1282,7 +1280,7 @@ EXESS_CONST_API const char* EXESS_NULLABLE
 exess_datatype_uri(ExessDatatype datatype);
 
 /**
-   Return the name of a supported datatype.
+   Return the name of a datatype, or null.
 
    This returns the suffix of the URI that would be returned by
    exess_datatype_uri().
@@ -1296,7 +1294,7 @@ exess_datatype_name(ExessDatatype datatype);
 /**
    Return the datatype tag for a datatype URI.
 
-   The `uri` is the absolute URI for a supported datatype, like
+   @param uri Absolute URI for a supported datatype, like
    "http://www.w3.org/2001/XMLSchema#unsignedLong" or
    "http://www.w3.org/2001/XMLSchema#dateTime".
 
@@ -1308,8 +1306,8 @@ exess_datatype_from_uri(const char* EXESS_NONNULL uri);
 /**
    Return the datatype tag for a datatype name.
 
-   The `name` is the camel-case name of a supported datatype, like
-   "unsignedLong" or "dateTime".
+   @param name The camel-case name of a supported datatype (its URI fragment),
+   like "unsignedLong" or "dateTime".
 
    @return A datatype tag, or #EXESS_NOTHING if no such datatype is known.
 */
@@ -1419,13 +1417,13 @@ exess_compare_value(ExessDatatype             lhs_datatype,
    will be dereferenced directly as a pointer to the value type.  A buffer
    aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
 
-   @param datatype The datatype to read the string as.
-   @param out_size The size of `out` in bytes.
-   @param out Set to the parsed value on success.
-   @param str String input.
+   @param datatype Datatype to read the string as.
+   @param out_size Size of `out` in bytes.
+   @param[out] out Parsed value on success.
+   @param str String to read.
 
    @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
-   and a `status` code.
+   and a `status`.
 */
 EXESS_API ExessVariableResult
 exess_read_value(ExessDatatype             datatype,
@@ -1440,14 +1438,14 @@ exess_read_value(ExessDatatype             datatype,
    it will be dereferenced directly as a pointer to the value type.  A buffer
    aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
 
-   @param datatype The datatype of `value`.
-   @param value_size The size of `value` in bytes.
+   @param datatype Datatype of `value`.
+   @param value_size Size of `value` in bytes.
    @param value Value to write.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
-   @return The `count` of characters in the output, and `status`
-   #EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small.
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
 exess_write_value(ExessDatatype             datatype,
@@ -1468,11 +1466,11 @@ exess_write_value(ExessDatatype             datatype,
 
    @param str Input value string.
    @param datatype Datatype of value.
-   @param buf_size The size of `buf` in bytes.
-   @param buf Output buffer, or null to only measure.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
 
    @return The `read_count` from `str`, `write_count` to `buf` (both in bytes),
-   and a `status` code.  The status may be an error from reading or writing.
+   and a `status`.  The status may be an error from reading or writing.
 */
 EXESS_API ExessVariableResult
 exess_write_canonical(const char* EXESS_NONNULL str,
@@ -1545,14 +1543,14 @@ typedef uint32_t ExessCoercions;
    back to the original type without any loss of data.  Otherwise, the lossy
    coercions enabled by the set bits will be attempted.
 
-   @param in_datatype The datatype of `in`.
-   @param in_size The size of `in` in bytes.
+   @param in_datatype Datatype of `in`.
+   @param in_size Size of `in` in bytes.
    @param in Input value to coerce.
    @param out_datatype Datatype to convert to.
    @param out_size Size of `out` in bytes.
-   @param out Set to the coerced value on success.
+   @param[out] out Coerced value on success.
 
-   @return The `count` of bytes written, and a `status` code:
+   @return The `count` of bytes written, and a `status`:
    #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
    value is outside the range of the target type,
    #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE

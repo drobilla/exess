@@ -27,12 +27,12 @@ SKIP_FUNCTION_MACROS = NO
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-PREDEFINED             = EXESS_API \
-                         EXESS_CONST_API \
+PREDEFINED             = EXESS_API= \
+                         EXESS_CONST_API= \
                          EXESS_CONST_FUNC= \
                          EXESS_NONNULL= \
                          EXESS_NULLABLE= \
-                         EXESS_PURE_API \
+                         EXESS_PURE_API= \
                          EXESS_PURE_FUNC= \
 
 RECURSIVE              = YES
