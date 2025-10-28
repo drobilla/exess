@@ -9,10 +9,10 @@
 #include <exess/exess.h>
 
 ExessResult
-parse_decimal(ExessFloatingDecimal* out, const char* str);
+parse_decimal(const char* str, ExessFloatingDecimal* out);
 
 ExessResult
-parse_double(ExessFloatingDecimal* out, const char* str);
+parse_double(const char* str, ExessFloatingDecimal* out);
 
 double
 decimal_to_double(ExessFloatingDecimal in);

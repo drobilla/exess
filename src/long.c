@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 ExessResult
-exess_read_long(int64_t* const out, const char* const str)
+exess_read_long(const char* const str, int64_t* const out)
 {
   *out = 0;
 

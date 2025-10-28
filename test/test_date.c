@@ -38,7 +38,7 @@ check_read(const char* const string,
 {
   ExessDate value = {0, 0, 0, EXESS_LOCAL};
 
-  const ExessResult r = exess_read_date(&value, string);
+  const ExessResult r = exess_read_date(string, &value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value.year == expected_year);

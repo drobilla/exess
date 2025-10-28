@@ -11,7 +11,7 @@
 #include <string.h>
 
 ExessResult
-exess_read_boolean(bool* const out, const char* const str)
+exess_read_boolean(const char* const str, bool* const out)
 {
   size_t      i = skip_whitespace(str);
   ExessResult r = {EXESS_EXPECTED_BOOLEAN, i};

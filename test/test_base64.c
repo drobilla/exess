@@ -20,7 +20,7 @@ check(const size_t      expected_read_count,
 {
   char buf[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-  ExessVariableResult r = exess_read_base64(sizeof(buf), buf, string);
+  ExessVariableResult r = exess_read_base64(string, sizeof(buf), buf);
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
   assert(r.write_count == expected_write_count);
@@ -95,25 +95,25 @@ test_read_overflow(void)
 {
   char buf[3] = {1, 2, 3};
 
-  ExessVariableResult r = exess_read_base64(0U, buf, "Zm9v");
+  ExessVariableResult r = exess_read_base64("Zm9v", 0U, buf);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4);
   assert(r.write_count == 0);
   assert(buf[0] == 1);
 
-  r = exess_read_base64(1U, buf, "Zm9v");
+  r = exess_read_base64("Zm9v", 1U, buf);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4U);
   assert(r.write_count == 0U);
   assert(buf[0] == 1);
 
-  r = exess_read_base64(2U, buf, "Zm9v");
+  r = exess_read_base64("Zm9v", 2U, buf);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 4U);
   assert(r.write_count == 0U);
   assert(buf[0] == 1);
 
-  r = exess_read_base64(3U, buf, "Zm9v");
+  r = exess_read_base64("Zm9v", 3U, buf);
   assert(r.status == EXESS_SUCCESS);
   assert(r.read_count == 4U);
   assert(r.write_count == 3U);
@@ -165,7 +165,7 @@ test_round_trip(void)
     assert(decoded);
 
     // Decode and check that data matches the original input
-    const ExessVariableResult r = exess_read_base64(size, decoded, str);
+    const ExessVariableResult r = exess_read_base64(str, size, decoded);
     assert(!r.status);
     assert(r.read_count == str_len);
     assert(r.write_count == size);

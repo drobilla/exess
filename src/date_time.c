@@ -250,7 +250,7 @@ exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
 }
 
 ExessResult
-exess_read_date_time(ExessDateTime* const out, const char* const str)
+exess_read_date_time(const char* const str, ExessDateTime* const out)
 {
   memset(out, 0, sizeof(*out));
 

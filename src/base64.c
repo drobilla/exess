@@ -57,7 +57,7 @@ exess_decoded_base64_size(const size_t length)
 }
 
 ExessVariableResult
-exess_read_base64(const size_t out_size, void* const out, const char* const str)
+exess_read_base64(const char* const str, const size_t out_size, void* const out)
 {
   uint8_t* const       uout = (uint8_t*)out;
   const uint8_t* const ustr = (const uint8_t*)str;

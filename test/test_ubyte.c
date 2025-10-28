@@ -18,7 +18,7 @@ check_read(const char* const string,
 {
   uint8_t value = 0;
 
-  const ExessResult r = exess_read_ubyte(&value, string);
+  const ExessResult r = exess_read_ubyte(string, &value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value == expected_value);
@@ -72,7 +72,7 @@ test_round_trip(void)
 
   for (uint16_t i = 0; i <= UINT8_MAX; ++i) {
     assert(!exess_write_ubyte((uint8_t)i, sizeof(buf), buf).status);
-    assert(!exess_read_ubyte(&value, buf).status);
+    assert(!exess_read_ubyte(buf, &value).status);
     assert(value == i);
   }
 }

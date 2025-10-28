@@ -152,7 +152,7 @@ write_date_time(const char* const str, const size_t buf_size, char* const buf)
   static const ExessDuration zero = {0, 0, 0};
 
   ExessDateTime     value = {0, 0, 0, 0, 0, 0, 0, 0};
-  const ExessResult r     = exess_read_date_time(&value, str);
+  const ExessResult r     = exess_read_date_time(str, &value);
   if (r.status) {
     return VRESULT(r.status, r.count, 0);
   }
@@ -214,7 +214,7 @@ write_bounded(const char* const   str,
   ExessValue value = {false};
 
   const ExessVariableResult vr =
-    exess_read_value(datatype, sizeof(value), &value, str);
+    exess_read_value(datatype, str, sizeof(value), &value);
 
   if (vr.status) {
     return VRESULT(vr.status, vr.read_count, 0U);
@@ -226,8 +226,8 @@ write_bounded(const char* const   str,
 }
 
 ExessVariableResult
-exess_write_canonical(const char* const   str,
-                      const ExessDatatype datatype,
+exess_write_canonical(const ExessDatatype datatype,
+                      const char* const   str,
                       const size_t        buf_size,
                       char* const         buf)
 {

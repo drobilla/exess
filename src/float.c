@@ -11,10 +11,10 @@
 #include <string.h>
 
 ExessResult
-exess_read_float(float* const out, const char* const str)
+exess_read_float(const char* const str, float* const out)
 {
   double            value = (double)NAN;
-  const ExessResult r     = exess_read_double(&value, str);
+  const ExessResult r     = exess_read_double(str, &value);
 
   *out = (float)value;
 

@@ -31,7 +31,7 @@ check_conversions(const ExessDatatype  from_datatype,
 
   // Read original value
   const ExessVariableResult vr =
-    exess_read_value(from_datatype, sizeof(value), &value, from_string);
+    exess_read_value(from_datatype, from_string, sizeof(value), &value);
 
   assert(!vr.status);
 
@@ -115,7 +115,7 @@ check_failure(const ExessDatatype from_datatype,
 
   // Read original value
   const ExessVariableResult vr =
-    exess_read_value(from_datatype, sizeof(value), &value, from_string);
+    exess_read_value(from_datatype, from_string, sizeof(value), &value);
 
   assert(!vr.status);
 

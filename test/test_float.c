@@ -23,7 +23,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   float             value = NAN;
-  const ExessResult r     = exess_read_float(&value, string);
+  const ExessResult r     = exess_read_float(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -170,7 +170,7 @@ check_round_trip(const float value)
 
   float parsed_value = 0.0f;
   assert(!exess_write_float(value, sizeof(buf), buf).status);
-  assert(!exess_read_float(&parsed_value, buf).status);
+  assert(!exess_read_float(buf, &parsed_value).status);
   assert(float_matches(parsed_value, value));
 }
 

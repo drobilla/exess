@@ -18,7 +18,7 @@ check_read(const char* const string,
 {
   bool value = false;
 
-  const ExessResult r = exess_read_boolean(&value, string);
+  const ExessResult r = exess_read_boolean(string, &value);
   assert(value == expected_value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);

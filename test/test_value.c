@@ -32,7 +32,7 @@ check_read(void*               value,
            const size_t        expected_read_count)
 {
   const ExessVariableResult r =
-    exess_read_value(datatype, EXESS_MAX_FIXED_SIZE, value, string);
+    exess_read_value(datatype, string, EXESS_MAX_FIXED_SIZE, value);
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
@@ -45,7 +45,7 @@ test_read_value(void)
   {
     int64_t                   a_long = 0;
     const ExessVariableResult bad =
-      exess_read_value(EXESS_LONG, 7, &a_long, "1");
+      exess_read_value(EXESS_LONG, "1", 7, &a_long);
     assert(bad.status == EXESS_NO_SPACE);
   }
   {
@@ -168,7 +168,7 @@ test_read_value(void)
   {
     char                      a_blob[] = {1, 2, 3};
     const ExessVariableResult r =
-      exess_read_value(EXESS_HEX, sizeof(a_blob), a_blob, "666F6F");
+      exess_read_value(EXESS_HEX, "666F6F", sizeof(a_blob), a_blob);
 
     assert(!r.status);
     assert(r.read_count == 6);
@@ -178,7 +178,7 @@ test_read_value(void)
   {
     char                      a_blob[] = {1, 2, 3};
     const ExessVariableResult r =
-      exess_read_value(EXESS_BASE64, sizeof(a_blob), a_blob, "Zm9v");
+      exess_read_value(EXESS_BASE64, "Zm9v", sizeof(a_blob), a_blob);
 
     assert(!r.status);
     assert(r.read_count == 4);

@@ -196,12 +196,12 @@ exess_strerror(ExessStatus status);
    Note that this is a limitation of this implementation and `decimal` itself
    has unlimited precision, so this may result in data loss.
 
-   @param[out] out Parsed value, or NaN on error.
    @param str String to read.
+   @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_decimal(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_decimal(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
 
 /**
    Write a canonical `decimal` string.
@@ -248,12 +248,12 @@ exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    Note that these cases are considered successful since the value space of
    `double` has limited precision by definition.
 
-   @param[out] out Parsed value, or NaN on error.
    @param str String to read.
+   @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_double(double* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_double(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
 
 /**
    Write a canonical `double` string.
@@ -296,12 +296,12 @@ exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
    Note that these cases are considered successful since the value space of
    `float` has limited precision by definition.
 
-   @param[out] out Parsed value, or NaN on error.
    @param str String to read.
+   @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_float(float* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_float(const char* EXESS_NONNULL str, float* EXESS_NONNULL out);
 
 /**
    Write a canonical `float` string.
@@ -336,12 +336,12 @@ exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `boolean` string after any leading whitespace.
 
-   @param[out] out Parsed value, or false on error.
    @param str String to read.
+   @param[out] out Parsed value, or false on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_boolean(bool* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_boolean(const char* EXESS_NONNULL str, bool* EXESS_NONNULL out);
 
 /**
    Write a canonical `boolean` string.
@@ -379,12 +379,12 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `long` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_long(int64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_long(const char* EXESS_NONNULL str, int64_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `long` string.
@@ -417,12 +417,12 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `int` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_int(int32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_int(const char* EXESS_NONNULL str, int32_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `int` string.
@@ -455,12 +455,12 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `short` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_short(int16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_short(const char* EXESS_NONNULL str, int16_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `short` string.
@@ -493,12 +493,12 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read a `byte` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_byte(int8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_byte(const char* EXESS_NONNULL str, int8_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `byte` string.
@@ -536,12 +536,12 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedLong` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_ulong(uint64_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_ulong(const char* EXESS_NONNULL str, uint64_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `unsignedLong` string.
@@ -574,12 +574,12 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedInt` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_uint(uint32_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_uint(const char* EXESS_NONNULL str, uint32_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `unsignedInt` string.
@@ -612,12 +612,12 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedShort` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_ushort(uint16_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_ushort(const char* EXESS_NONNULL str, uint16_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `unsignedShort` string.
@@ -650,12 +650,12 @@ exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
 /**
    Read an `unsignedByte` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_ubyte(uint8_t* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_ubyte(const char* EXESS_NONNULL str, uint8_t* EXESS_NONNULL out);
 
 /**
    Write a canonical `unsignedByte` string.
@@ -796,13 +796,13 @@ exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
 /**
    Read a `duration` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_duration(ExessDuration* EXESS_NONNULL out,
-                    const char* EXESS_NONNULL    str);
+exess_read_duration(const char* EXESS_NONNULL    str,
+                    ExessDuration* EXESS_NONNULL out);
 
 /**
    Write a canonical `duration` string.
@@ -903,13 +903,13 @@ exess_date_time_to_utc(ExessDateTime datetime);
 /**
    Read a dateTime string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_date_time(ExessDateTime* EXESS_NONNULL out,
-                     const char* EXESS_NONNULL    str);
+exess_read_date_time(const char* EXESS_NONNULL    str,
+                     ExessDateTime* EXESS_NONNULL out);
 
 /**
    Write a dateTime string.
@@ -972,12 +972,12 @@ exess_compare_date(ExessDate lhs, ExessDate rhs);
 /**
    Read a `date` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_date(ExessDate* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_date(const char* EXESS_NONNULL str, ExessDate* EXESS_NONNULL out);
 
 /**
    Write a canonical `date` string.
@@ -1042,12 +1042,12 @@ exess_compare_time(ExessTime lhs, ExessTime rhs);
 /**
    Read a `time` string after any leading whitespace.
 
-   @param[out] out Parsed value, or zero on error.
    @param str String to read.
+   @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
 EXESS_API ExessResult
-exess_read_time(ExessTime* EXESS_NONNULL out, const char* EXESS_NONNULL str);
+exess_read_time(const char* EXESS_NONNULL str, ExessTime* EXESS_NONNULL out);
 
 /**
    Write a canonical `time` string.
@@ -1116,17 +1116,17 @@ exess_decoded_base64_size(size_t length);
    which may be smaller than `out_size`.  Only these first bytes are written,
    the rest of the buffer isn't modified.
 
+   @param str String to read.
    @param out_size Size of `out` in bytes.
    @param[out] out Decoded binary data.
-   @param str String to read.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status`.
 */
 EXESS_API ExessVariableResult
-exess_read_base64(size_t                    out_size,
-                  void* EXESS_NONNULL       out,
-                  const char* EXESS_NONNULL str);
+exess_read_base64(const char* EXESS_NONNULL str,
+                  size_t                    out_size,
+                  void* EXESS_NONNULL       out);
 
 /**
    Write a canonical `base64Binary` string.
@@ -1190,17 +1190,17 @@ exess_decoded_hex_size(size_t length);
    which may be smaller than `out_size`.  Only these first bytes are written,
    the rest of the buffer isn't modified.
 
+   @param str String to parse.
    @param out_size Size of `out` in bytes.
    @param[out] out Decoded binary data.
-   @param str String to parse.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status`.
 */
 EXESS_API ExessVariableResult
-exess_read_hex(size_t                    out_size,
-               void* EXESS_NONNULL       out,
-               const char* EXESS_NONNULL str);
+exess_read_hex(const char* EXESS_NONNULL str,
+               size_t                    out_size,
+               void* EXESS_NONNULL       out);
 
 /**
    Write a canonical `hexBinary` string.
@@ -1417,19 +1417,19 @@ exess_compare_value(ExessDatatype             lhs_datatype,
    will be dereferenced directly as a pointer to the value type.  A buffer
    aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
 
+   @param str String to read.
    @param datatype Datatype to read the string as.
    @param out_size Size of `out` in bytes.
    @param[out] out Parsed value on success.
-   @param str String to read.
 
    @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
    and a `status`.
 */
 EXESS_API ExessVariableResult
 exess_read_value(ExessDatatype             datatype,
+                 const char* EXESS_NONNULL str,
                  size_t                    out_size,
-                 void* EXESS_NONNULL       out,
-                 const char* EXESS_NONNULL str);
+                 void* EXESS_NONNULL       out);
 
 /**
    Write any supported datatype to a canonical string.
@@ -1464,8 +1464,8 @@ exess_write_value(ExessDatatype             datatype,
 /**
    Rewrite a supported datatype in canonical form.
 
-   @param str Input value string.
    @param datatype Datatype of value.
+   @param str Input value string.
    @param buf_size Size of `buf` in bytes.
    @param[out] buf Output buffer, or null to only measure.
 
@@ -1473,8 +1473,8 @@ exess_write_value(ExessDatatype             datatype,
    and a `status`.  The status may be an error from reading or writing.
 */
 EXESS_API ExessVariableResult
-exess_write_canonical(const char* EXESS_NONNULL str,
-                      ExessDatatype             datatype,
+exess_write_canonical(ExessDatatype             datatype,
+                      const char* EXESS_NONNULL str,
                       size_t                    buf_size,
                       char* EXESS_NULLABLE      buf);
 

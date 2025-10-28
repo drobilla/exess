@@ -18,9 +18,9 @@ fixed(const ExessResult result, const size_t write_count)
 
 ExessVariableResult
 exess_read_value(const ExessDatatype datatype,
+                 const char* const   str,
                  const size_t        out_size,
-                 void* const         out,
-                 const char* const   str)
+                 void* const         out)
 {
   ExessVariableResult r = {EXESS_UNSUPPORTED, 0, 0};
 
@@ -33,68 +33,68 @@ exess_read_value(const ExessDatatype datatype,
   case EXESS_NOTHING:
     break;
   case EXESS_BOOLEAN:
-    return fixed(exess_read_boolean((bool*)out, str), sizeof(bool));
+    return fixed(exess_read_boolean(str, (bool*)out), sizeof(bool));
   case EXESS_DECIMAL:
-    return fixed(exess_read_decimal((double*)out, str), sizeof(double));
+    return fixed(exess_read_decimal(str, (double*)out), sizeof(double));
   case EXESS_DOUBLE:
-    return fixed(exess_read_double((double*)out, str), sizeof(double));
+    return fixed(exess_read_double(str, (double*)out), sizeof(double));
   case EXESS_FLOAT:
-    return fixed(exess_read_float((float*)out, str), sizeof(float));
+    return fixed(exess_read_float(str, (float*)out), sizeof(float));
   case EXESS_INTEGER:
-    return fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
+    return fixed(exess_read_long(str, (int64_t*)out), sizeof(int64_t));
 
   case EXESS_NON_POSITIVE_INTEGER:
-    r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
+    r = fixed(exess_read_long(str, (int64_t*)out), sizeof(int64_t));
     return (!r.status && *(const int64_t*)out > 0)
              ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_NEGATIVE_INTEGER:
-    r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
+    r = fixed(exess_read_long(str, (int64_t*)out), sizeof(int64_t));
     return (!r.status && *(const int64_t*)out >= 0)
              ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_LONG:
-    return fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
+    return fixed(exess_read_long(str, (int64_t*)out), sizeof(int64_t));
   case EXESS_INT:
-    return fixed(exess_read_int((int32_t*)out, str), sizeof(int32_t));
+    return fixed(exess_read_int(str, (int32_t*)out), sizeof(int32_t));
   case EXESS_SHORT:
-    return fixed(exess_read_short((int16_t*)out, str), sizeof(int16_t));
+    return fixed(exess_read_short(str, (int16_t*)out), sizeof(int16_t));
   case EXESS_BYTE:
-    return fixed(exess_read_byte((int8_t*)out, str), sizeof(int8_t));
+    return fixed(exess_read_byte(str, (int8_t*)out), sizeof(int8_t));
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
-    return fixed(exess_read_ulong((uint64_t*)out, str), sizeof(uint64_t));
+    return fixed(exess_read_ulong(str, (uint64_t*)out), sizeof(uint64_t));
   case EXESS_UINT:
-    return fixed(exess_read_uint((uint32_t*)out, str), sizeof(uint32_t));
+    return fixed(exess_read_uint(str, (uint32_t*)out), sizeof(uint32_t));
   case EXESS_USHORT:
-    return fixed(exess_read_ushort((uint16_t*)out, str), sizeof(uint16_t));
+    return fixed(exess_read_ushort(str, (uint16_t*)out), sizeof(uint16_t));
   case EXESS_UBYTE:
-    return fixed(exess_read_ubyte((uint8_t*)out, str), sizeof(uint8_t));
+    return fixed(exess_read_ubyte(str, (uint8_t*)out), sizeof(uint8_t));
 
   case EXESS_POSITIVE_INTEGER:
-    r = fixed(exess_read_ulong((uint64_t*)out, str), sizeof(uint64_t));
+    r = fixed(exess_read_ulong(str, (uint64_t*)out), sizeof(uint64_t));
     return (!r.status && *(const uint64_t*)out == 0)
              ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_DURATION:
-    return fixed(exess_read_duration((ExessDuration*)out, str),
+    return fixed(exess_read_duration(str, (ExessDuration*)out),
                  sizeof(ExessDuration));
 
   case EXESS_DATE_TIME:
-    return fixed(exess_read_date_time((ExessDateTime*)out, str),
+    return fixed(exess_read_date_time(str, (ExessDateTime*)out),
                  sizeof(ExessDateTime));
 
   case EXESS_TIME:
-    return fixed(exess_read_time((ExessTime*)out, str), sizeof(ExessTime));
+    return fixed(exess_read_time(str, (ExessTime*)out), sizeof(ExessTime));
   case EXESS_DATE:
-    return fixed(exess_read_date((ExessDate*)out, str), sizeof(ExessDate));
+    return fixed(exess_read_date(str, (ExessDate*)out), sizeof(ExessDate));
   case EXESS_HEX:
-    return exess_read_hex(out_size, out, str);
+    return exess_read_hex(str, out_size, out);
   case EXESS_BASE64:
-    return exess_read_base64(out_size, out, str);
+    return exess_read_base64(str, out_size, out);
   }
 
   return r;

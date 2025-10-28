@@ -51,10 +51,10 @@ check_cross_type_comparison(const ExessDatatype       lhs_datatype,
   ExessValue rhs = {false};
 
   const ExessVariableResult l =
-    exess_read_value(lhs_datatype, sizeof(lhs), &lhs, lhs_string);
+    exess_read_value(lhs_datatype, lhs_string, sizeof(lhs), &lhs);
 
   const ExessVariableResult r =
-    exess_read_value(rhs_datatype, sizeof(rhs), &rhs, rhs_string);
+    exess_read_value(rhs_datatype, rhs_string, sizeof(rhs), &rhs);
 
   assert(lhs_datatype == EXESS_NOTHING || !l.status);
   assert(rhs_datatype == EXESS_NOTHING || !r.status);

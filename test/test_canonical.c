@@ -25,7 +25,7 @@ check(const ExessDatatype datatype,
   assert(expected_write_count < sizeof(buf));
 
   const ExessVariableResult r =
-    exess_write_canonical(value, datatype, expected_write_count + 1, buf);
+    exess_write_canonical(datatype, value, expected_write_count + 1, buf);
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
@@ -38,7 +38,7 @@ check(const ExessDatatype datatype,
   }
 
   assert(r.status ||
-         exess_write_canonical(value, datatype, 0, NULL).write_count ==
+         exess_write_canonical(datatype, value, 0, NULL).write_count ==
            r.write_count);
 }
 

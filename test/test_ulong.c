@@ -17,7 +17,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   uint64_t          value = 0;
-  const ExessResult r     = exess_read_ulong(&value, string);
+  const ExessResult r     = exess_read_ulong(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);

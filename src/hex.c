@@ -39,7 +39,7 @@ exess_decoded_hex_size(const size_t length)
 }
 
 ExessVariableResult
-exess_read_hex(const size_t out_size, void* const out, const char* const str)
+exess_read_hex(const char* const str, const size_t out_size, void* const out)
 {
   uint8_t* const uout  = (uint8_t*)out;
   const size_t   first = skip_whitespace(str);

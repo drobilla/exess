@@ -17,7 +17,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   int8_t            value = 0;
-  const ExessResult r     = exess_read_byte(&value, string);
+  const ExessResult r     = exess_read_byte(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -70,7 +70,7 @@ test_round_trip(void)
 
   for (int16_t i = INT8_MIN; i <= INT8_MAX; ++i) {
     assert(!exess_write_byte((int8_t)i, sizeof(buf), buf).status);
-    assert(!exess_read_byte(&value, buf).status);
+    assert(!exess_read_byte(buf, &value).status);
     assert(value == i);
   }
 }

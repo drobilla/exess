@@ -14,13 +14,13 @@
 #include <string.h>
 
 ExessResult
-exess_read_double(double* const out, const char* const str)
+exess_read_double(const char* const str, double* const out)
 {
   *out = (double)NAN;
 
   const size_t         i  = skip_whitespace(str);
   ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
-  const ExessResult    r  = parse_double(&in, str + i);
+  const ExessResult    r  = parse_double(str + i, &in);
 
   if (!r.status) {
     *out = decimal_to_double(in);

@@ -9,10 +9,10 @@
 #include <stdlib.h>
 
 ExessResult
-exess_read_short(int16_t* const out, const char* const str)
+exess_read_short(const char* const str, int16_t* const out)
 {
   int64_t           long_out = 0;
-  const ExessResult r        = exess_read_long(&long_out, str);
+  const ExessResult r        = exess_read_long(str, &long_out);
   if (r.status) {
     return r;
   }

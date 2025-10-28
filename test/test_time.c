@@ -41,7 +41,7 @@ check_read(const char* const string,
 {
   ExessTime value = {EXESS_LOCAL, 0, 0, 0, 0};
 
-  const ExessResult r = exess_read_time(&value, string);
+  const ExessResult r = exess_read_time(string, &value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value.hour == expected_hour);
@@ -201,7 +201,7 @@ check_round_trip(const ExessTime value)
 
   ExessTime parsed_value = {EXESS_LOCAL, 0, 0, 0, 0};
   assert(!exess_write_time(value, sizeof(buf), buf).status);
-  assert(!exess_read_time(&parsed_value, buf).status);
+  assert(!exess_read_time(buf, &parsed_value).status);
   assert(parsed_value.hour == value.hour);
   assert(parsed_value.minute == value.minute);
   assert(double_matches(parsed_value.second, value.second));

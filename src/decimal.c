@@ -87,13 +87,13 @@ set_zeros(char* const dest, const size_t n)
 }
 
 ExessResult
-exess_read_decimal(double* const out, const char* const str)
+exess_read_decimal(const char* const str, double* const out)
 {
   *out = (double)NAN;
 
   const size_t         i  = skip_whitespace(str);
   ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
-  const ExessResult    r  = parse_decimal(&in, str + i);
+  const ExessResult    r  = parse_decimal(str + i, &in);
   if (!r.status) {
     *out = decimal_to_double(in);
   }

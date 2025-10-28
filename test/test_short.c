@@ -22,7 +22,7 @@ check_read(const char* const string,
 {
   int16_t value = 0;
 
-  const ExessResult r = exess_read_short(&value, string);
+  const ExessResult r = exess_read_short(string, &value);
   assert(value == expected_value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -78,7 +78,7 @@ test_round_trip(const ExessNumTestOptions opts)
 
     for (int64_t i = opts.low; i <= opts.high; ++i) {
       assert(!exess_write_short((int16_t)i, sizeof(buf), buf).status);
-      assert(!exess_read_short(&parsed_value, buf).status);
+      assert(!exess_read_short(buf, &parsed_value).status);
       assert(parsed_value == i);
     }
   } else {
@@ -91,7 +91,7 @@ test_round_trip(const ExessNumTestOptions opts)
       const int16_t value = (int16_t)(seed % INT16_MAX);
 
       assert(!exess_write_short(value, sizeof(buf), buf).status);
-      assert(!exess_read_short(&parsed_value, buf).status);
+      assert(!exess_read_short(buf, &parsed_value).status);
       assert(parsed_value == value);
 
       print_num_test_progress(i, opts.n_tests);

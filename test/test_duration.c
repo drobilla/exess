@@ -58,7 +58,7 @@ check_read(const char* const string,
            const bool        expected_is_negative)
 {
   ExessDuration     value = {0, 0, 0};
-  const ExessResult r     = exess_read_duration(&value, string);
+  const ExessResult r     = exess_read_duration(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -306,7 +306,7 @@ check_round_trip(const ExessDuration value)
          EXESS_MAX_DURATION_LENGTH);
 
   assert(!exess_write_duration(value, sizeof(buf), buf).status);
-  assert(!exess_read_duration(&parsed_value, buf).status);
+  assert(!exess_read_duration(buf, &parsed_value).status);
   assert(parsed_value.months == value.months);
   assert(parsed_value.seconds == value.seconds);
   assert(parsed_value.nanoseconds == value.nanoseconds);

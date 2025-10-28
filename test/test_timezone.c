@@ -77,7 +77,7 @@ check_read(const char* const string,
   strncpy(time_string + 8, string, sizeof(time_string) - 9);
 
   ExessTime         value = {EXESS_LOCAL, 0, 0, 0, 0};
-  const ExessResult r     = exess_read_time(&value, time_string);
+  const ExessResult r     = exess_read_time(time_string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == 8 + expected_count);
@@ -177,7 +177,7 @@ check_round_trip(const ExessTimezone value)
   ExessTime       parsed_time = {EXESS_LOCAL, 0, 0, 0, 0};
 
   assert(!exess_write_time(time, sizeof(buf), buf).status);
-  assert(!exess_read_time(&parsed_time, buf).status);
+  assert(!exess_read_time(buf, &parsed_time).status);
   assert(!memcmp(&parsed_time.zone, &value, sizeof(ExessTimezone)));
 }
 

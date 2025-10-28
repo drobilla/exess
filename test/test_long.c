@@ -18,7 +18,7 @@ check_read(const char* const string,
 {
   int64_t value = 0;
 
-  const ExessResult r = exess_read_long(&value, string);
+  const ExessResult r = exess_read_long(string, &value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value == expected_value);

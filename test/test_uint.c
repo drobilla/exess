@@ -20,7 +20,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   uint32_t          value = 0;
-  const ExessResult r     = exess_read_uint(&value, string);
+  const ExessResult r     = exess_read_uint(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -78,7 +78,7 @@ test_round_trip(const ExessNumTestOptions opts)
 
     for (uint64_t i = (uint64_t)opts.low; i <= (uint64_t)opts.high; ++i) {
       assert(!exess_write_uint((uint32_t)i, sizeof(buf), buf).status);
-      assert(!exess_read_uint(&parsed_value, buf).status);
+      assert(!exess_read_uint(buf, &parsed_value).status);
       assert(parsed_value == i);
 
       print_num_test_progress(i, UINT32_MAX);
@@ -92,7 +92,7 @@ test_round_trip(const ExessNumTestOptions opts)
       value = lcg32(value);
 
       assert(!exess_write_uint(value, sizeof(buf), buf).status);
-      assert(!exess_read_uint(&parsed_value, buf).status);
+      assert(!exess_read_uint(buf, &parsed_value).status);
       assert(parsed_value == value);
 
       print_num_test_progress(i, opts.n_tests);

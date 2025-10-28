@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 ExessResult
-exess_read_ulong(uint64_t* const out, const char* const str)
+exess_read_ulong(const char* const str, uint64_t* const out)
 {
   *out = 0;
 

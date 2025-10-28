@@ -24,7 +24,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   double            value = 0;
-  const ExessResult r     = exess_read_decimal(&value, string);
+  const ExessResult r     = exess_read_decimal(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -235,7 +235,7 @@ check_round_trip(const double value)
   init_out_buf(sizeof(buf), buf);
 
   assert(!exess_write_decimal(value, sizeof(buf), buf).status);
-  assert(!exess_read_decimal(&parsed_value, buf).status);
+  assert(!exess_read_decimal(buf, &parsed_value).status);
   assert(double_matches(parsed_value, value));
 }
 

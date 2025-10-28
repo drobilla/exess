@@ -9,10 +9,10 @@
 #include <stdlib.h>
 
 ExessResult
-exess_read_ushort(uint16_t* const out, const char* const str)
+exess_read_ushort(const char* const str, uint16_t* const out)
 {
   uint64_t          long_out = 0;
-  const ExessResult r        = exess_read_ulong(&long_out, str);
+  const ExessResult r        = exess_read_ulong(str, &long_out);
   if (r.status) {
     return r;
   }

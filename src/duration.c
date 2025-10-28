@@ -187,7 +187,7 @@ exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
 }
 
 ExessResult
-exess_read_duration(ExessDuration* const out, const char* const str)
+exess_read_duration(const char* const str, ExessDuration* const out)
 {
   memset(out, 0, sizeof(*out));
 

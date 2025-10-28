@@ -26,7 +26,7 @@ exess_compare_date(const ExessDate lhs, const ExessDate rhs)
 }
 
 ExessResult
-exess_read_date(ExessDate* const out, const char* const str)
+exess_read_date(const char* const str, ExessDate* const out)
 {
   memset(out, 0, sizeof(*out));
 

@@ -20,7 +20,7 @@ check_read(const char* const string,
            const size_t      expected_count)
 {
   int32_t           value = 0;
-  const ExessResult r     = exess_read_int(&value, string);
+  const ExessResult r     = exess_read_int(string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == expected_count);
@@ -78,7 +78,7 @@ test_round_trip(const ExessNumTestOptions opts)
 
     for (int64_t i = opts.low; i <= opts.high; ++i) {
       assert(!exess_write_int((int32_t)i, sizeof(buf), buf).status);
-      assert(!exess_read_int(&parsed_value, buf).status);
+      assert(!exess_read_int(buf, &parsed_value).status);
       assert(parsed_value == i);
 
       print_num_test_progress((uint64_t)(i - opts.low), (uint64_t)opts.high);
@@ -92,7 +92,7 @@ test_round_trip(const ExessNumTestOptions opts)
       const int32_t value = (int32_t)rep;
 
       assert(!exess_write_int(value, sizeof(buf), buf).status);
-      assert(!exess_read_int(&parsed_value, buf).status);
+      assert(!exess_read_int(buf, &parsed_value).status);
       assert(parsed_value == value);
 
       print_num_test_progress(i, opts.n_tests);

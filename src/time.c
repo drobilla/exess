@@ -22,7 +22,7 @@ exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 }
 
 ExessResult
-exess_read_time(ExessTime* const out, const char* const str)
+exess_read_time(const char* const str, ExessTime* const out)
 {
   memset(out, 0, sizeof(*out));
 

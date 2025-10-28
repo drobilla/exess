@@ -70,7 +70,7 @@ For example:
 .. code-block:: c
 
    int32_t     v = 0;
-   ExessResult r = exess_read_int(&v, "1234");
+   ExessResult r = exess_read_int("1234", &v);
    if (!r.status) {
      printf("Read %zu bytes as %d\n", r.count, v);
    }
@@ -88,7 +88,7 @@ for example:
 
    bool is_null_terminated_int(const char* string) {
      int32_t     v = 0;
-     ExessResult r = exess_read_int(&v, string);
+     ExessResult r = exess_read_int(string, &v);
 
      return !r.status && !string[r.count];
    }
@@ -190,7 +190,7 @@ For example, this will print ``12``:
    char                s[4] = {0};
    ExessVariableResult r    = {EXESS_SUCCESS, 0, 0};
 
-   r = exess_write_canonical("+12", EXESS_INT, sizeof(s), s);
+   r = exess_write_canonical(EXESS_INT, "+12", sizeof(s), s);
    if (!r.status) {
      printf("%s\n", s);
    }

@@ -44,10 +44,10 @@ check_add(const char* const datetime_string,
   ExessDateTime datetime = {0, 0U, 0U, EXESS_LOCAL, 0U, 0U, 0U, 0U};
   ExessDuration duration = {0U, 0U, 0U};
 
-  ExessResult r = exess_read_date_time(&datetime, datetime_string);
+  ExessResult r = exess_read_date_time(datetime_string, &datetime);
   assert(!r.status);
 
-  r = exess_read_duration(&duration, duration_string);
+  r = exess_read_duration(duration_string, &duration);
   assert(!r.status);
 
   const ExessDateTime result = exess_add_date_time_duration(datetime, duration);
@@ -188,7 +188,7 @@ check_to_utc(const char* const datetime_string, const char* const result_string)
 {
   ExessDateTime datetime = {0, 0U, 0U, EXESS_LOCAL, 0U, 0U, 0U, 0U};
 
-  ExessResult r = exess_read_date_time(&datetime, datetime_string);
+  ExessResult r = exess_read_date_time(datetime_string, &datetime);
   assert(!r.status);
 
   const ExessDateTime result = exess_date_time_to_utc(datetime);
@@ -250,7 +250,7 @@ check_read(const char* const   string,
 {
   ExessDateTime value = {0, 0, 0, EXESS_LOCAL, 0, 0, 0, 0};
 
-  const ExessResult r = exess_read_date_time(&value, string);
+  const ExessResult r = exess_read_date_time(string, &value);
   assert(r.status == expected_status);
   assert(r.count == expected_count);
   assert(value.year == expected_year);

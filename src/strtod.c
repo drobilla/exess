@@ -44,7 +44,7 @@ skip_leading_zeros(ExessFloatingDecimal* const out,
 }
 
 ExessResult
-parse_decimal(ExessFloatingDecimal* const out, const char* const str)
+parse_decimal(const char* const str, ExessFloatingDecimal* const out)
 {
   // Read leading sign if present
   int    sign = 0;
@@ -83,7 +83,7 @@ parse_decimal(ExessFloatingDecimal* const out, const char* const str)
 }
 
 ExessResult
-parse_double(ExessFloatingDecimal* const out, const char* const str)
+parse_double(const char* const str, ExessFloatingDecimal* const out)
 {
   // Handle non-numeric special cases
 
@@ -109,7 +109,7 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
   }
 
   // Read mantissa as a decimal
-  const ExessResult r = parse_decimal(out, str);
+  const ExessResult r = parse_decimal(str, out);
   if (r.status) {
     return r;
   }
