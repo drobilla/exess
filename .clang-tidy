@@ -5,13 +5,16 @@ Checks: >
   *,
   -*-macro-to-enum,
   -*-magic-numbers,
+  -*-use-nullptr,
   -altera-*,
   -bugprone-easily-swappable-parameters,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
   -llvm-header-guard,
   -llvmlibc-*,
   -misc-include-cleaner,
   -readability-avoid-nested-conditional-operator,
   -readability-identifier-length,
+  -readability-implicit-bool-conversion,
 CheckOptions:
   - key:   hicpp-uppercase-literal-suffix.NewSuffixes
     value: 'L;U;UL;ULL'

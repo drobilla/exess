@@ -110,7 +110,7 @@ write_timezone(const ExessTimezone value,
   }
 
   if (!buf) {
-    return result(EXESS_SUCCESS, value == 0 ? 1 : 6);
+    return result(EXESS_SUCCESS, !value ? 1U : 6U);
   }
 
   if (value == 0) {
