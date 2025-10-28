@@ -40,7 +40,7 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   size_t i = 0;
   if (str[i] == 'Z') {
     *out = 0;
-    return result(EXESS_SUCCESS, i + 1);
+    return RESULT(EXESS_SUCCESS, i + 1);
   }
 
   // Read leading sign
@@ -48,7 +48,7 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   if (str[i] == '-') {
     sign = -1;
   } else if (str[i] != '+') {
-    return result(EXESS_SUCCESS, i);
+    return RESULT(EXESS_SUCCESS, i);
   }
 
   ++i;
@@ -57,14 +57,14 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   uint8_t     hh = 0U;
   ExessResult r  = read_two_digit_number(&hh, 0U, 14U, str + i);
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   i += 2U;
 
   // Check colon
   if (str[i] != ':') {
-    return result(EXESS_EXPECTED_COLON, i);
+    return RESULT(EXESS_EXPECTED_COLON, i);
   }
 
   ++i;
@@ -73,7 +73,7 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   uint8_t mm = 0U;
   r          = read_two_digit_number(&mm, 0U, 59U, str + i);
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   i += 2U;
@@ -82,17 +82,17 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   const int8_t hour   = (int8_t)(sign * hh);
   const int8_t minute = (int8_t)(sign * mm);
   if (minute % 15) {
-    return result(EXESS_UNSUPPORTED, i);
+    return RESULT(EXESS_UNSUPPORTED, i);
   }
 
   // Convert to quarter hours
   const int8_t quarters = (int8_t)((4 * hour) + (minute / 15));
   if (quarters < -56 || quarters > 56) {
-    return result(EXESS_OUT_OF_RANGE, i);
+    return RESULT(EXESS_OUT_OF_RANGE, i);
   }
 
   *out = quarters;
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 ExessResult
@@ -102,20 +102,20 @@ write_timezone(const ExessTimezone value,
                size_t              o)
 {
   if (value == EXESS_LOCAL) {
-    return result(EXESS_SUCCESS, 0);
+    return RESULT(EXESS_SUCCESS, 0);
   }
 
   if (value < -56 || value > 56) {
-    return result(EXESS_BAD_VALUE, 0);
+    return RESULT(EXESS_BAD_VALUE, 0);
   }
 
   if (!buf) {
-    return result(EXESS_SUCCESS, !value ? 1U : 6U);
+    return RESULT(EXESS_SUCCESS, !value ? 1U : 6U);
   }
 
   if (value == 0) {
     write_char('Z', buf_size, buf, o);
-    return result(EXESS_SUCCESS, 1);
+    return RESULT(EXESS_SUCCESS, 1);
   }
 
   const uint8_t abs_quarters = (uint8_t)abs(value);
@@ -128,5 +128,5 @@ write_timezone(const ExessTimezone value,
   n += write_char(':', buf_size, buf, o + n);
   n += write_two_digit_number(abs_minute, buf_size, buf, o + n);
 
-  return result(EXESS_SUCCESS, n);
+  return RESULT(EXESS_SUCCESS, n);
 }

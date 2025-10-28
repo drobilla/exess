@@ -196,14 +196,14 @@ coerce_to_boolean(const ExessCoercions coercions,
   if (!st) {
     const bool truncate = (coercions & (ExessCoercions)EXESS_TRUNCATE);
     if (!truncate && l_out != 0 && l_out != 1) {
-      return result(EXESS_WOULD_TRUNCATE, 0U);
+      return RESULT(EXESS_WOULD_TRUNCATE, 0U);
     }
 
     *out = (l_out != 0);
-    return result(EXESS_SUCCESS, sizeof(bool));
+    return RESULT(EXESS_SUCCESS, sizeof(bool));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -213,12 +213,12 @@ coerce_to_decimal(const ExessDatatype in_datatype,
 {
   if (in_datatype == EXESS_DOUBLE) {
     *(double*)out = *(const double*)in;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
   if (in_datatype == EXESS_FLOAT) {
     *(double*)out = (double)*(const float*)in;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
   int64_t           l_out = 0;
@@ -227,10 +227,10 @@ coerce_to_decimal(const ExessDatatype in_datatype,
 
   if (!st) {
     *(double*)out = (double)l_out;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -240,12 +240,12 @@ coerce_to_double(const ExessDatatype in_datatype,
 {
   if (in_datatype == EXESS_DECIMAL) {
     *out = *(const double*)in;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
   if (in_datatype == EXESS_FLOAT) {
     *out = (double)*(const float*)in;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
   int64_t           l_out = 0;
@@ -253,10 +253,10 @@ coerce_to_double(const ExessDatatype in_datatype,
     coerce_signed(&l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
   if (!st) {
     *out = (double)l_out;
-    return result(EXESS_SUCCESS, sizeof(double));
+    return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -267,11 +267,11 @@ coerce_to_float(const ExessCoercions coercions,
 {
   if (in_datatype == EXESS_DECIMAL || in_datatype == EXESS_DOUBLE) {
     if (!(coercions & (ExessCoercions)EXESS_REDUCE_PRECISION)) {
-      return result(EXESS_WOULD_REDUCE_PRECISION, 0U);
+      return RESULT(EXESS_WOULD_REDUCE_PRECISION, 0U);
     }
 
     *out = (float)*(const double*)in;
-    return result(EXESS_SUCCESS, sizeof(float));
+    return RESULT(EXESS_SUCCESS, sizeof(float));
   }
 
   int64_t           l_out = 0;
@@ -280,10 +280,10 @@ coerce_to_float(const ExessCoercions coercions,
 
   if (!st) {
     *out = (float)l_out;
-    return result(EXESS_SUCCESS, sizeof(float));
+    return RESULT(EXESS_SUCCESS, sizeof(float));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -298,14 +298,14 @@ coerce_to_integer(const ExessCoercions coercions,
 
   if (!st) {
     if (l_out > max) {
-      return result(EXESS_OUT_OF_RANGE, 0U);
+      return RESULT(EXESS_OUT_OF_RANGE, 0U);
     }
 
     *out = l_out;
-    return result(EXESS_SUCCESS, sizeof(int64_t));
+    return RESULT(EXESS_SUCCESS, sizeof(int64_t));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -320,14 +320,14 @@ coerce_to_unsigned_integer(const ExessCoercions coercions,
 
   if (!st) {
     if (u_out < min) {
-      return result(EXESS_OUT_OF_RANGE, 0U);
+      return RESULT(EXESS_OUT_OF_RANGE, 0U);
     }
 
     *out = u_out;
-    return result(EXESS_SUCCESS, sizeof(uint64_t));
+    return RESULT(EXESS_SUCCESS, sizeof(uint64_t));
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }
 
 static ExessResult
@@ -337,11 +337,11 @@ coerce_to_time(const ExessCoercions coercions,
                ExessTime* const     out)
 {
   if (in_datatype != EXESS_DATE_TIME) {
-    return result(EXESS_UNSUPPORTED, 0U);
+    return RESULT(EXESS_UNSUPPORTED, 0U);
   }
 
   if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
-    return result(EXESS_WOULD_TRUNCATE, 0U);
+    return RESULT(EXESS_WOULD_TRUNCATE, 0U);
   }
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
@@ -353,7 +353,7 @@ coerce_to_time(const ExessCoercions coercions,
                           datetime.nanosecond};
 
   *out = time;
-  return result(EXESS_SUCCESS, sizeof(ExessTime));
+  return RESULT(EXESS_SUCCESS, sizeof(ExessTime));
 }
 
 static ExessResult
@@ -363,11 +363,11 @@ coerce_to_date(const ExessCoercions coercions,
                ExessDate* const     out)
 {
   if (in_datatype != EXESS_DATE_TIME) {
-    return result(EXESS_UNSUPPORTED, 0U);
+    return RESULT(EXESS_UNSUPPORTED, 0U);
   }
 
   if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
-    return result(EXESS_WOULD_TRUNCATE, 0U);
+    return RESULT(EXESS_WOULD_TRUNCATE, 0U);
   }
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
@@ -376,7 +376,7 @@ coerce_to_date(const ExessCoercions coercions,
     datetime.year, datetime.month, datetime.day, datetime.zone};
 
   *out = date;
-  return result(EXESS_SUCCESS, sizeof(ExessDate));
+  return RESULT(EXESS_SUCCESS, sizeof(ExessDate));
 }
 
 static ExessResult
@@ -445,7 +445,7 @@ exess_coerce_value(const ExessCoercions coercions,
 {
   // Ensure the input is sufficiently large so we don't read out of bounds
   if (in_size < exess_value_size(in_datatype)) {
-    return result(EXESS_BAD_VALUE, 0U);
+    return RESULT(EXESS_BAD_VALUE, 0U);
   }
 
   // Copy value verbatim for trivial conversions
@@ -453,16 +453,16 @@ exess_coerce_value(const ExessCoercions coercions,
       (out_datatype == EXESS_HEX && in_datatype == EXESS_BASE64) ||
       (out_datatype == EXESS_BASE64 && in_datatype == EXESS_HEX)) {
     if (out_size < in_size) {
-      return result(EXESS_NO_SPACE, 0U);
+      return RESULT(EXESS_NO_SPACE, 0U);
     }
 
     memcpy(out, in, in_size);
-    return result(EXESS_SUCCESS, in_size);
+    return RESULT(EXESS_SUCCESS, in_size);
   }
 
   // Ensure the output is sufficiently large so we don't write out of bounds
   if (out_size < exess_value_size(out_datatype)) {
-    return result(EXESS_NO_SPACE, 0U);
+    return RESULT(EXESS_NO_SPACE, 0U);
   }
 
   ExessStatus st = EXESS_UNSUPPORTED;
@@ -538,5 +538,5 @@ exess_coerce_value(const ExessCoercions coercions,
     break;
   }
 
-  return result(st, 0U);
+  return RESULT(st, 0U);
 }

@@ -33,19 +33,19 @@ read_year_number(int16_t* const out, const char* const str)
 
   i += r.count;
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   if (sign > 0) {
     if (magnitude > (uint16_t)INT16_MAX) {
-      return result(EXESS_OUT_OF_RANGE, i);
+      return RESULT(EXESS_OUT_OF_RANGE, i);
     }
 
     *out = (int16_t)magnitude;
   } else {
     const uint16_t min_magnitude = (uint16_t)(-(INT16_MIN + 1)) + 1;
     if (magnitude > min_magnitude) {
-      return result(EXESS_OUT_OF_RANGE, i);
+      return RESULT(EXESS_OUT_OF_RANGE, i);
     }
 
     if (magnitude == min_magnitude) {
@@ -55,7 +55,7 @@ read_year_number(int16_t* const out, const char* const str)
     }
   }
 
-  return result(r.count >= 4 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
+  return RESULT(r.count >= 4 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
 }
 
 ExessResult
@@ -66,7 +66,7 @@ write_year_number(const int16_t value, const size_t buf_size, char* const buf)
   const bool     is_negative = value < 0;
 
   if (!buf) {
-    return result(EXESS_SUCCESS, is_negative + MAX(4U, n_digits));
+    return RESULT(EXESS_SUCCESS, is_negative + MAX(4U, n_digits));
   }
 
   // Write sign

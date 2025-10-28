@@ -25,7 +25,7 @@ read_nanoseconds(uint32_t* const out, const char* const str)
   }
 
   if (i == 9U && is_digit(str[i])) {
-    return result(EXESS_OUT_OF_RANGE, i);
+    return RESULT(EXESS_OUT_OF_RANGE, i);
   }
 
   // "Read" imagined trailing zeros to reach 9 digit magnitude
@@ -33,7 +33,7 @@ read_nanoseconds(uint32_t* const out, const char* const str)
     *out *= 10U;
   }
 
-  return result(i > 0 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
+  return RESULT(i > 0 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
 }
 
 size_t
@@ -81,7 +81,7 @@ read_time(ExessTime* const out, const char* const str)
   size_t      i = 0;
   ExessResult r = read_two_digit_number(&out->hour, 0, 24, str + i);
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   const bool midnight = out->hour == 24;
@@ -89,20 +89,20 @@ read_time(ExessTime* const out, const char* const str)
   // Read hour-minute delimiter
   i += r.count;
   if (str[i] != ':') {
-    return result(EXESS_EXPECTED_COLON, i);
+    return RESULT(EXESS_EXPECTED_COLON, i);
   }
 
   // Read minute
   ++i;
   r = read_two_digit_number(&out->minute, 0, midnight ? 0 : 59, str + i);
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   // Read minute-second delimiter
   i += r.count;
   if (str[i] != ':') {
-    return result(EXESS_EXPECTED_COLON, i);
+    return RESULT(EXESS_EXPECTED_COLON, i);
   }
 
   // Read second
@@ -110,7 +110,7 @@ read_time(ExessTime* const out, const char* const str)
   r = read_two_digit_number(&out->second, 0, midnight ? 0 : 59, str + i);
   i += r.count;
   if (r.status) {
-    return result(r.status, i);
+    return RESULT(r.status, i);
   }
 
   // Read nanoseconds if present
@@ -120,19 +120,19 @@ read_time(ExessTime* const out, const char* const str)
     i += r.count;
   }
   if (r.status) {
-    return result(r.status, i);
+    return RESULT(r.status, i);
   }
 
   // Ensure midnight has zero nanoseconds
   if (midnight && out->nanosecond) {
-    return result(EXESS_OUT_OF_RANGE, i);
+    return RESULT(EXESS_OUT_OF_RANGE, i);
   }
 
   // Read timezone offset if present
   r = read_optional_timezone(&out->zone, str + i);
   i += r.count;
 
-  return result(r.status, i);
+  return RESULT(r.status, i);
 }
 
 ExessResult
@@ -143,7 +143,7 @@ write_time(const ExessTime value,
 {
   if (value.hour > 24 || value.minute > 59 || value.second > 59 ||
       value.nanosecond > 999999999) {
-    return result(EXESS_BAD_VALUE, 0);
+    return RESULT(EXESS_BAD_VALUE, 0);
   }
 
   size_t o = offset;
@@ -158,5 +158,5 @@ write_time(const ExessTime value,
 
   const ExessResult r = write_timezone(value.zone, buf_size, buf, o);
 
-  return result(r.status, o - offset + r.count);
+  return RESULT(r.status, o - offset + r.count);
 }

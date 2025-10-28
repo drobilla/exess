@@ -18,7 +18,7 @@ exess_read_int(int32_t* const out, const char* const str)
   }
 
   if (long_out < INT32_MIN || long_out > INT32_MAX) {
-    return result(EXESS_OUT_OF_RANGE, r.count);
+    return RESULT(EXESS_OUT_OF_RANGE, r.count);
   }
 
   *out = (int32_t)long_out;

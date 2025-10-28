@@ -18,7 +18,7 @@ exess_read_byte(int8_t* const out, const char* const str)
   }
 
   if (long_out < INT8_MIN || long_out > INT8_MAX) {
-    return result(EXESS_OUT_OF_RANGE, r.count);
+    return RESULT(EXESS_OUT_OF_RANGE, r.count);
   }
 
   *out = (int8_t)long_out;

@@ -18,7 +18,7 @@ exess_read_uint(uint32_t* const out, const char* const str)
   }
 
   if (long_out > UINT32_MAX) {
-    return result(EXESS_OUT_OF_RANGE, r.count);
+    return RESULT(EXESS_OUT_OF_RANGE, r.count);
   }
 
   *out = (uint32_t)long_out;

@@ -267,7 +267,7 @@ exess_read_date_time(ExessDateTime* const out, const char* const str)
 
   size_t i = dr.count;
   if (str[i] != 'T') {
-    return result(EXESS_EXPECTED_TIME_SEP, i);
+    return RESULT(EXESS_EXPECTED_TIME_SEP, i);
   }
 
   ++i;
@@ -283,10 +283,10 @@ exess_read_date_time(ExessDateTime* const out, const char* const str)
   out->nanosecond = time.nanosecond;
   i += tr.count;
   if (tr.status) {
-    return result(tr.status, i);
+    return RESULT(tr.status, i);
   }
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 ExessResult

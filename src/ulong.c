@@ -28,7 +28,7 @@ exess_read_ulong(uint64_t* const out, const char* const str)
       ++j;
     }
 
-    return result((j == i) ? EXESS_EXPECTED_ZERO : EXESS_SUCCESS, j);
+    return RESULT((j == i) ? EXESS_EXPECTED_ZERO : EXESS_SUCCESS, j);
   }
 
   ExessResult r = read_digits(out, str + i);
@@ -41,7 +41,7 @@ ExessResult
 exess_write_ulong(const uint64_t value, const size_t buf_size, char* const buf)
 {
   if (!buf) {
-    return result(EXESS_SUCCESS, exess_num_digits(value));
+    return RESULT(EXESS_SUCCESS, exess_num_digits(value));
   }
 
   const ExessResult r = write_digits(value, buf_size, buf, 0);

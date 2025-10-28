@@ -18,7 +18,7 @@ exess_read_short(int16_t* const out, const char* const str)
   }
 
   if (long_out < INT16_MIN || long_out > INT16_MAX) {
-    return result(EXESS_OUT_OF_RANGE, r.count);
+    return RESULT(EXESS_OUT_OF_RANGE, r.count);
   }
 
   *out = (int16_t)long_out;

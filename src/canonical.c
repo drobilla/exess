@@ -49,7 +49,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
   const size_t sign    = skip_whitespace(str);     // Sign
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (str[leading] != '.' && !is_digit(str[leading])) {
-    return vresult(EXESS_EXPECTED_DIGIT, sign, 0);
+    return VRESULT(EXESS_EXPECTED_DIGIT, sign, 0);
   }
 
   const size_t first = scan(is_zero, str, leading); // First non-zero
@@ -74,7 +74,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
   // Handle zero as a special case (no non-zero digits to copy)
   if (first == last) {
     o += write_string(3, "0.0", buf_size, buf, o);
-    return vresult(EXESS_SUCCESS, end, o);
+    return VRESULT(EXESS_SUCCESS, end, o);
   }
 
   // Add leading zero if needed to have at least one digit before the point
@@ -94,7 +94,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
   }
 
   const ExessResult w = end_write(EXESS_SUCCESS, buf_size, buf, o);
-  return vresult(w.status, end, o);
+  return VRESULT(w.status, end, o);
 }
 
 static ExessVariableResult
@@ -110,12 +110,12 @@ write_integer(const ExessDatatype datatype,
       (str[sign] == '+' && (datatype == EXESS_NON_POSITIVE_INTEGER ||
                             datatype == EXESS_NEGATIVE_INTEGER)) ||
       (str[sign] != '-' && (datatype == EXESS_NEGATIVE_INTEGER))) {
-    return vresult(EXESS_BAD_VALUE, sign, 0);
+    return VRESULT(EXESS_BAD_VALUE, sign, 0);
   }
 
   const size_t leading = skip(is_sign, str, sign); // First digit
   if (!is_digit(str[leading])) {
-    return vresult(EXESS_EXPECTED_DIGIT, leading, 0);
+    return VRESULT(EXESS_EXPECTED_DIGIT, leading, 0);
   }
 
   const size_t first = scan(is_zero, str, leading); // First non-zero
@@ -125,11 +125,11 @@ write_integer(const ExessDatatype datatype,
   size_t o = 0;
   if (first == last) {
     if (datatype == EXESS_POSITIVE_INTEGER) {
-      return vresult(EXESS_BAD_VALUE, sign, 0);
+      return VRESULT(EXESS_BAD_VALUE, sign, 0);
     }
 
     o += write_char('0', buf_size, buf, o);
-    return vresult(EXESS_SUCCESS, first, o);
+    return VRESULT(EXESS_SUCCESS, first, o);
   }
 
   // Add leading sign only if the number is negative
@@ -137,13 +137,13 @@ write_integer(const ExessDatatype datatype,
   if (str[sign] == '-') {
     o += write_char('-', buf_size, buf, o);
   } else if (datatype == EXESS_NON_POSITIVE_INTEGER) {
-    return vresult(EXESS_BAD_VALUE, first, sign);
+    return VRESULT(EXESS_BAD_VALUE, first, sign);
   }
 
   // Add digits
   o += write_string(last - first, str + first, buf_size, buf, o);
 
-  return vresult(st, last, o);
+  return VRESULT(st, last, o);
 }
 
 static ExessVariableResult
@@ -154,7 +154,7 @@ write_date_time(const char* const str, const size_t buf_size, char* const buf)
   ExessDateTime     value = {0, 0, 0, 0, 0, 0, 0, 0};
   const ExessResult r     = exess_read_date_time(&value, str);
   if (r.status) {
-    return vresult(r.status, r.count, 0);
+    return VRESULT(r.status, r.count, 0);
   }
 
   // Wrap 24:00 midnight to 00:00 on the next day
@@ -163,7 +163,7 @@ write_date_time(const char* const str, const size_t buf_size, char* const buf)
     buf_size,
     buf);
 
-  return vresult(w.status, r.count, w.count);
+  return VRESULT(w.status, r.count, w.count);
 }
 
 static ExessVariableResult
@@ -180,7 +180,7 @@ write_hex(const char* const str, const size_t buf_size, char* const buf)
     }
   }
 
-  return vresult(
+  return VRESULT(
     (o == 0 || o % 2 != 0) ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, i, o);
 }
 
@@ -199,10 +199,10 @@ write_base64(const char* const str, const size_t buf_size, char* const buf)
   }
 
   if (o == 0 || o % 4 != 0) {
-    return vresult(EXESS_EXPECTED_BASE64, i, o);
+    return VRESULT(EXESS_EXPECTED_BASE64, i, o);
   }
 
-  return vresult(EXESS_SUCCESS, i, o);
+  return VRESULT(EXESS_SUCCESS, i, o);
 }
 
 static ExessVariableResult
@@ -217,12 +217,12 @@ write_bounded(const char* const   str,
     exess_read_value(datatype, sizeof(value), &value, str);
 
   if (vr.status) {
-    return vresult(vr.status, vr.read_count, 0U);
+    return VRESULT(vr.status, vr.read_count, 0U);
   }
 
   const ExessResult w =
     exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
-  return vresult(w.status, vr.read_count, w.count);
+  return VRESULT(w.status, vr.read_count, w.count);
 }
 
 ExessVariableResult
@@ -245,5 +245,5 @@ exess_write_canonical(const char* const   str,
                                  : write_bounded(str, datatype, buf_size, buf);
 
   const ExessResult w = end_write(r.status, buf_size, buf, r.write_count);
-  return vresult(w.status, r.read_count, w.count);
+  return VRESULT(w.status, r.read_count, w.count);
 }

@@ -50,7 +50,7 @@ write_scientific(const ExessFloatingDecimal value,
 
   if (n <= (value.kind == EXESS_NEGATIVE) + value.n_digits + 1) {
     buf[0] = '\0';
-    return result(EXESS_NO_SPACE, 0);
+    return RESULT(EXESS_NO_SPACE, 0);
   }
 
   if (value.kind < EXESS_NEGATIVE) {
@@ -80,7 +80,7 @@ write_scientific(const ExessFloatingDecimal value,
 
   if (n - i <= 1U + (value.expt < 0) + n_expt_digits) {
     buf[0] = '\0';
-    return result(EXESS_NO_SPACE, 0);
+    return RESULT(EXESS_NO_SPACE, 0);
   }
 
   buf[i++] = 'E';
@@ -96,5 +96,5 @@ write_scientific(const ExessFloatingDecimal value,
     *s-- = (char)('0' + (abs_expt % 10));
   } while ((abs_expt /= 10) > 0);
 
-  return result(EXESS_SUCCESS, i + n_expt_digits);
+  return RESULT(EXESS_SUCCESS, i + n_expt_digits);
 }

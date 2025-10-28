@@ -36,15 +36,15 @@ read_two_digit_number(uint8_t* const    out,
 
   // Ensure there are exactly the expected number of digits
   if (i != 2) {
-    return result(EXESS_EXPECTED_DIGIT, i);
+    return RESULT(EXESS_EXPECTED_DIGIT, i);
   }
 
   // Ensure value is in range
   if (*out < min_value || *out > max_value) {
-    return result(EXESS_OUT_OF_RANGE, i);
+    return RESULT(EXESS_OUT_OF_RANGE, i);
   }
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 size_t
@@ -67,7 +67,7 @@ read_digits(uint64_t* const out, const char* const str)
   // Ensure the first character is a digit
   size_t i = 0;
   if (!is_digit(str[i])) {
-    return result(EXESS_EXPECTED_DIGIT, i);
+    return RESULT(EXESS_EXPECTED_DIGIT, i);
   }
 
   // Skip leading zeros
@@ -80,13 +80,13 @@ read_digits(uint64_t* const out, const char* const str)
     const uint64_t next = (*out * 10U) + (uint64_t)(str[i] - '0');
     if (next < *out) {
       *out = 0;
-      return result(EXESS_OUT_OF_RANGE, i);
+      return RESULT(EXESS_OUT_OF_RANGE, i);
     }
 
     *out = next;
   }
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 ExessResult
@@ -97,7 +97,7 @@ write_digits(const uint64_t value,
 {
   const uint8_t n_digits = exess_num_digits(value);
   if (!buf) {
-    return result(EXESS_SUCCESS, n_digits);
+    return RESULT(EXESS_SUCCESS, n_digits);
   }
 
   if (i + n_digits >= buf_size) {
@@ -113,5 +113,5 @@ write_digits(const uint64_t value,
     *s-- = (char)('0' + (remaining % 10));
   } while ((remaining /= 10) > 0);
 
-  return result(EXESS_SUCCESS, n_digits);
+  return RESULT(EXESS_SUCCESS, n_digits);
 }

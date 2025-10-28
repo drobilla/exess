@@ -20,22 +20,22 @@ exess_read_boolean(bool* const out, const char* const str)
 
   switch (str[i]) {
   case '0':
-    return result(EXESS_SUCCESS, i + 1);
+    return RESULT(EXESS_SUCCESS, i + 1);
 
   case '1':
     *out = true;
-    return result(EXESS_SUCCESS, i + 1);
+    return RESULT(EXESS_SUCCESS, i + 1);
 
   case 't':
     if (!strncmp(str + i, "true", 4)) {
       *out = true;
-      return result(EXESS_SUCCESS, i + 4U);
+      return RESULT(EXESS_SUCCESS, i + 4U);
     }
     break;
 
   case 'f':
     if (!strncmp(str + i, "false", 5)) {
-      return result(EXESS_SUCCESS, i + 5U);
+      return RESULT(EXESS_SUCCESS, i + 5U);
     }
     break;
 
@@ -43,7 +43,7 @@ exess_read_boolean(bool* const out, const char* const str)
     break;
   }
 
-  return result(r.status, r.count);
+  return RESULT(r.status, r.count);
 }
 
 ExessResult

@@ -67,5 +67,5 @@ write_special(const size_t      string_length,
   }
 
   memcpy(buf, string, string_length + 1);
-  return result(EXESS_SUCCESS, string_length);
+  return RESULT(EXESS_SUCCESS, string_length);
 }

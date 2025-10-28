@@ -27,5 +27,5 @@ exess_write_float(const float value, const size_t buf_size, char* const buf)
   const ExessFloatingDecimal decimal = measure_float(value);
 
   return buf ? write_scientific(decimal, buf_size, buf)
-             : result(EXESS_SUCCESS, scientific_string_length(decimal));
+             : RESULT(EXESS_SUCCESS, scientific_string_length(decimal));
 }

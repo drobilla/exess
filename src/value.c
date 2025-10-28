@@ -13,7 +13,7 @@
 static inline ExessVariableResult
 fixed(const ExessResult result, const size_t write_count)
 {
-  return vresult(result.status, result.count, result.status ? 0U : write_count);
+  return VRESULT(result.status, result.count, result.status ? 0U : write_count);
 }
 
 ExessVariableResult
@@ -46,13 +46,13 @@ exess_read_value(const ExessDatatype datatype,
   case EXESS_NON_POSITIVE_INTEGER:
     r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
     return (!r.status && *(const int64_t*)out > 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
+             ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_NEGATIVE_INTEGER:
     r = fixed(exess_read_long((int64_t*)out, str), sizeof(int64_t));
     return (!r.status && *(const int64_t*)out >= 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
+             ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_LONG:
@@ -76,7 +76,7 @@ exess_read_value(const ExessDatatype datatype,
   case EXESS_POSITIVE_INTEGER:
     r = fixed(exess_read_ulong((uint64_t*)out, str), sizeof(uint64_t));
     return (!r.status && *(const uint64_t*)out == 0)
-             ? vresult(EXESS_OUT_OF_RANGE, r.read_count, 0U)
+             ? VRESULT(EXESS_OUT_OF_RANGE, r.read_count, 0U)
              : r;
 
   case EXESS_DURATION:

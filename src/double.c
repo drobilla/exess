@@ -26,7 +26,7 @@ exess_read_double(double* const out, const char* const str)
     *out = decimal_to_double(in);
   }
 
-  return result(r.status, i + r.count);
+  return RESULT(r.status, i + r.count);
 }
 
 ExessResult
@@ -36,7 +36,7 @@ exess_write_double(const double value, const size_t buf_size, char* const buf)
 
   const ExessResult r =
     buf ? write_scientific(decimal, buf_size, buf)
-        : result(EXESS_SUCCESS, scientific_string_length(decimal));
+        : RESULT(EXESS_SUCCESS, scientific_string_length(decimal));
 
   return end_write(r.status, buf_size, buf, r.count);
 }

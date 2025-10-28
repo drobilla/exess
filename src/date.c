@@ -42,7 +42,7 @@ exess_read_date(ExessDate* const out, const char* const str)
     i += r.count;
   }
 
-  return result(r.status, i);
+  return RESULT(r.status, i);
 }
 
 ExessResult

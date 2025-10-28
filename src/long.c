@@ -27,23 +27,23 @@ exess_read_long(int64_t* const out, const char* const str)
   uint64_t    magnitude = 0;
   ExessResult r         = read_digits(&magnitude, str + i);
   if (r.status) {
-    return result(r.status, i + r.count);
+    return RESULT(r.status, i + r.count);
   }
 
   i += r.count;
 
   if (sign > 0) {
     if (magnitude > (uint64_t)INT64_MAX) {
-      return result(EXESS_OUT_OF_RANGE, i);
+      return RESULT(EXESS_OUT_OF_RANGE, i);
     }
 
     *out = (int64_t)magnitude;
-    return result(EXESS_SUCCESS, i);
+    return RESULT(EXESS_SUCCESS, i);
   }
 
   const uint64_t min_magnitude = (uint64_t)(-(INT64_MIN + 1)) + 1;
   if (magnitude > min_magnitude) {
-    return result(EXESS_OUT_OF_RANGE, i);
+    return RESULT(EXESS_OUT_OF_RANGE, i);
   }
 
   if (magnitude == min_magnitude) {
@@ -52,7 +52,7 @@ exess_read_long(int64_t* const out, const char* const str)
     *out = -(int64_t)magnitude;
   }
 
-  return result(r.status, i);
+  return RESULT(r.status, i);
 }
 
 static size_t
@@ -73,7 +73,7 @@ ExessResult
 exess_write_long(const int64_t value, const size_t buf_size, char* const buf)
 {
   if (!buf) {
-    return result(EXESS_SUCCESS, long_string_length(value));
+    return RESULT(EXESS_SUCCESS, long_string_length(value));
   }
 
   if (value == INT64_MIN) {

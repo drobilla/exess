@@ -50,31 +50,31 @@ exess_read_hex(const size_t out_size, void* const out, const char* const str)
     const char    hi_char = str[i];
     const uint8_t hi      = decode_nibble(hi_char);
     if (hi == UINT8_MAX) {
-      return vresult(i == first ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, i, o);
+      return VRESULT(i == first ? EXESS_EXPECTED_HEX : EXESS_SUCCESS, i, o);
     }
 
     ++i;
 
     const char lo_char = str[i];
     if (!lo_char) {
-      return vresult(EXESS_EXPECTED_HEX, i, o);
+      return VRESULT(EXESS_EXPECTED_HEX, i, o);
     }
 
     const uint8_t lo = decode_nibble(lo_char);
     if (lo == UINT8_MAX) {
-      return vresult(EXESS_EXPECTED_HEX, i, o);
+      return VRESULT(EXESS_EXPECTED_HEX, i, o);
     }
 
     ++i;
 
     if (o >= out_size) {
-      return vresult(EXESS_NO_SPACE, i, o);
+      return VRESULT(EXESS_NO_SPACE, i, o);
     }
 
     uout[o++] = (uint8_t)(((unsigned)hi << 4U) | lo);
   }
 
-  return vresult(EXESS_SUCCESS, i, o);
+  return VRESULT(EXESS_SUCCESS, i, o);
 }
 
 ExessResult
@@ -85,11 +85,11 @@ exess_write_hex(const size_t      data_size,
 {
   const size_t length = 2 * data_size;
   if (!buf) {
-    return result(EXESS_SUCCESS, length);
+    return RESULT(EXESS_SUCCESS, length);
   }
 
   if (buf_size < length + 1) {
-    return result(EXESS_NO_SPACE, 0);
+    return RESULT(EXESS_NO_SPACE, 0);
   }
 
   const uint8_t* const in = (const uint8_t*)data;

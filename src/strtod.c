@@ -56,7 +56,7 @@ parse_decimal(ExessFloatingDecimal* const out, const char* const str)
 
   // Check that the first character is valid
   if (!after_point && !is_digit(str[i])) {
-    return result(EXESS_EXPECTED_DIGIT, i);
+    return RESULT(EXESS_EXPECTED_DIGIT, i);
   }
 
   // Read significant digits of the mantissa
@@ -79,7 +79,7 @@ parse_decimal(ExessFloatingDecimal* const out, const char* const str)
                 ? (out->n_digits ? EXESS_NEGATIVE : EXESS_NEGATIVE_ZERO)
                 : (out->n_digits ? EXESS_POSITIVE : EXESS_POSITIVE_ZERO);
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 ExessResult
@@ -104,7 +104,7 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
   for (const SpecialCase* c = special_cases; c->length; ++c) {
     if (!strcmp(str, c->string)) {
       out->kind = c->kind;
-      return result(EXESS_SUCCESS, c->length);
+      return RESULT(EXESS_SUCCESS, c->length);
     }
   }
 
@@ -123,7 +123,7 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
     ++i;
 
     if (!is_sign(str[i]) && !is_digit(str[i])) {
-      return result(EXESS_EXPECTED_DIGIT, i);
+      return RESULT(EXESS_EXPECTED_DIGIT, i);
     }
 
     i += read_sign(&expt_sign, &str[i]);
@@ -135,7 +135,7 @@ parse_double(ExessFloatingDecimal* const out, const char* const str)
   // Calculate final output exponent
   out->expt += expt_sign * abs_expt;
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 static uint64_t

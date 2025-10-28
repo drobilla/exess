@@ -69,7 +69,7 @@ read_duration_date(ExessDuration* const out, const char* const str)
                         : (str[i] == 'D') ? DAY
                                           : NONE;
     if (!field) {
-      return result(EXESS_EXPECTED_DATE_TAG, i);
+      return RESULT(EXESS_EXPECTED_DATE_TAG, i);
     }
 
     // Set the field value and advance
@@ -78,7 +78,7 @@ read_duration_date(ExessDuration* const out, const char* const str)
     ++i;
   }
 
-  return i > 0 ? result(st, i) : result(EXESS_EXPECTED_DIGIT, i);
+  return i > 0 ? RESULT(st, i) : RESULT(EXESS_EXPECTED_DIGIT, i);
 }
 
 static ExessResult
@@ -102,13 +102,13 @@ read_duration_time(ExessDuration* const out, const char* const str)
     if (str[i] == '.') {
       uint32_t nanoseconds = 0U;
       if (!is_digit(str[++i])) {
-        return result(EXESS_EXPECTED_DIGIT, i);
+        return RESULT(EXESS_EXPECTED_DIGIT, i);
       }
 
       const ExessResult s = read_nanoseconds(&nanoseconds, str + i);
       i += s.count;
       if (str[i] != 'S') {
-        return result(EXESS_EXPECTED_SECOND_TAG, i);
+        return RESULT(EXESS_EXPECTED_SECOND_TAG, i);
       }
 
       field            = SECOND;
@@ -120,7 +120,7 @@ read_duration_time(ExessDuration* const out, const char* const str)
     } else if (str[i] == 'S') {
       field = SECOND;
     } else {
-      return result(EXESS_EXPECTED_TIME_TAG, i);
+      return RESULT(EXESS_EXPECTED_TIME_TAG, i);
     }
 
     // Set the field value and advance
@@ -129,7 +129,7 @@ read_duration_time(ExessDuration* const out, const char* const str)
     ++i;
   }
 
-  return i > 0 ? result(st, i) : result(EXESS_EXPECTED_DIGIT, i);
+  return i > 0 ? RESULT(st, i) : RESULT(EXESS_EXPECTED_DIGIT, i);
 }
 
 static ExessOrder
@@ -199,14 +199,14 @@ exess_read_duration(ExessDuration* const out, const char* const str)
   }
 
   if (str[i] != 'P') {
-    return result(EXESS_EXPECTED_DURATION, i);
+    return RESULT(EXESS_EXPECTED_DURATION, i);
   }
 
   ++i;
   if (str[i] != 'T') {
     ExessResult r = read_duration_date(out, str + i);
     if (r.status) {
-      return result(r.status, i + r.count);
+      return RESULT(r.status, i + r.count);
     }
 
     i += r.count;
@@ -217,7 +217,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
 
     ExessResult r = read_duration_time(out, str + i);
     if (r.status) {
-      return result(r.status, i + r.count);
+      return RESULT(r.status, i + r.count);
     }
 
     i += r.count;
@@ -229,7 +229,7 @@ exess_read_duration(ExessDuration* const out, const char* const str)
     out->nanoseconds = -out->nanoseconds;
   }
 
-  return result(EXESS_SUCCESS, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 static size_t
@@ -242,7 +242,7 @@ write_int_field(ExessResult*   r,
 {
   if (!r->status) {
     if (value == 0) {
-      *r = result(EXESS_SUCCESS, 0);
+      *r = RESULT(EXESS_SUCCESS, 0);
     } else if (!buf) {
       *r = exess_write_uint(value, buf_size, buf);
       ++r->count;
@@ -312,7 +312,7 @@ exess_write_duration(const ExessDuration value,
   const uint32_t abs_nanoseconds = (uint32_t)abs(value.nanoseconds);
 
   // Write date segments if present
-  ExessResult r = result(EXESS_SUCCESS, 0);
+  ExessResult r = RESULT(EXESS_SUCCESS, 0);
   i += write_int_field(&r, abs_years, 'Y', buf_size, buf, i);
   i += write_int_field(&r, abs_months, 'M', buf_size, buf, i);
   i += write_int_field(&r, abs_days, 'D', buf_size, buf, i);

@@ -98,7 +98,7 @@ exess_read_decimal(double* const out, const char* const str)
     *out = decimal_to_double(in);
   }
 
-  return result(r.status, i + r.count);
+  return RESULT(r.status, i + r.count);
 }
 
 ExessResult
@@ -106,7 +106,7 @@ exess_write_decimal(const double value, const size_t buf_size, char* const buf)
 {
   const ExessFloatingDecimal decimal = measure_double(value);
   if (!buf) {
-    return result(EXESS_SUCCESS, decimal_string_length(decimal));
+    return RESULT(EXESS_SUCCESS, decimal_string_length(decimal));
   }
 
   size_t i = 0;

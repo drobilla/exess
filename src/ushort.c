@@ -18,7 +18,7 @@ exess_read_ushort(uint16_t* const out, const char* const str)
   }
 
   if (long_out > UINT16_MAX) {
-    return result(EXESS_OUT_OF_RANGE, r.count);
+    return RESULT(EXESS_OUT_OF_RANGE, r.count);
   }
 
   *out = (uint16_t)long_out;
