@@ -9,12 +9,6 @@
 #include <math.h>
 #include <stdbool.h>
 
-typedef enum {
-  EXESS_POINT_AFTER,   ///< Decimal point is after all significant digits
-  EXESS_POINT_BEFORE,  ///< Decimal point is before all significant digits
-  EXESS_POINT_BETWEEN, ///< Decimal point is between significant digits
-} ExessPointLocation;
-
 static ExessNumberKind
 number_kind(const double d)
 {

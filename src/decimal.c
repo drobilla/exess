@@ -30,9 +30,6 @@ typedef struct {
 static DecimalMetrics
 decimal_metrics(const ExessFloatingDecimal count)
 {
-  const int expt =
-    count.expt >= 0 ? (count.expt - (int)count.n_digits + 1) : count.expt;
-
   DecimalMetrics metrics = {EXESS_POINT_AFTER, 0U, 0U};
 
   if (count.expt >= (int)count.n_digits - 1) {
@@ -42,7 +39,7 @@ decimal_metrics(const ExessFloatingDecimal count)
   } else if (count.expt < 0) {
     metrics.point_loc      = EXESS_POINT_BEFORE;
     metrics.n_zeros_before = 1U;
-    metrics.n_zeros_after  = (unsigned)(-expt - 1);
+    metrics.n_zeros_after  = (unsigned)(-count.expt - 1);
   } else {
     metrics.point_loc = EXESS_POINT_BETWEEN;
   }
