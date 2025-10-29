@@ -17,11 +17,10 @@ man_links = {
   'exess_datatypes.3': [
     'ExessDatatype.3',
     'exess_datatype_from_uri.3',
-    'exess_datatype_is_bounded.3',
     'exess_datatype_name.3',
     'exess_datatype_uri.3',
-    'exess_max_length.3',
-    'exess_value_size.3',
+    'exess_max_lengths.3',
+    'exess_value_sizes.3',
   ],
 
   'exess_date.3': [

@@ -34,6 +34,7 @@ c_suppressions = []
 if cc.get_id() in ['clang', 'emscripten']
   if warning_level == 'everything'
     c_suppressions += [
+      '-Wno-c++98-compat',
       '-Wno-declaration-after-statement',
       '-Wno-padded',
       '-Wno-pre-c11-compat',

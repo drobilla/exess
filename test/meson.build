@@ -211,6 +211,7 @@ endif
 header_suppressions = []
 if cc.get_id() in ['clang', 'emscripten']
   header_suppressions += [
+    '-Wno-c++98-compat',
     '-Wno-nullability-extension',
     '-Wno-padded',
     '-Wno-pre-c11-compat',
