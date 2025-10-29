@@ -39,6 +39,7 @@ test_read_decimal(void)
   check_read("\t\n\r ", EXESS_EXPECTED_DIGIT, (double)NAN, 4);
 
   // Basic values
+  check_read("-100.25", EXESS_SUCCESS, -100.25, 7);
   check_read("1.2", EXESS_SUCCESS, 1.2, 3);
   check_read("0.01", EXESS_SUCCESS, 0.01, 4);
   check_read("10.0", EXESS_SUCCESS, 10.0, 4);
@@ -49,6 +50,7 @@ test_read_decimal(void)
   check_read(".34", EXESS_SUCCESS, 0.34, 3);
   check_read("+.56", EXESS_SUCCESS, 0.56, 4);
   check_read("-.78", EXESS_SUCCESS, -0.78, 4);
+  check_read("+00.10", EXESS_SUCCESS, 0.1, 6);
 
   // Limits
 
@@ -122,27 +124,6 @@ test_read_decimal(void)
   check_read("-false", EXESS_EXPECTED_DIGIT, (double)NAN, 1);
 }
 
-static void
-test_decimal_string_length(void)
-{
-  // Basic values
-  assert(exess_write_decimal(-1.0, 0, NULL).count == 4);
-  assert(exess_write_decimal(-0.0, 0, NULL).count == 4);
-  assert(exess_write_decimal(0.0, 0, NULL).count == 3);
-  assert(exess_write_decimal(1.0, 0, NULL).count == 3);
-
-  // Limits
-  assert(exess_write_decimal(DBL_MIN, 0, NULL).count == 326);
-  assert(exess_write_decimal(DBL_MAX, 0, NULL).count == 311);
-
-  // Special values
-  assert(exess_write_decimal((double)NAN, 0, NULL).count == 0);
-  assert(exess_write_decimal(-0.0, 0, NULL).count == 4);
-  assert(exess_write_decimal(0.0, 0, NULL).count == 3);
-  assert(exess_write_decimal((double)INFINITY, 0, NULL).count == 0);
-  assert(exess_write_decimal((double)-INFINITY, 0, NULL).count == 0);
-}
-
 /// Check that `str` is a canonical xsd:double string
 static void
 check_canonical(const char* const str)
@@ -170,24 +151,37 @@ check_write(const double      value,
 
   const ExessResult r = exess_write_decimal(value, buf_size, buf);
   assert(r.status == expected_status);
-  if (expected_string) {
+  if (!r.status) {
+    assert(expected_string);
     assert(r.count == strlen(buf));
+    assert(buf[0]);
     assert(!strcmp(buf, expected_string));
-    assert(r.status || exess_write_decimal(value, 0, NULL).count == r.count);
+    check_canonical(buf);
 
-    if (expected_string[0]) {
-      check_canonical(buf);
+    assert(exess_write_decimal(value, 0, NULL).count == r.count);
+
+    for (size_t space = 0; space < buf_size; ++space) {
+      buf[0] = 1;
+      assert(exess_write_decimal(value, space, buf).status == EXESS_NO_SPACE);
+      assert(!space || !buf[0]);
     }
   } else {
-    assert((buf_size && !buf[0]) || (!buf_size && buf[0] == 1));
+    assert(!r.count);
+    assert(!buf[0]);
+    assert(!exess_write_decimal(value, 0, NULL).count);
   }
 }
 
 static void
 test_write_decimal(void)
 {
-  check_write((double)NAN, EXESS_BAD_VALUE, 4, "");
-  check_write((double)-INFINITY, EXESS_BAD_VALUE, 5, "");
+  // Numbers
+  check_write(-100.25, EXESS_SUCCESS, 8, "-100.25");
+  check_write(-0.0, EXESS_SUCCESS, 5, "-0.0");
+  check_write(0.0, EXESS_SUCCESS, 4, "0.0");
+  check_write(10.25, EXESS_SUCCESS, 6, "10.25");
+
+  // Limits
 
   check_write(
     DBL_MIN,
@@ -200,11 +194,6 @@ test_write_decimal(void)
     "00000000000000000000000000000000000000000000000000000000000000000000000000"
     "0000000000022250738585072014");
 
-  check_write(-1.2, EXESS_SUCCESS, 5, "-1.2");
-  check_write(-0.0, EXESS_SUCCESS, 5, "-0.0");
-  check_write(0.0, EXESS_SUCCESS, 4, "0.0");
-  check_write(1.2, EXESS_SUCCESS, 4, "1.2");
-
   check_write(DBL_MAX,
               EXESS_SUCCESS,
               312,
@@ -214,17 +203,10 @@ test_write_decimal(void)
               "0000000000000000000000000000000000000000000000000000000000000000"
               "00000000000000000000000000000000000000000000000000000.0");
 
+  // Bad values
+  check_write((double)NAN, EXESS_BAD_VALUE, 4, "");
+  check_write((double)-INFINITY, EXESS_BAD_VALUE, 5, "");
   check_write((double)INFINITY, EXESS_BAD_VALUE, 4, "");
-
-  check_write(DBL_MIN, EXESS_NO_SPACE, 326, "");
-  check_write(-1.2, EXESS_NO_SPACE, 4, "");
-  check_write(-0.0, EXESS_NO_SPACE, 4, "");
-  check_write(0.0, EXESS_NO_SPACE, 3, "");
-  check_write(1.2, EXESS_NO_SPACE, 3, "");
-  check_write(DBL_MAX, EXESS_NO_SPACE, 311, "");
-
-  check_write(-1.0, EXESS_NO_SPACE, 1, "");
-  check_write(-1.0, EXESS_NO_SPACE, 0, NULL);
 }
 
 static void
@@ -268,7 +250,6 @@ main(int argc, char** argv)
 
   if (!opts.error) {
     test_read_decimal();
-    test_decimal_string_length();
     test_write_decimal();
     test_round_trip(opts);
   }

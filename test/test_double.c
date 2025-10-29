@@ -43,6 +43,7 @@ test_read_double(void)
   check_read("1e-326", EXESS_SUCCESS, 0.0, 6);
   check_read("12345678901234567123", EXESS_SUCCESS, 12345678901234567000.0, 20);
   check_read("1e309", EXESS_SUCCESS, (double)INFINITY, 5);
+  check_read("1e310", EXESS_SUCCESS, (double)INFINITY, 5);
 
   // Non-canonical form
   check_read("+1E3", EXESS_SUCCESS, 1e3, 4);
@@ -54,6 +55,8 @@ test_read_double(void)
   check_read("1.E3", EXESS_SUCCESS, 1e3, 4);
   check_read("+1.E3", EXESS_SUCCESS, 1e3, 5);
   check_read("-1.E3", EXESS_SUCCESS, -1e3, 5);
+  check_read("-100.25", EXESS_SUCCESS, -100.25, 7);
+  check_read("+00.10", EXESS_SUCCESS, 0.10, 6);
 
   // Special values
   check_read("NaN", EXESS_SUCCESS, (double)NAN, 3);
@@ -104,7 +107,6 @@ check_canonical(const char* const str)
 
 static void
 check_write(const double      value,
-            const ExessStatus expected_status,
             const size_t      buf_size,
             const char* const expected_string)
 {
@@ -116,25 +118,39 @@ check_write(const double      value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_double(value, buf_size, buf);
-  assert(r.status == expected_status);
+  assert(!r.status);
   assert(r.count == strlen(buf));
+  assert(buf[0]);
+  assert(expected_string);
   assert(!strcmp(buf, expected_string));
-  assert((r.status && r.status != EXESS_NO_SPACE) ||
-         exess_write_double(value, 0, NULL).count == r.count);
+  check_canonical(buf);
 
-  if (!r.status) {
-    check_canonical(buf);
+  assert(exess_write_double(value, 0, NULL).count == r.count);
+
+  for (size_t space = 0; space < buf_size; ++space) {
+    buf[0] = '1';
+    assert(exess_write_double(value, space, buf).status == EXESS_NO_SPACE);
+    assert(!space || !buf[0]);
   }
 }
 
 static void
 test_write_double(void)
 {
-  check_write((double)NAN, EXESS_SUCCESS, 4, "NaN");
-  check_write(DBL_MIN, EXESS_SUCCESS, 24, "2.2250738585072014E-308");
-  check_write(-0.0, EXESS_SUCCESS, 7, "-0.0E0");
-  check_write(0.0, EXESS_SUCCESS, 6, "0.0E0");
-  check_write(DBL_MAX, EXESS_SUCCESS, 23, "1.7976931348623157E308");
+  // Numbers
+  check_write(-100.25, 10, "-1.0025E2");
+  check_write(-0.0, 7, "-0.0E0");
+  check_write(0.0, 6, "0.0E0");
+  check_write(10.25, 8, "1.025E1");
+
+  // Limits
+  check_write(DBL_MIN, 24, "2.2250738585072014E-308");
+  check_write(DBL_MAX, 23, "1.7976931348623157E308");
+
+  // Special values
+  check_write((double)NAN, 4, "NaN");
+  check_write((double)-INFINITY, 5, "-INF");
+  check_write((double)INFINITY, 4, "INF");
 }
 
 static void

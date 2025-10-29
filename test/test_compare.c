@@ -142,7 +142,11 @@ test_compare(void)
   check_comparison(EXESS_BOOLEAN, "1", "0", greater);
 
   // Numbers
+  check_comparison(EXESS_DECIMAL, "-0.0", "0.0", equal);
+  check_comparisons(EXESS_DECIMAL, "-0.1", "-0.0", "0.1");
   check_comparisons(EXESS_DECIMAL, "-9.0", "0.0", "9.0");
+  check_comparisons(EXESS_DECIMAL, "-100.0", "-10.0", "-1.0");
+  check_comparisons(EXESS_DECIMAL, "1.0", "10.0", "100.0");
   check_comparisons(EXESS_DOUBLE, "1.0E-1", "1.0E0", "1.0E1");
   check_comparisons(EXESS_FLOAT, "-1.0E-1", "1.0E0", "1.0E1");
   check_comparisons(EXESS_INTEGER, "-9", "0", "9");

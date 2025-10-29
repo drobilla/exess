@@ -206,6 +206,7 @@ check_write(const ExessDatatype datatype,
   assert(r.status == expected_status);
 
   if (buf_size > 0) {
+    assert(r.count + 1U == buf_size);
     assert(r.count == strlen(buf));
     assert(!strcmp(buf, expected_string));
   } else {
@@ -268,13 +269,13 @@ test_write_value(void)
               sizeof(a_datetime),
               &a_datetime,
               EXESS_SUCCESS,
-              40,
+              20,
               "2001-02-03T04:05:06");
 
   check_write(
-    EXESS_TIME, sizeof(a_time), &a_time, EXESS_SUCCESS, 40, "01:02:03Z");
+    EXESS_TIME, sizeof(a_time), &a_time, EXESS_SUCCESS, 10, "01:02:03Z");
   check_write(
-    EXESS_DATE, sizeof(a_date), &a_date, EXESS_SUCCESS, 40, "2001-02-03Z");
+    EXESS_DATE, sizeof(a_date), &a_date, EXESS_SUCCESS, 12, "2001-02-03Z");
 
   check_write(EXESS_HEX, sizeof(a_blob), a_blob, EXESS_SUCCESS, 7, "666F6F");
   check_write(EXESS_BASE64, sizeof(a_blob), a_blob, EXESS_SUCCESS, 5, "Zm9v");

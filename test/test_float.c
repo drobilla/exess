@@ -116,7 +116,6 @@ check_canonical(const char* const str)
 
 static void
 check_write(const float       value,
-            const ExessStatus expected_status,
             const size_t      buf_size,
             const char* const expected_string)
 {
@@ -126,40 +125,39 @@ check_write(const float       value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_float(value, buf_size, buf);
-  assert(r.status == expected_status);
-  if (expected_string) {
-    assert(r.count == strlen(buf));
-    assert(!expected_string || !strcmp(buf, expected_string));
-    assert(r.status || exess_write_float(value, 0, NULL).count == r.count);
-    check_canonical(buf);
-  } else {
-    assert(r.count == 0);
-    assert(!buf[0]);
+  assert(!r.status);
+  assert(r.count == strlen(buf));
+  assert(buf[0]);
+  assert(expected_string);
+  assert(!strcmp(buf, expected_string));
+  check_canonical(buf);
+
+  assert(exess_write_float(value, 0, NULL).count == r.count);
+
+  for (size_t space = 0; space < buf_size; ++space) {
+    buf[0] = 1;
+    assert(exess_write_float(value, space, buf).status == EXESS_NO_SPACE);
+    assert(!space || !buf[0]);
   }
 }
 
 static void
 test_write_float(void)
 {
-  check_write(NAN, EXESS_SUCCESS, 4, "NaN");
-  check_write(-INFINITY, EXESS_SUCCESS, 5, "-INF");
-  check_write(FLT_MIN, EXESS_SUCCESS, 15, "1.17549435E-38");
-  check_write(-0.0f, EXESS_SUCCESS, 7, "-0.0E0");
-  check_write(0.0f, EXESS_SUCCESS, 6, "0.0E0");
-  check_write(100.25f, EXESS_SUCCESS, 9, "1.0025E2");
-  check_write(FLT_MAX, EXESS_SUCCESS, 14, "3.40282346E38");
-  check_write(INFINITY, EXESS_SUCCESS, 4, "INF");
+  // Numbers
+  check_write(-100.25f, 10, "-1.0025E2");
+  check_write(-0.0f, 7, "-0.0E0");
+  check_write(0.0f, 6, "0.0E0");
+  check_write(10.25f, 8, "1.025E1");
 
-  check_write(NAN, EXESS_NO_SPACE, 3, NULL);
-  check_write(-INFINITY, EXESS_NO_SPACE, 4, NULL);
-  check_write(FLT_MIN, EXESS_NO_SPACE, 13, NULL);
-  check_write(-1.0f, EXESS_NO_SPACE, 2, NULL);
-  check_write(-0.0f, EXESS_NO_SPACE, 6, NULL);
-  check_write(0.0f, EXESS_NO_SPACE, 5, NULL);
-  check_write(100.25f, EXESS_NO_SPACE, 5, NULL);
-  check_write(100.25f, EXESS_NO_SPACE, 8, NULL);
-  check_write(FLT_MAX, EXESS_NO_SPACE, 13, NULL);
-  check_write(INFINITY, EXESS_NO_SPACE, 3, NULL);
+  // Limits
+  check_write(FLT_MIN, 15, "1.17549435E-38");
+  check_write(FLT_MAX, 14, "3.40282346E38");
+
+  // Special values
+  check_write(NAN, 4, "NaN");
+  check_write(-INFINITY, 5, "-INF");
+  check_write(INFINITY, 4, "INF");
 }
 
 static void
