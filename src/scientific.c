@@ -23,15 +23,13 @@ static const SpecialCase special_cases[] = {{3U, "NaN"},
                                             {6U, "-0.0E0"},
                                             {5U, "0.0E0"}};
 
-size_t
-scientific_string_length(const ExessFloatingDecimal value)
+EXESS_CONST_FUNC static size_t
+scientific_string_length(const ExessFloatingDecimal value,
+                         const unsigned             n_expt_digits)
 {
   if (value.kind < EXESS_NEGATIVE) {
     return special_cases[value.kind].length;
   }
-
-  const unsigned n_expt_digits =
-    (unsigned)exess_num_digits((unsigned)abs(value.expt));
 
   return ((value.kind == EXESS_NEGATIVE) + // Sign
           value.n_digits + 1 +             // Digits and point
@@ -48,7 +46,15 @@ write_scientific(const ExessFloatingDecimal value,
 {
   size_t i = 0;
 
-  if (n <= (value.kind == EXESS_NEGATIVE) + value.n_digits + 1) {
+  const unsigned n_expt_digits =
+    (unsigned)exess_num_digits((unsigned)abs(value.expt));
+
+  const size_t length = scientific_string_length(value, n_expt_digits);
+  if (!buf) {
+    return RESULT(EXESS_SUCCESS, length);
+  }
+
+  if (n <= length) {
     buf[0] = '\0';
     return RESULT(EXESS_NO_SPACE, 0);
   }
@@ -75,13 +81,6 @@ write_scientific(const ExessFloatingDecimal value,
   }
 
   // Write exponent
-
-  const unsigned n_expt_digits = exess_num_digits((unsigned)abs(value.expt));
-
-  if (n - i <= 1U + (value.expt < 0) + n_expt_digits) {
-    buf[0] = '\0';
-    return RESULT(EXESS_NO_SPACE, 0);
-  }
 
   buf[i++] = 'E';
   if (value.expt < 0) {

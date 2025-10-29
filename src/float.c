@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: ISC
 
 #include "floating_decimal.h"
-#include "result.h"
 #include "scientific.h"
 
 #include <exess/exess.h>
@@ -26,6 +25,5 @@ exess_write_float(const float value, const size_t buf_size, char* const buf)
 {
   const ExessFloatingDecimal decimal = measure_float(value);
 
-  return buf ? write_scientific(decimal, buf_size, buf)
-             : RESULT(EXESS_SUCCESS, scientific_string_length(decimal));
+  return write_scientific(decimal, buf_size, buf);
 }

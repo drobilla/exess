@@ -33,10 +33,7 @@ ExessResult
 exess_write_double(const double value, const size_t buf_size, char* const buf)
 {
   const ExessFloatingDecimal decimal = measure_double(value);
-
-  const ExessResult r =
-    buf ? write_scientific(decimal, buf_size, buf)
-        : RESULT(EXESS_SUCCESS, scientific_string_length(decimal));
+  const ExessResult          r       = write_scientific(decimal, buf_size, buf);
 
   return end_write(r.status, buf_size, buf, r.count);
 }

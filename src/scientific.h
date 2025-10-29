@@ -10,10 +10,9 @@
 
 #include <stddef.h>
 
-EXESS_CONST_FUNC size_t
-scientific_string_length(ExessFloatingDecimal value);
-
 ExessResult
-write_scientific(ExessFloatingDecimal value, size_t n, char* EXESS_NONNULL buf);
+write_scientific(ExessFloatingDecimal value,
+                 size_t               n,
+                 char* EXESS_NULLABLE buf);
 
 #endif // EXESS_SRC_SCIENTIFIC_H
