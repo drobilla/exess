@@ -1361,38 +1361,19 @@ exess_value_size(ExessDatatype datatype);
    @{
 */
 
-/**
-   The maximum size of a supported fixed-size value in bytes.
-
-   This is the size of #ExessValue, which is larger than the size of all the
-   supported numeric and time-based datatypes.
-*/
+/// The maximum size of a supported fixed-size value in bytes
 #define EXESS_MAX_FIXED_SIZE 12U
 
-/**
-   A union that can hold any supported fixed-sized value.
-
-   This can be used as a convenience for allocating a suitable buffer for any
-   numeric or time-based value and casting it to the appropriate type.
-*/
-typedef union {
-  bool          as_bool;                       ///< #EXESS_BOOLEAN
-  double        as_double;                     ///< #EXESS_DOUBLE
-  float         as_float;                      ///< #EXESS_FLOAT
-  int64_t       as_long;                       ///< #EXESS_LONG
-  int32_t       as_int;                        ///< #EXESS_INT
-  int16_t       as_short;                      ///< #EXESS_SHORT
-  int8_t        as_byte;                       ///< #EXESS_BYTE
-  uint64_t      as_ulong;                      ///< #EXESS_ULONG
-  uint32_t      as_uint;                       ///< #EXESS_UINT
-  uint16_t      as_ushort;                     ///< #EXESS_USHORT
-  uint8_t       as_ubyte;                      ///< #EXESS_UBYTE
-  ExessDuration as_duration;                   ///< #EXESS_DURATION
-  ExessDateTime as_date_time;                  ///< #EXESS_DATE_TIME
-  ExessTime     as_time;                       ///< #EXESS_TIME
-  ExessDate     as_date;                       ///< #EXESS_DATE
-  uint8_t       as_blob[EXESS_MAX_FIXED_SIZE]; ///< #EXESS_HEX and #EXESS_BASE64
-} ExessValue;
+/// Attribute to align a buffer for any supported value
+#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+#  define EXESS_ALIGN _Alignas(16)
+#elif (defined(__cplusplus) && __cplusplus >= 201103L)
+#  define EXESS_ALIGN alignas(16)
+#elif defined(__GNUC__)
+#  define EXESS_ALIGN __attribute__((aligned(16)))
+#else
+#  define EXESS_ALIGN
+#endif
 
 /**
    Compare two values.
@@ -1414,8 +1395,8 @@ exess_compare_value(ExessDatatype             lhs_datatype,
    Read any supported datatype from a string.
 
    Note that `out` must be suitably aligned for the datatype being read, it
-   will be dereferenced directly as a pointer to the value type.  A buffer
-   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
+   will be dereferenced directly as a pointer to the value type.  A 64-bit
+   aligned buffer will be suitably aligned for any datatype.
 
    @param str String to read.
    @param datatype Datatype to read the string as.
@@ -1435,8 +1416,8 @@ exess_read_value(ExessDatatype             datatype,
    Write any supported datatype to a canonical string.
 
    Note that `value` must be suitably aligned for the datatype being written,
-   it will be dereferenced directly as a pointer to the value type.  A buffer
-   aligned to sizeof(ExessValue) will be suitably aligned for any datatype.
+   it will be dereferenced directly as a pointer to the value type.  A 64-bit
+   aligned buffer will be suitably aligned for any datatype.
 
    @param datatype Datatype of `value`.
    @param value_size Size of `value` in bytes.

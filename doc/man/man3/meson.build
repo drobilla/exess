@@ -83,7 +83,6 @@ man_links = {
   'exess_ushort.3': ['exess_read_ushort.3', 'exess_write_ushort.3'],
 
   'exess_value.3': [
-    'ExessValue.3',
     'exess_compare_value.3',
     'exess_read_value.3',
     'exess_write_value.3',

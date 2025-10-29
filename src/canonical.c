@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /// Return true iff `c` is "0"
 static inline bool
@@ -211,17 +212,17 @@ write_bounded(const char* const   str,
               const size_t        buf_size,
               char* const         buf)
 {
-  ExessValue value = {false};
+  EXESS_ALIGN uint8_t value[EXESS_MAX_FIXED_SIZE] = {0};
 
   const ExessVariableResult vr =
-    exess_read_value(datatype, str, sizeof(value), &value);
+    exess_read_value(datatype, str, sizeof(value), value);
 
   if (vr.status) {
     return VRESULT(vr.status, vr.read_count, 0U);
   }
 
   const ExessResult w =
-    exess_write_value(datatype, vr.read_count, &value, buf_size, buf);
+    exess_write_value(datatype, vr.read_count, value, buf_size, buf);
   return VRESULT(w.status, vr.read_count, w.count);
 }
 

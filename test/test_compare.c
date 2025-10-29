@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef bool (*ComparisonPredicate)(int);
 
@@ -47,26 +48,26 @@ check_cross_type_comparison(const ExessDatatype       lhs_datatype,
                             const char* const         rhs_string,
                             const ComparisonPredicate pred)
 {
-  ExessValue lhs = {false};
-  ExessValue rhs = {false};
+  EXESS_ALIGN uint8_t lhs[EXESS_MAX_FIXED_SIZE] = {0};
+  EXESS_ALIGN uint8_t rhs[EXESS_MAX_FIXED_SIZE] = {0};
 
   const ExessVariableResult l =
-    exess_read_value(lhs_datatype, lhs_string, sizeof(lhs), &lhs);
+    exess_read_value(lhs_datatype, lhs_string, sizeof(lhs), lhs);
 
   const ExessVariableResult r =
-    exess_read_value(rhs_datatype, rhs_string, sizeof(rhs), &rhs);
+    exess_read_value(rhs_datatype, rhs_string, sizeof(rhs), rhs);
 
   assert(lhs_datatype == EXESS_NOTHING || !l.status);
   assert(rhs_datatype == EXESS_NOTHING || !r.status);
 
   const ExessOrder order = exess_compare_value(
-    lhs_datatype, l.write_count, &lhs, rhs_datatype, r.write_count, &rhs);
+    lhs_datatype, l.write_count, lhs, rhs_datatype, r.write_count, rhs);
 
   assert(pred(order));
 
   // NOLINTNEXTLINE(readability-suspicious-call-argument)
   const ExessOrder inv_order = exess_compare_value(
-    rhs_datatype, r.write_count, &rhs, lhs_datatype, l.write_count, &lhs);
+    rhs_datatype, r.write_count, rhs, lhs_datatype, l.write_count, lhs);
 
   if (order == EXESS_ORDER_STRICTLY_LESS) {
     assert(inv_order == EXESS_ORDER_STRICTLY_GREATER);

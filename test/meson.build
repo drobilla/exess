@@ -213,6 +213,7 @@ if cc.get_id() in ['clang', 'emscripten']
   header_suppressions += [
     '-Wno-nullability-extension',
     '-Wno-padded',
+    '-Wno-pre-c11-compat',
     '-Wno-pre-c2x-compat',
     '-Wno-unknown-warning-option',
   ]

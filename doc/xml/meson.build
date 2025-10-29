@@ -61,7 +61,6 @@ c_index_xml = custom_target(
     'structExessResult.xml',
     'structExessTime.xml',
     'structExessVariableResult.xml',
-    'unionExessValue.xml',
     'xml.xsd',
   ],
 )

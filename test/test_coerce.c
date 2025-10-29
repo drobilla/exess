@@ -8,10 +8,10 @@
 #include <exess/exess.h>
 
 #include <assert.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
+#define VALUE_SIZE EXESS_MAX_FIXED_SIZE
 #define STRING_SIZE (EXESS_MAX_DECIMAL_LENGTH + 1U)
 
 static const char* const min_long_str  = "-9223372036854775808";
@@ -19,8 +19,8 @@ static const char* const max_long_str  = "9223372036854775807";
 static const char* const max_ulong_str = "18446744073709551615";
 
 typedef struct {
-  ExessValue          value;
-  ExessValue          coerced;
+  EXESS_ALIGN uint8_t value[VALUE_SIZE];
+  EXESS_ALIGN uint8_t coerced[VALUE_SIZE];
   ExessVariableResult r_value;
   ExessResult         r_coerced;
 } CheckState;
@@ -38,7 +38,7 @@ check_conversions(CheckState* const    state,
 
   // Read original value
   state->r_value = exess_read_value(
-    from_datatype, from_string, sizeof(state->value), &state->value);
+    from_datatype, from_string, sizeof(state->value), state->value);
 
   assert(!state->r_value.status);
 
@@ -46,10 +46,10 @@ check_conversions(CheckState* const    state,
   state->r_coerced = exess_coerce_value(coercions,
                                         from_datatype,
                                         state->r_value.write_count,
-                                        &state->value,
+                                        state->value,
                                         to_datatype,
                                         sizeof(state->coerced),
-                                        &state->coerced);
+                                        state->coerced);
 
   assert(!state->r_coerced.status);
   assert(state->r_coerced.count >= exess_value_size(to_datatype));
@@ -57,7 +57,7 @@ check_conversions(CheckState* const    state,
   // Write coerced value and check string against expectation
   const ExessResult coerced_str_r = exess_write_value(to_datatype,
                                                       state->r_coerced.count,
-                                                      &state->coerced,
+                                                      state->coerced,
                                                       sizeof(coerced_str),
                                                       coerced_str);
 
@@ -77,25 +77,25 @@ check_perf(const ExessDatatype from_datatype,
   check_conversions(
     &state, from_datatype, from_string, EXESS_LOSSLESS, to_datatype, to_string);
 
-  ExessValue tripped                  = {false};
-  char       tripped_str[STRING_SIZE] = {42};
+  EXESS_ALIGN uint8_t tripped[VALUE_SIZE]      = {0};
+  char                tripped_str[STRING_SIZE] = {42};
   init_out_buf(sizeof(tripped_str), tripped_str);
 
   // Coerce the value back to the original type
   const ExessResult tripped_r = exess_coerce_value(EXESS_LOSSLESS,
                                                    to_datatype,
                                                    state.r_coerced.count,
-                                                   &state.coerced,
+                                                   state.coerced,
                                                    from_datatype,
                                                    sizeof(tripped),
-                                                   &tripped);
+                                                   tripped);
 
   assert(!tripped_r.status);
   assert(tripped_r.count >= exess_value_size(from_datatype));
 
   // Write round-tripped value and check string against the original
   const ExessResult tr = exess_write_value(
-    from_datatype, tripped_r.count, &tripped, sizeof(tripped_str), tripped_str);
+    from_datatype, tripped_r.count, tripped, sizeof(tripped_str), tripped_str);
 
   assert(!tr.status);
   assert(!strcmp(tripped_str, from_string));
@@ -108,12 +108,12 @@ check_fail(const ExessDatatype from_datatype,
            const ExessDatatype to_datatype,
            const ExessStatus   expected_status)
 {
-  ExessValue value   = {false};
-  ExessValue coerced = {false};
+  EXESS_ALIGN uint8_t value[VALUE_SIZE]   = {0};
+  EXESS_ALIGN uint8_t coerced[VALUE_SIZE] = {0};
 
   // Read original value
   const ExessVariableResult vr =
-    exess_read_value(from_datatype, from_string, sizeof(value), &value);
+    exess_read_value(from_datatype, from_string, sizeof(value), value);
 
   assert(!vr.status);
 
@@ -121,10 +121,10 @@ check_fail(const ExessDatatype from_datatype,
   const ExessResult coerced_r = exess_coerce_value(EXESS_LOSSLESS,
                                                    from_datatype,
                                                    vr.write_count,
-                                                   &value,
+                                                   value,
                                                    to_datatype,
                                                    sizeof(coerced),
-                                                   &coerced);
+                                                   coerced);
 
   assert(coerced_r.status == expected_status);
 }
@@ -146,10 +146,10 @@ check_loss(const ExessDatatype  from_datatype,
   assert(exess_coerce_value(EXESS_LOSSLESS,
                             from_datatype,
                             state.r_value.write_count,
-                            &state.value,
+                            state.value,
                             to_datatype,
                             state.r_coerced.count,
-                            &state.coerced)
+                            state.coerced)
            .status == loss_status);
 }
 
@@ -170,10 +170,10 @@ check_wide(const ExessDatatype from_datatype,
   assert(exess_coerce_value(EXESS_LOSSLESS,
                             to_datatype,
                             state.r_coerced.count,
-                            &state.coerced,
+                            state.coerced,
                             from_datatype,
                             state.r_value.write_count,
-                            &state.value)
+                            state.value)
            .status == reverse_status);
 }
 
