@@ -138,15 +138,15 @@ emit_digits(ExessBigint* const       numer,
             ExessBigint* const       d_lower,
             ExessBigint* const       d_upper,
             const bool               is_even,
-            const unsigned           max_digits,
-            char* const              buffer)
+            const size_t             digits_size,
+            char* const              digits)
 {
   unsigned length = 0;
-  for (size_t i = 0; i < max_digits; ++i) {
+  for (size_t i = 0; i < digits_size; ++i) {
     // Emit the next digit
     const uint32_t digit = exess_bigint_divmod(numer, denom);
     assert(digit <= 9);
-    buffer[length++] = (char)('0' + digit);
+    digits[length++] = (char)('0' + digit);
 
     // Check for termination
     const bool within_low  = within_lower(numer, d_lower, is_even);
@@ -161,8 +161,8 @@ emit_digits(ExessBigint* const       numer,
       if (!within_low || (within_high && exess_bigint_plus_compare(
                                            numer, numer, denom) >= 0)) {
         // In high only, or halfway and the next digit is > 5, round up
-        assert(buffer[length - 1] != '9');
-        buffer[length - 1]++;
+        assert(digits[length - 1] != '9');
+        digits[length - 1]++;
       }
 
       break;
@@ -204,7 +204,7 @@ approximate_power(const ExessSoftFloat value)
 }
 
 ExessDigitCount
-generate_digits(const double d, const unsigned max_digits, char* const buf)
+generate_digits(const double d, const size_t digits_size, char* const digits)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS
   assert(isfinite(d) && fpclassify(d) != FP_ZERO);
@@ -249,14 +249,14 @@ generate_digits(const double d, const unsigned max_digits, char* const buf)
 
   // Write digits to output
   assert(check_initial_values(&numer, &denom, d_upper));
-  count.count =
-    emit_digits(&numer, &denom, &d_lower, d_upper, is_even, max_digits, buf);
+  count.count = emit_digits(
+    &numer, &denom, &d_lower, d_upper, is_even, digits_size, digits);
 
   // Trim trailing zeros
-  while (count.count > 1 && buf[count.count - 1] == '0') {
-    buf[--count.count] = 0;
+  while (count.count > 1 && digits[count.count - 1] == '0') {
+    digits[--count.count] = 0;
   }
 
-  buf[count.count] = '\0';
+  digits[count.count] = '\0';
   return count;
 }

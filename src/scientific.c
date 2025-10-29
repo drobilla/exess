@@ -41,7 +41,7 @@ scientific_string_length(const ExessFloatingDecimal value,
 
 ExessResult
 write_scientific(const ExessFloatingDecimal value,
-                 const size_t               n,
+                 const size_t               buf_size,
                  char* const                buf)
 {
   size_t i = 0;
@@ -54,7 +54,7 @@ write_scientific(const ExessFloatingDecimal value,
     return RESULT(EXESS_SUCCESS, length);
   }
 
-  if (n <= length) {
+  if (buf_size <= length) {
     buf[0] = '\0';
     return RESULT(EXESS_NO_SPACE, 0);
   }
@@ -62,7 +62,7 @@ write_scientific(const ExessFloatingDecimal value,
   if (value.kind < EXESS_NEGATIVE) {
     return write_special(special_cases[value.kind].length,
                          special_cases[value.kind].string,
-                         n,
+                         buf_size,
                          buf);
   }
 

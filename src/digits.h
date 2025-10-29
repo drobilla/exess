@@ -4,22 +4,24 @@
 #ifndef EXESS_SRC_DIGITS_H
 #define EXESS_SRC_DIGITS_H
 
+#include <stddef.h>
+
 typedef struct {
   unsigned count; ///< Number of digits
   int      expt;  ///< Power of 10 exponent
 } ExessDigitCount;
 
 /**
-   Write significant digits digits for `d` into `buf`.
+   Write significant digits digits for `d` into `digits`.
 
    Writes only significant digits, without any leading or trailing zeros.  The
    actual number is given by the exponent in the return value.
 
    @param d The number to convert to digits, must be finite and non-zero.
-   @param max_digits The maximum number of digits to write.
-   @param buf The output buffer at least `max_digits` long.
+   @param digits_size The maximum number of digits to write.
+   @param digits The output buffer at least `digits_size` long.
 */
 ExessDigitCount
-generate_digits(double d, unsigned max_digits, char* buf);
+generate_digits(double d, size_t digits_size, char* digits);
 
 #endif // EXESS_SRC_DIGITS_H

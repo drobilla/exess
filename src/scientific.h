@@ -12,7 +12,7 @@
 
 ExessResult
 write_scientific(ExessFloatingDecimal value,
-                 size_t               n,
+                 size_t               buf_size,
                  char* EXESS_NULLABLE buf);
 
 #endif // EXESS_SRC_SCIENTIFIC_H
