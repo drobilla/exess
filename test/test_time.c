@@ -49,7 +49,7 @@ check_read(const char* const string,
   assert(value.second == expected_second);
   assert(value.nanosecond == expected_nanosecond);
   assert((!expected_tz_is_present && value.zone == EXESS_LOCAL) ||
-         value.zone == 4 * expected_tz_hour + expected_tz_minute / 15);
+         value.zone == (4 * expected_tz_hour) + (expected_tz_minute / 15));
 }
 
 static void

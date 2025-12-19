@@ -82,7 +82,7 @@ check_read(const char* const string,
   assert(r.status == expected_status);
   assert(r.count == 8 + expected_count);
   assert((!expected_is_present && value.zone == EXESS_LOCAL) ||
-         value.zone == 4 * expected_hour + expected_minute / 15);
+         value.zone == (4 * expected_hour) + (expected_minute / 15));
 }
 
 static void

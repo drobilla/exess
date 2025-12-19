@@ -148,7 +148,7 @@ add_field(const int32_t  lhs,
   const int32_t temp = lhs + rhs + *carry;
 
   if (temp < 0) {
-    *carry = temp / max - 1;
+    *carry = (temp / max) - 1;
     return max + (temp % max);
   }
 

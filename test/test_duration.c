@@ -64,8 +64,9 @@ check_read(const char* const string,
   assert(r.status == expected_status);
   assert(r.count == expected_count);
 
-  assert(value.months == (expected_is_negative ? -1 : 1) * 12 * expected_years +
-                           expected_months);
+  assert(value.months ==
+         ((expected_is_negative ? -1 : 1) * 12 * expected_years) +
+           expected_months);
 
   assert(value.seconds ==
          (expected_is_negative ? -1 : 1) *

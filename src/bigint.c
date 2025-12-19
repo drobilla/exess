@@ -131,7 +131,7 @@ read_u32(const char* const str, uint32_t* result, uint32_t* n_digits)
 
   uint32_t i = 0;
   for (; str[i] >= '0' && str[i] <= '9' && *n_digits < uint32_digits10; ++i) {
-    *result = *result * 10U + (unsigned)(str[i] - '0');
+    *result = (*result * 10U) + (unsigned)(str[i] - '0');
     *n_digits += 1;
   }
 

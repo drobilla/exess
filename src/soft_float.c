@@ -139,7 +139,7 @@ soft_float_pow10_under(const int max_exponent, int* pow10_exponent)
   const int cache_offset = -min_dec_expt;
   const int index        = (max_exponent + cache_offset) / dec_expt_step;
 
-  *pow10_exponent = min_dec_expt + index * dec_expt_step;
+  *pow10_exponent = min_dec_expt + (index * dec_expt_step);
 
   assert(*pow10_exponent <= max_exponent);
   assert(max_exponent < *pow10_exponent + dec_expt_step);
