@@ -8,7 +8,6 @@
 #include <exess/exess.h>
 
 #include <assert.h>
-#include <stddef.h>
 #include <string.h>
 
 static void

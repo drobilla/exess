@@ -10,7 +10,6 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 static const ExessDate nozone   = {2001, 1, 2, EXESS_LOCAL};
