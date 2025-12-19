@@ -4,7 +4,7 @@
 #ifndef EXESS_SRC_RESULT_H
 #define EXESS_SRC_RESULT_H
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 #  define RESULT(s, c) (ExessResult{s, c})
 #  define VRESULT(s, r, w) (ExessVariableResult{s, r, w})
 #else

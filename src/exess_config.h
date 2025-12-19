@@ -38,11 +38,11 @@
 // Define version unconditionally so a warning will catch a mismatch
 #define EXESS_VERSION "0.0.1"
 
-#if !defined(EXESS_NO_DEFAULT_CONFIG)
+#ifndef EXESS_NO_DEFAULT_CONFIG
 
 // GCC and clang: __builtin_clz()
-#  if !defined(HAVE_BUILTIN_CLZ)
-#    if defined(__has_builtin)
+#  ifndef HAVE_BUILTIN_CLZ
+#    ifdef __has_builtin
 #      if __has_builtin(__builtin_clz)
 #        define HAVE_BUILTIN_CLZ 1
 #      endif
@@ -52,8 +52,8 @@
 #  endif
 
 // GCC and clang: __builtin_clz()
-#  if !defined(HAVE_BUILTIN_CLZLL)
-#    if defined(__has_builtin)
+#  ifndef HAVE_BUILTIN_CLZLL
+#    ifdef __has_builtin
 #      if __has_builtin(__builtin_clzll)
 #        define HAVE_BUILTIN_CLZLL 1
 #      endif

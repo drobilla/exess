@@ -4,7 +4,7 @@
 #ifndef EXESS_SRC_WARNINGS_H
 #define EXESS_SRC_WARNINGS_H
 
-#if defined(__clang__)
+#ifdef __clang__
 
 #  define EXESS_DISABLE_CONVERSION_WARNINGS              \
     _Pragma("clang diagnostic push")                     \
