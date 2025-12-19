@@ -435,6 +435,7 @@ exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs)
 static unsigned
 exess_bigint_leading_zeros(const ExessBigint* num)
 {
+  assert(num->n_bigits);
   return (32 * (BIGINT_MAX_BIGITS - num->n_bigits)) +
          exess_clz32(num->bigits[num->n_bigits - 1]);
 }

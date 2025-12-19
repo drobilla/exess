@@ -36,6 +36,7 @@ if cc.get_id() in ['clang', 'emscripten']
     c_suppressions += [
       '-Wno-c++98-compat',
       '-Wno-declaration-after-statement',
+      '-Wno-nrvo',
       '-Wno-padded',
       '-Wno-pre-c11-compat',
       '-Wno-pre-c2x-compat',

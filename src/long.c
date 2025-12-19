@@ -52,7 +52,7 @@ exess_read_long(const char* const str, int64_t* const out)
     *out = -(int64_t)magnitude;
   }
 
-  return RESULT(r.status, i);
+  return RESULT(EXESS_SUCCESS, i);
 }
 
 static size_t
