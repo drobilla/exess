@@ -156,6 +156,7 @@ sources = files(
   'src/digits.c',
   'src/double.c',
   'src/duration.c',
+  'src/fixed.c',
   'src/float.c',
   'src/floating_decimal.c',
   'src/hex.c',

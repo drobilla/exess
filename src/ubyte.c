@@ -1,7 +1,7 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "result.h"
+#include "fixed.h"
 
 #include <exess/exess.h>
 
@@ -11,17 +11,10 @@
 ExessResult
 exess_read_ubyte(const char* const str, uint8_t* const out)
 {
-  uint64_t          long_out = 0;
-  const ExessResult r        = exess_read_ulong(str, &long_out);
-  if (r.status) {
-    return r;
-  }
+  uint64_t          value = 0U;
+  const ExessResult r     = read_unsigned(str, UINT8_MAX, &value);
 
-  if (long_out > UINT8_MAX) {
-    return RESULT(EXESS_OUT_OF_RANGE, r.count);
-  }
-
-  *out = (uint8_t)long_out;
+  *out = (uint8_t)value;
   return r;
 }
 

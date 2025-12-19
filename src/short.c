@@ -1,7 +1,7 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "result.h"
+#include "fixed.h"
 
 #include <exess/exess.h>
 
@@ -11,17 +11,13 @@
 ExessResult
 exess_read_short(const char* const str, int16_t* const out)
 {
-  int64_t           long_out = 0;
-  const ExessResult r        = exess_read_long(str, &long_out);
-  if (r.status) {
-    return r;
+  int64_t           value = 0;
+  const ExessResult r     = read_signed(str, INT16_MIN, INT16_MAX, &value);
+
+  if (!r.status) {
+    *out = (int16_t)value;
   }
 
-  if (long_out < INT16_MIN || long_out > INT16_MAX) {
-    return RESULT(EXESS_OUT_OF_RANGE, r.count);
-  }
-
-  *out = (int16_t)long_out;
   return r;
 }
 
