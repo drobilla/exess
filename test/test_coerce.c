@@ -361,6 +361,39 @@ test_boolean(void)
 }
 
 static void
+test_round(void)
+{
+  static const ExessDatatype float_types[] = {
+    EXESS_DOUBLE, EXESS_FLOAT, EXESS_NOTHING};
+  static const ExessDatatype signed_types[] = {
+    EXESS_LONG, EXESS_INT, EXESS_SHORT, EXESS_BYTE, EXESS_NOTHING};
+  static const ExessDatatype unsigned_types[] = {
+    EXESS_ULONG, EXESS_UINT, EXESS_USHORT, EXESS_UBYTE, EXESS_NOTHING};
+
+  for (const ExessDatatype* f = float_types; *f; ++f) {
+    for (const ExessDatatype* t = signed_types; *t; ++t) {
+      check_round(*f, "-3.5E0", *t, "-4");
+      check_round(*f, "-2.5E0", *t, "-2");
+      check_round(*f, "-1.5E0", *t, "-2");
+      check_round(*f, "-1.4E0", *t, "-1");
+      check_round(*f, "-0.5E0", *t, "0");
+      check_round(*f, "0.5E0", *t, "0");
+      check_round(*f, "1.4E0", *t, "1");
+      check_round(*f, "1.5E0", *t, "2");
+      check_round(*f, "2.5E0", *t, "2");
+      check_round(*f, "3.5E0", *t, "4");
+    }
+
+    for (const ExessDatatype* t = unsigned_types; *t; ++t) {
+      check_round(*f, "0.5E0", *t, "0");
+      check_round(*f, "1.5E0", *t, "2");
+      check_round(*f, "2.5E0", *t, "2");
+      check_round(*f, "3.5E0", *t, "4");
+    }
+  }
+}
+
+static void
 test_long(void)
 {
   // Truncating boolean conversion
@@ -673,6 +706,7 @@ main(void)
   test_boolean();
   test_floating();
   test_decimal();
+  test_round();
   test_long();
   test_ulong();
   test_large_integers();

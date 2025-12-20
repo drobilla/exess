@@ -60,6 +60,7 @@ if cc.get_id() in ['clang', 'emscripten']
 elif cc.get_id() == 'gcc'
   if warning_level == 'everything'
     c_suppressions += [
+      '-Wno-float-equal',
       '-Wno-inline',
       '-Wno-padded',
       '-Wno-strict-overflow',

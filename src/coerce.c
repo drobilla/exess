@@ -39,7 +39,7 @@ coerce_to_long(int64_t* const       out,
   case EXESS_DOUBLE: {
     const double d = *(const double*)in;
 
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) && d > trunc(d)) {
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) && d != trunc(d)) {
       return EXESS_WOULD_ROUND;
     }
 
@@ -54,7 +54,7 @@ coerce_to_long(int64_t* const       out,
   case EXESS_FLOAT: {
     const float f = *(const float*)in;
 
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) && f > truncf(f)) {
+    if (!(coercions & (ExessCoercions)EXESS_ROUND) && f != truncf(f)) {
       return EXESS_WOULD_ROUND;
     }
 
@@ -133,13 +133,14 @@ coerce_to_long(int64_t* const       out,
 }
 
 static ExessStatus
-coerce_signed(int64_t* const      out,
-              const ExessDatatype in_datatype,
-              const void* const   in,
-              const int64_t       min,
-              const int64_t       max)
+coerce_signed(const ExessCoercions coercions,
+              int64_t* const       out,
+              const ExessDatatype  in_datatype,
+              const void* const    in,
+              const int64_t        min,
+              const int64_t        max)
 {
-  const ExessStatus st = coerce_to_long(out, in_datatype, in, EXESS_LOSSLESS);
+  const ExessStatus st = coerce_to_long(out, in_datatype, in, coercions);
 
   return st                           ? st
          : (*out < min || *out > max) ? EXESS_OUT_OF_RANGE
@@ -174,12 +175,13 @@ coerce_to_ulong(uint64_t* const      out,
 }
 
 static ExessStatus
-coerce_unsigned(uint64_t* const     out,
-                const ExessDatatype in_datatype,
-                const void* const   in,
-                const uint64_t      max)
+coerce_unsigned(const ExessCoercions coercions,
+                uint64_t* const      out,
+                const ExessDatatype  in_datatype,
+                const void* const    in,
+                const uint64_t       max)
 {
-  const ExessStatus st = coerce_to_ulong(out, in_datatype, in, EXESS_LOSSLESS);
+  const ExessStatus st = coerce_to_ulong(out, in_datatype, in, coercions);
 
   return st ? st : (*out > max) ? EXESS_OUT_OF_RANGE : EXESS_SUCCESS;
 }
@@ -222,8 +224,8 @@ coerce_to_decimal(const ExessDatatype in_datatype,
   }
 
   int64_t           l_out = 0;
-  const ExessStatus st =
-    coerce_signed(&l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
+  const ExessStatus st    = coerce_signed(
+    EXESS_LOSSLESS, &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
 
   if (!st) {
     *(double*)out = (double)l_out;
@@ -249,8 +251,8 @@ coerce_to_double(const ExessDatatype in_datatype,
   }
 
   int64_t           l_out = 0;
-  const ExessStatus st =
-    coerce_signed(&l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
+  const ExessStatus st    = coerce_signed(
+    EXESS_LOSSLESS, &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
   if (!st) {
     *out = (double)l_out;
     return RESULT(EXESS_SUCCESS, sizeof(double));
@@ -275,8 +277,8 @@ coerce_to_float(const ExessCoercions coercions,
   }
 
   int64_t           l_out = 0;
-  const ExessStatus st =
-    coerce_signed(&l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT);
+  const ExessStatus st    = coerce_signed(
+    coercions, &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT);
 
   if (!st) {
     *out = (float)l_out;
@@ -380,17 +382,20 @@ coerce_to_date(const ExessCoercions coercions,
 }
 
 static ExessResult
-coerce_to_signed(const ExessDatatype in_datatype,
-                 const void* const   in,
-                 const ExessDatatype out_datatype,
-                 void* const         out,
-                 const int64_t       min,
-                 const int64_t       max)
+coerce_to_signed(const ExessCoercions coercions,
+                 const ExessDatatype  in_datatype,
+                 const void* const    in,
+                 const ExessDatatype  out_datatype,
+                 void* const          out,
+                 const int64_t        min,
+                 const int64_t        max)
 {
-  int64_t     value = 0;
-  ExessResult r     = {coerce_signed(&value, in_datatype, in, min, max), 0U};
+  int64_t           value = 0;
+  const ExessStatus st =
+    coerce_signed(coercions, &value, in_datatype, in, min, max);
 
-  if (!r.status) {
+  ExessResult r = {st, 0U};
+  if (!st) {
     if (out_datatype == EXESS_INT) {
       *(int32_t*)out = (int32_t)value;
       r.count        = sizeof(int32_t);
@@ -408,16 +413,19 @@ coerce_to_signed(const ExessDatatype in_datatype,
 }
 
 static ExessResult
-coerce_to_unsigned(const ExessDatatype in_datatype,
-                   const void* const   in,
-                   const ExessDatatype out_datatype,
-                   void* const         out,
-                   const uint64_t      max)
+coerce_to_unsigned(const ExessCoercions coercions,
+                   const ExessDatatype  in_datatype,
+                   const void* const    in,
+                   const ExessDatatype  out_datatype,
+                   void* const          out,
+                   const uint64_t       max)
 {
-  uint64_t    value = 0U;
-  ExessResult r     = {coerce_unsigned(&value, in_datatype, in, max), 0U};
+  uint64_t          value = 0U;
+  const ExessStatus st =
+    coerce_unsigned(coercions, &value, in_datatype, in, max);
 
-  if (!r.status) {
+  ExessResult r = {st, 0U};
+  if (!st) {
     if (out_datatype == EXESS_UINT) {
       *(uint32_t*)out = (uint32_t)value;
       r.count         = sizeof(uint32_t);
@@ -496,15 +504,15 @@ exess_coerce_value(const ExessCoercions coercions,
 
   case EXESS_INT:
     return coerce_to_signed(
-      in_datatype, in, out_datatype, out, INT32_MIN, INT32_MAX);
+      coercions, in_datatype, in, out_datatype, out, INT32_MIN, INT32_MAX);
 
   case EXESS_SHORT:
     return coerce_to_signed(
-      in_datatype, in, out_datatype, out, INT16_MIN, INT16_MAX);
+      coercions, in_datatype, in, out_datatype, out, INT16_MIN, INT16_MAX);
 
   case EXESS_BYTE:
     return coerce_to_signed(
-      in_datatype, in, out_datatype, out, INT8_MIN, INT8_MAX);
+      coercions, in_datatype, in, out_datatype, out, INT8_MIN, INT8_MAX);
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
@@ -512,13 +520,16 @@ exess_coerce_value(const ExessCoercions coercions,
       coercions, in_datatype, in, 0U, (uint64_t*)out);
 
   case EXESS_UINT:
-    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT32_MAX);
+    return coerce_to_unsigned(
+      coercions, in_datatype, in, out_datatype, out, UINT32_MAX);
 
   case EXESS_USHORT:
-    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT16_MAX);
+    return coerce_to_unsigned(
+      coercions, in_datatype, in, out_datatype, out, UINT16_MAX);
 
   case EXESS_UBYTE:
-    return coerce_to_unsigned(in_datatype, in, out_datatype, out, UINT8_MAX);
+    return coerce_to_unsigned(
+      coercions, in_datatype, in, out_datatype, out, UINT8_MAX);
 
   case EXESS_POSITIVE_INTEGER:
     return coerce_to_unsigned_integer(
