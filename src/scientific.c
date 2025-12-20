@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "scientific.h"
-#include "floating_decimal.h"
+#include "big_decimal.h"
 #include "int_math.h"
 #include "result.h"
 #include "write_utils.h"
@@ -24,8 +24,7 @@ static const SpecialCase special_cases[] = {{3U, "NaN"},
                                             {5U, "0.0E0"}};
 
 EXESS_CONST_FUNC static size_t
-scientific_string_length(const ExessFloatingDecimal value,
-                         const unsigned             n_expt_digits)
+scientific_string_length(const BigDecimal value, const unsigned n_expt_digits)
 {
   if (value.kind < EXESS_NEGATIVE) {
     return special_cases[value.kind].length;
@@ -40,9 +39,7 @@ scientific_string_length(const ExessFloatingDecimal value,
 }
 
 ExessResult
-write_scientific(const ExessFloatingDecimal value,
-                 const size_t               buf_size,
-                 char* const                buf)
+write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
 {
   size_t i = 0;
 

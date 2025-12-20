@@ -1,8 +1,8 @@
 // Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#ifndef EXESS_SRC_FLOATING_DECIMAL_H
-#define EXESS_SRC_FLOATING_DECIMAL_H
+#ifndef EXESS_SRC_BIG_DECIMAL_H
+#define EXESS_SRC_BIG_DECIMAL_H
 
 // Define C11 numeric constants if the compiler hasn't already
 #ifndef FLT_DECIMAL_DIG
@@ -21,7 +21,7 @@ typedef enum {
   EXESS_POSITIVE_ZERO,
   EXESS_NEGATIVE,
   EXESS_POSITIVE,
-} ExessNumberKind;
+} BigDecimalKind;
 
 /**
    An extended range/precision decimal floating point number.
@@ -32,16 +32,10 @@ typedef enum {
    encodes where the "real" decimal point is.
 */
 typedef struct {
-  ExessNumberKind kind;                        ///< Kind of number
-  int             expt;                        ///< Power of 10 exponent
-  unsigned        n_digits;                    ///< Number of significant digits
-  char            digits[DBL_DECIMAL_DIG + 2]; ///< Significant digits
-} ExessFloatingDecimal;
+  BigDecimalKind kind;                        ///< Kind of number
+  int            expt;                        ///< Power of 10 exponent
+  unsigned       n_digits;                    ///< Number of significant digits
+  char           digits[DBL_DECIMAL_DIG + 2]; ///< Significant digits
+} BigDecimal;
 
-ExessFloatingDecimal
-measure_float(float f);
-
-ExessFloatingDecimal
-measure_double(double d);
-
-#endif // EXESS_SRC_FLOATING_DECIMAL_H
+#endif // EXESS_SRC_BIG_DECIMAL_H

@@ -1,18 +1,14 @@
 // Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "strtod.h"
-
 #include <exess/exess.h>
 
+#include "big_decimal.h"
 #include "bigint.h"
-#include "char_utils.h"
-#include "floating_decimal.h"
+#include "decimal_to_double.h"
 #include "ieee_float.h"
 #include "int_math.h"
 #include "macros.h"
-#include "number_utils.h"
-#include "result.h"
 #include "soft_float.h"
 
 #include <assert.h>
@@ -24,119 +20,6 @@
 
 /// Number of digits always represented exactly by an unsigned 64-bit integer
 static const int uint64_digits10 = 19;
-
-static size_t
-skip_leading_zeros(ExessFloatingDecimal* const out,
-                   const char* const           str,
-                   bool* const                 after_point)
-{
-  *after_point = false;
-
-  for (size_t i = 0;; ++i) {
-    if (str[i] == '.' && !*after_point) {
-      *after_point = true;
-    } else if (str[i] == '0') {
-      out->expt -= *after_point;
-    } else {
-      return i;
-    }
-  }
-}
-
-ExessResult
-parse_decimal(const char* const str, ExessFloatingDecimal* const out)
-{
-  // Read leading sign if present
-  int    sign = 0;
-  size_t i    = read_sign(&sign, str);
-
-  // Skip any leading zeros (before and after decimal point)
-  bool after_point = false;
-  i += skip_leading_zeros(out, &str[i], &after_point);
-
-  // Check that the first character is valid
-  if (!after_point && !is_digit(str[i])) {
-    return RESULT(EXESS_EXPECTED_DIGIT, i);
-  }
-
-  // Read significant digits of the mantissa
-  for (;; ++i) {
-    if (is_digit(str[i])) {
-      if (out->n_digits < DBL_DECIMAL_DIG + 1) { // Significant digit
-        out->expt += !after_point;
-        out->digits[out->n_digits++] = str[i];
-      } else { // Insignificant digit
-        out->expt += !after_point;
-      }
-    } else if (str[i] == '.' && !after_point) {
-      after_point = true;
-    } else {
-      break;
-    }
-  }
-
-  out->kind = (sign < 0)
-                ? (out->n_digits ? EXESS_NEGATIVE : EXESS_NEGATIVE_ZERO)
-                : (out->n_digits ? EXESS_POSITIVE : EXESS_POSITIVE_ZERO);
-
-  return RESULT(EXESS_SUCCESS, i);
-}
-
-ExessResult
-parse_double(const char* const str, ExessFloatingDecimal* const out)
-{
-  // Handle non-numeric special cases
-
-  typedef struct {
-    ExessNumberKind kind;
-    unsigned        length;
-    const char*     string;
-  } SpecialCase;
-
-  static const SpecialCase special_cases[] = {
-    {EXESS_NAN, 3U, "NaN"},
-    {EXESS_NEGATIVE_INFINITY, 4U, "-INF"},
-    {EXESS_POSITIVE_INFINITY, 3U, "INF"},
-    {EXESS_POSITIVE_INFINITY, 4U, "+INF"},
-    {EXESS_NAN, 0U, ""},
-  };
-
-  for (const SpecialCase* c = special_cases; c->length; ++c) {
-    if (!strcmp(str, c->string)) {
-      out->kind = c->kind;
-      return RESULT(EXESS_SUCCESS, c->length);
-    }
-  }
-
-  // Read mantissa as a decimal
-  const ExessResult r = parse_decimal(str, out);
-  if (r.status) {
-    return r;
-  }
-
-  size_t i = r.count;
-
-  // Read exponent
-  int abs_expt  = 0;
-  int expt_sign = 1;
-  if (str[i] == 'e' || str[i] == 'E') {
-    ++i;
-
-    if (!is_sign(str[i]) && !is_digit(str[i])) {
-      return RESULT(EXESS_EXPECTED_DIGIT, i);
-    }
-
-    i += read_sign(&expt_sign, &str[i]);
-    while (is_digit(str[i])) {
-      abs_expt = (abs_expt * 10) + (str[i++] - '0');
-    }
-  }
-
-  // Calculate final output exponent
-  out->expt += expt_sign * abs_expt;
-
-  return RESULT(EXESS_SUCCESS, i);
-}
 
 static uint64_t
 normalize(ExessSoftFloat* value, const uint64_t error)
@@ -281,7 +164,7 @@ read_fraction(size_t n_digits, const char* const digits)
   uint64_t frac = 0;
 
   for (unsigned i = 0U; i < n_digits; ++i) {
-    assert(is_digit(digits[i]));
+    assert(digits[i] >= '0' && digits[i] <= '9');
     frac = (frac * 10U) + (unsigned)(digits[i] - '0');
   }
 
@@ -289,7 +172,7 @@ read_fraction(size_t n_digits, const char* const digits)
 }
 
 double
-decimal_to_double(const ExessFloatingDecimal in)
+decimal_to_double(const BigDecimal in)
 {
   static const int      n_exact_pow10        = sizeof(POW10) / sizeof(POW10[0]);
   static const unsigned max_exact_int_digits = 15;   // Digits that fit exactly

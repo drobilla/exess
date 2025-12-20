@@ -1,7 +1,7 @@
 // Copyright 2019-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "floating_decimal.h"
+#include "double_to_decimal.h"
 #include "digits.h"
 #include "warnings.h"
 
@@ -9,7 +9,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-static ExessNumberKind
+static BigDecimalKind
 number_kind(const double d)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS
@@ -32,16 +32,14 @@ number_kind(const double d)
   return EXESS_NAN;
 }
 
-static ExessFloatingDecimal
-measure_decimal(const double d, const unsigned max_precision)
+BigDecimal
+double_to_decimal(const double d, const unsigned max_precision)
 {
-  ExessFloatingDecimal value = {number_kind(d), 0, 0, {0}};
-
+  BigDecimal value = {number_kind(d), 0, 0U, {0}};
   if (value.kind != EXESS_NEGATIVE && value.kind != EXESS_POSITIVE) {
     return value;
   }
 
-  // Get decimal digits
   const ExessDigitCount count =
     generate_digits(fabs(d), max_precision, value.digits);
 
@@ -51,16 +49,4 @@ measure_decimal(const double d, const unsigned max_precision)
   value.expt     = count.expt + 1;
 
   return value;
-}
-
-ExessFloatingDecimal
-measure_float(const float f)
-{
-  return measure_decimal((double)f, FLT_DECIMAL_DIG);
-}
-
-ExessFloatingDecimal
-measure_double(const double d)
-{
-  return measure_decimal(d, DBL_DECIMAL_DIG);
 }

@@ -1,10 +1,12 @@
 // Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "floating_decimal.h"
+#include "big_decimal.h"
+#include "decimal_to_double.h"
+#include "double_to_decimal.h"
+#include "parse_decimal.h"
 #include "read_utils.h"
 #include "result.h"
-#include "strtod.h"
 #include "write_utils.h"
 
 #include <exess/exess.h>
@@ -27,7 +29,7 @@ typedef struct {
 } DecimalMetrics;
 
 static DecimalMetrics
-decimal_metrics(const ExessFloatingDecimal count)
+decimal_metrics(const BigDecimal count)
 {
   DecimalMetrics metrics = {EXESS_POINT_AFTER, 0U, 0U};
 
@@ -47,7 +49,7 @@ decimal_metrics(const ExessFloatingDecimal count)
 }
 
 static size_t
-decimal_string_length(const ExessFloatingDecimal decimal)
+decimal_string_length(const BigDecimal decimal)
 {
   if (decimal.kind < EXESS_NEGATIVE_ZERO) {
     return 0U; // Invalid value
@@ -87,9 +89,9 @@ exess_read_decimal(const char* const str, double* const out)
 {
   *out = (double)NAN;
 
-  const size_t         i  = skip_whitespace(str);
-  ExessFloatingDecimal in = {EXESS_NAN, 0U, 0, {0}};
-  const ExessResult    r  = parse_decimal(str + i, &in);
+  const size_t      i  = skip_whitespace(str);
+  BigDecimal        in = {EXESS_NAN, 0, 0U, {0}};
+  const ExessResult r  = parse_decimal(str + i, &in);
   if (!r.status) {
     *out = decimal_to_double(in);
   }
@@ -100,7 +102,7 @@ exess_read_decimal(const char* const str, double* const out)
 ExessResult
 exess_write_decimal(const double value, const size_t buf_size, char* const buf)
 {
-  const ExessFloatingDecimal decimal = measure_double(value);
+  const BigDecimal decimal = double_to_decimal(value, DBL_DECIMAL_DIG);
   if (!buf) {
     return RESULT(EXESS_SUCCESS, decimal_string_length(decimal));
   }
