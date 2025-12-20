@@ -212,11 +212,11 @@ test_round_trip(const ExessNumTestOptions opts)
 
   fprintf(stderr, "Testing xsd:double randomly with seed %u\n", opts.seed);
 
-  uint64_t rep = opts.seed;
+  uint64_t state = opts.seed;
   for (uint64_t i = 0; i < opts.n_tests; ++i) {
-    rep = lcg64(rep);
+    state = lcg64(state);
 
-    const double value = double_from_rep(rep);
+    const double value = random_double(state);
 
     check_round_trip(nextafter(value, -(double)INFINITY));
     check_round_trip(value);

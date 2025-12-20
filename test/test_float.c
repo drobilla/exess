@@ -197,7 +197,7 @@ test_round_trip(const ExessNumTestOptions opts)
     for (uint64_t i = 0; i < opts.n_tests; ++i) {
       rep = lcg32(rep);
 
-      const float value = float_from_rep(rep);
+      const float value = random_float(rep);
 
       check_round_trip(nextafterf(value, -INFINITY));
       check_round_trip(value);

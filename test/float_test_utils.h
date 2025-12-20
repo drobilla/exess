@@ -22,6 +22,13 @@ float_from_rep(const uint32_t rep)
   return f;
 }
 
+/// Return a somewhat evenly distributed float from a random integer
+static inline float
+random_float(const uint32_t state)
+{
+  return ldexpf((float)(state & 0xFFFF0000U), (int)(state % 256U) - 128);
+}
+
 /// Return the distance between two floats in ULPs
 static uint32_t
 float_ulp_distance(const float a, const float b)

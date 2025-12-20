@@ -124,7 +124,7 @@ test_read_decimal(void)
   check_read("-false", EXESS_EXPECTED_DIGIT, (double)NAN, 1);
 }
 
-/// Check that `str` is a canonical xsd:double string
+/// Check that `str` is a canonical xsd:decimal string
 static void
 check_canonical(const char* const str)
 {
@@ -229,13 +229,13 @@ test_round_trip(const ExessNumTestOptions opts)
   check_round_trip(0.0);
   check_round_trip(DBL_MAX);
 
-  fprintf(stderr, "Testing xsd:double randomly with seed %u\n", opts.seed);
+  fprintf(stderr, "Testing xsd:decimal randomly with seed %u\n", opts.seed);
 
-  uint32_t rep = opts.seed;
+  uint64_t state = opts.seed;
   for (uint64_t i = 0; i < opts.n_tests; ++i) {
-    rep = lcg32(rep);
+    state = lcg64(state);
 
-    const double value = double_from_rep(rep);
+    const double value = random_double(state);
 
     check_round_trip(value);
     print_num_test_progress(i, opts.n_tests);

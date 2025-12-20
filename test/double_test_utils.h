@@ -13,13 +13,11 @@
 #include <stdint.h>
 #include <string.h>
 
-/// Return the double with representation `rep`
+/// Return a somewhat evenly distributed double from a random integer
 static inline double
-double_from_rep(const uint64_t rep)
+random_double(const uint64_t state)
 {
-  double d = 0.0;
-  memcpy(&d, &rep, sizeof(d));
-  return d;
+  return ldexp((double)(state & 0xFFFF0000U), (int)(state % 1024U) - 512);
 }
 
 /// Return the distance between two doubles in ULPs
