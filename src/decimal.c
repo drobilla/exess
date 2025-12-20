@@ -13,7 +13,6 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdbool.h>
 #include <string.h>
 
 typedef enum {
@@ -49,38 +48,14 @@ decimal_metrics(const BigDecimal count)
 }
 
 static size_t
-decimal_string_length(const BigDecimal decimal)
+write_zeros(const size_t n,
+            const size_t buf_size,
+            char* const  buf,
+            const size_t i)
 {
-  if (decimal.kind < EXESS_NEGATIVE_ZERO) {
-    return 0U; // Invalid value
-  }
-
-  if (decimal.kind == EXESS_NEGATIVE_ZERO) {
-    return 4U; // "-0.0"
-  }
-
-  if (decimal.kind == EXESS_POSITIVE_ZERO) {
-    return 3U; // "0.0"
-  }
-
-  const DecimalMetrics metrics = decimal_metrics(decimal);
-  const unsigned       n_zeros = metrics.n_zeros_before + metrics.n_zeros_after;
-  const bool           is_negative = decimal.kind == EXESS_NEGATIVE;
-
-  return is_negative + decimal.n_digits + 1 + n_zeros;
-}
-
-static size_t
-copy_chars(char* const dest, const char* const src, const size_t n)
-{
-  memcpy(dest, src, n);
-  return n;
-}
-
-static size_t
-set_zeros(char* const dest, const size_t n)
-{
-  memset(dest, '0', n);
+  (void)buf_size;
+  assert(buf_size >= i + n);
+  memset(buf + i, '0', n);
   return n;
 }
 
@@ -103,14 +78,6 @@ ExessResult
 exess_write_decimal(const double value, const size_t buf_size, char* const buf)
 {
   const BigDecimal decimal = double_to_decimal(value, DBL_DECIMAL_DIG);
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, decimal_string_length(decimal));
-  }
-
-  size_t i = 0;
-  if (buf_size < 3) {
-    return end_write(EXESS_NO_SPACE, buf_size, buf, 0);
-  }
 
   if (decimal.kind < EXESS_NEGATIVE_ZERO) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
@@ -124,35 +91,34 @@ exess_write_decimal(const double value, const size_t buf_size, char* const buf)
     return write_special(3, "0.0", buf_size, buf);
   }
 
+  size_t i = 0;
   if (decimal.kind == EXESS_NEGATIVE) {
-    buf[i++] = '-';
+    i += write_char('-', buf_size, buf, i);
   }
 
   const DecimalMetrics metrics = decimal_metrics(decimal);
   const unsigned       n_zeros = metrics.n_zeros_before + metrics.n_zeros_after;
-  if (buf_size - i <= decimal.n_digits + 1 + n_zeros) {
-    return end_write(EXESS_NO_SPACE, buf_size, buf, 0);
+  const unsigned       n_total = decimal.n_digits + 1U + n_zeros;
+  if (i + n_total >= buf_size) {
+    return end_write(EXESS_NO_SPACE, buf_size, buf, i + n_total);
   }
 
   if (metrics.point_loc == EXESS_POINT_AFTER) {
-    i += copy_chars(buf + i, decimal.digits, decimal.n_digits);
-    i += set_zeros(buf + i, metrics.n_zeros_before);
-    i += copy_chars(buf + i, ".0", 2U);
+    i += write_string(decimal.n_digits, decimal.digits, buf_size, buf, i);
+    i += write_zeros(metrics.n_zeros_before, buf_size, buf, i);
+    i += write_string(2, ".0", buf_size, buf, i);
   } else if (metrics.point_loc == EXESS_POINT_BEFORE) {
-    i += copy_chars(buf + i, "0.", 2U);
-    i += set_zeros(buf + i, metrics.n_zeros_after);
-    i += copy_chars(buf + i, decimal.digits, decimal.n_digits);
+    i += write_string(2, "0.", buf_size, buf, i);
+    i += write_zeros(metrics.n_zeros_after, buf_size, buf, i);
+    i += write_string(decimal.n_digits, decimal.digits, buf_size, buf, i);
   } else {
     assert(metrics.point_loc == EXESS_POINT_BETWEEN);
     assert(decimal.expt >= 0);
-
     const size_t n_before = (size_t)decimal.expt;
-    i += copy_chars(buf + i, decimal.digits, n_before);
-
-    buf[i++] = '.';
-
-    const size_t n_after = decimal.n_digits - n_before;
-    i += copy_chars(buf + i, decimal.digits + n_before, n_after);
+    const size_t n_after  = decimal.n_digits - n_before;
+    i += write_string(n_before, decimal.digits, buf_size, buf, i);
+    i += write_char('.', buf_size, buf, i);
+    i += write_string(n_after, decimal.digits + n_before, buf_size, buf, i);
   }
 
   return end_write(EXESS_SUCCESS, buf_size, buf, i);

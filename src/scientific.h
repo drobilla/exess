@@ -11,6 +11,6 @@
 #include <stddef.h>
 
 ExessResult
-write_scientific(BigDecimal value, size_t buf_size, char* EXESS_NULLABLE buf);
+write_scientific(BigDecimal value, size_t buf_size, char* buf);
 
 #endif // EXESS_SRC_SCIENTIFIC_H

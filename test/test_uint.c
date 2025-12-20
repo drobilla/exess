@@ -55,9 +55,11 @@ check_write(const uint32_t    value,
 
   const ExessResult r = exess_write_uint(value, buf_size, buf);
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(!strcmp(buf, expected_string));
-  assert(r.status || exess_write_uint(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_uint(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -65,6 +67,7 @@ test_write_uint(void)
 {
   check_write(0U, EXESS_SUCCESS, 2, "0");
   check_write(UINT32_MAX, EXESS_SUCCESS, 11, "4294967295");
+  check_write(UINT32_MAX, EXESS_NO_SPACE, 10, "4294967295");
 }
 
 static void

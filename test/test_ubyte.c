@@ -51,9 +51,11 @@ check_write(const uint8_t     value,
 
   const ExessResult r = exess_write_ubyte(value, buf_size, buf);
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(!strcmp(buf, expected_string));
-  assert(r.status || exess_write_ubyte(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_ubyte(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -61,6 +63,7 @@ test_write_ubyte(void)
 {
   check_write(0, EXESS_SUCCESS, 2, "0");
   check_write(UINT8_MAX, EXESS_SUCCESS, 4, "255");
+  check_write(UINT8_MAX, EXESS_NO_SPACE, 3, "255");
 }
 
 static void

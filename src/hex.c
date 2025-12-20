@@ -67,14 +67,14 @@ exess_read_hex(const char* const str, const size_t out_size, void* const out)
 
     ++i;
 
-    if (o >= out_size) {
-      return VRESULT(EXESS_NO_SPACE, i, o);
+    if (o < out_size) {
+      uout[o] = (uint8_t)(((unsigned)hi << 4U) | lo);
     }
 
-    uout[o++] = (uint8_t)(((unsigned)hi << 4U) | lo);
+    ++o;
   }
 
-  return VRESULT(EXESS_SUCCESS, i, o);
+  return VRESULT(o <= out_size ? EXESS_SUCCESS : EXESS_NO_SPACE, i, o);
 }
 
 ExessResult
@@ -84,12 +84,8 @@ exess_write_hex(const size_t      data_size,
                 char* const       buf)
 {
   const size_t length = 2 * data_size;
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, length);
-  }
-
-  if (buf_size < length + 1) {
-    return RESULT(EXESS_NO_SPACE, 0);
+  if (!buf || length >= buf_size) {
+    return end_write(EXESS_NO_SPACE, buf_size, buf, length);
   }
 
   const uint8_t* const in = (const uint8_t*)data;

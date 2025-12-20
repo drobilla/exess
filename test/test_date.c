@@ -143,9 +143,11 @@ check_write(const ExessDate   value,
 
   const ExessResult r = exess_write_date(value, buf_size, buf);
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(!strcmp(buf, expected_string));
-  assert(r.status || exess_write_date(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_date(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -176,7 +178,7 @@ test_write_date(void)
   const ExessResult r = exess_write_date(nozone, 0, &c);
   assert(c == 42);
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 0);
+  assert(r.count == 10);
 }
 
 int

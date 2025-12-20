@@ -6,7 +6,6 @@
 #include "char_utils.h"
 #include "int_math.h"
 #include "result.h"
-#include "write_utils.h"
 
 #include <exess/exess.h>
 
@@ -53,7 +52,7 @@ write_two_digit_number(const uint8_t value,
                        char* const   buf,
                        const size_t  i)
 {
-  if (buf_size >= i + 1) {
+  if (i + 1 < buf_size) {
     buf[i]     = (char)((value >= 10) ? ('0' + (value / 10)) : '0');
     buf[i + 1] = (char)('0' + (value % 10));
   }
@@ -96,12 +95,8 @@ write_digits(const uint64_t value,
              const size_t   i)
 {
   const uint8_t n_digits = exess_num_digits(value);
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, n_digits);
-  }
-
   if (i + n_digits >= buf_size) {
-    return end_write(EXESS_NO_SPACE, buf_size, buf, 0);
+    return RESULT(EXESS_NO_SPACE, n_digits);
   }
 
   // Point s to the end

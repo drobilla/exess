@@ -68,10 +68,12 @@ check_write(const bool        value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_boolean(value, buf_size, buf);
-  assert(!strcmp(buf, expected_string));
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_boolean(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_boolean(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -88,7 +90,7 @@ test_write_boolean(void)
   const ExessResult r = exess_write_boolean(false, 0, &c);
   assert(c == 42);
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 0);
+  assert(r.count == 5);
 }
 
 int

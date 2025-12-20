@@ -50,10 +50,12 @@ check_write(const uint16_t    value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_ushort(value, buf_size, buf);
-  assert(!strcmp(buf, expected_string));
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_ushort(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_ushort(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -61,6 +63,7 @@ test_write_ushort(void)
 {
   check_write(0U, EXESS_SUCCESS, 2, "0");
   check_write(UINT16_MAX, EXESS_SUCCESS, 6, "65535");
+  check_write(UINT16_MAX, EXESS_NO_SPACE, 5, "65535");
 }
 
 static void

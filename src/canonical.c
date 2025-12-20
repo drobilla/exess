@@ -94,8 +94,7 @@ write_decimal(const char* const str, const size_t buf_size, char* const buf)
     o += write_char('0', buf_size, buf, o);
   }
 
-  const ExessResult w = end_write(EXESS_SUCCESS, buf_size, buf, o);
-  return VRESULT(w.status, end, o);
+  return VRESULT(EXESS_SUCCESS, end, o);
 }
 
 static ExessVariableResult

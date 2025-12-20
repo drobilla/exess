@@ -49,9 +49,11 @@ check_write(const int8_t      value,
 
   const ExessResult r = exess_write_byte(value, buf_size, buf);
   assert(r.status == expected_status);
-  assert(!strcmp(buf, expected_string));
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_byte(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_byte(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -59,6 +61,7 @@ test_write_byte(void)
 {
   check_write(INT8_MIN, EXESS_SUCCESS, 5, "-128");
   check_write(INT8_MAX, EXESS_SUCCESS, 4, "127");
+  check_write(INT8_MAX, EXESS_NO_SPACE, 3, "127");
 }
 
 static void

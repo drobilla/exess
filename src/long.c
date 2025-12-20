@@ -1,7 +1,6 @@
 // Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
-#include "int_math.h"
 #include "number_utils.h"
 #include "read_utils.h"
 #include "result.h"
@@ -55,27 +54,9 @@ exess_read_long(const char* const str, int64_t* const out)
   return RESULT(EXESS_SUCCESS, i);
 }
 
-static size_t
-long_string_length(const int64_t value)
-{
-  if (value == INT64_MIN) {
-    return 20;
-  }
-
-  if (value < 0) {
-    return 1U + exess_num_digits((uint64_t)-value);
-  }
-
-  return exess_num_digits((uint64_t)value);
-}
-
 ExessResult
 exess_write_long(const int64_t value, const size_t buf_size, char* const buf)
 {
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, long_string_length(value));
-  }
-
   if (value == INT64_MIN) {
     return end_write(
       EXESS_SUCCESS,

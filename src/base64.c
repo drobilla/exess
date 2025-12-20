@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -42,14 +42,6 @@ unmap(const uint8_t in)
   return (uint8_t)(b64_unmap[in] - 47U);
 }
 
-static char
-next_char(const char* const str, size_t* const i)
-{
-  *i += skip_whitespace(str + *i);
-
-  return str[*i];
-}
-
 size_t
 exess_decoded_base64_size(const size_t length)
 {
@@ -61,25 +53,19 @@ exess_read_base64(const char* const str, const size_t out_size, void* const out)
 {
   uint8_t* const       uout = (uint8_t*)out;
   const uint8_t* const ustr = (const uint8_t*)str;
-  size_t               i    = 0U;
+  size_t               i    = skip_whitespace(str);
   size_t               o    = 0U;
 
   while (str[i]) {
-    // Skip leading whitespace
-    i += skip_whitespace(str + i);
-    if (!str[i]) {
-      break;
-    }
-
     // Read next chunk of 4 input characters
     uint8_t in[] = {'=', '=', '=', '='};
     for (size_t j = 0; j < 4; ++j) {
-      const char c = next_char(str, &i);
-      if (!is_base64(c)) {
+      if (!is_base64(str[i])) {
         return VRESULT(EXESS_EXPECTED_BASE64, i, o);
       }
 
       in[j] = ustr[i++];
+      i += skip_whitespace(str + i);
     }
 
     if (in[0] == '=' || in[1] == '=' || (in[2] == '=' && in[3] != '=')) {
@@ -88,30 +74,30 @@ exess_read_base64(const char* const str, const size_t out_size, void* const out)
 
     const size_t n_bytes = 1U + (in[2] != '=') + (in[3] != '=');
     if (o + n_bytes > out_size) {
-      return VRESULT(EXESS_NO_SPACE, i, o);
-    }
+      o += n_bytes;
+    } else {
+      const uint8_t a1 = (uint8_t)(unmap(in[0]) << 2U);
+      const uint8_t a2 = unmap(in[1]) >> 4U;
 
-    const uint8_t a1 = (uint8_t)(unmap(in[0]) << 2U);
-    const uint8_t a2 = unmap(in[1]) >> 4U;
+      uout[o++] = a1 | a2;
 
-    uout[o++] = a1 | a2;
+      if (in[2] != '=') {
+        const uint8_t b1 = (uint8_t)(((unsigned)unmap(in[1]) << 4U) & 0xF0U);
+        const uint8_t b2 = unmap(in[2]) >> 2U;
 
-    if (in[2] != '=') {
-      const uint8_t b1 = (uint8_t)(((unsigned)unmap(in[1]) << 4U) & 0xF0U);
-      const uint8_t b2 = unmap(in[2]) >> 2U;
+        uout[o++] = b1 | b2;
+      }
 
-      uout[o++] = b1 | b2;
-    }
+      if (in[3] != '=') {
+        const uint8_t c1 = (uint8_t)(((unsigned)unmap(in[2]) << 6U) & 0xC0U);
+        const uint8_t c2 = unmap(in[3]);
 
-    if (in[3] != '=') {
-      const uint8_t c1 = (uint8_t)(((unsigned)unmap(in[2]) << 6U) & 0xC0U);
-      const uint8_t c2 = unmap(in[3]);
-
-      uout[o++] = c1 | c2;
+        uout[o++] = c1 | c2;
+      }
     }
   }
 
-  return VRESULT(EXESS_SUCCESS, i, o);
+  return VRESULT(o <= out_size ? EXESS_SUCCESS : EXESS_NO_SPACE, i, o);
 }
 
 ExessResult
@@ -121,12 +107,8 @@ exess_write_base64(const size_t      data_size,
                    char* const       buf)
 {
   const size_t length = (data_size + 2) / 3 * 4;
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, length);
-  }
-
-  if (buf_size < length + 1) {
-    return RESULT(EXESS_NO_SPACE, 0);
+  if (!buf || length >= buf_size) {
+    return end_write(EXESS_NO_SPACE, buf_size, buf, length);
   }
 
   uint8_t* const out = (uint8_t*)buf;

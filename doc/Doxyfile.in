@@ -36,6 +36,7 @@ PREDEFINED             = EXESS_ALIGN= \
                          EXESS_NULLABLE= \
                          EXESS_PURE_API= \
                          EXESS_PURE_FUNC= \
+                         EXESS_UNSPECIFIED= \
 
 RECURSIVE              = YES
 STRIP_FROM_PATH        = @EXESS_SRCDIR@

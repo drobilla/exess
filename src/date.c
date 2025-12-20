@@ -52,18 +52,15 @@ exess_write_date(const ExessDate value, const size_t buf_size, char* const buf)
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
   }
 
-  ExessResult r = write_year_number(value.year, buf_size, buf);
-  size_t      o = r.count;
-  if (r.status) {
-    return end_write(r.status, buf_size, buf, o);
-  }
+  const ExessResult yr = write_year_number(value.year, buf_size, buf);
+  size_t            o  = yr.count;
 
   o += write_char('-', buf_size, buf, o);
   o += write_two_digit_number(value.month, buf_size, buf, o);
   o += write_char('-', buf_size, buf, o);
   o += write_two_digit_number(value.day, buf_size, buf, o);
 
-  r = write_timezone(value.zone, buf_size, buf, o);
-
-  return end_write(r.status, buf_size, buf, o + r.count);
+  const ExessResult tr = write_timezone(value.zone, buf_size, buf, o);
+  return end_write(
+    yr.status ? yr.status : tr.status, buf_size, buf, o + tr.count);
 }

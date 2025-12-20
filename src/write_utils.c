@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "write_utils.h"
@@ -7,12 +7,13 @@
 
 #include <exess/exess.h>
 
+#include <stdbool.h>
 #include <string.h>
 
 size_t
 write_char(const char c, const size_t buf_size, char* const buf, const size_t i)
 {
-  if (buf && buf_size >= i + 1) {
+  if (buf && i < buf_size) {
     buf[i] = c;
   }
 
@@ -26,9 +27,8 @@ write_string(const size_t      len,
              char* const       buf,
              const size_t      i)
 {
-  if (buf && buf_size >= i + len + 1) {
+  if (buf && i + len <= buf_size) {
     memcpy(buf + i, str, len);
-    buf[i + len] = '\0';
   }
 
   return len;
@@ -40,20 +40,16 @@ end_write(const ExessStatus status,
           char* const       buf,
           const size_t      i)
 {
-  ExessResult r = {status, status ? 0 : i};
+  const bool overflow =
+    (status == EXESS_NO_SPACE || (!status && i >= buf_size));
 
-  if (buf) {
-    if (!status && i >= buf_size) {
-      r.status = EXESS_NO_SPACE;
-      r.count  = 0;
-    }
-
-    if (r.count < buf_size) {
-      buf[r.count] = '\0';
-    }
+  // Truncate on error and null terminate output if at all possible
+  const size_t end = (status || overflow) ? 0 : i;
+  if (buf && end < buf_size) {
+    buf[end] = '\0';
   }
 
-  return r;
+  return overflow ? RESULT(EXESS_NO_SPACE, i) : RESULT(status, end);
 }
 
 ExessResult
@@ -62,10 +58,10 @@ write_special(const size_t      string_length,
               const size_t      buf_size,
               char* const       buf)
 {
-  if (buf_size < string_length + 1) {
-    return end_write(EXESS_NO_SPACE, buf_size, buf, 0);
+  if (string_length >= buf_size) {
+    return end_write(EXESS_NO_SPACE, buf_size, buf, string_length);
   }
 
-  memcpy(buf, string, string_length + 1);
-  return RESULT(EXESS_SUCCESS, string_length);
+  memcpy(buf, string, string_length);
+  return end_write(EXESS_SUCCESS, buf_size, buf, string_length);
 }

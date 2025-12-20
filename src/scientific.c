@@ -41,20 +41,12 @@ scientific_string_length(const BigDecimal value, const unsigned n_expt_digits)
 ExessResult
 write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
 {
-  size_t i = 0;
-
-  const int      expt = value.expt - 1;
-  const unsigned n_expt_digits =
-    (unsigned)exess_num_digits((unsigned)abs(expt));
-
-  const size_t length = scientific_string_length(value, n_expt_digits);
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, length);
-  }
-
-  if (buf_size <= length) {
-    buf[0] = '\0';
-    return RESULT(EXESS_NO_SPACE, 0);
+  const int      expt          = value.expt - 1;
+  unsigned       abs_expt      = (unsigned)abs(expt);
+  const unsigned n_expt_digits = (unsigned)exess_num_digits(abs_expt);
+  const size_t   length        = scientific_string_length(value, n_expt_digits);
+  if (length >= buf_size) {
+    return RESULT(EXESS_NO_SPACE, length);
   }
 
   if (value.kind < EXESS_NEGATIVE) {
@@ -64,6 +56,7 @@ write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
                          buf);
   }
 
+  size_t i = 0;
   if (value.kind == EXESS_NEGATIVE) {
     buf[i++] = '-';
   }
@@ -85,8 +78,7 @@ write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
     buf[i++] = '-';
   }
 
-  unsigned abs_expt = (unsigned)abs(expt);
-  char*    s        = buf + i + n_expt_digits;
+  char* s = buf + i + n_expt_digits;
 
   *s-- = '\0';
   do {

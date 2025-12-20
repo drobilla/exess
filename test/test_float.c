@@ -136,8 +136,11 @@ check_write(const float       value,
 
   for (size_t space = 0; space < buf_size; ++space) {
     buf[0] = 1;
-    assert(exess_write_float(value, space, buf).status == EXESS_NO_SPACE);
-    assert(!space || !buf[0]);
+
+    const ExessResult s = exess_write_float(value, space, buf);
+    assert(s.status == EXESS_NO_SPACE);
+    assert(s.count == r.count);
+    assert(buf[0] == (space ? 0 : 1));
   }
 }
 

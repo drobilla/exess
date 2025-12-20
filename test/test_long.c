@@ -91,10 +91,12 @@ check_write(const int64_t     value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_long(value, buf_size, buf);
-  assert(!strcmp(buf, expected_string));
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_long(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_long(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -116,7 +118,7 @@ test_write_long(void)
   const ExessResult r = exess_write_long(1234, 0, &c);
   assert(c == 42);
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.count == 0);
+  assert(r.count == 4);
 }
 
 int

@@ -81,20 +81,20 @@ test_read_overflow(void)
 
   ExessVariableResult r = exess_read_hex("666F6F", 0U, buf);
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 2U);
-  assert(r.write_count == 0U);
+  assert(r.read_count == 6U);
+  assert(r.write_count == 3U);
   assert(buf[0] == 1);
 
   r = exess_read_hex("666F6F", 1U, buf);
   assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4U);
-  assert(r.write_count == 1U);
+  assert(r.read_count == 6U);
+  assert(r.write_count == 3U);
   assert(buf[0] == 'f');
 
   r = exess_read_hex("666F6F", 2U, buf);
   assert(r.status == EXESS_NO_SPACE);
   assert(r.read_count == 6U);
-  assert(r.write_count == 2U);
+  assert(r.write_count == 3U);
   assert(buf[0] == 'f');
   assert(buf[1] == 'o');
 
@@ -106,26 +106,12 @@ test_read_overflow(void)
 }
 
 static void
-test_write_overflow(void)
-{
-  char buf[7] = {1, 2, 3, 4, 5, 6, 7};
-
-  assert(exess_write_hex(3, "foo", 0, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 1, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 2, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 3, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 4, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 5, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 6, buf).status == EXESS_NO_SPACE);
-  assert(exess_write_hex(3, "foo", 7, buf).status == EXESS_SUCCESS);
-}
-
-static void
 test_round_trip(void)
 {
   for (size_t size = 1; size < 256; ++size) {
     // Allocate and generate data
     uint8_t* const data = (uint8_t*)malloc(size);
+    assert(data);
     for (size_t i = 0; i < size; ++i) {
       data[i] = (uint8_t)((size + i) % 256);
     }
@@ -133,6 +119,7 @@ test_round_trip(void)
     // Allocate buffer for encoding with minimum required size
     const size_t str_len = exess_write_hex(size, data, 0, NULL).count;
     char* const  str     = (char*)malloc(str_len + 1);
+    assert(str);
 
     // Encode data to string buffer
     assert(!exess_write_hex(size, data, str_len + 1, str).status);
@@ -141,6 +128,7 @@ test_round_trip(void)
 
     // Allocate buffer for decoded data with the same size as the input
     uint8_t* const decoded = (uint8_t*)malloc(size);
+    assert(decoded);
 
     // Decode and check that data matches the original input
     const ExessVariableResult r = exess_read_hex(str, size, decoded);
@@ -162,7 +150,6 @@ main(void)
   test_whitespace();
   test_syntax_errors();
   test_read_overflow();
-  test_write_overflow();
   test_round_trip();
 
   return 0;

@@ -233,42 +233,31 @@ exess_read_duration(const char* const str, ExessDuration* const out)
 }
 
 static size_t
-write_int_field(ExessResult*   r,
-                const uint32_t value,
+write_int_field(const uint32_t value,
                 const char     tag,
                 const size_t   buf_size,
                 char* const    buf,
                 const size_t   i)
 {
-  if (!r->status) {
-    if (value == 0) {
-      *r = RESULT(EXESS_SUCCESS, 0);
-    } else if (!buf) {
-      *r = exess_write_uint(value, buf_size, buf);
-      ++r->count;
-    } else {
-      *r = exess_write_uint(value, buf_size - i, buf + i);
-      if (!r->status) {
-        buf[i + r->count++] = tag;
-      }
-    }
+  if (!value) {
+    return 0;
   }
 
-  return r->count;
+  const ExessResult r = write_digits(value, buf_size, buf, i);
+  return r.count + write_char(tag, buf_size, buf, i + r.count);
 }
 
 static size_t
-write_seconds(ExessResult*   r,
-              const uint8_t  abs_seconds,
+write_seconds(const uint8_t  abs_seconds,
               const uint32_t abs_nanoseconds,
               const size_t   buf_size,
               char* const    buf,
               const size_t   i)
 {
-  *r = write_digits(abs_seconds, buf_size, buf, i);
+  const ExessResult r = write_digits(abs_seconds, buf_size, buf, i);
 
-  size_t len = r->count;
-  if (!r->status && abs_nanoseconds) {
+  size_t len = r.count;
+  if (abs_nanoseconds) {
     len += write_nanoseconds(abs_nanoseconds, buf_size, buf, i + len);
   }
 
@@ -312,21 +301,20 @@ exess_write_duration(const ExessDuration value,
   const uint32_t abs_nanoseconds = (uint32_t)abs(value.nanoseconds);
 
   // Write date segments if present
-  ExessResult r = RESULT(EXESS_SUCCESS, 0);
-  i += write_int_field(&r, abs_years, 'Y', buf_size, buf, i);
-  i += write_int_field(&r, abs_months, 'M', buf_size, buf, i);
-  i += write_int_field(&r, abs_days, 'D', buf_size, buf, i);
+  i += write_int_field(abs_years, 'Y', buf_size, buf, i);
+  i += write_int_field(abs_months, 'M', buf_size, buf, i);
+  i += write_int_field(abs_days, 'D', buf_size, buf, i);
 
   // Write time segments if present
   const bool has_time = abs_hours + abs_minutes + abs_seconds + abs_nanoseconds;
-  if (has_time && !r.status) {
+  if (has_time) {
     i += write_char('T', buf_size, buf, i);
-    i += write_int_field(&r, abs_hours, 'H', buf_size, buf, i);
-    i += write_int_field(&r, abs_minutes, 'M', buf_size, buf, i);
+    i += write_int_field(abs_hours, 'H', buf_size, buf, i);
+    i += write_int_field(abs_minutes, 'M', buf_size, buf, i);
     if (abs_seconds + abs_nanoseconds) {
-      i += write_seconds(&r, abs_seconds, abs_nanoseconds, buf_size, buf, i);
+      i += write_seconds(abs_seconds, abs_nanoseconds, buf_size, buf, i);
     }
   }
 
-  return end_write(r.status, buf_size, buf, i);
+  return end_write(EXESS_SUCCESS, buf_size, buf, i);
 }

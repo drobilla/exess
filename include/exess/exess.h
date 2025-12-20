@@ -34,9 +34,11 @@
 #if defined(__clang__) && __clang_major__ >= 7
 #  define EXESS_NONNULL _Nonnull
 #  define EXESS_NULLABLE _Nullable
+#  define EXESS_UNSPECIFIED _Null_unspecified
 #else
 #  define EXESS_NONNULL
 #  define EXESS_NULLABLE
+#  define EXESS_UNSPECIFIED
 #endif
 
 /// A pure function in the public API that only reads memory
@@ -226,7 +228,7 @@ exess_read_decimal(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_decimal(double value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_decimal(double value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -282,7 +284,7 @@ exess_read_double(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_double(double value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_double(double value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -330,7 +332,7 @@ exess_read_float(const char* EXESS_NONNULL str, float* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_float(float value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_float(float value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -366,7 +368,7 @@ exess_read_boolean(const char* EXESS_NONNULL str, bool* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_boolean(bool value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_boolean(bool value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -409,7 +411,7 @@ exess_read_long(const char* EXESS_NONNULL str, int64_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_long(int64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_long(int64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -447,7 +449,7 @@ exess_read_int(const char* EXESS_NONNULL str, int32_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_int(int32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_int(int32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -485,7 +487,7 @@ exess_read_short(const char* EXESS_NONNULL str, int16_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_short(int16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_short(int16_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -523,7 +525,7 @@ exess_read_byte(const char* EXESS_NONNULL str, int8_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_byte(int8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_byte(int8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -566,7 +568,7 @@ exess_read_ulong(const char* EXESS_NONNULL str, uint64_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -604,7 +606,7 @@ exess_read_uint(const char* EXESS_NONNULL str, uint32_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -642,7 +644,9 @@ exess_read_ushort(const char* EXESS_NONNULL str, uint16_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_ushort(uint16_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_ushort(uint16_t                value,
+                   size_t                  buf_size,
+                   char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -680,7 +684,7 @@ exess_read_ubyte(const char* EXESS_NONNULL str, uint8_t* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -827,9 +831,9 @@ exess_read_duration(const char* EXESS_NONNULL    str,
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
 EXESS_API ExessResult
-exess_write_duration(ExessDuration        value,
-                     size_t               buf_size,
-                     char* EXESS_NULLABLE buf);
+exess_write_duration(ExessDuration           value,
+                     size_t                  buf_size,
+                     char* EXESS_UNSPECIFIED buf);
 /**
    @}
    @defgroup exess_date_time dateTime
@@ -938,9 +942,9 @@ exess_read_date_time(const char* EXESS_NONNULL    str,
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
 EXESS_API ExessResult
-exess_write_date_time(ExessDateTime        value,
-                      size_t               buf_size,
-                      char* EXESS_NULLABLE buf);
+exess_write_date_time(ExessDateTime           value,
+                      size_t                  buf_size,
+                      char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -1005,7 +1009,7 @@ exess_read_date(const char* EXESS_NONNULL str, ExessDate* EXESS_NONNULL out);
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
 EXESS_API ExessResult
-exess_write_date(ExessDate value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_date(ExessDate value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -1074,7 +1078,7 @@ exess_read_time(const char* EXESS_NONNULL str, ExessTime* EXESS_NONNULL out);
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
 EXESS_API ExessResult
-exess_write_time(ExessTime value, size_t buf_size, char* EXESS_NULLABLE buf);
+exess_write_time(ExessTime value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
@@ -1159,7 +1163,7 @@ EXESS_API ExessResult
 exess_write_base64(size_t                    data_size,
                    const void* EXESS_NONNULL data,
                    size_t                    buf_size,
-                   char* EXESS_NULLABLE      buf);
+                   char* EXESS_UNSPECIFIED   buf);
 
 /**
    @}
@@ -1232,7 +1236,7 @@ EXESS_API ExessResult
 exess_write_hex(size_t                    data_size,
                 const void* EXESS_NONNULL data,
                 size_t                    buf_size,
-                char* EXESS_NULLABLE      buf);
+                char* EXESS_UNSPECIFIED   buf);
 
 /**
    @}
@@ -1481,7 +1485,7 @@ exess_write_value(ExessDatatype             datatype,
                   size_t                    value_size,
                   const void* EXESS_NONNULL value,
                   size_t                    buf_size,
-                  char* EXESS_NULLABLE      buf);
+                  char* EXESS_UNSPECIFIED   buf);
 
 /**
    @}
@@ -1505,7 +1509,7 @@ EXESS_API ExessVariableResult
 exess_write_canonical(ExessDatatype             datatype,
                       const char* EXESS_NONNULL str,
                       size_t                    buf_size,
-                      char* EXESS_NULLABLE      buf);
+                      char* EXESS_UNSPECIFIED   buf);
 
 /**
    @}

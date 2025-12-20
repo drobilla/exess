@@ -3,7 +3,6 @@
 
 #include <exess/exess.h>
 
-#include "int_math.h"
 #include "number_utils.h"
 #include "read_utils.h"
 #include "result.h"
@@ -40,10 +39,6 @@ exess_read_ulong(const char* const str, uint64_t* const out)
 ExessResult
 exess_write_ulong(const uint64_t value, const size_t buf_size, char* const buf)
 {
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, exess_num_digits(value));
-  }
-
   const ExessResult r = write_digits(value, buf_size, buf, 0);
   return end_write(r.status, buf_size, buf, r.count);
 }

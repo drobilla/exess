@@ -61,8 +61,7 @@ they don't have their own API functions and are only relevant for some higher-le
 Reading Values
 **************
 
-Each supported type has a read function that takes a pointer to an output value,
-and a string to read.
+Each supported type has a read function that takes a string to read, and a pointer to an output value.
 It reads the value after skipping any leading whitespace,
 then returns an :struct:`ExessResult` with a ``status`` code and the ``count`` of characters read.
 For example:
@@ -76,11 +75,12 @@ For example:
    }
 
 If there was a syntax error,
-the status code indicates the specific problem.
+the ``status`` gives the specific problem,
+and the ``count`` gives the offset of the error.
 
-Note that read functions may simply stop at unexpected characters.
-This allows reading fragments from within some higher-level language,
-but leaves the caller responsible for checking that the read ended where expected.
+Note that read functions may stop at unrecognized non-whitespace characters and return successfully.
+This allows values to be read directly from any syntactic context (for example, a quoted field in a document string),
+but requires the caller to check that the read ended where expected.
 Proper error detection requires checking the returned count as well,
 for example:
 
@@ -120,14 +120,12 @@ the calling code is responsible for providing a large enough output buffer.
 
 For datatypes with a bounded length,
 the array :var:`exess_max_lengths`,
-indexed by the corresponding :enum:`ExessDatatype` value,
-contains the length of the longest possible string value of that datatype,
+indexed by the :enum:`ExessDatatype`,
+contains the length of the longest possible string value of that datatype (at most 41),
 or zero if the datatype is unbounded.
-The longest string of any unbounded datatype is 41 bytes.
 
-The `count` returned by write functions can be used to determine the space required for a specific value.
-If the write function is called with a null output buffer,
-then this count is still returned as if a value were written.
+For larger values, the required length can be determined by passing a zero output size to the write function.
+Then, :enumerator:`EXESS_NO_SPACE` is returned with the ``count`` of characters required.
 This can be used to precisely allocate memory for the string,
 taking care to allocate an extra byte for the null terminator.
 For example:
@@ -142,10 +140,7 @@ For example:
 Note that for some types,
 measuring the output can be about as expensive as actually writing the value.
 For example, it requires binary to decimal conversion for floating point numbers.
-So, for ``float`` and ``double``,
-since the length is bounded and reasonably small,
-it's faster to write immediately to a sufficiently large buffer,
-then copy the result to the final destination.
+So, it's usually best to avoid measuring twice by writing immediately to a sufficiently large buffer, then copying the result to the final destination.
 
 **************
 Generic Values

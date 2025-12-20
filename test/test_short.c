@@ -1,4 +1,4 @@
-// Copyright 2011-2021 David Robillard <d@drobilla.net>
+// Copyright 2011-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -53,10 +53,12 @@ check_write(const int16_t     value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_short(value, buf_size, buf);
-  assert(!strcmp(buf, expected_string));
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_short(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(r.status || exess_write_short(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -64,6 +66,7 @@ test_write_short(void)
 {
   check_write(INT16_MIN, EXESS_SUCCESS, 7, "-32768");
   check_write(INT16_MAX, EXESS_SUCCESS, 6, "32767");
+  check_write(INT16_MAX, EXESS_NO_SPACE, 5, "32767");
 }
 
 static void

@@ -109,10 +109,6 @@ write_timezone(const ExessTimezone value,
     return RESULT(EXESS_BAD_VALUE, 0);
   }
 
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, !value ? 1U : 6U);
-  }
-
   if (value == 0) {
     write_char('Z', buf_size, buf, o);
     return RESULT(EXESS_SUCCESS, 1);

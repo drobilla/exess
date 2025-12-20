@@ -54,10 +54,12 @@ check_write(const int32_t     value,
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r = exess_write_int(value, buf_size, buf);
-  assert(!strcmp(buf, expected_string));
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert(r.status || exess_write_int(value, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert(!strcmp(buf, expected_string));
+    assert(r.count == strlen(buf));
+    assert(exess_write_int(value, 0, NULL).count == r.count);
+  }
 }
 
 static void
@@ -65,6 +67,7 @@ test_write_int(void)
 {
   check_write(INT32_MIN, EXESS_SUCCESS, 12, "-2147483648");
   check_write(INT32_MAX, EXESS_SUCCESS, 11, "2147483647");
+  check_write(INT32_MAX, EXESS_NO_SPACE, 10, "2147483647");
 }
 
 static void

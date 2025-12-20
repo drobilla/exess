@@ -36,7 +36,13 @@ check_read(void*               value,
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_read_count);
-  assert(r.status || r.write_count == exess_value_sizes[datatype]);
+  if (!r.status) {
+    assert(!exess_value_sizes[datatype] ||
+           r.write_count == exess_value_sizes[datatype]);
+
+  } else {
+    assert(!r.write_count);
+  }
 }
 
 static void
@@ -151,7 +157,6 @@ test_read_value(void)
   {
     ExessDate a_date = date;
     check_read(&a_date, EXESS_DATE, "2001-01-02", EXESS_SUCCESS, 10);
-
     assert(a_date.year == 2001);
     assert(a_date.month == 1);
     assert(a_date.day == 2);
@@ -159,30 +164,19 @@ test_read_value(void)
   {
     ExessTime a_time = time;
     check_read(&a_time, EXESS_TIME, "12:15:01.25", EXESS_SUCCESS, 11);
-
     assert(a_time.hour == 12);
     assert(a_time.minute == 15);
     assert(a_time.second == 1);
     assert(a_time.nanosecond == 250000000);
   }
   {
-    char                      a_blob[] = {1, 2, 3};
-    const ExessVariableResult r =
-      exess_read_value(EXESS_HEX, "666F6F", sizeof(a_blob), a_blob);
-
-    assert(!r.status);
-    assert(r.read_count == 6);
-    assert(r.write_count == sizeof(a_blob));
+    char a_blob[] = {1, 2, 3};
+    check_read(a_blob, EXESS_HEX, "666F6F", EXESS_SUCCESS, 6);
     assert(!strncmp(a_blob, "foo", sizeof(a_blob)));
   }
   {
-    char                      a_blob[] = {1, 2, 3};
-    const ExessVariableResult r =
-      exess_read_value(EXESS_BASE64, "Zm9v", sizeof(a_blob), a_blob);
-
-    assert(!r.status);
-    assert(r.read_count == 4);
-    assert(r.write_count == sizeof(a_blob));
+    char a_blob[] = {1, 2, 3};
+    check_read(a_blob, EXESS_BASE64, "Zm9v", EXESS_SUCCESS, 4);
     assert(!strncmp(a_blob, "foo", sizeof(a_blob)));
   }
 }
@@ -191,26 +185,31 @@ static void
 check_write(const ExessDatatype datatype,
             const size_t        value_size,
             const void*         value,
-            const ExessStatus   expected_status,
             const size_t        buf_size,
             const char* const   expected_string)
 {
   char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
-  init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
+  init_out_buf(sizeof(buf), buf);
 
   const ExessResult r =
     exess_write_value(datatype, value_size, value, buf_size, buf);
 
-  assert(r.status == expected_status);
+  assert(!r.status);
+  assert(r.count + 1U == buf_size);
+  assert(r.count == strlen(buf));
+  assert(!strcmp(buf, expected_string));
 
-  if (buf_size > 0) {
-    assert(r.count + 1U == buf_size);
-    assert(r.count == strlen(buf));
-    assert(!strcmp(buf, expected_string));
-  } else {
-    assert(buf[0] == 1);
+  for (size_t space = 0U; space < r.count; ++space) {
+    buf[0] = 1;
+
+    const ExessResult s =
+      exess_write_value(datatype, value_size, value, space, buf);
+
+    assert(s.status == EXESS_NO_SPACE);
+    assert(s.count == r.count);
+    assert(buf[0] == (space ? 0 : 1));
   }
 }
 
@@ -236,49 +235,39 @@ test_write_value(void)
   const ExessTime     a_time     = time;
   const ExessDate     a_date     = date;
 
-  check_write(EXESS_NOTHING, sizeof(a_bool), &a_bool, EXESS_BAD_VALUE, 0, NULL);
+  {
+    char buf = '\0';
+    assert(exess_write_value(EXESS_NOTHING, 1, &buf, 1, &buf).status ==
+           EXESS_BAD_VALUE);
+  }
 
-  check_write(EXESS_BOOLEAN, sizeof(a_bool), &a_bool, EXESS_SUCCESS, 5, "true");
+  check_write(EXESS_BOOLEAN, sizeof(a_bool), &a_bool, 5, "true");
+  check_write(EXESS_DECIMAL, sizeof(a_decimal), &a_decimal, 4, "1.2");
+  check_write(EXESS_DOUBLE, sizeof(a_double), &a_double, 6, "3.4E0");
+  check_write(EXESS_FLOAT, sizeof(a_float), &a_float, 12, "5.5999999E0");
+  check_write(EXESS_LONG, sizeof(a_long), &a_long, 2, "7");
+  check_write(EXESS_INT, sizeof(a_int), &a_int, 2, "8");
+  check_write(EXESS_SHORT, sizeof(a_short), &a_short, 2, "9");
+  check_write(EXESS_BYTE, sizeof(a_byte), &a_byte, 3, "10");
+  check_write(EXESS_ULONG, sizeof(a_ulong), &a_ulong, 3, "11");
+  check_write(EXESS_UINT, sizeof(a_uint), &a_uint, 3, "12");
+  check_write(EXESS_USHORT, sizeof(a_ushort), &a_ushort, 3, "13");
+  check_write(EXESS_UBYTE, sizeof(a_ubyte), &a_ubyte, 3, "14");
 
   check_write(
-    EXESS_DECIMAL, sizeof(a_decimal), &a_decimal, EXESS_SUCCESS, 4, "1.2");
-  check_write(
-    EXESS_DOUBLE, sizeof(a_double), &a_double, EXESS_SUCCESS, 6, "3.4E0");
-  check_write(
-    EXESS_FLOAT, sizeof(a_float), &a_float, EXESS_SUCCESS, 12, "5.5999999E0");
-
-  check_write(EXESS_LONG, sizeof(a_long), &a_long, EXESS_SUCCESS, 2, "7");
-  check_write(EXESS_INT, sizeof(a_int), &a_int, EXESS_SUCCESS, 2, "8");
-  check_write(EXESS_SHORT, sizeof(a_short), &a_short, EXESS_SUCCESS, 2, "9");
-  check_write(EXESS_BYTE, sizeof(a_byte), &a_byte, EXESS_SUCCESS, 3, "10");
-
-  check_write(EXESS_ULONG, sizeof(a_ulong), &a_ulong, EXESS_SUCCESS, 3, "11");
-  check_write(EXESS_UINT, sizeof(a_uint), &a_uint, EXESS_SUCCESS, 3, "12");
-  check_write(
-    EXESS_USHORT, sizeof(a_ushort), &a_ushort, EXESS_SUCCESS, 3, "13");
-  check_write(EXESS_UBYTE, sizeof(a_ubyte), &a_ubyte, EXESS_SUCCESS, 3, "14");
-
-  check_write(EXESS_DURATION,
-              sizeof(a_duration),
-              &a_duration,
-              EXESS_SUCCESS,
-              15,
-              "P1Y2M3DT4H5M6S");
+    EXESS_DURATION, sizeof(a_duration), &a_duration, 15, "P1Y2M3DT4H5M6S");
 
   check_write(EXESS_DATE_TIME,
               sizeof(a_datetime),
               &a_datetime,
-              EXESS_SUCCESS,
               20,
               "2001-02-03T04:05:06");
 
-  check_write(
-    EXESS_TIME, sizeof(a_time), &a_time, EXESS_SUCCESS, 10, "01:02:03Z");
-  check_write(
-    EXESS_DATE, sizeof(a_date), &a_date, EXESS_SUCCESS, 12, "2001-02-03Z");
+  check_write(EXESS_TIME, sizeof(a_time), &a_time, 10, "01:02:03Z");
+  check_write(EXESS_DATE, sizeof(a_date), &a_date, 12, "2001-02-03Z");
 
-  check_write(EXESS_HEX, sizeof(a_blob), a_blob, EXESS_SUCCESS, 7, "666F6F");
-  check_write(EXESS_BASE64, sizeof(a_blob), a_blob, EXESS_SUCCESS, 5, "Zm9v");
+  check_write(EXESS_HEX, sizeof(a_blob), a_blob, 7, "666F6F");
+  check_write(EXESS_BASE64, sizeof(a_blob), a_blob, 5, "Zm9v");
 }
 
 int

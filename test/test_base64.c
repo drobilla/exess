@@ -92,50 +92,29 @@ test_syntax_errors(void)
 static void
 test_read_overflow(void)
 {
-  char buf[3] = {1, 2, 3};
+  char buf[6] = {1, 2, 3, 4, 5, 6};
 
-  ExessVariableResult r = exess_read_base64("Zm9v", 0U, buf);
-  assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4);
-  assert(r.write_count == 0);
-  assert(buf[0] == 1);
+  for (unsigned space = 0; space < 3; ++space) {
+    const ExessVariableResult r = exess_read_base64("Zm9vYmFy", space, buf);
+    assert(r.status == EXESS_NO_SPACE);
+    assert(r.read_count == 8U);
+    assert(r.write_count == 6U);
+    assert(buf[0] == 1);
+  }
 
-  r = exess_read_base64("Zm9v", 1U, buf);
-  assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4U);
-  assert(r.write_count == 0U);
-  assert(buf[0] == 1);
+  for (unsigned space = 3; space < 6; ++space) {
+    const ExessVariableResult r = exess_read_base64("Zm9vYmFy", space, buf);
+    assert(r.status == EXESS_NO_SPACE);
+    assert(r.read_count == 8U);
+    assert(r.write_count == 6U);
+    assert(!strncmp(buf, "foo", 3));
+  }
 
-  r = exess_read_base64("Zm9v", 2U, buf);
-  assert(r.status == EXESS_NO_SPACE);
-  assert(r.read_count == 4U);
-  assert(r.write_count == 0U);
-  assert(buf[0] == 1);
-
-  r = exess_read_base64("Zm9v", 3U, buf);
+  const ExessVariableResult r = exess_read_base64("Zm9vYmFy", 6U, buf);
   assert(r.status == EXESS_SUCCESS);
-  assert(r.read_count == 4U);
-  assert(r.write_count == 3U);
-  assert(!strncmp(buf, "foo", 3));
-}
-
-static void
-test_write_overflow(void)
-{
-  char buf[5] = {1, 2, 3, 4, 5};
-
-  assert(exess_write_base64(3, "foo", 0, buf).status == EXESS_NO_SPACE);
-  assert(buf[0] == 1);
-  assert(exess_write_base64(3, "foo", 1, buf).status == EXESS_NO_SPACE);
-  assert(buf[0] == 1);
-  assert(exess_write_base64(3, "foo", 2, buf).status == EXESS_NO_SPACE);
-  assert(buf[0] == 1);
-  assert(exess_write_base64(3, "foo", 3, buf).status == EXESS_NO_SPACE);
-  assert(buf[0] == 1);
-  assert(exess_write_base64(3, "foo", 4, buf).status == EXESS_NO_SPACE);
-  assert(buf[0] == 1);
-  assert(exess_write_base64(3, "foo", 5, buf).status == EXESS_SUCCESS);
-  assert(!strncmp(buf, "Zm9v", 4));
+  assert(r.read_count == 8U);
+  assert(r.write_count == 6U);
+  assert(!strncmp(buf, "foobar", 6));
 }
 
 static void
@@ -183,7 +162,6 @@ main(void)
   test_whitespace();
   test_syntax_errors();
   test_read_overflow();
-  test_write_overflow();
   test_round_trip();
 
   return 0;

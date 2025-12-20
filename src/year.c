@@ -3,7 +3,6 @@
 
 #include "year.h"
 #include "int_math.h"
-#include "macros.h"
 #include "number_utils.h"
 #include "result.h"
 #include "write_utils.h"
@@ -65,10 +64,6 @@ write_year_number(const int16_t value, const size_t buf_size, char* const buf)
   const uint8_t  n_digits    = exess_num_digits(abs_year);
   const bool     is_negative = value < 0;
 
-  if (!buf) {
-    return RESULT(EXESS_SUCCESS, is_negative + MAX(4U, n_digits));
-  }
-
   // Write sign
   size_t i = 0;
   if (is_negative) {
@@ -80,7 +75,6 @@ write_year_number(const int16_t value, const size_t buf_size, char* const buf)
     i += write_char('0', buf_size, buf, i);
   }
 
-  const ExessResult yr = exess_write_uint(abs_year, buf_size - i, buf + i);
-
+  const ExessResult yr = write_digits(abs_year, buf_size, buf, i);
   return end_write(yr.status, buf_size, buf, i + yr.count);
 }

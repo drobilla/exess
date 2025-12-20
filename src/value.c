@@ -107,10 +107,6 @@ exess_write_value(const ExessDatatype datatype,
                   const size_t        buf_size,
                   char* const         buf)
 {
-  if (buf && buf_size > 0) {
-    buf[0] = '\0';
-  }
-
   switch (datatype) {
   case EXESS_NOTHING:
     break;

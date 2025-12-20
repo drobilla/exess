@@ -141,9 +141,12 @@ check_write(const ExessTimezone value,
   const ExessTime   time = {value, 12, 0, 0, 0};
   const ExessResult r    = exess_write_time(time, 8 + buf_size, buf);
   assert(r.status == expected_status);
-  assert(r.count == strlen(buf));
-  assert((!buf[0] && !expected_string[0]) || !strcmp(buf + 8, expected_string));
-  assert(r.status || exess_write_time(time, 0, NULL).count == r.count);
+  if (!r.status) {
+    assert((r.count == strlen(buf)));
+    assert((!buf[0] && !expected_string[0]) ||
+           !strcmp(buf + 8, expected_string));
+    assert(exess_write_time(time, 0, NULL).count == r.count);
+  }
 }
 
 static void
