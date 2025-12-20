@@ -135,7 +135,6 @@ check_loss(const ExessDatatype  from_datatype,
            const char* const    from_string,
            const ExessDatatype  to_datatype,
            const char* const    to_string,
-           const ExessStatus    loss_status,
            const ExessCoercions coercions)
 {
   CheckState state = {{0}, {0}, {EXESS_SUCCESS, 0, 0}, {EXESS_SUCCESS, 0}};
@@ -150,7 +149,7 @@ check_loss(const ExessDatatype  from_datatype,
                             to_datatype,
                             state.r_coerced.count,
                             state.coerced)
-           .status == loss_status);
+           .status == EXESS_LOSS);
 }
 
 // Check a widening coercions that's only lossless in one direction
@@ -158,8 +157,7 @@ static void
 check_wide(const ExessDatatype from_datatype,
            const char* const   from_string,
            const ExessDatatype to_datatype,
-           const char* const   to_string,
-           const ExessStatus   reverse_status)
+           const char* const   to_string)
 {
   CheckState state = {{0}, {0}, {EXESS_SUCCESS, 0, 0}, {EXESS_SUCCESS, 0}};
 
@@ -174,7 +172,7 @@ check_wide(const ExessDatatype from_datatype,
                             from_datatype,
                             state.r_value.write_count,
                             state.value)
-           .status == reverse_status);
+           .status == EXESS_LOSS);
 }
 
 // Check a truncating coercion
@@ -184,12 +182,8 @@ check_trunc(const ExessDatatype from_datatype,
             const ExessDatatype to_datatype,
             const char* const   to_string)
 {
-  check_loss(from_datatype,
-             from_string,
-             to_datatype,
-             to_string,
-             EXESS_WOULD_TRUNCATE,
-             EXESS_TRUNCATE);
+  check_loss(
+    from_datatype, from_string, to_datatype, to_string, EXESS_TRUNCATE);
 }
 
 // Check a rounding coercion
@@ -199,12 +193,7 @@ check_round(const ExessDatatype from_datatype,
             const ExessDatatype to_datatype,
             const char* const   to_string)
 {
-  check_loss(from_datatype,
-             from_string,
-             to_datatype,
-             to_string,
-             EXESS_WOULD_ROUND,
-             EXESS_ROUND);
+  check_loss(from_datatype, from_string, to_datatype, to_string, EXESS_ROUND);
 }
 
 static void
@@ -281,22 +270,12 @@ test_unknown(void)
 static void
 test_floating(void)
 {
-  check_wide(
-    EXESS_FLOAT, "1.2E3", EXESS_DOUBLE, "1.2E3", EXESS_WOULD_REDUCE_PRECISION);
+  check_wide(EXESS_FLOAT, "1.2E3", EXESS_DOUBLE, "1.2E3");
 
-  check_loss(EXESS_DOUBLE,
-             "1.0000000000001E0",
-             EXESS_FLOAT,
-             "1.0E0",
-             EXESS_WOULD_REDUCE_PRECISION,
-             EXESS_REDUCE_PRECISION);
+  check_loss(
+    EXESS_DOUBLE, "1.0000000000001E0", EXESS_FLOAT, "1.0E0", EXESS_APPROXIMATE);
 
-  check_loss(EXESS_DOUBLE,
-             "1.5E0",
-             EXESS_FLOAT,
-             "1.5E0",
-             EXESS_WOULD_REDUCE_PRECISION,
-             EXESS_REDUCE_PRECISION);
+  check_loss(EXESS_DOUBLE, "1.5E0", EXESS_FLOAT, "1.5E0", EXESS_APPROXIMATE);
 }
 
 static void
@@ -305,18 +284,10 @@ test_decimal(void)
   check_perf(EXESS_DECIMAL, "1.2", EXESS_DECIMAL, "1.2");
   check_perf(EXESS_DOUBLE, "1.2E4", EXESS_DECIMAL, "12000.0");
 
-  check_wide(EXESS_FLOAT,
-             "1.2E3",
-             EXESS_DECIMAL,
-             "1200.0",
-             EXESS_WOULD_REDUCE_PRECISION);
+  check_wide(EXESS_FLOAT, "1.2E3", EXESS_DECIMAL, "1200.0");
 
-  check_loss(EXESS_DECIMAL,
-             "1.000000001",
-             EXESS_FLOAT,
-             "1.0E0",
-             EXESS_WOULD_REDUCE_PRECISION,
-             EXESS_REDUCE_PRECISION);
+  check_loss(
+    EXESS_DECIMAL, "1.000000001", EXESS_FLOAT, "1.0E0", EXESS_APPROXIMATE);
 
   check_perf(
     EXESS_DECIMAL, "-9007199254740991.0", EXESS_LONG, "-9007199254740991");
@@ -344,13 +315,13 @@ test_boolean(void)
   check_perf(EXESS_BOOLEAN, "true", EXESS_DOUBLE, "1.0E0");
   check_perf(EXESS_BOOLEAN, "false", EXESS_LONG, "0");
   check_perf(EXESS_BOOLEAN, "true", EXESS_LONG, "1");
-  check_fail(EXESS_LONG, "-1", EXESS_BOOLEAN, EXESS_WOULD_TRUNCATE);
-  check_fail(EXESS_LONG, "2", EXESS_BOOLEAN, EXESS_WOULD_TRUNCATE);
+  check_fail(EXESS_LONG, "-1", EXESS_BOOLEAN, EXESS_LOSS);
+  check_fail(EXESS_LONG, "2", EXESS_BOOLEAN, EXESS_LOSS);
   check_trunc(EXESS_LONG, "42", EXESS_BOOLEAN, "true");
   check_trunc(EXESS_LONG, "-1", EXESS_BOOLEAN, "true");
   check_perf(EXESS_BOOLEAN, "false", EXESS_ULONG, "0");
   check_perf(EXESS_BOOLEAN, "true", EXESS_ULONG, "1");
-  check_fail(EXESS_LONG, "2", EXESS_BOOLEAN, EXESS_WOULD_TRUNCATE);
+  check_fail(EXESS_LONG, "2", EXESS_BOOLEAN, EXESS_LOSS);
   check_trunc(EXESS_ULONG, "42", EXESS_BOOLEAN, "true");
 
   // Not convertible to any time types
@@ -361,7 +332,7 @@ test_boolean(void)
 }
 
 static void
-test_round(void)
+test_round_trunc(void)
 {
   static const ExessDatatype float_types[] = {
     EXESS_DOUBLE, EXESS_FLOAT, EXESS_NOTHING};
@@ -389,6 +360,24 @@ test_round(void)
       check_round(*f, "1.5E0", *t, "2");
       check_round(*f, "2.5E0", *t, "2");
       check_round(*f, "3.5E0", *t, "4");
+    }
+
+    for (const ExessDatatype* t = signed_types; *t; ++t) {
+      check_trunc(*f, "-3.5E0", *t, "-3");
+      check_trunc(*f, "-2.5E0", *t, "-2");
+      check_trunc(*f, "-1.5E0", *t, "-1");
+      check_trunc(*f, "-0.5E0", *t, "0");
+      check_trunc(*f, "0.5E0", *t, "0");
+      check_trunc(*f, "1.5E0", *t, "1");
+      check_trunc(*f, "2.5E0", *t, "2");
+      check_trunc(*f, "3.5E0", *t, "3");
+    }
+
+    for (const ExessDatatype* t = unsigned_types; *t; ++t) {
+      check_trunc(*f, "0.5E0", *t, "0");
+      check_trunc(*f, "1.5E0", *t, "1");
+      check_trunc(*f, "2.5E0", *t, "2");
+      check_trunc(*f, "3.5E0", *t, "3");
     }
   }
 }
@@ -449,7 +438,7 @@ test_long(void)
              EXESS_OUT_OF_RANGE);
 
   // Float
-  check_fail(EXESS_FLOAT, "1.5", EXESS_LONG, EXESS_WOULD_ROUND);
+  check_fail(EXESS_FLOAT, "1.5", EXESS_LONG, EXESS_LOSS);
   check_fail(EXESS_FLOAT, "1E38", EXESS_LONG, EXESS_OUT_OF_RANGE);
   check_perf(EXESS_LONG, "-16777215", EXESS_FLOAT, "-1.6777215E7");
   check_fail(EXESS_LONG, "-16777216", EXESS_FLOAT, EXESS_OUT_OF_RANGE);
@@ -463,7 +452,7 @@ test_long(void)
   check_round(EXESS_FLOAT, "3.5E0", EXESS_LONG, "4");
 
   // Double
-  check_fail(EXESS_DOUBLE, "1.5", EXESS_LONG, EXESS_WOULD_ROUND);
+  check_fail(EXESS_DOUBLE, "1.5", EXESS_LONG, EXESS_LOSS);
   check_fail(EXESS_DOUBLE, "1E38", EXESS_LONG, EXESS_OUT_OF_RANGE);
   check_perf(
     EXESS_LONG, "-9007199254740991", EXESS_DOUBLE, "-9.007199254740991E15");
@@ -530,7 +519,7 @@ test_ulong(void)
 
   // Float
   check_fail(EXESS_FLOAT, "-1", EXESS_ULONG, EXESS_OUT_OF_RANGE);
-  check_fail(EXESS_FLOAT, "1.5", EXESS_ULONG, EXESS_WOULD_ROUND);
+  check_fail(EXESS_FLOAT, "1.5", EXESS_ULONG, EXESS_LOSS);
   check_perf(EXESS_ULONG, "0", EXESS_FLOAT, "0.0E0");
   check_perf(EXESS_ULONG, "16777215", EXESS_FLOAT, "1.6777215E7");
   check_fail(EXESS_ULONG, "16777216", EXESS_FLOAT, EXESS_OUT_OF_RANGE);
@@ -542,7 +531,7 @@ test_ulong(void)
 
   // Double
   check_fail(EXESS_DOUBLE, "-1", EXESS_ULONG, EXESS_OUT_OF_RANGE);
-  check_fail(EXESS_DOUBLE, "1.5", EXESS_ULONG, EXESS_WOULD_ROUND);
+  check_fail(EXESS_DOUBLE, "1.5", EXESS_ULONG, EXESS_LOSS);
   check_perf(EXESS_ULONG, "0", EXESS_DOUBLE, "0.0E0");
   check_perf(
     EXESS_ULONG, "9007199254740991", EXESS_DOUBLE, "9.007199254740991E15");
@@ -569,8 +558,7 @@ test_large_integers(void)
 static void
 test_date_time(void)
 {
-  check_fail(
-    EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_TIME, EXESS_WOULD_TRUNCATE);
+  check_fail(EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_TIME, EXESS_LOSS);
 
   check_trunc(EXESS_DATE_TIME, "2001-02-03T04:05:06", EXESS_TIME, "04:05:06");
 
@@ -706,7 +694,7 @@ main(void)
   test_boolean();
   test_floating();
   test_decimal();
-  test_round();
+  test_round_trunc();
   test_long();
   test_ulong();
   test_large_integers();

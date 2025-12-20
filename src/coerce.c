@@ -5,7 +5,6 @@
 
 #include <exess/exess.h>
 
-#include <assert.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -21,103 +20,94 @@
 #define MAX_FLOAT_INT 16777215
 #define MAX_DOUBLE_INT 9007199254740991L
 
-static ExessStatus
-coerce_to_long(int64_t* const       out,
+#define ENSURE(condition, return_status_otherwise)  \
+  do {                                              \
+    if (!(condition)) {                             \
+      return RESULT((return_status_otherwise), 0U); \
+    }                                               \
+  } while (0)
+
+#define ENSURE_COERCION(coercions, coercion) \
+  ENSURE(((coercions) & (ExessCoercions)(coercion)), EXESS_LOSS)
+
+#ifdef __cplusplus
+#  define UCONVERSION(s, v) (UConversion{s, v})
+#  define SCONVERSION(s, v) (SConversion{s, v})
+#else
+#  define UCONVERSION(s, v) ((UConversion){s, v})
+#  define SCONVERSION(s, v) ((SConversion){s, v})
+#endif
+
+typedef struct {
+  ExessStatus status;
+  int64_t     value;
+} SConversion;
+
+typedef struct {
+  ExessStatus status;
+  uint64_t    value;
+} UConversion;
+
+static SConversion
+convert_signed(const ExessCoercions coercions,
                const ExessDatatype  in_datatype,
-               const void* const    in,
-               const ExessCoercions coercions)
+               const void* const    in)
 {
+#define FP_CONVERSION(Type, f, max, trunc_func, round_func)           \
+  ((f) < (Type)(-(max)) || (f) > (Type)(max))                         \
+    ? SCONVERSION(EXESS_OUT_OF_RANGE, 0)                              \
+  : ((f) == trunc_func(f)) ? SCONVERSION(EXESS_SUCCESS, (int64_t)(f)) \
+  : (coercions & (ExessCoercions)EXESS_ROUND)                         \
+    ? SCONVERSION(EXESS_SUCCESS, round_func(f))                       \
+  : (coercions & (ExessCoercions)EXESS_TRUNCATE)                      \
+    ? SCONVERSION(EXESS_SUCCESS, (int64_t)(f))                        \
+    : SCONVERSION(EXESS_LOSS, 0)
+
   switch (in_datatype) {
   case EXESS_NOTHING:
     break;
 
   case EXESS_BOOLEAN:
-    *out = *(const bool*)in;
-    return EXESS_SUCCESS;
+    return SCONVERSION(EXESS_SUCCESS, *(const bool*)in);
 
   case EXESS_DECIMAL:
-  case EXESS_DOUBLE: {
-    const double d = *(const double*)in;
-
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) && d != trunc(d)) {
-      return EXESS_WOULD_ROUND;
-    }
-
-    if (d < (double)-MAX_DOUBLE_INT || d > (double)MAX_DOUBLE_INT) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = llrint(d);
-    return EXESS_SUCCESS;
-  }
-
-  case EXESS_FLOAT: {
-    const float f = *(const float*)in;
-
-    if (!(coercions & (ExessCoercions)EXESS_ROUND) && f != truncf(f)) {
-      return EXESS_WOULD_ROUND;
-    }
-
-    if (f < (float)-MAX_FLOAT_INT || f > (float)MAX_FLOAT_INT) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = llrintf(f);
-    return EXESS_SUCCESS;
-  }
+  case EXESS_DOUBLE:
+    return FP_CONVERSION(
+      double, *(const double*)in, MAX_DOUBLE_INT, trunc, llrint);
+  case EXESS_FLOAT:
+    return FP_CONVERSION(
+      float, *(const float*)in, MAX_FLOAT_INT, truncf, llrintf);
 
   case EXESS_INTEGER:
   case EXESS_NON_POSITIVE_INTEGER:
   case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
-    *out = *(const int64_t*)in;
-    return EXESS_SUCCESS;
-
+    return SCONVERSION(EXESS_SUCCESS, *(const int64_t*)in);
   case EXESS_INT:
-    *out = *(const int32_t*)in;
-    return EXESS_SUCCESS;
-
+    return SCONVERSION(EXESS_SUCCESS, *(const int32_t*)in);
   case EXESS_SHORT:
-    *out = *(const int16_t*)in;
-    return EXESS_SUCCESS;
-
+    return SCONVERSION(EXESS_SUCCESS, *(const int16_t*)in);
   case EXESS_BYTE:
-    *out = (int64_t)(*(const int8_t*)in);
-    return EXESS_SUCCESS;
+    return SCONVERSION(EXESS_SUCCESS, *(const int8_t*)in);
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG: {
     const uint64_t u = *(const uint64_t*)in;
-
-    if (u > INT64_MAX) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (int64_t)u;
-    return EXESS_SUCCESS;
+    return (u > INT64_MAX) ? SCONVERSION(EXESS_OUT_OF_RANGE, 0)
+                           : SCONVERSION(EXESS_SUCCESS, (int64_t)u);
   }
 
   case EXESS_UINT:
-    *out = *(const uint32_t*)in;
-    return EXESS_SUCCESS;
-
+    return SCONVERSION(EXESS_SUCCESS, *(const uint32_t*)in);
   case EXESS_USHORT:
-    *out = *(const uint16_t*)in;
-    return EXESS_SUCCESS;
-
+    return SCONVERSION(EXESS_SUCCESS, *(const uint16_t*)in);
   case EXESS_UBYTE:
-    *out = *(const uint8_t*)in;
-    return EXESS_SUCCESS;
+    return SCONVERSION(EXESS_SUCCESS, *(const uint8_t*)in);
 
   case EXESS_POSITIVE_INTEGER: {
     const uint64_t u = *(const uint64_t*)in;
-
-    if (u > INT64_MAX) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (int64_t)u;
-    return EXESS_SUCCESS;
+    return (u > INT64_MAX) ? SCONVERSION(EXESS_OUT_OF_RANGE, 0)
+                           : SCONVERSION(EXESS_SUCCESS, (int64_t)u);
   }
 
   case EXESS_DURATION:
@@ -129,116 +119,74 @@ coerce_to_long(int64_t* const       out,
     break;
   }
 
-  return EXESS_UNSUPPORTED;
+  return SCONVERSION(EXESS_UNSUPPORTED, 0);
 }
 
-static ExessStatus
-coerce_signed(const ExessCoercions coercions,
-              int64_t* const       out,
-              const ExessDatatype  in_datatype,
-              const void* const    in,
-              const int64_t        min,
-              const int64_t        max)
-{
-  const ExessStatus st = coerce_to_long(out, in_datatype, in, coercions);
-
-  return st                           ? st
-         : (*out < min || *out > max) ? EXESS_OUT_OF_RANGE
-                                      : EXESS_SUCCESS;
-}
-
-static ExessStatus
-coerce_to_ulong(uint64_t* const      out,
-                const ExessDatatype  in_datatype,
-                const void* const    in,
-                const ExessCoercions coercions)
+static UConversion
+convert_unsigned(const ExessCoercions coercions,
+                 const ExessDatatype  in_datatype,
+                 const void* const    in)
 {
   if (in_datatype == EXESS_NON_NEGATIVE_INTEGER || in_datatype == EXESS_ULONG ||
       in_datatype == EXESS_POSITIVE_INTEGER) {
-    *out = *(const uint64_t*)in;
-    return EXESS_SUCCESS;
+    return UCONVERSION(EXESS_SUCCESS, *(const uint64_t*)in);
   }
 
-  int64_t           signed_out = 0;
-  const ExessStatus st =
-    coerce_to_long(&signed_out, in_datatype, in, coercions);
+  const SConversion c = convert_signed(coercions, in_datatype, in);
 
-  if (!st) {
-    if (signed_out < 0) {
-      return EXESS_OUT_OF_RANGE;
-    }
-
-    *out = (uint64_t)signed_out;
-  }
-
-  return st;
+  return c.status        ? UCONVERSION(c.status, 0U)
+         : (c.value < 0) ? UCONVERSION(EXESS_OUT_OF_RANGE, 0U)
+                         : UCONVERSION(EXESS_SUCCESS, (uint64_t)c.value);
 }
 
-static ExessStatus
-coerce_unsigned(const ExessCoercions coercions,
-                uint64_t* const      out,
-                const ExessDatatype  in_datatype,
-                const void* const    in,
-                const uint64_t       max)
+static SConversion
+convert_signed_range(const ExessCoercions coercions,
+                     const ExessDatatype  in_datatype,
+                     const void* const    in,
+                     const int64_t        min,
+                     const int64_t        max)
 {
-  const ExessStatus st = coerce_to_ulong(out, in_datatype, in, coercions);
+  const SConversion c = convert_signed(coercions, in_datatype, in);
 
-  return st ? st : (*out > max) ? EXESS_OUT_OF_RANGE : EXESS_SUCCESS;
+  return (!c.status && (c.value < min || c.value > max))
+           ? SCONVERSION(EXESS_OUT_OF_RANGE, 0U)
+           : c;
+}
+
+static UConversion
+convert_unsigned_range(const ExessCoercions coercions,
+                       const ExessDatatype  in_datatype,
+                       const void* const    in,
+                       const uint64_t       min,
+                       const uint64_t       max)
+{
+  const UConversion c = convert_unsigned(coercions, in_datatype, in);
+
+  return (!c.status && (c.value < min || c.value > max))
+           ? UCONVERSION(EXESS_OUT_OF_RANGE, 0U)
+           : c;
 }
 
 static ExessResult
-coerce_to_boolean(const ExessCoercions coercions,
-                  const ExessDatatype  in_datatype,
-                  const void* const    in,
-                  bool* const          out)
+to_boolean(const ExessCoercions coercions,
+           const ExessDatatype  in_datatype,
+           const void* const    in,
+           bool* const          out)
 {
-  int64_t           l_out = 0;
-  const ExessStatus st    = coerce_to_long(&l_out, in_datatype, in, coercions);
+  const SConversion c = convert_signed(coercions, in_datatype, in);
+  ENSURE(!c.status, c.status);
+  ENSURE((coercions & (ExessCoercions)EXESS_TRUNCATE) || c.value == 0 ||
+           c.value == 1,
+         EXESS_LOSS);
 
-  if (!st) {
-    const bool truncate = (coercions & (ExessCoercions)EXESS_TRUNCATE);
-    if (!truncate && l_out != 0 && l_out != 1) {
-      return RESULT(EXESS_WOULD_TRUNCATE, 0U);
-    }
-
-    *out = (l_out != 0);
-    return RESULT(EXESS_SUCCESS, sizeof(bool));
-  }
-
-  return RESULT(st, 0U);
+  *out = !!c.value;
+  return RESULT(EXESS_SUCCESS, sizeof(bool));
 }
 
 static ExessResult
-coerce_to_decimal(const ExessDatatype in_datatype,
-                  const void* const   in,
-                  void* const         out)
-{
-  if (in_datatype == EXESS_DOUBLE) {
-    *(double*)out = *(const double*)in;
-    return RESULT(EXESS_SUCCESS, sizeof(double));
-  }
-
-  if (in_datatype == EXESS_FLOAT) {
-    *(double*)out = (double)*(const float*)in;
-    return RESULT(EXESS_SUCCESS, sizeof(double));
-  }
-
-  int64_t           l_out = 0;
-  const ExessStatus st    = coerce_signed(
-    EXESS_LOSSLESS, &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
-
-  if (!st) {
-    *(double*)out = (double)l_out;
-    return RESULT(EXESS_SUCCESS, sizeof(double));
-  }
-
-  return RESULT(st, 0U);
-}
-
-static ExessResult
-coerce_to_double(const ExessDatatype in_datatype,
-                 const void* const   in,
-                 double* const       out)
+to_double(const ExessDatatype in_datatype,
+          const void* const   in,
+          double* const       out)
 {
   if (in_datatype == EXESS_DECIMAL) {
     *out = *(const double*)in;
@@ -250,196 +198,99 @@ coerce_to_double(const ExessDatatype in_datatype,
     return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
-  int64_t           l_out = 0;
-  const ExessStatus st    = coerce_signed(
-    EXESS_LOSSLESS, &l_out, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
-  if (!st) {
-    *out = (double)l_out;
-    return RESULT(EXESS_SUCCESS, sizeof(double));
-  }
+  const SConversion c = convert_signed_range(
+    EXESS_LOSSLESS, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
 
-  return RESULT(st, 0U);
+  ENSURE(!c.status, c.status);
+  *out = (double)c.value;
+  return RESULT(EXESS_SUCCESS, sizeof(double));
 }
 
 static ExessResult
-coerce_to_float(const ExessCoercions coercions,
-                const ExessDatatype  in_datatype,
-                const void* const    in,
-                float* const         out)
+to_float(const ExessCoercions coercions,
+         const ExessDatatype  in_datatype,
+         const void* const    in,
+         float* const         out)
 {
   if (in_datatype == EXESS_DECIMAL || in_datatype == EXESS_DOUBLE) {
-    if (!(coercions & (ExessCoercions)EXESS_REDUCE_PRECISION)) {
-      return RESULT(EXESS_WOULD_REDUCE_PRECISION, 0U);
-    }
-
+    ENSURE_COERCION(coercions, EXESS_APPROXIMATE);
     *out = (float)*(const double*)in;
     return RESULT(EXESS_SUCCESS, sizeof(float));
   }
 
-  int64_t           l_out = 0;
-  const ExessStatus st    = coerce_signed(
-    coercions, &l_out, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT);
+  const SConversion c = convert_signed_range(
+    coercions, in_datatype, in, -MAX_FLOAT_INT, MAX_FLOAT_INT);
 
-  if (!st) {
-    *out = (float)l_out;
-    return RESULT(EXESS_SUCCESS, sizeof(float));
-  }
-
-  return RESULT(st, 0U);
+  ENSURE(!c.status, c.status);
+  *out = (float)c.value;
+  return RESULT(EXESS_SUCCESS, sizeof(float));
 }
 
 static ExessResult
-coerce_to_integer(const ExessCoercions coercions,
-                  const ExessDatatype  in_datatype,
-                  const void* const    in,
-                  const int64_t        max,
-                  int64_t* const       out)
+to_long(const ExessCoercions coercions,
+        const ExessDatatype  in_datatype,
+        const void* const    in,
+        const int64_t        max,
+        int64_t* const       out)
 {
-  int64_t           l_out = 0;
-  const ExessStatus st    = coerce_to_long(&l_out, in_datatype, in, coercions);
+  const SConversion c =
+    convert_signed_range(coercions, in_datatype, in, INT64_MIN, max);
 
-  if (!st) {
-    if (l_out > max) {
-      return RESULT(EXESS_OUT_OF_RANGE, 0U);
-    }
-
-    *out = l_out;
-    return RESULT(EXESS_SUCCESS, sizeof(int64_t));
-  }
-
-  return RESULT(st, 0U);
+  ENSURE(!c.status, c.status);
+  *out = c.value;
+  return RESULT(EXESS_SUCCESS, sizeof(int64_t));
 }
 
 static ExessResult
-coerce_to_unsigned_integer(const ExessCoercions coercions,
-                           const ExessDatatype  in_datatype,
-                           const void* const    in,
-                           const uint64_t       min,
-                           uint64_t* const      out)
+to_ulong(const ExessCoercions coercions,
+         const ExessDatatype  in_datatype,
+         const void* const    in,
+         const uint64_t       min,
+         uint64_t* const      out)
 {
-  uint64_t          u_out = 0;
-  const ExessStatus st    = coerce_to_ulong(&u_out, in_datatype, in, coercions);
+  const UConversion c =
+    convert_unsigned_range(coercions, in_datatype, in, min, UINT64_MAX);
+  ENSURE(!c.status, c.status);
 
-  if (!st) {
-    if (u_out < min) {
-      return RESULT(EXESS_OUT_OF_RANGE, 0U);
-    }
-
-    *out = u_out;
-    return RESULT(EXESS_SUCCESS, sizeof(uint64_t));
-  }
-
-  return RESULT(st, 0U);
+  *out = c.value;
+  return RESULT(EXESS_SUCCESS, sizeof(uint64_t));
 }
 
 static ExessResult
-coerce_to_time(const ExessCoercions coercions,
-               const ExessDatatype  in_datatype,
-               const void* const    in,
-               ExessTime* const     out)
+to_time(const ExessCoercions coercions,
+        const ExessDatatype  in_datatype,
+        const void* const    in,
+        ExessTime* const     out)
 {
-  if (in_datatype != EXESS_DATE_TIME) {
-    return RESULT(EXESS_UNSUPPORTED, 0U);
-  }
-
-  if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
-    return RESULT(EXESS_WOULD_TRUNCATE, 0U);
-  }
+  ENSURE(in_datatype == EXESS_DATE_TIME, EXESS_UNSUPPORTED);
+  ENSURE_COERCION(coercions, EXESS_TRUNCATE);
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
 
-  const ExessTime time = {datetime.zone,
-                          datetime.hour,
-                          datetime.minute,
-                          datetime.second,
-                          datetime.nanosecond};
-
-  *out = time;
+  out->zone       = datetime.zone;
+  out->hour       = datetime.hour;
+  out->minute     = datetime.minute;
+  out->second     = datetime.second;
+  out->nanosecond = datetime.nanosecond;
   return RESULT(EXESS_SUCCESS, sizeof(ExessTime));
 }
 
 static ExessResult
-coerce_to_date(const ExessCoercions coercions,
-               const ExessDatatype  in_datatype,
-               const void* const    in,
-               ExessDate* const     out)
+to_date(const ExessCoercions coercions,
+        const ExessDatatype  in_datatype,
+        const void* const    in,
+        ExessDate* const     out)
 {
-  if (in_datatype != EXESS_DATE_TIME) {
-    return RESULT(EXESS_UNSUPPORTED, 0U);
-  }
-
-  if (!(coercions & (ExessCoercions)EXESS_TRUNCATE)) {
-    return RESULT(EXESS_WOULD_TRUNCATE, 0U);
-  }
+  ENSURE(in_datatype == EXESS_DATE_TIME, EXESS_UNSUPPORTED);
+  ENSURE_COERCION(coercions, EXESS_TRUNCATE);
 
   const ExessDateTime datetime = *(const ExessDateTime*)in;
 
-  const ExessDate date = {
-    datetime.year, datetime.month, datetime.day, datetime.zone};
-
-  *out = date;
+  out->year  = datetime.year;
+  out->month = datetime.month;
+  out->day   = datetime.day;
+  out->zone  = datetime.zone;
   return RESULT(EXESS_SUCCESS, sizeof(ExessDate));
-}
-
-static ExessResult
-coerce_to_signed(const ExessCoercions coercions,
-                 const ExessDatatype  in_datatype,
-                 const void* const    in,
-                 const ExessDatatype  out_datatype,
-                 void* const          out,
-                 const int64_t        min,
-                 const int64_t        max)
-{
-  int64_t           value = 0;
-  const ExessStatus st =
-    coerce_signed(coercions, &value, in_datatype, in, min, max);
-
-  ExessResult r = {st, 0U};
-  if (!st) {
-    if (out_datatype == EXESS_INT) {
-      *(int32_t*)out = (int32_t)value;
-      r.count        = sizeof(int32_t);
-    } else if (out_datatype == EXESS_SHORT) {
-      *(int16_t*)out = (int16_t)value;
-      r.count        = sizeof(int16_t);
-    } else {
-      assert(out_datatype == EXESS_BYTE);
-      *(int8_t*)out = (int8_t)value;
-      r.count       = sizeof(int8_t);
-    }
-  }
-
-  return r;
-}
-
-static ExessResult
-coerce_to_unsigned(const ExessCoercions coercions,
-                   const ExessDatatype  in_datatype,
-                   const void* const    in,
-                   const ExessDatatype  out_datatype,
-                   void* const          out,
-                   const uint64_t       max)
-{
-  uint64_t          value = 0U;
-  const ExessStatus st =
-    coerce_unsigned(coercions, &value, in_datatype, in, max);
-
-  ExessResult r = {st, 0U};
-  if (!st) {
-    if (out_datatype == EXESS_UINT) {
-      *(uint32_t*)out = (uint32_t)value;
-      r.count         = sizeof(uint32_t);
-    } else if (out_datatype == EXESS_USHORT) {
-      *(uint16_t*)out = (uint16_t)value;
-      r.count         = sizeof(uint16_t);
-    } else {
-      assert(out_datatype == EXESS_UBYTE);
-      *(uint8_t*)out = (uint8_t)value;
-      r.count        = sizeof(uint8_t);
-    }
-  }
-
-  return r;
 }
 
 ExessResult
@@ -451,103 +302,97 @@ exess_coerce_value(const ExessCoercions coercions,
                    const size_t         out_size,
                    void* const          out)
 {
-  // Ensure the input is sufficiently large so we don't read out of bounds
-  if (in_size < exess_value_sizes[in_datatype]) {
-    return RESULT(EXESS_BAD_VALUE, 0U);
-  }
+  // Ensure the input and output are large enough (for fixed types)
+  ENSURE(in_size >= exess_value_sizes[in_datatype], EXESS_BAD_VALUE);
+  ENSURE(out_size >= exess_value_sizes[out_datatype], EXESS_NO_SPACE);
 
   // Copy value verbatim for trivial conversions
   if ((out_datatype == in_datatype) ||
       (out_datatype == EXESS_HEX && in_datatype == EXESS_BASE64) ||
       (out_datatype == EXESS_BASE64 && in_datatype == EXESS_HEX)) {
-    if (out_size < in_size) {
-      return RESULT(EXESS_NO_SPACE, 0U);
-    }
-
+    ENSURE(out_size >= in_size, EXESS_NO_SPACE);
     memcpy(out, in, in_size);
     return RESULT(EXESS_SUCCESS, in_size);
   }
 
-  // Ensure the output is sufficiently large so we don't write out of bounds
-  if (out_size < exess_value_sizes[out_datatype]) {
-    return RESULT(EXESS_NO_SPACE, 0U);
-  }
-
-  ExessStatus st = EXESS_UNSUPPORTED;
+#define FIXED_CASE(Type, c)                                    \
+  do {                                                         \
+    *(Type*)out = (c).status ? (Type)0 : (Type)(c).value;      \
+    return RESULT((c).status, (c).status ? 0U : sizeof(Type)); \
+  } while (0)
 
   switch (out_datatype) {
   case EXESS_NOTHING:
     break;
 
   case EXESS_BOOLEAN:
-    return coerce_to_boolean(coercions, in_datatype, in, (bool*)out);
+    return to_boolean(coercions, in_datatype, in, (bool*)out);
   case EXESS_DECIMAL:
-    return coerce_to_decimal(in_datatype, in, (double*)out);
   case EXESS_DOUBLE:
-    return coerce_to_double(in_datatype, in, (double*)out);
+    return to_double(in_datatype, in, (double*)out);
   case EXESS_FLOAT:
-    return coerce_to_float(coercions, in_datatype, in, (float*)out);
+    return to_float(coercions, in_datatype, in, (float*)out);
 
   case EXESS_INTEGER:
-    return coerce_to_integer(
-      coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
+    return to_long(coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
 
   case EXESS_NON_POSITIVE_INTEGER:
-    return coerce_to_integer(coercions, in_datatype, in, 0, (int64_t*)out);
+    return to_long(coercions, in_datatype, in, 0, (int64_t*)out);
 
   case EXESS_NEGATIVE_INTEGER:
-    return coerce_to_integer(coercions, in_datatype, in, -1, (int64_t*)out);
+    return to_long(coercions, in_datatype, in, -1, (int64_t*)out);
 
   case EXESS_LONG:
-    return coerce_to_integer(
-      coercions, in_datatype, in, INT64_MAX, (int64_t*)out);
-
+    FIXED_CASE(
+      int64_t,
+      convert_signed_range(coercions, in_datatype, in, INT64_MIN, INT64_MAX));
   case EXESS_INT:
-    return coerce_to_signed(
-      coercions, in_datatype, in, out_datatype, out, INT32_MIN, INT32_MAX);
-
+    FIXED_CASE(
+      int32_t,
+      convert_signed_range(coercions, in_datatype, in, INT32_MIN, INT32_MAX));
   case EXESS_SHORT:
-    return coerce_to_signed(
-      coercions, in_datatype, in, out_datatype, out, INT16_MIN, INT16_MAX);
-
+    FIXED_CASE(
+      int16_t,
+      convert_signed_range(coercions, in_datatype, in, INT16_MIN, INT16_MAX));
   case EXESS_BYTE:
-    return coerce_to_signed(
-      coercions, in_datatype, in, out_datatype, out, INT8_MIN, INT8_MAX);
+    FIXED_CASE(
+      int8_t,
+      convert_signed_range(coercions, in_datatype, in, INT8_MIN, INT8_MAX));
 
   case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
-    return coerce_to_unsigned_integer(
-      coercions, in_datatype, in, 0U, (uint64_t*)out);
-
+    FIXED_CASE(
+      uint64_t,
+      convert_unsigned_range(coercions, in_datatype, in, 0U, UINT64_MAX));
   case EXESS_UINT:
-    return coerce_to_unsigned(
-      coercions, in_datatype, in, out_datatype, out, UINT32_MAX);
-
+    FIXED_CASE(
+      uint32_t,
+      convert_unsigned_range(coercions, in_datatype, in, 0U, UINT32_MAX));
   case EXESS_USHORT:
-    return coerce_to_unsigned(
-      coercions, in_datatype, in, out_datatype, out, UINT16_MAX);
-
+    FIXED_CASE(
+      uint16_t,
+      convert_unsigned_range(coercions, in_datatype, in, 0U, UINT16_MAX));
   case EXESS_UBYTE:
-    return coerce_to_unsigned(
-      coercions, in_datatype, in, out_datatype, out, UINT8_MAX);
+    FIXED_CASE(
+      uint8_t,
+      convert_unsigned_range(coercions, in_datatype, in, 0U, UINT8_MAX));
 
   case EXESS_POSITIVE_INTEGER:
-    return coerce_to_unsigned_integer(
-      coercions, in_datatype, in, 1U, (uint64_t*)out);
+    return to_ulong(coercions, in_datatype, in, 1U, (uint64_t*)out);
 
   case EXESS_DURATION:
   case EXESS_DATE_TIME:
     break;
 
   case EXESS_TIME:
-    return coerce_to_time(coercions, in_datatype, in, (ExessTime*)out);
+    return to_time(coercions, in_datatype, in, (ExessTime*)out);
   case EXESS_DATE:
-    return coerce_to_date(coercions, in_datatype, in, (ExessDate*)out);
+    return to_date(coercions, in_datatype, in, (ExessDate*)out);
 
   case EXESS_HEX:
   case EXESS_BASE64:
     break;
   }
 
-  return RESULT(st, 0U);
+  return RESULT(EXESS_UNSUPPORTED, 0U);
 }

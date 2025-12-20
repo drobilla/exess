@@ -26,9 +26,7 @@ exess_strerror(const ExessStatus status)
     "Invalid value",
     "Value outside valid range",
     "Insufficient space",
-    "Precision reducing coercion required",
-    "Rounding coercion required",
-    "Truncating coercion required",
+    "Lossy coercion required",
     "Unsupported value",
   };
 

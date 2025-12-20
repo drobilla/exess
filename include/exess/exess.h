@@ -109,29 +109,27 @@ typedef enum {
 
 /// Status code to describe errors or other relevant situations
 typedef enum {
-  EXESS_SUCCESS,                ///< Success
-  EXESS_EXPECTED_BOOLEAN,       ///< Expected "false", "true", "0" or "1"
-  EXESS_EXPECTED_INTEGER,       ///< Expected an integer value
-  EXESS_EXPECTED_DURATION,      ///< Expected a duration starting with 'P'
-  EXESS_EXPECTED_SIGN,          ///< Expected '-' or '+'
-  EXESS_EXPECTED_DIGIT,         ///< Expected a digit
-  EXESS_EXPECTED_ZERO,          ///< Expected '0'
-  EXESS_EXPECTED_COLON,         ///< Expected ':'
-  EXESS_EXPECTED_DASH,          ///< Expected '-'
-  EXESS_EXPECTED_TIME_SEP,      ///< Expected 'T'
-  EXESS_EXPECTED_TIME_TAG,      ///< Expected 'H', 'M', or 'S'
-  EXESS_EXPECTED_DATE_TAG,      ///< Expected 'Y', 'M', or 'D'
-  EXESS_EXPECTED_SECOND_TAG,    ///< Expected 'S'
-  EXESS_EXPECTED_HEX,           ///< Expected a hexadecimal character
-  EXESS_EXPECTED_BASE64,        ///< Expected a base64 character
-  EXESS_BAD_ORDER,              ///< Invalid field order
-  EXESS_BAD_VALUE,              ///< Invalid value
-  EXESS_OUT_OF_RANGE,           ///< Value out of range for datatype
-  EXESS_NO_SPACE,               ///< Insufficient space
-  EXESS_WOULD_REDUCE_PRECISION, ///< Precision reducing coercion required
-  EXESS_WOULD_ROUND,            ///< Rounding coercion required
-  EXESS_WOULD_TRUNCATE,         ///< Truncating coercion required
-  EXESS_UNSUPPORTED,            ///< Unsupported value
+  EXESS_SUCCESS,             ///< Success
+  EXESS_LOSS,                ///< Lossy operation
+  EXESS_EXPECTED_BOOLEAN,    ///< Expected "false", "true", "0" or "1"
+  EXESS_EXPECTED_INTEGER,    ///< Expected an integer value
+  EXESS_EXPECTED_DURATION,   ///< Expected a duration starting with 'P'
+  EXESS_EXPECTED_SIGN,       ///< Expected '-' or '+'
+  EXESS_EXPECTED_DIGIT,      ///< Expected a digit
+  EXESS_EXPECTED_ZERO,       ///< Expected '0'
+  EXESS_EXPECTED_COLON,      ///< Expected ':'
+  EXESS_EXPECTED_DASH,       ///< Expected '-'
+  EXESS_EXPECTED_TIME_SEP,   ///< Expected 'T'
+  EXESS_EXPECTED_TIME_TAG,   ///< Expected 'H', 'M', or 'S'
+  EXESS_EXPECTED_DATE_TAG,   ///< Expected 'Y', 'M', or 'D'
+  EXESS_EXPECTED_SECOND_TAG, ///< Expected 'S'
+  EXESS_EXPECTED_HEX,        ///< Expected a hexadecimal character
+  EXESS_EXPECTED_BASE64,     ///< Expected a base64 character
+  EXESS_BAD_ORDER,           ///< Invalid field order
+  EXESS_BAD_VALUE,           ///< Invalid value
+  EXESS_OUT_OF_RANGE,        ///< Value out of range for datatype
+  EXESS_NO_SPACE,            ///< Insufficient space
+  EXESS_UNSUPPORTED,         ///< Unsupported value
 } ExessStatus;
 
 /**
@@ -1530,7 +1528,7 @@ typedef enum {
      resulting value is approximately equal to the original value.
      Specifically, this allows coercing double to float.
   */
-  EXESS_REDUCE_PRECISION = 1U << 0U,
+  EXESS_APPROXIMATE = 1U << 0U,
 
   /**
      Allow coercions that round to the nearest integer.
@@ -1547,7 +1545,7 @@ typedef enum {
      Specifically, this allows coercing any number to boolean, and dateTime to
      date or time.
   */
-  EXESS_TRUNCATE = 1U << 1U,
+  EXESS_TRUNCATE = 1U << 2U,
 } ExessCoercion;
 
 /**
@@ -1581,12 +1579,10 @@ typedef uint32_t ExessCoercions;
    @param out_size Size of `out` in bytes.
    @param[out] out Coerced value on success.
 
-   @return The `count` of bytes written, and a `status`:
-   #EXESS_SUCCESS on successful conversion, #EXESS_OUT_OF_RANGE if the
-   value is outside the range of the target type,
-   #EXESS_WOULD_REDUCE_PRECISION, #EXESS_WOULD_ROUND, or #EXESS_WOULD_TRUNCATE
-   if the required coercion isn't enabled, or #EXESS_UNSUPPORTED if conversion
-   between the types isn't supported at all.
+   @return The `count` of bytes written, and a `status`: #EXESS_SUCCESS on
+   successful conversion, #EXESS_OUT_OF_RANGE if the value is outside the range
+   of the target type, #EXESS_LOSS if the required coercion isn't enabled, or
+   #EXESS_UNSUPPORTED if conversion between the types isn't supported at all.
 */
 EXESS_API ExessResult
 exess_coerce_value(ExessCoercions            coercions,
