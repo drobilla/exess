@@ -1,4 +1,4 @@
-// Copyright 2019-2024 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "scientific.h"
@@ -35,7 +35,7 @@ scientific_string_length(const ExessFloatingDecimal value,
           value.n_digits + 1 +             // Digits and point
           (value.n_digits <= 1) +          // Added '0' after point
           1 +                              // 'E'
-          (value.expt < 0) +               // Exponent sign
+          (value.expt < 1) +               // Exponent sign
           n_expt_digits);                  // Exponent digits
 }
 
@@ -46,8 +46,9 @@ write_scientific(const ExessFloatingDecimal value,
 {
   size_t i = 0;
 
+  const int      expt = value.expt - 1;
   const unsigned n_expt_digits =
-    (unsigned)exess_num_digits((unsigned)abs(value.expt));
+    (unsigned)exess_num_digits((unsigned)abs(expt));
 
   const size_t length = scientific_string_length(value, n_expt_digits);
   if (!buf) {
@@ -83,11 +84,11 @@ write_scientific(const ExessFloatingDecimal value,
   // Write exponent
 
   buf[i++] = 'E';
-  if (value.expt < 0) {
+  if (expt < 0) {
     buf[i++] = '-';
   }
 
-  unsigned abs_expt = (unsigned)abs(value.expt);
+  unsigned abs_expt = (unsigned)abs(expt);
   char*    s        = buf + i + n_expt_digits;
 
   *s-- = '\0';

@@ -63,7 +63,7 @@ parse_decimal(const char* const str, ExessFloatingDecimal* const out)
   for (;; ++i) {
     if (is_digit(str[i])) {
       if (out->n_digits < DBL_DECIMAL_DIG + 1) { // Significant digit
-        out->expt -= after_point;
+        out->expt += !after_point;
         out->digits[out->n_digits++] = str[i];
       } else { // Insignificant digit
         out->expt += !after_point;
@@ -299,38 +299,37 @@ decimal_to_double(const ExessFloatingDecimal in)
   static const double special_values[] = {
     (double)NAN, (double)-INFINITY, (double)INFINITY, -0.0, 0.0};
 
-  // Return early for edge cases
   if (in.kind < EXESS_NEGATIVE) {
-    return special_values[in.kind];
+    return special_values[in.kind]; // Special case
   }
 
-  const uint64_t frac         = read_fraction(in.n_digits, in.digits);
-  const int      sign         = in.kind == EXESS_POSITIVE ? 1 : -1;
-  const int      result_power = (int)in.n_digits + in.expt;
+  const int sign = in.kind == EXESS_POSITIVE ? 1 : -1;
 
-  // Return early for simple exact cases
-
-  if (result_power > max_decimal_power) {
-    return sign * (double)INFINITY;
+  if (in.expt > max_decimal_power) {
+    return sign * (double)INFINITY; // Infinite magnitude => infinity
   }
 
-  if (result_power < min_decimal_power) {
-    return sign * 0.0;
+  if (in.expt < min_decimal_power) {
+    return sign * 0.0; // Effectively zero
   }
 
-  if (in.n_digits < max_exact_int_digits) {
-    if (in.expt < 0) {
-      if (-in.expt < n_exact_pow10) {
-        return sign * ((double)frac / (double)POW10[-in.expt]);
+  // Represent value with integer mantissa and adjusted decimal power
+  const uint64_t frac  = read_fraction(in.n_digits, in.digits);
+  const int      power = in.expt - (int)in.n_digits;
+
+  if (in.n_digits < max_exact_int_digits) { // Exact integer value
+    if (power < 0) {
+      if (-power < n_exact_pow10) {
+        return sign * ((double)frac / (double)POW10[-power]);
       }
-    } else if (in.expt < n_exact_pow10) {
-      return sign * ((double)frac * (double)POW10[in.expt]);
+    } else if (power < n_exact_pow10) {
+      return sign * ((double)frac * (double)POW10[power]);
     }
   }
 
   // Try to guess the number using only soft floating point (fast path)
   ExessSoftFloat guess = {0, 0};
-  const bool     exact = sftod(frac, in.expt, (int)in.n_digits, &guess);
+  const bool     exact = sftod(frac, power, (int)in.n_digits, &guess);
   const double   g     = soft_float_to_double(guess);
   if (exact) {
     return sign * g;
@@ -339,7 +338,7 @@ decimal_to_double(const ExessFloatingDecimal in)
   // Not sure, guess is either the number or its predecessor (rare slow path)
   // Compare it with the buffer using bigints to find out which
   const ExessSoftFloat upper = {(guess.f * 2) + 1, guess.e - 1};
-  const int            cmp   = compare_buffer(in.digits, in.expt, upper);
+  const int            cmp   = compare_buffer(in.digits, power, upper);
   const bool round_up        = (cmp > 0) || (cmp == 0 && (guess.f & 1U) != 0);
 
   return sign * (round_up ? nextafter(g, (double)INFINITY) : g);

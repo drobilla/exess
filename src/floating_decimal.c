@@ -48,7 +48,7 @@ measure_decimal(const double d, const unsigned max_precision)
   assert(count.count == 1 || value.digits[count.count - 1] != '0');
 
   value.n_digits = count.count;
-  value.expt     = count.expt;
+  value.expt     = count.expt + 1;
 
   return value;
 }

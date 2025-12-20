@@ -1,4 +1,4 @@
-// Copyright 2019-2024 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "floating_decimal.h"
@@ -31,14 +31,14 @@ decimal_metrics(const ExessFloatingDecimal count)
 {
   DecimalMetrics metrics = {EXESS_POINT_AFTER, 0U, 0U};
 
-  if (count.expt >= (int)count.n_digits - 1) {
+  if (count.expt >= (int)count.n_digits) {
     metrics.point_loc      = EXESS_POINT_AFTER;
-    metrics.n_zeros_before = (unsigned)count.expt - (count.n_digits - 1U);
+    metrics.n_zeros_before = (unsigned)count.expt - count.n_digits;
     metrics.n_zeros_after  = 1U;
   } else if (count.expt < 0) {
     metrics.point_loc      = EXESS_POINT_BEFORE;
     metrics.n_zeros_before = 1U;
-    metrics.n_zeros_after  = (unsigned)(-count.expt - 1);
+    metrics.n_zeros_after  = (unsigned)(-count.expt);
   } else {
     metrics.point_loc = EXESS_POINT_BETWEEN;
   }
@@ -142,9 +142,9 @@ exess_write_decimal(const double value, const size_t buf_size, char* const buf)
     i += copy_chars(buf + i, decimal.digits, decimal.n_digits);
   } else {
     assert(metrics.point_loc == EXESS_POINT_BETWEEN);
-    assert(decimal.expt >= -1);
+    assert(decimal.expt >= 0);
 
-    const size_t n_before = (size_t)decimal.expt + 1U;
+    const size_t n_before = (size_t)decimal.expt;
     i += copy_chars(buf + i, decimal.digits, n_before);
 
     buf[i++] = '.';

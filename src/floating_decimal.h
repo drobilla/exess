@@ -1,4 +1,4 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_FLOATING_DECIMAL_H
@@ -12,7 +12,7 @@
 #  define DBL_DECIMAL_DIG 17
 #endif
 
-/// A "kind" of floating point number
+/// A "kind" of decimal floating point number
 typedef enum {
   EXESS_NAN,
   EXESS_NEGATIVE_INFINITY,
@@ -23,7 +23,14 @@ typedef enum {
   EXESS_POSITIVE,
 } ExessNumberKind;
 
-/// A floating point double stored as a decimal string
+/**
+   An extended range/precision decimal floating point number.
+
+   This is vaguely similar to an IEEE floating point number, except with digits
+   stored as ASCII characters.  There's an implicit decimal point before all of
+   the digits (that is, an implicit first digit of '0'), and an exponent that
+   encodes where the "real" decimal point is.
+*/
 typedef struct {
   ExessNumberKind kind;                        ///< Kind of number
   int             expt;                        ///< Power of 10 exponent
