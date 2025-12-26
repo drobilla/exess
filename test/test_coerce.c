@@ -63,6 +63,16 @@ check_conversions(CheckState* const    state,
 
   assert(!coerced_str_r.status);
   assert(!strcmp(coerced_str, to_string));
+
+  // Check that coercion fails with inadequate space
+  assert(exess_coerce_value(coercions,
+                            from_datatype,
+                            state->r_value.write_count,
+                            state->value,
+                            to_datatype,
+                            state->r_coerced.count - 1U,
+                            state->coerced)
+           .status == EXESS_NO_SPACE);
 }
 
 // Check a perfect (lossless/bidirectional) coercion

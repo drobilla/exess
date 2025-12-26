@@ -67,6 +67,7 @@ test_read_long(void)
 
   // Trailing garbage
   check_read("1234extra", EXESS_SUCCESS, 1234, 4);
+  check_read("-0x", EXESS_SUCCESS, 0, 2);
 
   // Garbage
   check_read("+", EXESS_EXPECTED_DIGIT, 0, 1);

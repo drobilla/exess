@@ -56,11 +56,13 @@ test_read_value(void)
   }
   {
     bool a_bool = false;
+    check_read(&a_bool, EXESS_BOOLEAN, "x", EXESS_EXPECTED_BOOLEAN, 0);
     check_read(&a_bool, EXESS_BOOLEAN, "true", EXESS_SUCCESS, 4);
     assert(a_bool);
   }
   {
     double a_double = (double)NAN;
+    check_read(&a_double, EXESS_DOUBLE, "x", EXESS_EXPECTED_DIGIT, 0);
 
     check_read(&a_double, EXESS_DECIMAL, "1.2", EXESS_SUCCESS, 3);
     assert(double_matches(a_double, 1.2));
@@ -70,12 +72,14 @@ test_read_value(void)
   }
   {
     float a_float = NAN;
+    check_read(&a_float, EXESS_FLOAT, "x", EXESS_EXPECTED_DIGIT, 0);
+
     check_read(&a_float, EXESS_FLOAT, "5.6", EXESS_SUCCESS, 3);
     assert(float_matches(a_float, 5.6f));
   }
   {
     int64_t a_long = 0;
-
+    check_read(&a_long, EXESS_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_long, EXESS_NOTHING, "42", EXESS_UNSUPPORTED, 0);
 
     check_read(&a_long, EXESS_INTEGER, "7", EXESS_SUCCESS, 1);
@@ -97,36 +101,43 @@ test_read_value(void)
   }
   {
     int32_t a_int = 0;
+    check_read(&a_int, EXESS_INT, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_int, EXESS_INT, "11", EXESS_SUCCESS, 2);
     assert(a_int == 11);
   }
   {
     int16_t a_short = 0;
+    check_read(&a_short, EXESS_SHORT, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_short, EXESS_SHORT, "12", EXESS_SUCCESS, 2);
     assert(a_short == 12);
   }
   {
     int8_t a_byte = 0;
+    check_read(&a_byte, EXESS_BYTE, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_byte, EXESS_BYTE, "13", EXESS_SUCCESS, 2);
     assert(a_byte == 13);
   }
   {
     uint64_t a_ulong = 0U;
+    check_read(&a_ulong, EXESS_ULONG, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_ulong, EXESS_ULONG, "14", EXESS_SUCCESS, 2);
     assert(a_ulong == 14U);
   }
   {
     uint32_t a_uint = 0U;
+    check_read(&a_uint, EXESS_UINT, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_uint, EXESS_UINT, "15", EXESS_SUCCESS, 2);
     assert(a_uint == 15U);
   }
   {
     uint16_t a_ushort = 0U;
+    check_read(&a_ushort, EXESS_USHORT, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_ushort, EXESS_USHORT, "16", EXESS_SUCCESS, 2);
     assert(a_ushort == 16U);
   }
   {
     uint8_t a_ubyte = 0U;
+    check_read(&a_ubyte, EXESS_UBYTE, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_ubyte, EXESS_UBYTE, "17", EXESS_SUCCESS, 2);
     assert(a_ubyte == 17U);
   }
@@ -139,7 +150,20 @@ test_read_value(void)
     assert(a_ulong == 18U);
   }
   {
+    ExessDuration a_duration = {1, 2, 3};
+    check_read(&a_duration, EXESS_DURATION, "x", EXESS_EXPECTED_DURATION, 0);
+
+    check_read(
+      &a_duration, EXESS_DURATION, "P1MT2.000000003S", EXESS_SUCCESS, 16);
+
+    assert(a_duration.months == 1);
+    assert(a_duration.seconds == 2);
+    assert(a_duration.nanoseconds == 3);
+  }
+  {
     ExessDateTime a_datetime = datetime;
+    check_read(&a_datetime, EXESS_DATE_TIME, "x", EXESS_EXPECTED_DIGIT, 0);
+
     check_read(&a_datetime,
                EXESS_DATE_TIME,
                "2001-01-02T12:15:01.25",
@@ -156,6 +180,7 @@ test_read_value(void)
   }
   {
     ExessDate a_date = date;
+    check_read(&a_date, EXESS_DATE, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_date, EXESS_DATE, "2001-01-02", EXESS_SUCCESS, 10);
     assert(a_date.year == 2001);
     assert(a_date.month == 1);
@@ -163,6 +188,7 @@ test_read_value(void)
   }
   {
     ExessTime a_time = time;
+    check_read(&a_time, EXESS_TIME, "x", EXESS_EXPECTED_DIGIT, 0);
     check_read(&a_time, EXESS_TIME, "12:15:01.25", EXESS_SUCCESS, 11);
     assert(a_time.hour == 12);
     assert(a_time.minute == 15);
@@ -171,11 +197,13 @@ test_read_value(void)
   }
   {
     char a_blob[] = {1, 2, 3};
+    check_read(a_blob, EXESS_HEX, "!", EXESS_EXPECTED_HEX, 0);
     check_read(a_blob, EXESS_HEX, "666F6F", EXESS_SUCCESS, 6);
     assert(!strncmp(a_blob, "foo", sizeof(a_blob)));
   }
   {
     char a_blob[] = {1, 2, 3};
+    check_read(a_blob, EXESS_BASE64, "!", EXESS_EXPECTED_BASE64, 0);
     check_read(a_blob, EXESS_BASE64, "Zm9v", EXESS_SUCCESS, 4);
     assert(!strncmp(a_blob, "foo", sizeof(a_blob)));
   }
@@ -253,6 +281,13 @@ test_write_value(void)
   check_write(EXESS_UINT, sizeof(a_uint), &a_uint, 3, "12");
   check_write(EXESS_USHORT, sizeof(a_ushort), &a_ushort, 3, "13");
   check_write(EXESS_UBYTE, sizeof(a_ubyte), &a_ubyte, 3, "14");
+
+  check_write(EXESS_INTEGER, sizeof(a_long), &a_long, 2, "7");
+  check_write(EXESS_NON_POSITIVE_INTEGER, sizeof(a_long), &a_long, 2, "7");
+  check_write(EXESS_NEGATIVE_INTEGER, sizeof(a_long), &a_long, 2, "7");
+
+  check_write(EXESS_NON_NEGATIVE_INTEGER, sizeof(a_ulong), &a_ulong, 3, "11");
+  check_write(EXESS_POSITIVE_INTEGER, sizeof(a_ulong), &a_ulong, 3, "11");
 
   check_write(
     EXESS_DURATION, sizeof(a_duration), &a_duration, 15, "P1Y2M3DT4H5M6S");

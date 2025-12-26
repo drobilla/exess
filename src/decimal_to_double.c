@@ -99,10 +99,8 @@ sftod(const uint64_t        significand,
   error = normalize(&input, product_error(error, half_ulp, half_ulp));
 
   // Get the effective number of significant bits from the order of magnitude
-  const int      magnitude      = 64 + input.e;
-  const int      real_magnitude = magnitude - dbl_subnormal_expt;
-  const unsigned n_significant_bits =
-    (unsigned)MAX(0, MIN(real_magnitude, DBL_MANT_DIG));
+  const int magnitude = MIN(DBL_MANT_DIG, 64 + input.e - dbl_subnormal_expt);
+  const unsigned n_significant_bits = (unsigned)MAX(0, magnitude);
 
   // Calculate the number of "extra" bits of precision we have
   assert(n_significant_bits <= 64);
