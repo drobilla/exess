@@ -57,6 +57,7 @@ man_links = {
   ],
 
   'exess_int.3': ['exess_read_int.3', 'exess_write_int.3'],
+  'exess_integer.3': ['exess_read_integer.3', 'exess_write_integer.3'],
   'exess_long.3': ['exess_read_long.3', 'exess_write_long.3'],
   'exess_short.3': ['exess_read_short.3', 'exess_write_short.3'],
   'exess_status.3': [

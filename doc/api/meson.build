@@ -24,6 +24,7 @@ c_exess_rst = custom_target(
     'exess_float.rst',
     'exess_hex.rst',
     'exess_int.rst',
+    'exess_integer.rst',
     'exess_long.rst',
     'exess_numbers.rst',
     'exess_short.rst',

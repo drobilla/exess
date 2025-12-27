@@ -18,6 +18,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifndef DBL_DECIMAL_DIG
+#  define DBL_DECIMAL_DIG 17U
+#endif
+
 static ExessResult
 parse_double(const char* const str,
              BigDecimal* const out,

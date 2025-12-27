@@ -25,13 +25,12 @@ Support for reading and writing is provided for:
 
   * `boolean`, like "false", "true", "0", or "1".
 
-  * `decimal`, like "1.234" (stored as `double`).
+  * `decimal`, like "1.234".
 
   * `float` and `double`, like "4.2E1" or "4.2e1".
 
   * The unbounded integer types `integer`, `nonPositiveInteger`,
-    `negativeInteger`, `nonNegativeInteger`, and `nonPositiveInteger` (stored
-    as `int64_t` or `uint64_t`).
+    `negativeInteger`, `nonNegativeInteger`, and `nonPositiveInteger`.
 
   * The fixed-size integer types `long`, `int`, `short`, `byte`,
     `unsignedLong`, `unsignedInt`, `unsignedShort`, and `unsignedByte`.

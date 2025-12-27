@@ -3,8 +3,10 @@
 
 #undef NDEBUG
 
+#include "decimal_test_utils.h"
 #include "double_test_utils.h"
 #include "float_test_utils.h"
+#include "integer_test_utils.h"
 #include "write_test_utils.h"
 
 #include <exess/exess.h>
@@ -15,6 +17,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#define VALUE_SIZE 28U
 #define STRING_SIZE 20U
 
 static const ExessDuration duration = {14,
@@ -50,6 +53,22 @@ check_read(void*               value,
 }
 
 static void
+check_decimal_value(const void* const decimal, const double number)
+{
+  EXESS_ALIGN uint8_t check[VALUE_SIZE] = {0};
+  const size_t        size = set_decimal_value(sizeof(check), check, number);
+  assert(!memcmp(decimal, check, size));
+}
+
+static void
+check_integer_value(const void* const integer, const int64_t number)
+{
+  EXESS_ALIGN uint8_t check[VALUE_SIZE] = {0};
+  const size_t        size = set_integer_value(sizeof(check), check, number);
+  assert(!memcmp(integer, check, size));
+}
+
+static void
 test_read_value(void)
 {
   {
@@ -65,12 +84,12 @@ test_read_value(void)
     assert(a_bool);
   }
   {
+    EXESS_ALIGN uint8_t a_decimal[VALUE_SIZE] = {0};
+    check_read(a_decimal, EXESS_DECIMAL, "1.2", EXESS_SUCCESS, 3);
+    check_decimal_value(a_decimal, 1.2);
+  }
+  {
     double a_double = (double)NAN;
-    check_read(&a_double, EXESS_DOUBLE, "x", EXESS_EXPECTED_DIGIT, 0);
-
-    check_read(&a_double, EXESS_DECIMAL, "1.2", EXESS_SUCCESS, 3);
-    assert(double_matches(a_double, 1.2));
-
     check_read(&a_double, EXESS_DOUBLE, "3.4", EXESS_SUCCESS, 3);
     assert(double_matches(a_double, 3.4));
   }
@@ -82,24 +101,38 @@ test_read_value(void)
     assert(float_matches(a_float, 5.6f));
   }
   {
-    int64_t a_long = 0;
-    check_read(&a_long, EXESS_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_long, EXESS_NOTHING, "42", EXESS_UNSUPPORTED, 0);
+    EXESS_ALIGN uint8_t a_decimal[VALUE_SIZE] = {0};
 
-    check_read(&a_long, EXESS_INTEGER, "7", EXESS_SUCCESS, 1);
-    assert(a_long == 7);
+    check_read(a_decimal, EXESS_NOTHING, "42", EXESS_UNSUPPORTED, 0);
+
+    check_read(a_decimal, EXESS_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(a_decimal, EXESS_INTEGER, "7", EXESS_SUCCESS, 1);
+    check_decimal_value(a_decimal, 7.0);
 
     check_read(
-      &a_long, EXESS_NON_POSITIVE_INTEGER, "f", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_long, EXESS_NON_POSITIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_long, EXESS_NON_POSITIVE_INTEGER, "-8", EXESS_SUCCESS, 2);
-    assert(a_long == -8);
+      a_decimal, EXESS_NON_POSITIVE_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(
+      a_decimal, EXESS_NON_POSITIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
+    check_read(a_decimal, EXESS_NON_POSITIVE_INTEGER, "-8", EXESS_SUCCESS, 2);
+    check_decimal_value(a_decimal, -8.0);
 
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "f", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_long, EXESS_NEGATIVE_INTEGER, "-9", EXESS_SUCCESS, 2);
-    assert(a_long == -9);
+    check_read(a_decimal, EXESS_NEGATIVE_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(a_decimal, EXESS_NEGATIVE_INTEGER, "1", EXESS_OUT_OF_RANGE, 1);
+    check_read(a_decimal, EXESS_NEGATIVE_INTEGER, "-9", EXESS_SUCCESS, 2);
+    check_decimal_value(a_decimal, -9.0);
 
+    check_read(
+      a_decimal, EXESS_NON_NEGATIVE_INTEGER, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(
+      a_decimal, EXESS_NON_NEGATIVE_INTEGER, "-1", EXESS_OUT_OF_RANGE, 2);
+    check_read(a_decimal, EXESS_NON_NEGATIVE_INTEGER, "-0", EXESS_SUCCESS, 2);
+    check_read(a_decimal, EXESS_NON_NEGATIVE_INTEGER, "0", EXESS_SUCCESS, 1);
+    check_read(a_decimal, EXESS_NON_NEGATIVE_INTEGER, "+0", EXESS_SUCCESS, 2);
+    check_read(a_decimal, EXESS_NON_NEGATIVE_INTEGER, "43", EXESS_SUCCESS, 2);
+    check_decimal_value(a_decimal, 43.0);
+  }
+  {
+    int64_t a_long = 0;
     check_read(&a_long, EXESS_LONG, "10", EXESS_SUCCESS, 2);
     assert(a_long == 10);
   }
@@ -146,12 +179,14 @@ test_read_value(void)
     assert(a_ubyte == 17U);
   }
   {
-    uint64_t a_ulong = 0U;
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "E", EXESS_EXPECTED_DIGIT, 0);
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "-1", EXESS_EXPECTED_ZERO, 1);
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "0", EXESS_OUT_OF_RANGE, 1);
-    check_read(&a_ulong, EXESS_POSITIVE_INTEGER, "18", EXESS_SUCCESS, 2);
-    assert(a_ulong == 18U);
+    EXESS_ALIGN uint8_t a_integer[VALUE_SIZE] = {0};
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "E", EXESS_EXPECTED_DIGIT, 0);
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "-1", EXESS_OUT_OF_RANGE, 2);
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "-0", EXESS_OUT_OF_RANGE, 2);
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "0", EXESS_OUT_OF_RANGE, 1);
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "+0", EXESS_OUT_OF_RANGE, 2);
+    check_read(a_integer, EXESS_POSITIVE_INTEGER, "18", EXESS_SUCCESS, 2);
+    check_integer_value(a_integer, 18);
   }
   {
     ExessDuration a_duration = {1, 2, 3};
@@ -250,8 +285,10 @@ test_write_value(void)
 {
   uint8_t a_blob[] = {'f', 'o', 'o'};
 
+  EXESS_ALIGN uint8_t a_decimal[VALUE_SIZE] = {0};
+  set_decimal_value(sizeof(a_decimal), a_decimal, 1.2);
+
   const bool          a_bool     = true;
-  const double        a_decimal  = 1.2;
   const double        a_double   = 3.4;
   const float         a_float    = 5.6f;
   const int64_t       a_long     = 7;
@@ -286,12 +323,22 @@ test_write_value(void)
   check_write(EXESS_USHORT, sizeof(a_ushort), &a_ushort, 3, "13");
   check_write(EXESS_UBYTE, sizeof(a_ubyte), &a_ubyte, 3, "14");
 
-  check_write(EXESS_INTEGER, sizeof(a_long), &a_long, 2, "7");
-  check_write(EXESS_NON_POSITIVE_INTEGER, sizeof(a_long), &a_long, 2, "7");
-  check_write(EXESS_NEGATIVE_INTEGER, sizeof(a_long), &a_long, 2, "7");
+  {
+    EXESS_ALIGN uint8_t a_integer[VALUE_SIZE] = {0};
 
-  check_write(EXESS_NON_NEGATIVE_INTEGER, sizeof(a_ulong), &a_ulong, 3, "11");
-  check_write(EXESS_POSITIVE_INTEGER, sizeof(a_ulong), &a_ulong, 3, "11");
+    set_integer_value(sizeof(a_integer), a_integer, -15);
+    check_write(EXESS_INTEGER, sizeof(a_integer), &a_integer, 4, "-15");
+    check_write(
+      EXESS_NON_POSITIVE_INTEGER, sizeof(a_integer), &a_integer, 4, "-15");
+    check_write(
+      EXESS_NEGATIVE_INTEGER, sizeof(a_integer), &a_integer, 4, "-15");
+
+    set_integer_value(sizeof(a_integer), a_integer, -16);
+    check_write(
+      EXESS_NON_NEGATIVE_INTEGER, sizeof(a_integer), &a_integer, 4, "-16");
+    check_write(
+      EXESS_POSITIVE_INTEGER, sizeof(a_integer), &a_integer, 4, "-16");
+  }
 
   check_write(
     EXESS_DURATION, sizeof(a_duration), &a_duration, 15, "P1Y2M3DT4H5M6S");

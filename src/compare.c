@@ -1,6 +1,8 @@
 // Copyright 2019-2025 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
+#include "big_decimal.h"
+
 #include <exess/exess.h>
 
 #include <stdbool.h>
@@ -17,6 +19,42 @@ compare_datatypes(const ExessDatatype lhs_datatype,
          : !rhs_name                        ? EXESS_ORDER_MAYBE_GREATER
          : (strcmp(lhs_name, rhs_name) < 0) ? EXESS_ORDER_MAYBE_LESS
                                             : EXESS_ORDER_MAYBE_GREATER;
+}
+
+static ExessOrder
+compare_decimal(const void* const lhs_value, const void* const rhs_value)
+{
+  //                                       Na  -I  +I  -0  +0  -N  +N
+  static const int8_t kind_orders[7][7] = {{0, -1, -1, -1, -1, -1, -1},  // Na
+                                           {1, +0, -2, -2, -2, -2, -2},  // -I
+                                           {1, +2, +0, +2, +2, +2, +2},  // +I
+                                           {1, +2, -2, +0, +0, +2, -2},  // -0
+                                           {1, +2, -2, +0, +0, +2, -2},  // +0
+                                           {1, +2, -2, -2, -2, +0, -2},  // -N
+                                           {1, +2, -2, +2, +2, +2, +0}}; // +N
+
+  const BigDecimal lhs = *(const BigDecimal*)lhs_value;
+  const BigDecimal rhs = *(const BigDecimal*)rhs_value;
+  if (lhs.kind != rhs.kind) {
+    return (ExessOrder)kind_orders[lhs.kind][rhs.kind];
+  }
+
+  // The internal representation has digits without leading zeros
+  const char* const lhs_digits = (const char*)lhs_value + sizeof(lhs);
+  const char* const rhs_digits = (const char*)rhs_value + sizeof(rhs);
+  const bool        negative   = lhs.kind == EXESS_NEGATIVE;
+  const int         factor     = negative ? -1 : 1;
+
+  if (lhs.expt != rhs.expt) {
+    return (ExessOrder)(factor * ((lhs.expt < rhs.expt)
+                                    ? EXESS_ORDER_STRICTLY_LESS
+                                    : EXESS_ORDER_STRICTLY_GREATER));
+  }
+
+  const int cmp = strncmp(lhs_digits, rhs_digits, lhs.n_digits);
+  return (ExessOrder)(factor * (cmp < 0   ? EXESS_ORDER_STRICTLY_LESS
+                                : cmp > 0 ? EXESS_ORDER_STRICTLY_GREATER
+                                          : EXESS_ORDER_EQUAL));
 }
 
 static ExessOrder
@@ -58,14 +96,10 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     break;
   case EXESS_BOOLEAN:
     return COMPARE(*(const bool*)lhs_value, *(const bool*)rhs_value);
-  case EXESS_DECIMAL:
   case EXESS_DOUBLE:
     return COMPARE(*(const double*)lhs_value, *(const double*)rhs_value);
   case EXESS_FLOAT:
     return COMPARE(*(const float*)lhs_value, *(const float*)rhs_value);
-  case EXESS_INTEGER:
-  case EXESS_NON_POSITIVE_INTEGER:
-  case EXESS_NEGATIVE_INTEGER:
   case EXESS_LONG:
     return COMPARE(*(const int64_t*)lhs_value, *(const int64_t*)rhs_value);
   case EXESS_INT:
@@ -74,7 +108,6 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return COMPARE(*(const int16_t*)lhs_value, *(const int16_t*)rhs_value);
   case EXESS_BYTE:
     return COMPARE(*(const int8_t*)lhs_value, *(const int8_t*)rhs_value);
-  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_ULONG:
     return COMPARE(*(const uint64_t*)lhs_value, *(const uint64_t*)rhs_value);
   case EXESS_UINT:
@@ -83,8 +116,13 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return COMPARE(*(const uint16_t*)lhs_value, *(const uint16_t*)rhs_value);
   case EXESS_UBYTE:
     return COMPARE(*(const uint8_t*)lhs_value, *(const uint8_t*)rhs_value);
+  case EXESS_DECIMAL:
+  case EXESS_INTEGER:
+  case EXESS_NON_POSITIVE_INTEGER:
+  case EXESS_NEGATIVE_INTEGER:
+  case EXESS_NON_NEGATIVE_INTEGER:
   case EXESS_POSITIVE_INTEGER:
-    return COMPARE(*(const uint64_t*)lhs_value, *(const uint64_t*)rhs_value);
+    return compare_decimal(lhs_value, rhs_value);
   case EXESS_DURATION:
     return exess_compare_duration(*(const ExessDuration*)lhs_value,
                                   *(const ExessDuration*)rhs_value);

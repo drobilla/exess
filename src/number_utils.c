@@ -9,6 +9,9 @@
 
 #include <exess/exess.h>
 
+#include <assert.h>
+#include <string.h>
+
 size_t
 read_sign(int* const sign, const char* const str)
 {
@@ -58,6 +61,18 @@ write_two_digit_number(const uint8_t value,
   }
 
   return 2;
+}
+
+size_t
+write_zeros(const size_t n,
+            const size_t buf_size,
+            char* const  buf,
+            const size_t i)
+{
+  assert(i + n < buf_size);
+  (void)buf_size;
+  memset(buf + i, '0', n);
+  return n;
 }
 
 ExessResult

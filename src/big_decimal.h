@@ -4,14 +4,6 @@
 #ifndef EXESS_SRC_BIG_DECIMAL_H
 #define EXESS_SRC_BIG_DECIMAL_H
 
-// Define C11 numeric constants if the compiler hasn't already
-#ifndef FLT_DECIMAL_DIG
-#  define FLT_DECIMAL_DIG 9
-#endif
-#ifndef DBL_DECIMAL_DIG
-#  define DBL_DECIMAL_DIG 17
-#endif
-
 /// A "kind" of decimal floating point number
 typedef enum {
   EXESS_NAN,

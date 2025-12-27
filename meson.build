@@ -165,6 +165,7 @@ sources = files(
   'src/hex.c',
   'src/int.c',
   'src/int_math.c',
+  'src/integer.c',
   'src/long.c',
   'src/number_utils.c',
   'src/parse_decimal.c',

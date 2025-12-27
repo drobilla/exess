@@ -11,21 +11,21 @@ static const size_t xsd_len = sizeof(EXESS_XSD_URI) - 1U;
 static const char* EXESS_NONNULL const uris[EXESS_MAX_DATATYPE + 1U] = {
   NULL,                               //
   EXESS_XSD_URI "boolean",            //
-  EXESS_XSD_URI "decimal",            //
   EXESS_XSD_URI "double",             //
   EXESS_XSD_URI "float",              //
-  EXESS_XSD_URI "integer",            //
-  EXESS_XSD_URI "nonPositiveInteger", //
-  EXESS_XSD_URI "negativeInteger",    //
   EXESS_XSD_URI "long",               //
   EXESS_XSD_URI "int",                //
   EXESS_XSD_URI "short",              //
   EXESS_XSD_URI "byte",               //
-  EXESS_XSD_URI "nonNegativeInteger", //
   EXESS_XSD_URI "unsignedLong",       //
   EXESS_XSD_URI "unsignedInt",        //
   EXESS_XSD_URI "unsignedShort",      //
   EXESS_XSD_URI "unsignedByte",       //
+  EXESS_XSD_URI "decimal",            //
+  EXESS_XSD_URI "integer",            //
+  EXESS_XSD_URI "nonPositiveInteger", //
+  EXESS_XSD_URI "negativeInteger",    //
+  EXESS_XSD_URI "nonNegativeInteger", //
   EXESS_XSD_URI "positiveInteger",    //
   EXESS_XSD_URI "duration",           //
   EXESS_XSD_URI "dateTime",           //

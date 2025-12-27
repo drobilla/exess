@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
-#include "decimal_to_double.h"
-#include "double_to_decimal.h"
+#include "number_utils.h"
 #include "parse_decimal.h"
 #include "read_utils.h"
 #include "result.h"
@@ -12,8 +11,7 @@
 #include <exess/exess.h>
 
 #include <assert.h>
-#include <math.h>
-#include <string.h>
+#include <stddef.h>
 
 typedef enum {
   EXESS_POINT_AFTER,   ///< Decimal point is after all significant digits
@@ -47,36 +45,33 @@ decimal_metrics(const BigDecimal count)
   return metrics;
 }
 
-static size_t
-write_zeros(const size_t n,
-            const size_t buf_size,
-            char* const  buf,
-            const size_t i)
-{
-  (void)buf_size;
-  assert(buf_size >= i + n);
-  memset(buf + i, '0', n);
-  return n;
-}
-
 ExessVariableResult
 exess_read_decimal(const char* const str,
                    const size_t      out_size,
                    void* const       out)
 {
-  assert(out_size >= sizeof(double));
-  (void)out_size;
+  if (out_size < sizeof(BigDecimal) + 2U) {
+    return VRESULT(EXESS_NO_SPACE, 0U, sizeof(BigDecimal) + 2U);
+  }
 
-  char digits[DBL_DECIMAL_DIG + 1U] = {0};
+  char* const  digits      = (char*)out + sizeof(BigDecimal);
+  const size_t digits_size = out_size - sizeof(BigDecimal) - 1U;
 
-  const size_t      i  = skip_whitespace(str);
-  BigDecimal        in = {EXESS_NAN, 0U, 0};
-  const ExessResult r  = parse_decimal(str + i, &in, DBL_DECIMAL_DIG, digits);
+  const size_t      i = skip_whitespace(str);
+  BigDecimal        d = {EXESS_NAN, 0U, 0};
+  const ExessResult r = parse_decimal(str + i, &d, digits_size, digits);
 
-  *(double*)out =
-    (r.status > EXESS_LOSS) ? (double)NAN : decimal_to_double(in, digits);
+  // Trim trailing zeros
+  if (r.status <= EXESS_LOSS) {
+    while (d.n_digits > 1 && digits[d.n_digits - 1] == '0') {
+      --d.n_digits;
+    }
+  }
 
-  return VRESULT(r.status, i + r.count, sizeof(double));
+  *(BigDecimal*)out  = d;    // Set output header
+  digits[d.n_digits] = '\0'; // Terminate digits for safety/convenience
+
+  return VRESULT(r.status, i + r.count, sizeof(d) + d.n_digits + 1U);
 }
 
 ExessResult
@@ -85,15 +80,11 @@ exess_write_decimal(const size_t      value_size,
                     const size_t      buf_size,
                     char* const       buf)
 {
-  assert(value_size >= sizeof(double));
-  (void)value_size;
+  const BigDecimal  decimal = *(const BigDecimal*)value;
+  const char* const digits  = (const char*)value + sizeof(decimal);
 
-  char digits[DBL_DECIMAL_DIG + 1U] = {0};
-
-  const BigDecimal decimal =
-    double_to_decimal(*(const double*)value, sizeof(digits), digits);
-
-  if (decimal.kind < EXESS_NEGATIVE_ZERO) {
+  if (decimal.kind < EXESS_NEGATIVE_ZERO ||
+      value_size < sizeof(decimal) + decimal.n_digits) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
   }
 

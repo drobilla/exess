@@ -52,7 +52,8 @@ Most of the datatypes from the XSD_ specification are implemented.
 The fully supported primitive datatypes are :ref:`boolean<exess_boolean>`, :ref:`float <exess_float>`, :ref:`double <exess_double>`, :ref:`duration <exess_duration>`, :ref:`dateTime <exess_date_time>`, :ref:`time <exess_time>`, :ref:`date <exess_date>`, :ref:`hexBinary <exess_hex>`, and :ref:`base64Binary <exess_base64>`.
 All of the derived datatypes for fixed-size numbers (which correspond to C integer types) are also fully supported: :ref:`long <exess_long>`, :ref:`int <exess_int>`, :ref:`short <exess_short>`, :ref:`byte <exess_byte>`, :ref:`unsignedLong <exess_ulong>`, :ref:`unsignedInt <exess_uint>`, :ref:`unsignedShort <exess_ushort>`, and :ref:`unsignedByte <exess_ubyte>`
 
-The variably-sized :ref:`decimal <exess_decimal>` and ``integer`` are supported to an extent, but values are limited to those that can be stored in a ``double`` or ``int64_t``, respectively.
+The variably-sized :ref:`decimal <exess_decimal>` and :ref:`integer <exess_integer>` are supported as high-precision opaque values.
+No facilities are provided for working with these values as numbers, but they can be converted to/from strings or primitive number types.
 The library also understands the variably-sized ``integer`` derived datatypes ``nonPositiveInteger``, ``negativeInteger``, ``nonNegativeInteger``, and ``positiveInteger``,
 although since these are functionally equivalent to ``integer``,
 they don't have their own API functions and are only relevant for some higher-level functionality like value coercion.

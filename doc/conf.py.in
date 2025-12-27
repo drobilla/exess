@@ -131,6 +131,7 @@ groups = {
     "symbols": "Preprocessor Symbols",
     "status": "Status",
     "decimal": "Decimal Strings",
+    "integer": "Integer Strings",
     "double": "Double Strings",
     "float": "Float Strings",
     "boolean": "Boolean Strings",

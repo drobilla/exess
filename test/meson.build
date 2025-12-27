@@ -55,6 +55,7 @@ public_tests = [
   'double',
   'duration',
   'hex',
+  'integer',
   'long',
   'strerror',
   'time',

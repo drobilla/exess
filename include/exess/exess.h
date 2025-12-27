@@ -202,17 +202,16 @@ exess_strerror(ExessStatus status);
 /**
    Read a `decimal` string after any leading whitespace.
 
-   Values too large (in absolute terms) to store will produce infinity, values
-   too small will produce zero, and insignificant digits may be discarded.
-   Note that this is a limitation of this implementation and `decimal` itself
-   has unlimited precision, so this may result in data loss.
+   The high-precision value format is opaque to the user, but can be written or
+   converted to other types.
 
    @param str String to read.
    @param out_size Size of `out` in bytes.
-   @param[out] out Parsed value, or NaN on error.
+   @param[out] out Parsed value.
 
    @return The `read_count` of characters read, `write_count` of bytes written,
-   and a `status`.
+   and a `status`.  The `status` will be #EXESS_LOSS if an approximate value
+   was successfully read by dropping significant digits.
 */
 EXESS_API ExessVariableResult
 exess_read_decimal(const char* EXESS_NONNULL str,
@@ -235,6 +234,51 @@ exess_write_decimal(size_t                    value_size,
                     const void* EXESS_NONNULL value,
                     size_t                    buf_size,
                     char* EXESS_UNSPECIFIED   buf);
+
+/**
+   @}
+   @defgroup exess_integer integer
+
+   An `integer` is a `decimal` with no decimal point or fractional component.
+
+   @{
+*/
+
+/**
+   Read a `integer` string after any leading whitespace.
+
+   The high-precision value format is opaque to the user, but can be written or
+   converted to other types.
+
+   @param str String to read.
+   @param out_size Size of `out` in bytes.
+   @param[out] out Parsed value.
+
+   @return The `read_count` of characters read, `write_count` of bytes written,
+   and a `status`.  The `status` will be #EXESS_LOSS if an approximate value
+   was successfully read by dropping significant digits.
+*/
+EXESS_API ExessVariableResult
+exess_read_integer(const char* EXESS_NONNULL str,
+                   size_t                    out_size,
+                   void* EXESS_NONNULL       out);
+
+/**
+   Write a canonical `integer` string.
+
+   @param value_size The size of `value` in bytes.
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return The `count` of characters in the output, and a `status`
+   (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
+*/
+EXESS_API ExessResult
+exess_write_integer(size_t                    value_size,
+                    const void* EXESS_NONNULL value,
+                    size_t                    buf_size,
+                    char* EXESS_NULLABLE      buf);
 
 /**
    @}
@@ -1263,22 +1307,22 @@ exess_write_hex(size_t                    data_size,
 typedef enum {
   EXESS_NOTHING,              ///< Sentinel for unknown datatypes or errors
   EXESS_BOOLEAN,              ///< @ref exess_boolean
-  EXESS_DECIMAL,              ///< @ref exess_decimal
   EXESS_DOUBLE,               ///< @ref exess_double
   EXESS_FLOAT,                ///< @ref exess_float
-  EXESS_INTEGER,              ///< `integer` as @ref exess_long
-  EXESS_NON_POSITIVE_INTEGER, ///< `nonPositiveInteger` as @ref exess_long
-  EXESS_NEGATIVE_INTEGER,     ///< `negativeInteger` as @ref exess_long
   EXESS_LONG,                 ///< @ref exess_long
   EXESS_INT,                  ///< @ref exess_int
   EXESS_SHORT,                ///< @ref exess_short
   EXESS_BYTE,                 ///< @ref exess_byte
-  EXESS_NON_NEGATIVE_INTEGER, ///< `nonNegativeInteger` as @ref exess_ulong
   EXESS_ULONG,                ///< @ref exess_ulong
   EXESS_UINT,                 ///< @ref exess_uint
   EXESS_USHORT,               ///< @ref exess_ushort
   EXESS_UBYTE,                ///< @ref exess_ubyte
-  EXESS_POSITIVE_INTEGER,     ///< `positiveInteger` as @ref exess_ulong
+  EXESS_DECIMAL,              ///< @ref exess_decimal
+  EXESS_INTEGER,              ///< @ref exess_integer
+  EXESS_NON_POSITIVE_INTEGER, ///< `integer` <= 0
+  EXESS_NEGATIVE_INTEGER,     ///< `integer` < 0
+  EXESS_NON_NEGATIVE_INTEGER, ///< `integer` >= 0
+  EXESS_POSITIVE_INTEGER,     ///< `integer` > 0
   EXESS_DURATION,             ///< @ref exess_duration
   EXESS_DATE_TIME,            ///< @ref exess_date_time
   EXESS_TIME,                 ///< @ref exess_time
@@ -1308,21 +1352,21 @@ typedef enum {
 static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
   0U,  // Unknown datatype
   5U,  // boolean
-  0U,  // decimal
   24U, // double
   15U, // float
-  0U,  // integer
-  0U,  // nonPositiveInteger
-  0U,  // negativeInteger
   20U, // long
   11U, // int
   6U,  // short
   4U,  // byte
-  0U,  // nonNegativeInteger
   20U, // ulong
   10U, // uint
   5U,  // ushort
   3U,  // ubyte
+  0U,  // decimal
+  0U,  // integer
+  0U,  // nonPositiveInteger
+  0U,  // negativeInteger
+  0U,  // nonNegativeInteger
   0U,  // positiveInteger
   41U, // duration
   32U, // dateTime
@@ -1341,22 +1385,22 @@ static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
 static EXESS_CONSTEXPR uint8_t exess_value_sizes[EXESS_MAX_DATATYPE + 1U] = {
   0U,                    // Unknown
   sizeof(bool),          // boolean
-  sizeof(double),        // decimal
   sizeof(double),        // double
   sizeof(float),         // float
-  sizeof(int64_t),       // integer
-  sizeof(int64_t),       // nonPositiveInteger
-  sizeof(int64_t),       // negativeInteger
   sizeof(int64_t),       // long
   sizeof(int32_t),       // int
   sizeof(int16_t),       // short
   sizeof(int8_t),        // byte
-  sizeof(uint64_t),      // nonNegativeInteger
   sizeof(uint64_t),      // ulong
   sizeof(uint32_t),      // uint
   sizeof(uint16_t),      // ushort
   sizeof(uint8_t),       // ubyte
-  sizeof(uint64_t),      // positiveInteger
+  0U,                    // decimal
+  0U,                    // integer
+  0U,                    // nonPositiveInteger
+  0U,                    // negativeInteger
+  0U,                    // nonNegativeInteger
+  0U,                    // positiveInteger
   sizeof(ExessDuration), // duration
   sizeof(ExessDateTime), // dateTime
   sizeof(ExessTime),     // time

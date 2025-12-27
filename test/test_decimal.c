@@ -3,6 +3,7 @@
 
 #undef NDEBUG
 
+#include "decimal_test_utils.h"
 #include "double_test_utils.h"
 #include "int_test_utils.h"
 #include "num_test_utils.h"
@@ -17,26 +18,28 @@
 #include <stdio.h>
 #include <string.h>
 
-#define VALUE_SIZE sizeof(double)
+#define VALUE_SIZE 22U
 #define STRING_SIZE 327U
 
 static void
 check_read(const char* const string,
            const ExessStatus expected_status,
-           const double      expected_value,
+           const double      expected_number,
            const size_t      expected_count)
 {
-  EXESS_ALIGN uint8_t       value[VALUE_SIZE] = {0};
+  EXESS_ALIGN uint8_t value[VALUE_SIZE]          = {0};
+  EXESS_ALIGN uint8_t expected_value[VALUE_SIZE] = {0};
+
+  const size_t expected_value_size =
+    set_decimal_value(sizeof(expected_value), expected_value, expected_number);
+
   const ExessVariableResult r =
-    exess_read_decimal(string, sizeof(value), &value);
+    exess_read_decimal(string, sizeof(value), value);
 
   assert(r.status == expected_status);
   assert(r.read_count == expected_count);
-  assert(r.write_count == sizeof(double));
-
-  double number = 0.0;
-  memcpy(&number, value, sizeof(double));
-  assert(double_matches(number, expected_value));
+  assert(r.write_count == expected_value_size);
+  assert(!memcmp(expected_value, value, r.write_count));
 }
 
 static void
@@ -82,28 +85,6 @@ test_read_decimal(void)
              DBL_MAX,
              311);
 
-  // Beyond limits
-
-  check_read(
-    "0."
-    "00000000000000000000000000000000000000000000000000000000000000000000000000"
-    "00000000000000000000000000000000000000000000000000000000000000000000000000"
-    "00000000000000000000000000000000000000000000000000000000000000000000000000"
-    "00000000000000000000000000000000000000000000000000000000000000000000000000"
-    "0000000000000000000000000001",
-    EXESS_SUCCESS,
-    0.0,
-    326);
-
-  check_read("1797693134862315900000000000000000000000000000000000000000000000"
-             "0000000000000000000000000000000000000000000000000000000000000000"
-             "0000000000000000000000000000000000000000000000000000000000000000"
-             "0000000000000000000000000000000000000000000000000000000000000000"
-             "00000000000000000000000000000000000000000000000000000.0",
-             EXESS_SUCCESS,
-             (double)INFINITY,
-             311);
-
   // Superfluous digits
   check_read("12345678901234567890", EXESS_LOSS, 12345678901234568000.0, 20);
   check_read("1.2345678901234567890", EXESS_LOSS, 1.2345678901234568, 21);
@@ -130,6 +111,12 @@ test_read_decimal(void)
   check_read("true", EXESS_EXPECTED_DIGIT, (double)NAN, 0);
   check_read("+true", EXESS_EXPECTED_DIGIT, (double)NAN, 1);
   check_read("-false", EXESS_EXPECTED_DIGIT, (double)NAN, 1);
+
+  // Insufficient output space
+  EXESS_ALIGN char value[VALUE_SIZE] = {0};
+  for (size_t i = 0U; i < 5; ++i) {
+    assert(exess_read_decimal("1", i, value).status == EXESS_NO_SPACE);
+  }
 }
 
 /// Check that `str` is a canonical xsd:decimal string
@@ -147,18 +134,21 @@ check_canonical(const char* const str)
 }
 
 static void
-check_write(const double      value,
+check_write(const double      number,
             const ExessStatus expected_status,
             const size_t      buf_size,
             const char* const expected_string)
 {
+  EXESS_ALIGN char value[VALUE_SIZE] = {0};
+  set_decimal_value(sizeof(value), value, number);
+
   char buf[STRING_SIZE] = {42};
   init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
   const ExessResult r =
-    exess_write_decimal(sizeof(value), &value, buf_size, buf);
+    exess_write_decimal(sizeof(value), value, buf_size, buf);
   assert(r.status == expected_status);
   if (!r.status) {
     assert(expected_string);
@@ -167,14 +157,14 @@ check_write(const double      value,
     assert(!strcmp(buf, expected_string));
     check_canonical(buf);
 
-    assert(exess_write_decimal(sizeof(value), &value, 0, NULL).count ==
-           r.count);
+    assert(exess_write_decimal(sizeof(value), value, 0, NULL).count == r.count);
 
     for (size_t space = 0; space < buf_size; ++space) {
       buf[0] = 1;
 
       const ExessResult s =
-        exess_write_decimal(sizeof(value), &value, space, buf);
+        exess_write_decimal(sizeof(value), value, space, buf);
+
       assert(s.status == EXESS_NO_SPACE);
       assert(s.count == r.count);
       assert(buf[0] == (space ? 0 : 1));
@@ -182,7 +172,7 @@ check_write(const double      value,
   } else {
     assert(!r.count);
     assert(!buf[0]);
-    assert(!exess_write_decimal(sizeof(value), &value, 0, NULL).count);
+    assert(!exess_write_decimal(sizeof(value), value, 0, NULL).count);
   }
 }
 
@@ -221,18 +211,47 @@ test_write_decimal(void)
   check_write((double)NAN, EXESS_BAD_VALUE, 4, "");
   check_write((double)-INFINITY, EXESS_BAD_VALUE, 5, "");
   check_write((double)INFINITY, EXESS_BAD_VALUE, 4, "");
+
+  // Bad value size
+  EXESS_ALIGN char value[VALUE_SIZE] = {0};
+  char             buf[STRING_SIZE]  = {0};
+  set_decimal_value(sizeof(value), value, 2.0);
+  assert(exess_write_decimal(1, value, sizeof(buf), buf).status ==
+         EXESS_BAD_VALUE);
 }
 
 static void
-check_round_trip(const double value)
+check_round_trip(const double number)
 {
-  double parsed_value     = 0.0;
-  char   buf[STRING_SIZE] = {42};
+  EXESS_ALIGN uint8_t value[VALUE_SIZE]        = {0};
+  EXESS_ALIGN uint8_t parsed_value[VALUE_SIZE] = {0};
+  char                buf[STRING_SIZE]         = {42};
+
+  set_decimal_value(sizeof(value), value, number);
   init_out_buf(sizeof(buf), buf);
 
-  assert(!exess_write_decimal(sizeof(value), &value, sizeof(buf), buf).status);
-  assert(!exess_read_decimal(buf, sizeof(parsed_value), &parsed_value).status);
-  assert(double_matches(parsed_value, value));
+  const ExessResult w =
+    exess_write_decimal(sizeof(value), value, sizeof(buf), buf);
+
+  const ExessVariableResult r =
+    exess_read_decimal(buf, sizeof(parsed_value), parsed_value);
+
+  assert(!w.status);
+  assert(r.status <= EXESS_LOSS);
+  assert(r.read_count == w.count);
+  assert(!memcmp(parsed_value, value, r.write_count));
+
+  double parsed_number = (double)NAN;
+  assert(!exess_coerce_value(0U,
+                             EXESS_DECIMAL,
+                             sizeof(parsed_value),
+                             &parsed_value,
+                             EXESS_DOUBLE,
+                             sizeof(parsed_number),
+                             &parsed_number)
+            .status);
+
+  assert(double_matches(parsed_number, number));
 }
 
 static void

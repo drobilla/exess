@@ -41,6 +41,7 @@ c_index_xml = custom_target(
     'group__exess__float.xml',
     'group__exess__hex.xml',
     'group__exess__int.xml',
+    'group__exess__integer.xml',
     'group__exess__long.xml',
     'group__exess__numbers.xml',
     'group__exess__short.xml',

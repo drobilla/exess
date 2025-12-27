@@ -11,8 +11,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#define VALUE_SIZE EXESS_MAX_FIXED_SIZE
-#define STRING_SIZE 22U
+#define VALUE_SIZE 27U
+#define STRING_SIZE 23U
 
 static const char* const min_long_str  = "-9223372036854775808";
 static const char* const max_long_str  = "9223372036854775807";
@@ -281,28 +281,86 @@ test_floating(void)
 static void
 test_decimal(void)
 {
+  check_perf(EXESS_DECIMAL, "1.0", EXESS_INTEGER, "1");
   check_perf(EXESS_DECIMAL, "1.2", EXESS_DECIMAL, "1.2");
+  check_perf(EXESS_FLOAT, "1.2E3", EXESS_DECIMAL, "1200.0");
   check_perf(EXESS_DOUBLE, "1.2E4", EXESS_DECIMAL, "12000.0");
 
-  check_wide(EXESS_FLOAT, "1.2E3", EXESS_DECIMAL, "1200.0");
-
+  // Approximation to fixed-size binary floating point
   check_loss(
     EXESS_DECIMAL, "1.000000001", EXESS_FLOAT, "1.0E0", EXESS_APPROXIMATE);
+  check_loss(EXESS_DECIMAL,
+             "1.00000000000000001",
+             EXESS_DOUBLE,
+             "1.0E0",
+             EXESS_APPROXIMATE);
 
-  check_perf(
-    EXESS_DECIMAL, "-9007199254740991.0", EXESS_LONG, "-9007199254740991");
+  // Truncation to fixed-size integer
+  check_loss(EXESS_DECIMAL, "0.00000001", EXESS_LONG, "0", EXESS_TRUNCATE);
+  check_loss(EXESS_DECIMAL, "0.00000001", EXESS_ULONG, "0", EXESS_TRUNCATE);
 
+  // Truncation to big integer
+  check_trunc(EXESS_DECIMAL, "-4.8", EXESS_INTEGER, "-4");
+  check_trunc(EXESS_DECIMAL, "4.8", EXESS_INTEGER, "4");
+  check_trunc(EXESS_DECIMAL, "0.01", EXESS_INTEGER, "0");
+  check_fail(EXESS_DECIMAL, "1.2", EXESS_INTEGER, EXESS_LOSS);
+
+  // Rounding to big integer
+  check_round(EXESS_DECIMAL, "-4.8", EXESS_INTEGER, "-5");
+  check_round(EXESS_DECIMAL, "4.8", EXESS_INTEGER, "5");
+  check_round(EXESS_DECIMAL, "0.01", EXESS_INTEGER, "0");
+
+  // One away from signed long limits
+  check_perf(EXESS_DECIMAL,
+             "-9223372036854775807.0",
+             EXESS_LONG,
+             "-9223372036854775807");
+  check_perf(EXESS_DECIMAL,
+             "9223372036854775806.0", //
+             EXESS_LONG,
+             "9223372036854775806");
+
+  // Signed long limits
+  check_perf(EXESS_DECIMAL,
+             "-9223372036854775808.0", //
+             EXESS_LONG,
+             "-9223372036854775808");
+  check_perf(EXESS_DECIMAL,
+             "9223372036854775807.0", //
+             EXESS_LONG,
+             "9223372036854775807");
+
+  // Beyond signed long limits
+  check_fail(EXESS_DECIMAL,
+             "-9223372036854775809.0", //
+             EXESS_LONG,
+             EXESS_OUT_OF_RANGE);
+  check_trunc(EXESS_DECIMAL,
+              "-9223372036854775808.01", //
+              EXESS_LONG,
+              "-9223372036854775808");
+  check_trunc(
+    EXESS_DECIMAL, "9223372036854775807.01", EXESS_LONG, "9223372036854775807");
   check_fail(
-    EXESS_DECIMAL, "-9007199254740992.0", EXESS_LONG, EXESS_OUT_OF_RANGE);
-
+    EXESS_DECIMAL, "9223372036854775808.0", EXESS_LONG, EXESS_OUT_OF_RANGE);
   check_fail(
-    EXESS_DECIMAL, "9007199254740992.0", EXESS_ULONG, EXESS_OUT_OF_RANGE);
+    EXESS_DECIMAL, "100000000000000000000.0", EXESS_LONG, EXESS_OUT_OF_RANGE);
 
-  check_fail(
-    EXESS_ULONG, "18446744073709551615", EXESS_DECIMAL, EXESS_OUT_OF_RANGE);
+  // Unsigned long limit
+  check_perf(EXESS_DECIMAL,
+             "18446744073709551615.0",
+             EXESS_ULONG,
+             "18446744073709551615");
 
+  // Beyond unsigned long limit
+  check_trunc(EXESS_DECIMAL,
+              "18446744073709551615.09",
+              EXESS_ULONG,
+              "18446744073709551615");
   check_fail(
-    EXESS_LONG, "-9007199254740992", EXESS_DECIMAL, EXESS_OUT_OF_RANGE);
+    EXESS_DECIMAL, "18446744073709551616.0", EXESS_ULONG, EXESS_OUT_OF_RANGE);
+  check_fail(
+    EXESS_DECIMAL, "100000000000000000000.0", EXESS_ULONG, EXESS_OUT_OF_RANGE);
 }
 
 static void
@@ -335,11 +393,15 @@ static void
 test_round_trunc(void)
 {
   static const ExessDatatype float_types[] = {
-    EXESS_DOUBLE, EXESS_FLOAT, EXESS_NOTHING};
-  static const ExessDatatype signed_types[] = {
-    EXESS_LONG, EXESS_INT, EXESS_SHORT, EXESS_BYTE, EXESS_NOTHING};
+    EXESS_DOUBLE, EXESS_FLOAT, EXESS_DECIMAL, EXESS_NOTHING};
   static const ExessDatatype unsigned_types[] = {
     EXESS_ULONG, EXESS_UINT, EXESS_USHORT, EXESS_UBYTE, EXESS_NOTHING};
+  static const ExessDatatype signed_types[] = {EXESS_LONG,
+                                               EXESS_INT,
+                                               EXESS_SHORT,
+                                               EXESS_BYTE,
+                                               EXESS_INTEGER,
+                                               EXESS_NOTHING};
 
   for (const ExessDatatype* f = float_types; *f; ++f) {
     for (const ExessDatatype* t = signed_types; *t; ++t) {
@@ -497,8 +559,6 @@ test_ulong(void)
 
   // Limits
   check_perf(EXESS_ULONG, "0", EXESS_INTEGER, "0");
-  check_fail(
-    EXESS_ULONG, "9223372036854775808", EXESS_INTEGER, EXESS_OUT_OF_RANGE);
 
   // Only zero to/from nonPositiveInteger
   check_perf(EXESS_ULONG, "0", EXESS_NON_POSITIVE_INTEGER, "0");

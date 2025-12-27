@@ -48,8 +48,10 @@ check_cross_type_comparison(const ExessDatatype       lhs_datatype,
                             const char* const         rhs_string,
                             const ComparisonPredicate pred)
 {
-  EXESS_ALIGN uint8_t lhs[EXESS_MAX_FIXED_SIZE] = {0};
-  EXESS_ALIGN uint8_t rhs[EXESS_MAX_FIXED_SIZE] = {0};
+#define VALUE_SIZE 12U
+
+  EXESS_ALIGN uint8_t lhs[VALUE_SIZE] = {0};
+  EXESS_ALIGN uint8_t rhs[VALUE_SIZE] = {0};
 
   const ExessVariableResult l =
     exess_read_value(lhs_datatype, lhs_string, sizeof(lhs), lhs);
@@ -80,6 +82,8 @@ check_cross_type_comparison(const ExessDatatype       lhs_datatype,
   } else if (order == EXESS_ORDER_STRICTLY_GREATER) {
     assert(inv_order == EXESS_ORDER_STRICTLY_LESS);
   }
+
+#undef VALUE_SIZE
 }
 
 static void
