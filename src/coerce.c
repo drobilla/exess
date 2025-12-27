@@ -192,7 +192,10 @@ convert_signed(const ExessCoercions coercions,
     return convert_signed_decimal(coercions, in);
 
   case EXESS_DURATION:
+  case EXESS_YEAR_MONTH_DURATION:
+  case EXESS_DAY_TIME_DURATION:
   case EXESS_DATE_TIME:
+  case EXESS_DATE_TIME_STAMP:
   case EXESS_TIME:
   case EXESS_DATE:
   case EXESS_HEX:
@@ -604,7 +607,10 @@ exess_coerce_value(const ExessCoercions coercions,
       coercions, in_datatype, in, out_datatype, out_size, out);
 
   case EXESS_DURATION:
+  case EXESS_YEAR_MONTH_DURATION:
+  case EXESS_DAY_TIME_DURATION:
   case EXESS_DATE_TIME:
+  case EXESS_DATE_TIME_STAMP:
     break;
 
   case EXESS_TIME:

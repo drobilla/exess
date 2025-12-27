@@ -198,6 +198,23 @@ test_read_value(void)
     assert(a_duration.months == 1);
     assert(a_duration.seconds == 2);
     assert(a_duration.nanoseconds == 3);
+
+    check_read(
+      &a_duration, EXESS_YEAR_MONTH_DURATION, "x", EXESS_EXPECTED_DURATION, 0);
+    check_read(
+      &a_duration, EXESS_DAY_TIME_DURATION, "x", EXESS_EXPECTED_DURATION, 0);
+
+    check_read(&a_duration, EXESS_YEAR_MONTH_DURATION, "P1M", EXESS_SUCCESS, 3);
+    check_read(
+      &a_duration, EXESS_DAY_TIME_DURATION, "PT2.3S", EXESS_SUCCESS, 6);
+
+    check_read(
+      &a_duration, EXESS_YEAR_MONTH_DURATION, "PT0.1S", EXESS_BAD_VALUE, 6);
+    check_read(
+      &a_duration, EXESS_YEAR_MONTH_DURATION, "PT1.0S", EXESS_BAD_VALUE, 6);
+    check_read(
+      &a_duration, EXESS_YEAR_MONTH_DURATION, "PT1.2S", EXESS_BAD_VALUE, 6);
+    check_read(&a_duration, EXESS_DAY_TIME_DURATION, "P1M", EXESS_BAD_VALUE, 3);
   }
   {
     ExessDateTime a_datetime = datetime;
@@ -216,6 +233,21 @@ test_read_value(void)
     assert(a_datetime.minute == 15);
     assert(a_datetime.second == 1);
     assert(a_datetime.nanosecond == 250000000);
+
+    check_read(
+      &a_datetime, EXESS_DATE_TIME_STAMP, "x", EXESS_EXPECTED_DIGIT, 0);
+
+    check_read(&a_datetime,
+               EXESS_DATE_TIME_STAMP,
+               "2001-01-02T12:15:16Z",
+               EXESS_SUCCESS,
+               20);
+
+    check_read(&a_datetime,
+               EXESS_DATE_TIME_STAMP,
+               "2001-01-02T12:15:16",
+               EXESS_BAD_VALUE,
+               19);
   }
   {
     ExessDate a_date = date;

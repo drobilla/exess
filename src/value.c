@@ -93,9 +93,32 @@ exess_read_value(const ExessDatatype datatype,
     return fixed(exess_read_duration(str, (ExessDuration*)out),
                  sizeof(ExessDuration));
 
+  case EXESS_YEAR_MONTH_DURATION:
+    r = fixed(exess_read_duration(str, (ExessDuration*)out),
+              sizeof(ExessDuration));
+    return (!r.status && (((const ExessDuration*)out)->seconds ||
+                          ((const ExessDuration*)out)->nanoseconds))
+             ? VRESULT(EXESS_BAD_VALUE, r.read_count, 0U)
+             : r;
+
+  case EXESS_DAY_TIME_DURATION:
+    r = fixed(exess_read_duration(str, (ExessDuration*)out),
+              sizeof(ExessDuration));
+    return (!r.status && ((const ExessDuration*)out)->months)
+             ? VRESULT(EXESS_BAD_VALUE, r.read_count, 0U)
+             : r;
+
   case EXESS_DATE_TIME:
     return fixed(exess_read_date_time(str, (ExessDateTime*)out),
                  sizeof(ExessDateTime));
+
+  case EXESS_DATE_TIME_STAMP:
+    r = fixed(exess_read_date_time(str, (ExessDateTime*)out),
+              sizeof(ExessDateTime));
+    return (!r.status &&
+            (((const ExessDateTime*)out)->zone == EXESS_TIMEZONE_LOCAL))
+             ? VRESULT(EXESS_BAD_VALUE, r.read_count, 0U)
+             : r;
 
   case EXESS_TIME:
     return fixed(exess_read_time(str, (ExessTime*)out), sizeof(ExessTime));
@@ -151,8 +174,11 @@ exess_write_value(const ExessDatatype datatype,
   case EXESS_POSITIVE_INTEGER:
     return exess_write_integer(value_size, value, buf_size, buf);
   case EXESS_DURATION:
+  case EXESS_YEAR_MONTH_DURATION:
+  case EXESS_DAY_TIME_DURATION:
     return exess_write_duration(*(const ExessDuration*)value, buf_size, buf);
   case EXESS_DATE_TIME:
+  case EXESS_DATE_TIME_STAMP:
     return exess_write_date_time(*(const ExessDateTime*)value, buf_size, buf);
   case EXESS_TIME:
     return exess_write_time(*(const ExessTime*)value, buf_size, buf);

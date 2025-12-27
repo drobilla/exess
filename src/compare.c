@@ -124,10 +124,13 @@ exess_compare_value(const ExessDatatype lhs_datatype,
   case EXESS_POSITIVE_INTEGER:
     return compare_decimal(lhs_value, rhs_value);
   case EXESS_DURATION:
+  case EXESS_YEAR_MONTH_DURATION:
+  case EXESS_DAY_TIME_DURATION:
     return exess_compare_duration(*(const ExessDuration*)lhs_value,
                                   *(const ExessDuration*)rhs_value);
 
   case EXESS_DATE_TIME:
+  case EXESS_DATE_TIME_STAMP:
     return exess_compare_date_time(*(const ExessDateTime*)lhs_value,
                                    *(const ExessDateTime*)rhs_value);
 

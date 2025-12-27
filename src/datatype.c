@@ -28,7 +28,10 @@ static const char* EXESS_NONNULL const uris[EXESS_MAX_DATATYPE + 1U] = {
   EXESS_XSD_URI "nonNegativeInteger", //
   EXESS_XSD_URI "positiveInteger",    //
   EXESS_XSD_URI "duration",           //
+  EXESS_XSD_URI "yearMonthDuration",  //
+  EXESS_XSD_URI "dayTimeDuration",    //
   EXESS_XSD_URI "dateTime",           //
+  EXESS_XSD_URI "dateTimeStamp",      //
   EXESS_XSD_URI "time",               //
   EXESS_XSD_URI "date",               //
   EXESS_XSD_URI "hexBinary",          //

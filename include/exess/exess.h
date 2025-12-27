@@ -1324,7 +1324,10 @@ typedef enum {
   EXESS_NON_NEGATIVE_INTEGER, ///< `integer` >= 0
   EXESS_POSITIVE_INTEGER,     ///< `integer` > 0
   EXESS_DURATION,             ///< @ref exess_duration
+  EXESS_YEAR_MONTH_DURATION,  ///< @ref exess_duration
+  EXESS_DAY_TIME_DURATION,    ///< @ref exess_duration
   EXESS_DATE_TIME,            ///< @ref exess_date_time
+  EXESS_DATE_TIME_STAMP,      ///< @ref exess_date_time
   EXESS_TIME,                 ///< @ref exess_time
   EXESS_DATE,                 ///< @ref exess_date
   EXESS_HEX,                  ///< @ref exess_hex
@@ -1332,7 +1335,7 @@ typedef enum {
 } ExessDatatype;
 
 /// The unsigned value of the largest #ExessDatatype enumerator
-#define EXESS_MAX_DATATYPE 23U
+#define EXESS_MAX_DATATYPE 26U
 
 /**
    Array of maximum string lengths, indexed by datatype.
@@ -1369,7 +1372,10 @@ static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
   0U,  // nonNegativeInteger
   0U,  // positiveInteger
   41U, // duration
+  15U, // yearMonthDuration
+  28U, // dayTimeDuration
   32U, // dateTime
+  32U, // dateTimeStamp
   24U, // time
   18U, // date
   0U,  // hexBinary
@@ -1402,7 +1408,10 @@ static EXESS_CONSTEXPR uint8_t exess_value_sizes[EXESS_MAX_DATATYPE + 1U] = {
   0U,                    // nonNegativeInteger
   0U,                    // positiveInteger
   sizeof(ExessDuration), // duration
+  sizeof(ExessDuration), // yearMonthDuration
+  sizeof(ExessDuration), // dayTimeDuration
   sizeof(ExessDateTime), // dateTime
+  sizeof(ExessDateTime), // dateTimeStamp
   sizeof(ExessTime),     // time
   sizeof(ExessDate),     // date
   0U,                    // hexBinary

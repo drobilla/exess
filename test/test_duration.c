@@ -19,6 +19,8 @@ static const ExessDuration zero       = {0, 0, 0};
 static const ExessDuration lowest     = {-INT32_MAX, -INT32_MAX, -999999999};
 static const ExessDuration highest    = {INT32_MAX, INT32_MAX, 999999999};
 static const ExessDuration longest    = {-2119579475, -1093803875, -999999999};
+static const ExessDuration longest_ym = {-2119579475, 0, 0};
+static const ExessDuration longest_dt = {0, -1093803875, -999999999};
 static const ExessDuration year       = {12, 0, 0};
 static const ExessDuration month      = {1, 0, 0};
 static const ExessDuration day        = {0, 24 * 60 * 60, 0};
@@ -252,6 +254,9 @@ test_write_duration(void)
 
   check_write(
     longest, EXESS_SUCCESS, 42, "-P176631622Y11M12659DT18H24M35.999999999S");
+
+  check_write(longest_ym, EXESS_SUCCESS, 16, "-P176631622Y11M");
+  check_write(longest_dt, EXESS_SUCCESS, 29, "-P12659DT18H24M35.999999999S");
 
   check_write(year, EXESS_SUCCESS, 4, "P1Y");
   check_write(month, EXESS_SUCCESS, 4, "P1M");
