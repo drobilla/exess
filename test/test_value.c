@@ -15,6 +15,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#define STRING_SIZE 20U
+
 static const ExessDuration duration = {14,
                                        (3 * 24 * 60 * 60) + (4 * 60 * 60) +
                                          (5 * 60) + 6,
@@ -218,7 +220,7 @@ check_write(const ExessDatatype datatype,
             const size_t        buf_size,
             const char* const   expected_string)
 {
-  char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  char buf[STRING_SIZE] = {42};
 
   assert(buf_size <= sizeof(buf));
   init_out_buf(sizeof(buf), buf);

@@ -35,7 +35,7 @@ exess_read_value(const ExessDatatype datatype,
   case EXESS_BOOLEAN:
     return fixed(exess_read_boolean(str, (bool*)out), sizeof(bool));
   case EXESS_DECIMAL:
-    return fixed(exess_read_decimal(str, (double*)out), sizeof(double));
+    return exess_read_decimal(str, out_size, out);
   case EXESS_DOUBLE:
     return fixed(exess_read_double(str, (double*)out), sizeof(double));
   case EXESS_FLOAT:
@@ -113,7 +113,7 @@ exess_write_value(const ExessDatatype datatype,
   case EXESS_BOOLEAN:
     return exess_write_boolean(*(const bool*)value, buf_size, buf);
   case EXESS_DECIMAL:
-    return exess_write_decimal(*(const double*)value, buf_size, buf);
+    return exess_write_decimal(value_size, value, buf_size, buf);
   case EXESS_DOUBLE:
     return exess_write_double(*(const double*)value, buf_size, buf);
   case EXESS_FLOAT:

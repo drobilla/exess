@@ -12,7 +12,7 @@
 #include <string.h>
 
 #define VALUE_SIZE EXESS_MAX_FIXED_SIZE
-#define STRING_SIZE (EXESS_MAX_DECIMAL_LENGTH + 1U)
+#define STRING_SIZE 22U
 
 static const char* const min_long_str  = "-9223372036854775808";
 static const char* const max_long_str  = "9223372036854775807";

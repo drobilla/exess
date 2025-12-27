@@ -10,6 +10,8 @@
 #include <assert.h>
 #include <string.h>
 
+#define STRING_SIZE 26U
+
 static void
 check(const ExessDatatype datatype,
       const size_t        expected_read_count,
@@ -18,7 +20,7 @@ check(const ExessDatatype datatype,
       const size_t        expected_write_count,
       const char* const   expected_string)
 {
-  char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  char buf[STRING_SIZE] = {42};
   init_out_buf(sizeof(buf), buf);
 
   assert(expected_write_count < sizeof(buf));

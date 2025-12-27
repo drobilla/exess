@@ -59,25 +59,34 @@ write_zeros(const size_t n,
   return n;
 }
 
-ExessResult
-exess_read_decimal(const char* const str, double* const out)
+ExessVariableResult
+exess_read_decimal(const char* const str,
+                   const size_t      out_size,
+                   void* const       out)
 {
-  *out = (double)NAN;
+  assert(out_size >= sizeof(double));
+  (void)out_size;
 
   const size_t      i  = skip_whitespace(str);
   BigDecimal        in = {EXESS_NAN, 0, 0U, {0}};
   const ExessResult r  = parse_decimal(str + i, &in);
-  if (!r.status) {
-    *out = decimal_to_double(in);
-  }
 
-  return RESULT(r.status, i + r.count);
+  *(double*)out = r.status ? (double)NAN : decimal_to_double(in);
+
+  return VRESULT(r.status, i + r.count, sizeof(double));
 }
 
 ExessResult
-exess_write_decimal(const double value, const size_t buf_size, char* const buf)
+exess_write_decimal(const size_t      value_size,
+                    const void* const value,
+                    const size_t      buf_size,
+                    char* const       buf)
 {
-  const BigDecimal decimal = double_to_decimal(value, DBL_DECIMAL_DIG);
+  assert(value_size >= sizeof(double));
+  (void)value_size;
+
+  const BigDecimal decimal =
+    double_to_decimal(*(const double*)value, DBL_DECIMAL_DIG);
 
   if (decimal.kind < EXESS_NEGATIVE_ZERO) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);

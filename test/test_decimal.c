@@ -17,18 +17,26 @@
 #include <stdio.h>
 #include <string.h>
 
+#define VALUE_SIZE sizeof(double)
+#define STRING_SIZE 327U
+
 static void
 check_read(const char* const string,
            const ExessStatus expected_status,
            const double      expected_value,
            const size_t      expected_count)
 {
-  double            value = 0;
-  const ExessResult r     = exess_read_decimal(string, &value);
+  EXESS_ALIGN uint8_t       value[VALUE_SIZE] = {0};
+  const ExessVariableResult r =
+    exess_read_decimal(string, sizeof(value), &value);
 
   assert(r.status == expected_status);
-  assert(r.count == expected_count);
-  assert(double_matches(value, expected_value));
+  assert(r.read_count == expected_count);
+  assert(r.write_count == sizeof(double));
+
+  double number = 0.0;
+  memcpy(&number, value, sizeof(double));
+  assert(double_matches(number, expected_value));
 }
 
 static void
@@ -52,7 +60,7 @@ test_read_decimal(void)
   check_read("-.78", EXESS_SUCCESS, -0.78, 4);
   check_read("+00.10", EXESS_SUCCESS, 0.1, 6);
 
-  // Limits
+  // Double limits
 
   check_read(
     "0."
@@ -144,12 +152,13 @@ check_write(const double      value,
             const size_t      buf_size,
             const char* const expected_string)
 {
-  char buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  char buf[STRING_SIZE] = {42};
   init_out_buf(sizeof(buf), buf);
 
   assert(buf_size <= sizeof(buf));
 
-  const ExessResult r = exess_write_decimal(value, buf_size, buf);
+  const ExessResult r =
+    exess_write_decimal(sizeof(value), &value, buf_size, buf);
   assert(r.status == expected_status);
   if (!r.status) {
     assert(expected_string);
@@ -158,12 +167,14 @@ check_write(const double      value,
     assert(!strcmp(buf, expected_string));
     check_canonical(buf);
 
-    assert(exess_write_decimal(value, 0, NULL).count == r.count);
+    assert(exess_write_decimal(sizeof(value), &value, 0, NULL).count ==
+           r.count);
 
     for (size_t space = 0; space < buf_size; ++space) {
       buf[0] = 1;
 
-      const ExessResult s = exess_write_decimal(value, space, buf);
+      const ExessResult s =
+        exess_write_decimal(sizeof(value), &value, space, buf);
       assert(s.status == EXESS_NO_SPACE);
       assert(s.count == r.count);
       assert(buf[0] == (space ? 0 : 1));
@@ -171,7 +182,7 @@ check_write(const double      value,
   } else {
     assert(!r.count);
     assert(!buf[0]);
-    assert(!exess_write_decimal(value, 0, NULL).count);
+    assert(!exess_write_decimal(sizeof(value), &value, 0, NULL).count);
   }
 }
 
@@ -215,12 +226,12 @@ test_write_decimal(void)
 static void
 check_round_trip(const double value)
 {
-  double parsed_value                      = 0.0;
-  char   buf[EXESS_MAX_DECIMAL_LENGTH + 1] = {42};
+  double parsed_value     = 0.0;
+  char   buf[STRING_SIZE] = {42};
   init_out_buf(sizeof(buf), buf);
 
-  assert(!exess_write_decimal(value, sizeof(buf), buf).status);
-  assert(!exess_read_decimal(buf, &parsed_value).status);
+  assert(!exess_write_decimal(sizeof(value), &value, sizeof(buf), buf).status);
+  assert(!exess_read_decimal(buf, sizeof(parsed_value), &parsed_value).status);
   assert(double_matches(parsed_value, value));
 }
 

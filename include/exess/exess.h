@@ -199,9 +199,6 @@ exess_strerror(ExessStatus status);
    @{
 */
 
-/// The maximum length of a `decimal` string from exess_write_decimal()
-#define EXESS_MAX_DECIMAL_LENGTH 327U
-
 /**
    Read a `decimal` string after any leading whitespace.
 
@@ -211,15 +208,19 @@ exess_strerror(ExessStatus status);
    has unlimited precision, so this may result in data loss.
 
    @param str String to read.
+   @param out_size Size of `out` in bytes.
    @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
-exess_read_decimal(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
+EXESS_API ExessVariableResult
+exess_read_decimal(const char* EXESS_NONNULL str,
+                   size_t                    out_size,
+                   void* EXESS_NONNULL       out);
 
 /**
    Write a canonical `decimal` string.
 
+   @param value_size The size of `value` in bytes.
    @param value Value to write.
    @param buf_size Size of `buf` in bytes.
    @param[out] buf Output buffer, or null to only measure.
@@ -228,7 +229,10 @@ exess_read_decimal(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
 EXESS_API ExessResult
-exess_write_decimal(double value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
+exess_write_decimal(size_t                    value_size,
+                    const void* EXESS_NONNULL value,
+                    size_t                    buf_size,
+                    char* EXESS_UNSPECIFIED   buf);
 
 /**
    @}
@@ -1330,8 +1334,7 @@ static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
    Array of binary value sizes, indexed by datatype.
 
    Each entry is the size of the binary representation of the indexed datatype
-   (not a string length), or zero for #EXESS_HEX and #EXESS_BASE64, since such
-   values can be arbitrarily large.
+   (not a string length), or zero for values that can be arbitrarily large.
 */
 static EXESS_CONSTEXPR uint8_t exess_value_sizes[EXESS_MAX_DATATYPE + 1U] = {
   0U,                    // Unknown
