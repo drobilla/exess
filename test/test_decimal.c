@@ -105,8 +105,8 @@ test_read_decimal(void)
              311);
 
   // Superfluous digits
-  check_read("12345678901234567890", EXESS_SUCCESS, 12345678901234568000.0, 20);
-  check_read("1.2345678901234567890", EXESS_SUCCESS, 1.2345678901234568, 21);
+  check_read("12345678901234567890", EXESS_LOSS, 12345678901234568000.0, 20);
+  check_read("1.2345678901234567890", EXESS_LOSS, 1.2345678901234568, 21);
 
   // Special values
   check_read("-0.0E0", EXESS_SUCCESS, -0.0, 4);

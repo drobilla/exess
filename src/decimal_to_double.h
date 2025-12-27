@@ -7,6 +7,6 @@
 #include "big_decimal.h"
 
 double
-decimal_to_double(BigDecimal in);
+decimal_to_double(BigDecimal in, const char* digits);
 
 #endif // EXESS_SRC_DECIMAL_TO_DOUBLE_H

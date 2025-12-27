@@ -32,10 +32,9 @@ typedef enum {
    encodes where the "real" decimal point is.
 */
 typedef struct {
-  BigDecimalKind kind;                        ///< Kind of number
-  int            expt;                        ///< Power of 10 exponent
-  unsigned       n_digits;                    ///< Number of significant digits
-  char           digits[DBL_DECIMAL_DIG + 2]; ///< Significant digits
+  BigDecimalKind kind : 8;     ///< Kind of number
+  unsigned       n_digits : 8; ///< Number of significant digits
+  int            expt : 16;    ///< Power of 10 exponent
 } BigDecimal;
 
 #endif // EXESS_SRC_BIG_DECIMAL_H

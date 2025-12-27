@@ -170,7 +170,7 @@ read_fraction(size_t n_digits, const char* const digits)
 }
 
 double
-decimal_to_double(const BigDecimal in)
+decimal_to_double(const BigDecimal in, const char* const digits)
 {
   static const int      n_exact_pow10        = sizeof(POW10) / sizeof(POW10[0]);
   static const unsigned max_exact_int_digits = 15;   // Digits that fit exactly
@@ -195,7 +195,7 @@ decimal_to_double(const BigDecimal in)
   }
 
   // Represent value with integer mantissa and adjusted decimal power
-  const uint64_t frac  = read_fraction(in.n_digits, in.digits);
+  const uint64_t frac  = read_fraction(in.n_digits, digits);
   const int      power = in.expt - (int)in.n_digits;
 
   if (in.n_digits < max_exact_int_digits) { // Exact integer value
@@ -219,7 +219,7 @@ decimal_to_double(const BigDecimal in)
   // Not sure, guess is either the number or its predecessor (rare slow path)
   // Compare it with the buffer using bigints to find out which
   const ExessSoftFloat upper = {(guess.f * 2) + 1, guess.e - 1};
-  const int            cmp   = compare_buffer(in.digits, power, upper);
+  const int            cmp   = compare_buffer(digits, power, upper);
   const bool round_up        = (cmp > 0) || (cmp == 0 && (guess.f & 1U) != 0);
 
   return sign * (round_up ? nextafter(g, (double)INFINITY) : g);

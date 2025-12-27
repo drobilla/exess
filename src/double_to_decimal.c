@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 static BigDecimalKind
 number_kind(const double d)
@@ -33,20 +34,18 @@ number_kind(const double d)
 }
 
 BigDecimal
-double_to_decimal(const double d, const unsigned max_precision)
+double_to_decimal(const double d, const size_t digits_size, char* const digits)
 {
-  BigDecimal value = {number_kind(d), 0, 0U, {0}};
+  BigDecimal value = {number_kind(d), 0U, 0};
   if (value.kind != EXESS_NEGATIVE && value.kind != EXESS_POSITIVE) {
     return value;
   }
 
-  const ExessDigitCount count =
-    generate_digits(fabs(d), max_precision, value.digits);
+  const ExessDigitCount count = generate_digits(fabs(d), digits_size, digits);
 
-  assert(count.count == 1 || value.digits[count.count - 1] != '0');
+  assert(count.count == 1 || digits[count.count - 1] != '0');
 
-  value.n_digits = count.count;
-  value.expt     = count.expt + 1;
-
+  value.n_digits = (uint8_t)count.count;
+  value.expt     = (int16_t)(count.expt + 1);
   return value;
 }

@@ -30,16 +30,19 @@ scientific_string_length(const BigDecimal value, const unsigned n_expt_digits)
     return special_cases[value.kind].length;
   }
 
-  return ((value.kind == EXESS_NEGATIVE) + // Sign
-          value.n_digits + 1 +             // Digits and point
-          (value.n_digits <= 1) +          // Added '0' after point
-          1 +                              // 'E'
-          (value.expt < 1) +               // Exponent sign
-          n_expt_digits);                  // Exponent digits
+  return (value.n_digits + n_expt_digits +
+          !!(value.kind == EXESS_NEGATIVE) + // Sign
+          1U +                               // Decimal point
+          !!(value.n_digits <= 1) +          // Added '0' after point
+          1U +                               // 'E'
+          !!(value.expt < 1));               // Exponent sign
 }
 
 ExessResult
-write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
+write_scientific(const BigDecimal  value,
+                 const char* const digits,
+                 const size_t      buf_size,
+                 char* const       buf)
 {
   const int      expt          = value.expt - 1;
   unsigned       abs_expt      = (unsigned)abs(expt);
@@ -62,11 +65,11 @@ write_scientific(const BigDecimal value, const size_t buf_size, char* const buf)
   }
 
   // Write mantissa, with decimal point after the first (normal form)
-  buf[i++] = value.digits[0];
+  buf[i++] = digits[0];
   buf[i++] = '.';
   if (value.n_digits > 1) {
-    memcpy(buf + i, value.digits + 1, value.n_digits - 1);
-    i += value.n_digits - 1;
+    memcpy(buf + i, digits + 1, value.n_digits - 1U);
+    i += value.n_digits - 1U;
   } else {
     buf[i++] = '0';
   }

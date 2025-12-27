@@ -15,10 +15,14 @@
 #include <exess/exess.h>
 
 #include <math.h>
+#include <stdint.h>
 #include <string.h>
 
 static ExessResult
-parse_double(const char* const str, BigDecimal* const out)
+parse_double(const char* const str,
+             BigDecimal* const out,
+             const size_t      digits_size,
+             char* const       digits)
 {
   typedef struct {
     BigDecimalKind kind;
@@ -43,8 +47,8 @@ parse_double(const char* const str, BigDecimal* const out)
   }
 
   // Read mantissa as a decimal
-  const ExessResult r = parse_decimal(str, out);
-  if (r.status) {
+  const ExessResult r = parse_decimal(str, out, digits_size, digits);
+  if (r.status > EXESS_LOSS) {
     return r;
   }
 
@@ -67,7 +71,7 @@ parse_double(const char* const str, BigDecimal* const out)
   }
 
   // Calculate final output exponent
-  out->expt += expt_sign * abs_expt;
+  out->expt = (int16_t)(out->expt + (expt_sign * abs_expt));
 
   return RESULT(r.status, i);
 }
@@ -75,18 +79,22 @@ parse_double(const char* const str, BigDecimal* const out)
 ExessResult
 exess_read_double(const char* const str, double* const out)
 {
-  const size_t      i  = skip_whitespace(str);
-  BigDecimal        in = {EXESS_NAN, 0, 0U, {0}};
-  const ExessResult r  = parse_double(str + i, &in);
+  char digits[DBL_DECIMAL_DIG + 1U] = {0};
 
-  *out = r.status ? (double)NAN : decimal_to_double(in);
+  const size_t      i  = skip_whitespace(str);
+  BigDecimal        in = {EXESS_NAN, 0U, 0};
+  const ExessResult r  = parse_double(str + i, &in, sizeof(digits), digits);
+
+  *out = (r.status > EXESS_LOSS) ? (double)NAN : decimal_to_double(in, digits);
   return RESULT(r.status, i + r.count);
 }
 
 ExessResult
 exess_write_double(const double value, const size_t buf_size, char* const buf)
 {
-  const BigDecimal  decimal = double_to_decimal(value, DBL_DECIMAL_DIG);
-  const ExessResult r       = write_scientific(decimal, buf_size, buf);
+  char digits[DBL_DECIMAL_DIG + 1U] = {0};
+
+  const BigDecimal  decimal = double_to_decimal(value, DBL_DECIMAL_DIG, digits);
+  const ExessResult r       = write_scientific(decimal, digits, buf_size, buf);
   return end_write(r.status, buf_size, buf, r.count);
 }

@@ -5,13 +5,16 @@
 
 #include "big_decimal.h"
 #include "char_utils.h"
+#include "macros.h"
 #include "number_utils.h"
 #include "result.h"
 
 #include <exess/exess.h>
 
 #include <stdbool.h>
-#include <string.h>
+#include <stdint.h>
+
+#define BIG_DECIMAL_MAX_DIGITS 255U
 
 typedef struct {
   int  expt;        // Running power of 10 exponent
@@ -35,7 +38,10 @@ skip_leading_zeros(const char* const str, ParseState* const out)
 }
 
 ExessResult
-parse_decimal(const char* const str, BigDecimal* const out)
+parse_decimal(const char* const str,
+              BigDecimal* const out,
+              const size_t      digits_size,
+              char* const       digits)
 {
   // Read leading sign if present
   int    sign = 0;
@@ -51,13 +57,16 @@ parse_decimal(const char* const str, BigDecimal* const out)
   }
 
   // Read significant digits of the mantissa
+  const size_t max_n_digits = MIN(digits_size, BIG_DECIMAL_MAX_DIGITS);
+  bool         approximate  = false;
   for (;; ++i) {
     if (is_digit(str[i])) {
-      if (out->n_digits < DBL_DECIMAL_DIG + 1) { // Significant digit
-        state.expt += !state.after_point;
-        out->digits[out->n_digits++] = str[i];
-      } else { // Insignificant digit
-        state.expt += !state.after_point;
+      const bool significant = (out->n_digits < max_n_digits);
+      state.expt += !state.after_point;
+      if (significant) {
+        digits[out->n_digits++] = str[i];
+      } else if (str[i] != '0') {
+        approximate = true;
       }
     } else if (str[i] == '.' && !state.after_point) {
       state.after_point = true;
@@ -66,10 +75,10 @@ parse_decimal(const char* const str, BigDecimal* const out)
     }
   }
 
-  out->expt = state.expt;
+  out->expt = (int16_t)(out->n_digits ? state.expt : 0);
   out->kind = (sign < 0)
                 ? (out->n_digits ? EXESS_NEGATIVE : EXESS_NEGATIVE_ZERO)
                 : (out->n_digits ? EXESS_POSITIVE : EXESS_POSITIVE_ZERO);
 
-  return RESULT(EXESS_SUCCESS, i);
+  return RESULT(approximate ? EXESS_LOSS : EXESS_SUCCESS, i);
 }

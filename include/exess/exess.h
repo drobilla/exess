@@ -210,7 +210,9 @@ exess_strerror(ExessStatus status);
    @param str String to read.
    @param out_size Size of `out` in bytes.
    @param[out] out Parsed value, or NaN on error.
-   @return The `count` of characters read, and a `status`.
+
+   @return The `read_count` of characters read, `write_count` of bytes written,
+   and a `status`.
 */
 EXESS_API ExessVariableResult
 exess_read_decimal(const char* EXESS_NONNULL str,

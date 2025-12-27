@@ -41,7 +41,7 @@ test_read_double(void)
 
   // Beyond limits
   check_read("1e-326", EXESS_SUCCESS, 0.0, 6);
-  check_read("12345678901234567123", EXESS_SUCCESS, 12345678901234567000.0, 20);
+  check_read("12345678901234567123", EXESS_LOSS, 12345678901234567000.0, 20);
   check_read("1e309", EXESS_SUCCESS, (double)INFINITY, 5);
   check_read("1e310", EXESS_SUCCESS, (double)INFINITY, 5);
 

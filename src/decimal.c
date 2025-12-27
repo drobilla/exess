@@ -67,11 +67,14 @@ exess_read_decimal(const char* const str,
   assert(out_size >= sizeof(double));
   (void)out_size;
 
-  const size_t      i  = skip_whitespace(str);
-  BigDecimal        in = {EXESS_NAN, 0, 0U, {0}};
-  const ExessResult r  = parse_decimal(str + i, &in);
+  char digits[DBL_DECIMAL_DIG + 1U] = {0};
 
-  *(double*)out = r.status ? (double)NAN : decimal_to_double(in);
+  const size_t      i  = skip_whitespace(str);
+  BigDecimal        in = {EXESS_NAN, 0U, 0};
+  const ExessResult r  = parse_decimal(str + i, &in, DBL_DECIMAL_DIG, digits);
+
+  *(double*)out =
+    (r.status > EXESS_LOSS) ? (double)NAN : decimal_to_double(in, digits);
 
   return VRESULT(r.status, i + r.count, sizeof(double));
 }
@@ -85,8 +88,10 @@ exess_write_decimal(const size_t      value_size,
   assert(value_size >= sizeof(double));
   (void)value_size;
 
+  char digits[DBL_DECIMAL_DIG + 1U] = {0};
+
   const BigDecimal decimal =
-    double_to_decimal(*(const double*)value, DBL_DECIMAL_DIG);
+    double_to_decimal(*(const double*)value, sizeof(digits), digits);
 
   if (decimal.kind < EXESS_NEGATIVE_ZERO) {
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
@@ -113,21 +118,21 @@ exess_write_decimal(const size_t      value_size,
   }
 
   if (metrics.point_loc == EXESS_POINT_AFTER) {
-    i += write_string(decimal.n_digits, decimal.digits, buf_size, buf, i);
+    i += write_string(decimal.n_digits, digits, buf_size, buf, i);
     i += write_zeros(metrics.n_zeros_before, buf_size, buf, i);
     i += write_string(2, ".0", buf_size, buf, i);
   } else if (metrics.point_loc == EXESS_POINT_BEFORE) {
     i += write_string(2, "0.", buf_size, buf, i);
     i += write_zeros(metrics.n_zeros_after, buf_size, buf, i);
-    i += write_string(decimal.n_digits, decimal.digits, buf_size, buf, i);
+    i += write_string(decimal.n_digits, digits, buf_size, buf, i);
   } else {
     assert(metrics.point_loc == EXESS_POINT_BETWEEN);
     assert(decimal.expt >= 0);
     const size_t n_before = (size_t)decimal.expt;
     const size_t n_after  = decimal.n_digits - n_before;
-    i += write_string(n_before, decimal.digits, buf_size, buf, i);
+    i += write_string(n_before, digits, buf_size, buf, i);
     i += write_char('.', buf_size, buf, i);
-    i += write_string(n_after, decimal.digits + n_before, buf_size, buf, i);
+    i += write_string(n_after, digits + n_before, buf_size, buf, i);
   }
 
   return end_write(EXESS_SUCCESS, buf_size, buf, i);
