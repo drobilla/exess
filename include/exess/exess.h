@@ -720,10 +720,10 @@ exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 typedef int8_t ExessTimezone;
 
 /// Sentinel value for local time
-#define EXESS_LOCAL ((ExessTimezone)127U)
+#define EXESS_TIMEZONE_LOCAL ((ExessTimezone)127U)
 
 /// Sentinel value for UTC time
-#define EXESS_UTC ((ExessTimezone)0U)
+#define EXESS_TIMEZONE_UTC ((ExessTimezone)0U)
 
 /**
    Construct a time zone offset from hours and minutes.
@@ -733,7 +733,7 @@ typedef int8_t ExessTimezone;
    must be the same.  Hours can be from -14 to 14 inclusive, and minutes can
    only be -45, -30, -15, 0, 15, 30, or 45.
 
-   @return A time zone offset in quarter hours, or #EXESS_LOCAL if the
+   @return A time zone offset in quarter hours, or #EXESS_TIMEZONE_LOCAL if the
    parameters are invalid or not supported.
 */
 EXESS_CONST_API ExessTimezone
@@ -1565,15 +1565,12 @@ typedef enum {
 */
 typedef uint32_t ExessCoercions;
 
-/// Readability macro for using no lossy coercions (a zero #ExessCoercions)
-#define EXESS_LOSSLESS 0U
-
 /**
    Coerce a value to another datatype if possible.
 
-   @param coercions Enabled coercion flags.  If this is zero (#EXESS_LOSSLESS),
-   then #EXESS_SUCCESS is only returned if the resulting value can be coerced
-   back to the original type without any loss of data.  Otherwise, the lossy
+   @param coercions Enabled coercion flags.  If this is zero, then
+   #EXESS_SUCCESS is only returned if the resulting value can be coerced back
+   to the original type without any loss of data.  Otherwise, the lossy
    coercions enabled by the set bits will be attempted.
 
    @param in_datatype Datatype of `in`.

@@ -79,7 +79,7 @@ static ExessDateTime
 to_utc(const ExessDateTime s, const ExessDuration offset)
 {
   ExessDateTime r = exess_add_date_time_duration(s, offset);
-  r.zone          = EXESS_UTC;
+  r.zone          = EXESS_TIMEZONE_UTC;
   return r;
 }
 
@@ -101,7 +101,7 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 
   ExessOrder order = EXESS_ORDER_EQUAL;
 
-  if (lhs.zone != EXESS_LOCAL) {
+  if (lhs.zone != EXESS_TIMEZONE_LOCAL) {
     order = compare_date_time_total(lhs, to_utc(rhs, minus_14h));
     if (order < 0) {
       return order;
@@ -133,8 +133,8 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 ExessOrder
 exess_compare_date_time(const ExessDateTime lhs, const ExessDateTime rhs)
 {
-  return ((lhs.zone == rhs.zone) ||
-          (lhs.zone != EXESS_LOCAL && rhs.zone != EXESS_LOCAL))
+  return ((lhs.zone == rhs.zone) || (lhs.zone != EXESS_TIMEZONE_LOCAL &&
+                                     rhs.zone != EXESS_TIMEZONE_LOCAL))
            ? compare_date_time_total(lhs, rhs)
            : compare_date_time_partial(lhs, rhs);
 }
@@ -255,7 +255,7 @@ exess_read_date_time(const char* const str, ExessDateTime* const out)
   memset(out, 0, sizeof(*out));
 
   // Read date
-  ExessDate         date = {0, 0U, 0U, EXESS_LOCAL};
+  ExessDate         date = {0, 0U, 0U, EXESS_TIMEZONE_LOCAL};
   const ExessResult dr   = read_date_numbers(&date, str);
 
   out->year  = date.year;
@@ -273,7 +273,7 @@ exess_read_date_time(const char* const str, ExessDateTime* const out)
   ++i;
 
   // Read time
-  ExessTime         time = {EXESS_LOCAL, 0U, 0U, 0U, 0U};
+  ExessTime         time = {EXESS_TIMEZONE_LOCAL, 0U, 0U, 0U, 0U};
   const ExessResult tr   = read_time(&time, str + i);
 
   out->zone       = time.zone;
@@ -294,7 +294,8 @@ exess_write_date_time(const ExessDateTime value,
                       const size_t        buf_size,
                       char* const         buf)
 {
-  const ExessDate date = {value.year, value.month, value.day, EXESS_LOCAL};
+  const ExessDate date = {
+    value.year, value.month, value.day, EXESS_TIMEZONE_LOCAL};
 
   const ExessTime time = {
     value.zone, value.hour, value.minute, value.second, value.nanosecond};

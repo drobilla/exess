@@ -35,7 +35,7 @@ timezone_matches(const ExessTimezone zone,
                  const bool          expected_is_present)
 
 {
-  return (!expected_is_present && zone == EXESS_LOCAL) ||
+  return (!expected_is_present && zone == EXESS_TIMEZONE_LOCAL) ||
          zone == (4 * expected_hour) + (expected_minute / 15);
 }
 

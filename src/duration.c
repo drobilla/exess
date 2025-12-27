@@ -137,10 +137,10 @@ compare_duration_partial(const ExessDuration lhs, const ExessDuration rhs)
 {
   // See https://www.w3.org/TR/xmlschema11-2/#duration
 
-  static const ExessDateTime a = {1696, 9, 1, EXESS_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime b = {1697, 2, 1, EXESS_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime c = {1903, 3, 1, EXESS_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime d = {1903, 7, 1, EXESS_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime a = {1696, 9, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime b = {1697, 2, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime c = {1903, 3, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  static const ExessDateTime d = {1903, 7, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
 
   const ExessOrder cmp = exess_compare_date_time(
     exess_add_date_time_duration(a, lhs), exess_add_date_time_duration(a, rhs));

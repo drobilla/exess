@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 
-static const ExessDate nozone   = {2001, 1, 2, EXESS_LOCAL};
-static const ExessDate utc      = {2002, 2, 3, EXESS_UTC};
+static const ExessDate nozone   = {2001, 1, 2, EXESS_TIMEZONE_LOCAL};
+static const ExessDate utc      = {2002, 2, 3, EXESS_TIMEZONE_UTC};
 static const ExessDate zoned    = {2003, 3, 4, INIT_ZONE(11, 30)};
 static const ExessDate early    = {99, 3, 4, INIT_ZONE(11, 30)};
 static const ExessDate future   = {12345, 3, 4, INIT_ZONE(11, 30)};
@@ -35,7 +35,7 @@ check_read(const char* const string,
            const bool        expected_tz_is_present,
            const size_t      expected_count)
 {
-  ExessDate value = {0, 0, 0, EXESS_LOCAL};
+  ExessDate value = {0, 0, 0, EXESS_TIMEZONE_LOCAL};
 
   const ExessResult r = exess_read_date(string, &value);
   assert(r.status == expected_status);
@@ -43,7 +43,7 @@ check_read(const char* const string,
   assert(value.year == expected_year);
   assert(value.month == expected_month);
   assert(value.day == expected_day);
-  assert((!expected_tz_is_present && value.zone == EXESS_LOCAL) ||
+  assert((!expected_tz_is_present && value.zone == EXESS_TIMEZONE_LOCAL) ||
          value.zone == (4 * expected_tz_hour) + (expected_tz_minute / 15));
 }
 

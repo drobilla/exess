@@ -85,14 +85,14 @@ check_perf(const ExessDatatype from_datatype,
   CheckState state = {{0}, {0}, {EXESS_SUCCESS, 0, 0}, {EXESS_SUCCESS, 0}};
 
   check_conversions(
-    &state, from_datatype, from_string, EXESS_LOSSLESS, to_datatype, to_string);
+    &state, from_datatype, from_string, 0U, to_datatype, to_string);
 
   EXESS_ALIGN uint8_t tripped[VALUE_SIZE]      = {0};
   char                tripped_str[STRING_SIZE] = {42};
   init_out_buf(sizeof(tripped_str), tripped_str);
 
   // Coerce the value back to the original type
-  const ExessResult tripped_r = exess_coerce_value(EXESS_LOSSLESS,
+  const ExessResult tripped_r = exess_coerce_value(0U,
                                                    to_datatype,
                                                    state.r_coerced.count,
                                                    state.coerced,
@@ -128,7 +128,7 @@ check_fail(const ExessDatatype from_datatype,
   assert(!vr.status);
 
   // Try to coerce to target datatype
-  const ExessResult coerced_r = exess_coerce_value(EXESS_LOSSLESS,
+  const ExessResult coerced_r = exess_coerce_value(0U,
                                                    from_datatype,
                                                    vr.write_count,
                                                    value,
@@ -152,7 +152,7 @@ check_loss(const ExessDatatype  from_datatype,
   check_conversions(
     &state, from_datatype, from_string, coercions, to_datatype, to_string);
 
-  assert(exess_coerce_value(EXESS_LOSSLESS,
+  assert(exess_coerce_value(0U,
                             from_datatype,
                             state.r_value.write_count,
                             state.value,
@@ -172,10 +172,10 @@ check_wide(const ExessDatatype from_datatype,
   CheckState state = {{0}, {0}, {EXESS_SUCCESS, 0, 0}, {EXESS_SUCCESS, 0}};
 
   check_conversions(
-    &state, from_datatype, from_string, EXESS_LOSSLESS, to_datatype, to_string);
+    &state, from_datatype, from_string, 0U, to_datatype, to_string);
 
   // Ensure that converting coerced value back isn't lossless
-  assert(exess_coerce_value(EXESS_LOSSLESS,
+  assert(exess_coerce_value(0U,
                             to_datatype,
                             state.r_coerced.count,
                             state.coerced,
@@ -212,20 +212,20 @@ test_overflow(void)
   const uint32_t v = 4294967295U;
   uint16_t       o = 42U;
 
-  ExessResult r = exess_coerce_value(
-    EXESS_LOSSLESS, EXESS_SHORT, 1U, &v, EXESS_LONG, sizeof(o), &o);
+  ExessResult r =
+    exess_coerce_value(0U, EXESS_SHORT, 1U, &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_BAD_VALUE);
   assert(o == 42U);
 
   r = exess_coerce_value(
-    EXESS_LOSSLESS, EXESS_SHORT, sizeof(v), &v, EXESS_LONG, sizeof(o), &o);
+    0U, EXESS_SHORT, sizeof(v), &v, EXESS_LONG, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
   assert(o == 42U);
 
   r = exess_coerce_value(
-    EXESS_LOSSLESS, EXESS_HEX, sizeof(v), &v, EXESS_BASE64, sizeof(o), &o);
+    0U, EXESS_HEX, sizeof(v), &v, EXESS_BASE64, sizeof(o), &o);
 
   assert(r.status == EXESS_NO_SPACE);
   assert(o == 42U);
@@ -240,25 +240,15 @@ test_unknown(void)
   uint8_t in[32]  = {0U};
   uint8_t out[32] = {0U};
 
-  assert(exess_coerce_value(EXESS_LOSSLESS,
-                            EXESS_NOTHING,
-                            sizeof(in),
-                            in,
-                            EXESS_LONG,
-                            sizeof(out),
-                            out)
+  assert(exess_coerce_value(
+           0U, EXESS_NOTHING, sizeof(in), in, EXESS_LONG, sizeof(out), out)
            .status);
 
-  assert(exess_coerce_value(EXESS_LOSSLESS,
-                            EXESS_NOTHING,
-                            sizeof(in),
-                            in,
-                            EXESS_ULONG,
-                            sizeof(out),
-                            out)
+  assert(exess_coerce_value(
+           0U, EXESS_NOTHING, sizeof(in), in, EXESS_ULONG, sizeof(out), out)
            .status);
 
-  assert(exess_coerce_value(EXESS_LOSSLESS,
+  assert(exess_coerce_value(0U,
                             EXESS_LONG,
                             sizeof(long_value),
                             &long_value,
@@ -267,7 +257,7 @@ test_unknown(void)
                             out)
            .status);
 
-  assert(exess_coerce_value(EXESS_LOSSLESS,
+  assert(exess_coerce_value(0U,
                             EXESS_ULONG,
                             sizeof(ulong_value),
                             &ulong_value,

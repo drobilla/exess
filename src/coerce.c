@@ -198,8 +198,8 @@ to_double(const ExessDatatype in_datatype,
     return RESULT(EXESS_SUCCESS, sizeof(double));
   }
 
-  const SConversion c = convert_signed_range(
-    EXESS_LOSSLESS, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
+  const SConversion c =
+    convert_signed_range(0U, in_datatype, in, -MAX_DOUBLE_INT, MAX_DOUBLE_INT);
 
   ENSURE(!c.status, c.status);
   *out = (double)c.value;

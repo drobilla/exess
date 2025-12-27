@@ -15,17 +15,17 @@ ExessTimezone
 exess_timezone(const int8_t hours, const int8_t minutes)
 {
   if (hours < -14 || hours > 14) {
-    return EXESS_LOCAL;
+    return EXESS_TIMEZONE_LOCAL;
   }
 
   if (hours < 0 && minutes != 0 && minutes != -15 && minutes != -30 &&
       minutes != -45) {
-    return EXESS_LOCAL;
+    return EXESS_TIMEZONE_LOCAL;
   }
 
   if (hours > 0 && minutes != 0 && minutes != 15 && minutes != 30 &&
       minutes != 45) {
-    return EXESS_LOCAL;
+    return EXESS_TIMEZONE_LOCAL;
   }
 
   return (int8_t)((4 * hours) + (minutes / 15));
@@ -34,7 +34,7 @@ exess_timezone(const int8_t hours, const int8_t minutes)
 ExessResult
 read_optional_timezone(ExessTimezone* const out, const char* const str)
 {
-  *out = EXESS_LOCAL;
+  *out = EXESS_TIMEZONE_LOCAL;
 
   // Handle UTC special case
   size_t i = 0;
@@ -101,7 +101,7 @@ write_timezone(const ExessTimezone value,
                char* const         buf,
                size_t              o)
 {
-  if (value == EXESS_LOCAL) {
+  if (value == EXESS_TIMEZONE_LOCAL) {
     return RESULT(EXESS_SUCCESS, 0);
   }
 

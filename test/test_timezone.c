@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <string.h>
 
-static const ExessTimezone missing  = {EXESS_LOCAL};
+static const ExessTimezone missing  = {EXESS_TIMEZONE_LOCAL};
 static const ExessTimezone utc      = INIT_ZONE(0, 0);
 static const ExessTimezone plus     = INIT_ZONE(11, 30);
 static const ExessTimezone minus    = INIT_ZONE(-11, -30);
@@ -28,20 +28,20 @@ static void
 test_construct(void)
 {
   // Out of bounds
-  assert(exess_timezone(-15, 00) == EXESS_LOCAL);
-  assert(exess_timezone(15, 00) == EXESS_LOCAL);
+  assert(exess_timezone(-15, 00) == EXESS_TIMEZONE_LOCAL);
+  assert(exess_timezone(15, 00) == EXESS_TIMEZONE_LOCAL);
 
   // Extremes
   assert(exess_timezone(-14, -45) == -59);
   assert(exess_timezone(14, 45) == 59);
 
   // Bad minutes
-  assert(exess_timezone(12, 20) == EXESS_LOCAL);
-  assert(exess_timezone(-12, -20) == EXESS_LOCAL);
+  assert(exess_timezone(12, 20) == EXESS_TIMEZONE_LOCAL);
+  assert(exess_timezone(-12, -20) == EXESS_TIMEZONE_LOCAL);
 
   // Bad signs
-  assert(exess_timezone(12, -30) == EXESS_LOCAL);
-  assert(exess_timezone(-12, 30) == EXESS_LOCAL);
+  assert(exess_timezone(12, -30) == EXESS_TIMEZONE_LOCAL);
+  assert(exess_timezone(-12, 30) == EXESS_TIMEZONE_LOCAL);
 
   // All valid negative cases
   ExessTimezone z = -59;
@@ -76,12 +76,12 @@ check_read(const char* const string,
   char time_string[] = "12:00:00XXXXXX";
   strncpy(time_string + 8, string, sizeof(time_string) - 9);
 
-  ExessTime         value = {EXESS_LOCAL, 0, 0, 0, 0};
+  ExessTime         value = {EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
   const ExessResult r     = exess_read_time(time_string, &value);
 
   assert(r.status == expected_status);
   assert(r.count == 8 + expected_count);
-  assert((!expected_is_present && value.zone == EXESS_LOCAL) ||
+  assert((!expected_is_present && value.zone == EXESS_TIMEZONE_LOCAL) ||
          value.zone == (4 * expected_hour) + (expected_minute / 15));
 }
 
@@ -177,7 +177,7 @@ check_round_trip(const ExessTimezone value)
                                          19, 20, 21, 22, 23, 24, 25};
 
   const ExessTime time        = {value, 12, 0, 0, 0};
-  ExessTime       parsed_time = {EXESS_LOCAL, 0, 0, 0, 0};
+  ExessTime       parsed_time = {EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
 
   assert(!exess_write_time(time, sizeof(buf), buf).status);
   assert(!exess_read_time(buf, &parsed_time).status);

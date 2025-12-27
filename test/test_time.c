@@ -14,8 +14,8 @@
 #include <stdint.h>
 #include <string.h>
 
-static const ExessTime nozone   = {EXESS_LOCAL, 0, 0, 0, 0};
-static const ExessTime utc      = {EXESS_UTC, 12, 15, 1, 250000000};
+static const ExessTime nozone   = {EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+static const ExessTime utc      = {EXESS_TIMEZONE_UTC, 12, 15, 1, 250000000};
 static const ExessTime zoned    = {INIT_ZONE(11, 30), 23, 59, 59, 1000000};
 static const ExessTime high     = {INIT_ZONE(11, 30), 23, 59, 59, 999999999};
 static const ExessTime garbage1 = {INIT_ZONE(11, 30), 0, 0, 0, 1000000000};
@@ -39,7 +39,7 @@ check_read(const char* const string,
            const bool        expected_tz_is_present,
            const size_t      expected_count)
 {
-  ExessTime value = {EXESS_LOCAL, 0, 0, 0, 0};
+  ExessTime value = {EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
 
   const ExessResult r = exess_read_time(string, &value);
   assert(r.status == expected_status);
@@ -48,7 +48,7 @@ check_read(const char* const string,
   assert(value.minute == expected_minute);
   assert(value.second == expected_second);
   assert(value.nanosecond == expected_nanosecond);
-  assert((!expected_tz_is_present && value.zone == EXESS_LOCAL) ||
+  assert((!expected_tz_is_present && value.zone == EXESS_TIMEZONE_LOCAL) ||
          value.zone == (4 * expected_tz_hour) + (expected_tz_minute / 15));
 }
 
@@ -201,7 +201,7 @@ check_round_trip(const ExessTime value)
                                          10, 11, 12, 13, 14, 15, 16, 17, 18,
                                          19, 20, 21, 22, 23, 24, 25};
 
-  ExessTime parsed_value = {EXESS_LOCAL, 0, 0, 0, 0};
+  ExessTime parsed_value = {EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
   assert(!exess_write_time(value, sizeof(buf), buf).status);
   assert(!exess_read_time(buf, &parsed_value).status);
   assert(parsed_value.hour == value.hour);
@@ -223,7 +223,7 @@ test_round_trip(void)
       rng = lcg32(rng);
 
       const uint8_t   s            = (uint8_t)(rng % 60U);
-      const ExessTime no_zone      = {EXESS_LOCAL, h, m, s, ns};
+      const ExessTime no_zone      = {EXESS_TIMEZONE_LOCAL, h, m, s, ns};
       const ExessTime lowest_zone  = {INIT_ZONE(-14, 0), h, m, s, ns};
       const ExessTime highest_zone = {INIT_ZONE(14, 0), h, m, s, ns};
 

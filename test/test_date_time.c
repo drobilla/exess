@@ -11,17 +11,19 @@
 #include <stdint.h>
 #include <string.h>
 
-static const ExessDateTime local   = {2001, 2, 3, 56, 4, 5, 6, 0};
-static const ExessDateTime utc     = {2001, 2, 3, EXESS_UTC, 4, 5, 6, 0};
+static const ExessDateTime local = {2001, 2, 3, 56, 4, 5, 6, 0};
+static const ExessDateTime utc   = {2001, 2, 3, EXESS_TIMEZONE_UTC, 4, 5, 6, 0};
 static const ExessDateTime lowest  = {INT16_MIN, 1, 1, -56, 0, 0, 0, 0};
 static const ExessDateTime highest = {INT16_MAX, 12, 31, 56, 24, 0, 0, 0};
 
 static const ExessDateTime longest =
   {INT16_MIN, 12, 31, 56, 23, 59, 59, 999999999};
 
-static const ExessDateTime utc_min = {INT16_MIN, 1, 1, EXESS_UTC, 0, 0, 0, 0};
+static const ExessDateTime utc_min =
+  {INT16_MIN, 1, 1, EXESS_TIMEZONE_UTC, 0, 0, 0, 0};
+
 static const ExessDateTime utc_max =
-  {INT16_MAX, 12, 31, EXESS_UTC, 24, 0, 0, 0};
+  {INT16_MAX, 12, 31, EXESS_TIMEZONE_UTC, 24, 0, 0, 0};
 
 static const ExessDateTime nano      = {2001, 1, 1, 56, 0, 0, 0, 1};
 static const ExessDateTime garbage1  = {2004, 0, 1, 56, 12, 0, 0, 0};
@@ -41,7 +43,7 @@ check_add(const char* const datetime_string,
           const char* const duration_string,
           const char* const result_string)
 {
-  ExessDateTime datetime = {0, 0U, 0U, EXESS_LOCAL, 0U, 0U, 0U, 0U};
+  ExessDateTime datetime = {0, 0U, 0U, EXESS_TIMEZONE_LOCAL, 0U, 0U, 0U, 0U};
   ExessDuration duration = {0U, 0U, 0U};
 
   ExessResult r = exess_read_date_time(datetime_string, &datetime);
@@ -186,7 +188,7 @@ test_calendar(void)
 static void
 check_to_utc(const char* const datetime_string, const char* const result_string)
 {
-  ExessDateTime datetime = {0, 0U, 0U, EXESS_LOCAL, 0U, 0U, 0U, 0U};
+  ExessDateTime datetime = {0, 0U, 0U, EXESS_TIMEZONE_LOCAL, 0U, 0U, 0U, 0U};
 
   ExessResult r = exess_read_date_time(datetime_string, &datetime);
   assert(!r.status);
@@ -248,7 +250,7 @@ check_read(const char* const   string,
            const uint32_t      expected_nanosecond,
            const ExessTimezone expected_zone)
 {
-  ExessDateTime value = {0, 0, 0, EXESS_LOCAL, 0, 0, 0, 0};
+  ExessDateTime value = {0, 0, 0, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
 
   const ExessResult r = exess_read_date_time(string, &value);
   assert(r.status == expected_status);
@@ -278,7 +280,7 @@ test_read_date_time(void)
              5,
              6,
              0,
-             EXESS_LOCAL);
+             EXESS_TIMEZONE_LOCAL);
 
   check_read("2001-02-03T04:05:06Z",
              EXESS_SUCCESS,
@@ -290,7 +292,7 @@ test_read_date_time(void)
              5,
              6,
              0,
-             EXESS_UTC);
+             EXESS_TIMEZONE_UTC);
 
   check_read("2004-04-12T13:20:15.5",
              EXESS_SUCCESS,
@@ -302,7 +304,7 @@ test_read_date_time(void)
              20,
              15,
              500000000,
-             EXESS_LOCAL);
+             EXESS_TIMEZONE_LOCAL);
 
   // Time zone offsets
 
@@ -341,7 +343,7 @@ test_read_date_time(void)
              0,
              0,
              0,
-             EXESS_LOCAL);
+             EXESS_TIMEZONE_LOCAL);
 
   // Too many nanosecond digits (expecting a timezone after 9 digits)
   check_read("2001-02-03T04:05:06.123456789123",
@@ -354,7 +356,7 @@ test_read_date_time(void)
              5,
              6,
              123456789,
-             EXESS_LOCAL);
+             EXESS_TIMEZONE_LOCAL);
 
   // Garbage
 
@@ -368,7 +370,7 @@ test_read_date_time(void)
              0,
              0,
              0,
-             EXESS_LOCAL);
+             EXESS_TIMEZONE_LOCAL);
 
   check_read(
     "2004-04-121", EXESS_EXPECTED_TIME_SEP, 10, 2004, 4, 12, 0, 0, 0, 0, 0);

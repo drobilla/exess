@@ -20,9 +20,11 @@ static const ExessDuration duration = {14,
                                          (5 * 60) + 6,
                                        0};
 
-static const ExessDateTime datetime = {2001, 2, 3, EXESS_LOCAL, 4, 5, 6, 0};
-static const ExessTime     time     = {EXESS_UTC, 1, 2, 3, 0};
-static const ExessDate     date     = {2001, 2, 3, EXESS_UTC};
+static const ExessDateTime datetime =
+  {2001, 2, 3, EXESS_TIMEZONE_LOCAL, 4, 5, 6, 0};
+
+static const ExessTime time = {EXESS_TIMEZONE_UTC, 1, 2, 3, 0};
+static const ExessDate date = {2001, 2, 3, EXESS_TIMEZONE_UTC};
 
 static void
 check_read(void*               value,
