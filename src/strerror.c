@@ -8,6 +8,7 @@ exess_strerror(const ExessStatus status)
 {
   static const char* const strings[] = {
     "Success",
+    "Lossy operation",
     "Expected \"false\", \"true\", \"0\" or \"1\"",
     "Expected an integer value",
     "Expected a duration starting with 'P'",
@@ -24,9 +25,8 @@ exess_strerror(const ExessStatus status)
     "Expected a base64 character",
     "Invalid field order",
     "Invalid value",
-    "Value outside valid range",
+    "Value out of range",
     "Insufficient space",
-    "Lossy coercion required",
     "Unsupported value",
   };
 

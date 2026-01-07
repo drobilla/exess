@@ -129,7 +129,7 @@ typedef enum {
   EXESS_EXPECTED_BASE64,     ///< Expected a base64 character
   EXESS_BAD_ORDER,           ///< Invalid field order
   EXESS_BAD_VALUE,           ///< Invalid value
-  EXESS_OUT_OF_RANGE,        ///< Value out of range for datatype
+  EXESS_OUT_OF_RANGE,        ///< Value out of range
   EXESS_NO_SPACE,            ///< Insufficient space
   EXESS_UNSUPPORTED,         ///< Unsupported value
 } ExessStatus;
