@@ -68,7 +68,7 @@ exess_write_long(const int64_t value, const size_t buf_size, char* const buf)
   const bool     is_negative = value < 0;
   const uint64_t abs_value   = (uint64_t)(is_negative ? -value : value);
 
-  size_t      i = (is_negative) ? write_char('-', buf_size, buf, 0) : 0;
+  size_t      i = is_negative ? write_char('-', buf_size, buf, 0) : 0;
   ExessResult r = write_digits(abs_value, buf_size, buf, i);
 
   return end_write(r.status, buf_size, buf, i + r.count);
