@@ -1,4 +1,4 @@
-// Copyright 2019-2023 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "date_utils.h"
@@ -11,7 +11,7 @@
 
 #include <stddef.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_date_numbers(ExessDate* const out, const char* const str)
 {
   // Read year at the beginning

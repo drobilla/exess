@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "fixed.h"
@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_read_ubyte(const char* const str, uint8_t* const out)
 {
   uint64_t          value = 0U;
@@ -18,7 +18,7 @@ exess_read_ubyte(const char* const str, uint8_t* const out)
   return r;
 }
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_write_ubyte(const uint8_t value, const size_t buf_size, char* const buf)
 {
   return exess_write_ulong(value, buf_size, buf);

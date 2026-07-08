@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -13,22 +13,22 @@
 #include <stdint.h>
 
 /// Return true iff `c` is "0"
-static inline bool
+static inline EXESS_NONBLOCKING bool
 is_zero(const int c)
 {
   return c == '0';
 }
 
 /// Return true iff `c` is "."
-static inline bool
+static inline EXESS_NONBLOCKING bool
 is_point(const int c)
 {
   return c == '.';
 }
 
 // Scan forwards as long as `pred` returns true for characters
-static inline size_t
-scan(bool (*pred)(const int), const char* const str, size_t i)
+static inline EXESS_NONBLOCKING size_t
+scan(bool EXESS_NONBLOCKING (*pred)(const int), const char* const str, size_t i)
 {
   while (pred(str[i])) {
     ++i;
@@ -38,13 +38,15 @@ scan(bool (*pred)(const int), const char* const str, size_t i)
 }
 
 // Skip the next character if `pred` returns true for it
-static inline size_t
-skip(bool (*pred)(const int), const char* const str, const size_t i)
+static inline EXESS_NONBLOCKING size_t
+skip(bool EXESS_NONBLOCKING (*pred)(const int),
+     const char* const str,
+     const size_t      i)
 {
   return i + (pred(str[i]) ? 1 : 0);
 }
 
-static ExessVariableResult
+static EXESS_NONBLOCKING ExessVariableResult
 write_decimal(const char* const str, const size_t buf_size, char* const buf)
 {
   const size_t sign    = skip_whitespace(str);     // Sign
@@ -146,10 +148,10 @@ write_integer(const ExessDatatype datatype,
   return VRESULT(st, last, o);
 }
 
-static ExessVariableResult
+static EXESS_NONBLOCKING ExessVariableResult
 write_date_time(const char* const str, const size_t buf_size, char* const buf)
 {
-  static const ExessDuration zero = {0, 0, 0};
+  EXESS_CONSTEXPR ExessDuration zero = {0, 0, 0};
 
   ExessDateTime     value = {0, 0, 0, 0, 0, 0, 0, 0};
   const ExessResult r     = exess_read_date_time(str, &value);
@@ -225,7 +227,7 @@ write_bounded(const char* const   str,
   return VRESULT(w.status, vr.read_count, w.count);
 }
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_write_canonical(const ExessDatatype datatype,
                       const char* const   str,
                       const size_t        buf_size,
@@ -241,7 +243,7 @@ exess_write_canonical(const ExessDatatype datatype,
       ? write_integer(datatype, str, buf_size, buf)
     : (datatype == EXESS_DATE_TIME) ? write_date_time(str, buf_size, buf)
     : (datatype == EXESS_HEX)       ? write_hex(str, buf_size, buf)
-    : (datatype == EXESS_BASE64)    ? write_base64(str, buf_size, buf)
+    : (datatype == EXESS_BASE64) ? write_base64(str, buf_size, buf)
                                  : write_bounded(str, datatype, buf_size, buf);
 
   const ExessResult w = end_write(r.status, buf_size, buf, r.write_count);

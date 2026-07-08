@@ -1,4 +1,4 @@
-// Copyright 2021-2025 David Robillard <d@drobilla.net>
+// Copyright 2021-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_EXESS_H
@@ -7,6 +7,13 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+// Clang nonblocking attributes
+#if defined(__clang__) && __clang_major__ >= 20
+#  define EXESS_NONBLOCKING __attribute__((nonblocking))
+#else
+#  define EXESS_NONBLOCKING ///< Function doesn't allocate or block
+#endif
 
 // EXESS_API must be used to decorate things in the public API
 #ifndef EXESS_API
@@ -42,15 +49,15 @@
 #endif
 
 /// A pure function in the public API that only reads memory
-#define EXESS_PURE_API EXESS_API EXESS_PURE_FUNC
+#define EXESS_PURE_API EXESS_API EXESS_NONBLOCKING EXESS_PURE_FUNC
 
 /// A const function in the public API that's pure and only reads parameters
-#define EXESS_CONST_API EXESS_API EXESS_CONST_FUNC
+#define EXESS_CONST_API EXESS_API EXESS_NONBLOCKING EXESS_CONST_FUNC
 
 /// A static constant expression usable at compile time
 #if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || \
      (defined(__cplusplus) && __cplusplus >= 201103L))
-#  define EXESS_CONSTEXPR constexpr
+#  define EXESS_CONSTEXPR constexpr const
 #else
 #  define EXESS_CONSTEXPR const
 #endif
@@ -213,7 +220,7 @@ exess_strerror(ExessStatus status);
    and a `status`.  The `status` will be #EXESS_LOSS if an approximate value
    was successfully read by dropping significant digits.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_read_decimal(const char* EXESS_NONNULL str,
                    size_t                    out_size,
                    void* EXESS_NONNULL       out);
@@ -229,7 +236,7 @@ exess_read_decimal(const char* EXESS_NONNULL str,
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_decimal(size_t                    value_size,
                     const void* EXESS_NONNULL value,
                     size_t                    buf_size,
@@ -258,7 +265,7 @@ exess_write_decimal(size_t                    value_size,
    and a `status`.  The `status` will be #EXESS_LOSS if an approximate value
    was successfully read by dropping significant digits.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_read_integer(const char* EXESS_NONNULL str,
                    size_t                    out_size,
                    void* EXESS_NONNULL       out);
@@ -274,7 +281,7 @@ exess_read_integer(const char* EXESS_NONNULL str,
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_integer(size_t                    value_size,
                     const void* EXESS_NONNULL value,
                     size_t                    buf_size,
@@ -316,7 +323,7 @@ exess_write_integer(size_t                    value_size,
    @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_double(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
 
 /**
@@ -333,7 +340,7 @@ exess_read_double(const char* EXESS_NONNULL str, double* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_double(double value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -364,7 +371,7 @@ exess_write_double(double value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or NaN on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_float(const char* EXESS_NONNULL str, float* EXESS_NONNULL out);
 
 /**
@@ -381,7 +388,7 @@ exess_read_float(const char* EXESS_NONNULL str, float* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_float(float value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -404,7 +411,7 @@ exess_write_float(float value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or false on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_boolean(const char* EXESS_NONNULL str, bool* EXESS_NONNULL out);
 
 /**
@@ -417,7 +424,7 @@ exess_read_boolean(const char* EXESS_NONNULL str, bool* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_boolean(bool value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -447,7 +454,7 @@ exess_write_boolean(bool value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_long(const char* EXESS_NONNULL str, int64_t* EXESS_NONNULL out);
 
 /**
@@ -460,7 +467,7 @@ exess_read_long(const char* EXESS_NONNULL str, int64_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_long(int64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -485,7 +492,7 @@ exess_write_long(int64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_int(const char* EXESS_NONNULL str, int32_t* EXESS_NONNULL out);
 
 /**
@@ -498,7 +505,7 @@ exess_read_int(const char* EXESS_NONNULL str, int32_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_int(int32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -523,7 +530,7 @@ exess_write_int(int32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_short(const char* EXESS_NONNULL str, int16_t* EXESS_NONNULL out);
 
 /**
@@ -536,7 +543,7 @@ exess_read_short(const char* EXESS_NONNULL str, int16_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_short(int16_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -561,7 +568,7 @@ exess_write_short(int16_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_byte(const char* EXESS_NONNULL str, int8_t* EXESS_NONNULL out);
 
 /**
@@ -574,7 +581,7 @@ exess_read_byte(const char* EXESS_NONNULL str, int8_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_byte(int8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -604,7 +611,7 @@ exess_write_byte(int8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_ulong(const char* EXESS_NONNULL str, uint64_t* EXESS_NONNULL out);
 
 /**
@@ -617,7 +624,7 @@ exess_read_ulong(const char* EXESS_NONNULL str, uint64_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -642,7 +649,7 @@ exess_write_ulong(uint64_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_uint(const char* EXESS_NONNULL str, uint32_t* EXESS_NONNULL out);
 
 /**
@@ -655,7 +662,7 @@ exess_read_uint(const char* EXESS_NONNULL str, uint32_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -680,7 +687,7 @@ exess_write_uint(uint32_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_ushort(const char* EXESS_NONNULL str, uint16_t* EXESS_NONNULL out);
 
 /**
@@ -693,7 +700,7 @@ exess_read_ushort(const char* EXESS_NONNULL str, uint16_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_ushort(uint16_t                value,
                    size_t                  buf_size,
                    char* EXESS_UNSPECIFIED buf);
@@ -720,7 +727,7 @@ exess_write_ushort(uint16_t                value,
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_ubyte(const char* EXESS_NONNULL str, uint8_t* EXESS_NONNULL out);
 
 /**
@@ -733,7 +740,7 @@ exess_read_ubyte(const char* EXESS_NONNULL str, uint8_t* EXESS_NONNULL out);
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_ubyte(uint8_t value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -866,7 +873,7 @@ exess_compare_duration(ExessDuration lhs, ExessDuration rhs);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_duration(const char* EXESS_NONNULL    str,
                     ExessDuration* EXESS_NONNULL out);
 
@@ -880,7 +887,7 @@ exess_read_duration(const char* EXESS_NONNULL    str,
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_duration(ExessDuration           value,
                      size_t                  buf_size,
                      char* EXESS_UNSPECIFIED buf);
@@ -973,7 +980,7 @@ exess_date_time_to_utc(ExessDateTime datetime);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_date_time(const char* EXESS_NONNULL    str,
                      ExessDateTime* EXESS_NONNULL out);
 
@@ -991,7 +998,7 @@ exess_read_date_time(const char* EXESS_NONNULL    str,
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_date_time(ExessDateTime           value,
                       size_t                  buf_size,
                       char* EXESS_UNSPECIFIED buf);
@@ -1042,7 +1049,7 @@ exess_compare_date(ExessDate lhs, ExessDate rhs);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_date(const char* EXESS_NONNULL str, ExessDate* EXESS_NONNULL out);
 
 /**
@@ -1058,7 +1065,7 @@ exess_read_date(const char* EXESS_NONNULL str, ExessDate* EXESS_NONNULL out);
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_date(ExessDate value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -1112,7 +1119,7 @@ exess_compare_time(ExessTime lhs, ExessTime rhs);
    @param[out] out Parsed value, or zero on error.
    @return The `count` of characters read, and a `status`.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_read_time(const char* EXESS_NONNULL str, ExessTime* EXESS_NONNULL out);
 
 /**
@@ -1127,7 +1134,7 @@ exess_read_time(const char* EXESS_NONNULL str, ExessTime* EXESS_NONNULL out);
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_time(ExessTime value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
@@ -1189,7 +1196,7 @@ exess_decoded_base64_size(size_t length);
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status`.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_read_base64(const char* EXESS_NONNULL str,
                   size_t                    out_size,
                   void* EXESS_NONNULL       out);
@@ -1209,7 +1216,7 @@ exess_read_base64(const char* EXESS_NONNULL str,
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_base64(size_t                    data_size,
                    const void* EXESS_NONNULL data,
                    size_t                    buf_size,
@@ -1263,7 +1270,7 @@ exess_decoded_hex_size(size_t length);
    @return The `read_count` of characters read, `write_count` of bytes written,
    and a `status`.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_read_hex(const char* EXESS_NONNULL str,
                size_t                    out_size,
                void* EXESS_NONNULL       out);
@@ -1282,7 +1289,7 @@ exess_read_hex(const char* EXESS_NONNULL str,
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_hex(size_t                    data_size,
                 const void* EXESS_NONNULL data,
                 size_t                    buf_size,
@@ -1516,7 +1523,7 @@ exess_compare_value(ExessDatatype             lhs_datatype,
    @return The `read_count` from `str`, `write_count` to `out` (both in bytes),
    and a `status`.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_read_value(ExessDatatype             datatype,
                  const char* EXESS_NONNULL str,
                  size_t                    out_size,
@@ -1538,7 +1545,7 @@ exess_read_value(ExessDatatype             datatype,
    @return The `count` of characters in the output, and a `status`
    (#EXESS_SUCCESS, or #EXESS_NO_SPACE if the buffer is too small).
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_write_value(ExessDatatype             datatype,
                   size_t                    value_size,
                   const void* EXESS_NONNULL value,
@@ -1563,7 +1570,7 @@ exess_write_value(ExessDatatype             datatype,
    @return The `read_count` from `str`, `write_count` to `buf` (both in bytes),
    and a `status`.  The status may be an error from reading or writing.
 */
-EXESS_API ExessVariableResult
+EXESS_NONBLOCKING EXESS_API ExessVariableResult
 exess_write_canonical(ExessDatatype             datatype,
                       const char* EXESS_NONNULL str,
                       size_t                    buf_size,
@@ -1643,7 +1650,7 @@ typedef uint32_t ExessCoercions;
    of the target type, #EXESS_LOSS if the required coercion isn't enabled, or
    #EXESS_UNSUPPORTED if conversion between the types isn't supported at all.
 */
-EXESS_API ExessResult
+EXESS_NONBLOCKING EXESS_API ExessResult
 exess_coerce_value(ExessCoercions            coercions,
                    ExessDatatype             in_datatype,
                    size_t                    in_size,

@@ -1,8 +1,9 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "digits.h"
 
+#include "attributes.h"
 #include "bigint.h"
 #include "ieee_float.h"
 #include "int_math.h"
@@ -63,7 +64,7 @@ within_upper(const ExessBigint* const numer,
    @param[out] denom Denominator of rational number.
    @param[out] delta Distance to the lower and upper boundaries.
 */
-static void
+static EXESS_I_NONBLOCKING void
 calculate_initial_values(const uint64_t     significand,
                          const int          exponent,
                          const int          decimal_power,
@@ -117,7 +118,7 @@ calculate_initial_values(const uint64_t     significand,
 }
 
 #ifndef NDEBUG
-static bool
+static EXESS_I_NONBLOCKING bool
 check_initial_values(const ExessBigint* const numer,
                      const ExessBigint* const denom,
                      const ExessBigint* const d_upper)
@@ -186,7 +187,7 @@ double_lower_boundary_is_closer(const double d)
 }
 
 /// Return an estimate for the decimal power of value, undershot by at most 1
-static int
+static EXESS_I_NONBLOCKING int
 approximate_power(const ExessSoftFloat value)
 {
   /* See "Printing Floating-Point Numbers Quickly and Accurately" by Robert
@@ -195,7 +196,7 @@ approximate_power(const ExessSoftFloat value)
      https://ryanjuckett.com/printing-floating-point-numbers-part-2-dragon4/
   */
 
-  static const double log10_2 = 0.30102999566398119521373889472449;
+  EXESS_I_CONSTEXPR double log10_2 = 0.30102999566398119521373889472449;
 
   const double f_msb_index = 64U - exess_clz64(value.f);
   const double power       = ceil(((f_msb_index + value.e) * log10_2) - 0.69);
@@ -203,7 +204,7 @@ approximate_power(const ExessSoftFloat value)
   return (int)power;
 }
 
-ExessDigitCount
+EXESS_I_NONBLOCKING ExessDigitCount
 generate_digits(const double d, const size_t digits_size, char* const digits)
 {
   EXESS_DISABLE_CONVERSION_WARNINGS

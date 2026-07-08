@@ -1,13 +1,14 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "int_math.h"
 
+#include "attributes.h"
 #include "exess_config.h"
 
 #include <assert.h>
 
-unsigned
+EXESS_I_NONBLOCKING unsigned
 exess_clz32(const uint32_t i)
 {
   assert(i != 0);
@@ -28,7 +29,7 @@ exess_clz32(const uint32_t i)
 #endif
 }
 
-unsigned
+EXESS_I_NONBLOCKING unsigned
 exess_clz64(const uint64_t i)
 {
   assert(i != 0);
@@ -41,14 +42,14 @@ exess_clz64(const uint64_t i)
 #endif
 }
 
-uint64_t
+EXESS_I_NONBLOCKING uint64_t
 exess_ilog2(const uint64_t i)
 {
   assert(i != 0);
   return (64U - exess_clz64(i | 1U)) - 1U;
 }
 
-uint64_t
+EXESS_I_NONBLOCKING uint64_t
 exess_ilog10(const uint64_t i)
 {
   // See https://graphics.stanford.edu/~seander/bithacks.html#IntegerLog10
@@ -58,7 +59,7 @@ exess_ilog10(const uint64_t i)
   return t - (i < POW10[t]) + (i == 0);
 }
 
-uint8_t
+EXESS_I_NONBLOCKING uint8_t
 exess_num_digits(const uint64_t i)
 {
   return i == 0U ? 1U : (uint8_t)(exess_ilog10(i) + 1U);

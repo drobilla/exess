@@ -1,4 +1,4 @@
-// Copyright 2011-2025 David Robillard <d@drobilla.net>
+// Copyright 2011-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -20,7 +20,7 @@ map(const unsigned group)
   assert(group < 64);
 
   // See <http://tools.ietf.org/html/rfc3548#section-3>.
-  static const uint8_t b64_map[] =
+  EXESS_CONSTEXPR uint8_t b64_map[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
   return b64_map[group];
@@ -33,7 +33,7 @@ unmap(const uint8_t in)
   /* Table indexed by encoded characters that contains the numeric value used
      for decoding, shifted up by 47 to be in the range of printable ASCII.  A
      '$' is a placeholder for characters not in the base64 alphabet. */
-  static const uint8_t b64_unmap[] =
+  EXESS_CONSTEXPR uint8_t b64_unmap[] =
     "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$m$$$ncdefghijkl$$$$$$"
     "$/0123456789:;<=>?@ABCDEFGH$$$$$$IJKLMNOPQRSTUVWXYZ[\\]^_`ab$$$$"
     "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
@@ -42,13 +42,13 @@ unmap(const uint8_t in)
   return (uint8_t)(b64_unmap[in] - 47U);
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 exess_decoded_base64_size(const size_t length)
 {
   return ((length * 3) / 4) + 2;
 }
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_read_base64(const char* const str, const size_t out_size, void* const out)
 {
   uint8_t* const       uout = (uint8_t*)out;
@@ -100,7 +100,7 @@ exess_read_base64(const char* const str, const size_t out_size, void* const out)
   return VRESULT(o <= out_size ? EXESS_SUCCESS : EXESS_NO_SPACE, i, o);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_base64(const size_t      data_size,
                    const void* const data,
                    const size_t      buf_size,

@@ -1,4 +1,4 @@
-// Copyright 2019-2024 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_DATE_UTILS_H
@@ -25,7 +25,7 @@ days_in_month(const int16_t year, const uint8_t month)
 }
 
 /// Read YYYY-MM-DD date numbers without a timezone
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_date_numbers(ExessDate* out, const char* str);
 
 #endif // EXESS_SRC_DATE_UTILS_H

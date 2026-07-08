@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -15,7 +15,7 @@
 #  define FLT_DECIMAL_DIG 9U
 #endif
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_float(const char* const str, float* const out)
 {
   double            value = (double)NAN;
@@ -26,7 +26,7 @@ exess_read_float(const char* const str, float* const out)
   return r;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_float(const float value, const size_t buf_size, char* const buf)
 {
   char digits[FLT_DECIMAL_DIG + 1U] = {0};

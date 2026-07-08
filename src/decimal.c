@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -45,7 +45,7 @@ decimal_metrics(const BigDecimal count)
   return metrics;
 }
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_read_decimal(const char* const str,
                    const size_t      out_size,
                    void* const       out)
@@ -74,7 +74,7 @@ exess_read_decimal(const char* const str,
   return VRESULT(r.status, i + r.count, sizeof(d) + d.n_digits + 1U);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_decimal(const size_t      value_size,
                     const void* const value,
                     const size_t      buf_size,

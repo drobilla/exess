@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -22,26 +22,26 @@
 #  define DBL_DECIMAL_DIG 17U
 #endif
 
-static ExessResult
+typedef struct {
+  BigDecimalKind kind;
+  unsigned       length;
+  const char*    string;
+} SpecialCase;
+
+static const SpecialCase special_cases[] = {
+  {EXESS_NAN, 3U, "NaN"},
+  {EXESS_NEGATIVE_INFINITY, 4U, "-INF"},
+  {EXESS_POSITIVE_INFINITY, 3U, "INF"},
+  {EXESS_POSITIVE_INFINITY, 4U, "+INF"},
+  {EXESS_NAN, 0U, ""},
+};
+
+static EXESS_NONBLOCKING ExessResult
 parse_double(const char* const str,
              BigDecimal* const out,
              const size_t      digits_size,
              char* const       digits)
 {
-  typedef struct {
-    BigDecimalKind kind;
-    unsigned       length;
-    const char*    string;
-  } SpecialCase;
-
-  static const SpecialCase special_cases[] = {
-    {EXESS_NAN, 3U, "NaN"},
-    {EXESS_NEGATIVE_INFINITY, 4U, "-INF"},
-    {EXESS_POSITIVE_INFINITY, 3U, "INF"},
-    {EXESS_POSITIVE_INFINITY, 4U, "+INF"},
-    {EXESS_NAN, 0U, ""},
-  };
-
   // Handle non-numeric special cases
   for (const SpecialCase* c = special_cases; c->length; ++c) {
     if (!strcmp(str, c->string)) {
@@ -80,7 +80,7 @@ parse_double(const char* const str,
   return RESULT(r.status, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_double(const char* const str, double* const out)
 {
   char digits[DBL_DECIMAL_DIG + 1U] = {0};
@@ -93,7 +93,7 @@ exess_read_double(const char* const str, double* const out)
   return RESULT(r.status, i + r.count);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_double(const double value, const size_t buf_size, char* const buf)
 {
   char digits[DBL_DECIMAL_DIG + 1U] = {0};

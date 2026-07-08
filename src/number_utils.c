@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "number_utils.h"
@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <string.h>
 
-size_t
+EXESS_NONBLOCKING size_t
 read_sign(int* const sign, const char* const str)
 {
   if (*str == '-') {
@@ -24,7 +24,7 @@ read_sign(int* const sign, const char* const str)
   return (*str == '+') ? 1U : 0U;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_two_digit_number(uint8_t* const    out,
                       const uint8_t     min_value,
                       const uint8_t     max_value,
@@ -49,7 +49,7 @@ read_two_digit_number(uint8_t* const    out,
   return RESULT(EXESS_SUCCESS, i);
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 write_two_digit_number(const uint8_t value,
                        const size_t  buf_size,
                        char* const   buf,
@@ -63,7 +63,7 @@ write_two_digit_number(const uint8_t value,
   return 2;
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 write_zeros(const size_t n,
             const size_t buf_size,
             char* const  buf,
@@ -75,7 +75,7 @@ write_zeros(const size_t n,
   return n;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_digits(uint64_t* const out, const char* const str)
 {
   // Ensure the first character is a digit
@@ -103,7 +103,7 @@ read_digits(uint64_t* const out, const char* const str)
   return RESULT(EXESS_SUCCESS, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_digits(const uint64_t value,
              const size_t   buf_size,
              char* const    buf,

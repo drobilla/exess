@@ -1,4 +1,4 @@
-// Copyright 2011-2025 David Robillard <d@drobilla.net>
+// Copyright 2011-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -32,13 +32,13 @@ decode_nibble(const char c)
   return UINT8_MAX;
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 exess_decoded_hex_size(const size_t length)
 {
   return length / 2;
 }
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_read_hex(const char* const str, const size_t out_size, void* const out)
 {
   uint8_t* const uout  = (uint8_t*)out;
@@ -77,7 +77,7 @@ exess_read_hex(const char* const str, const size_t out_size, void* const out)
   return VRESULT(o <= out_size ? EXESS_SUCCESS : EXESS_NO_SPACE, i, o);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_hex(const size_t      data_size,
                 const void* const data,
                 const size_t      buf_size,

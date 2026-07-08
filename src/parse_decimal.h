@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_PARSE_DECIMAL_H
@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 parse_decimal(const char* str,
               BigDecimal* out,
               size_t      digits_size,

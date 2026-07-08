@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_SCIENTIFIC_H
@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_scientific(BigDecimal  value,
                  const char* digits,
                  size_t      buf_size,

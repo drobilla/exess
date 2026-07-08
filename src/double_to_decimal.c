@@ -1,7 +1,8 @@
-// Copyright 2019-2024 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "double_to_decimal.h"
+#include "attributes.h"
 #include "digits.h"
 #include "warnings.h"
 
@@ -33,7 +34,7 @@ number_kind(const double d)
   return EXESS_NAN;
 }
 
-BigDecimal
+EXESS_I_NONBLOCKING BigDecimal
 double_to_decimal(const double d, const size_t digits_size, char* const digits)
 {
   BigDecimal value = {number_kind(d), 0U, 0};

@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "bigint.h"
@@ -38,7 +38,7 @@ exess_bigint_is_clamped(const ExessBigint* num)
 }
 #endif
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_shift_left(ExessBigint* num, const unsigned amount)
 {
   assert(exess_bigint_is_clamped(num));
@@ -74,21 +74,21 @@ exess_bigint_shift_left(ExessBigint* num, const unsigned amount)
   assert(exess_bigint_is_clamped(num));
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_zero(ExessBigint* num)
 {
-  static const ExessBigint zero = {{0}, 0};
+  EXESS_I_CONSTEXPR ExessBigint zero = {{0}, 0};
 
   *num = zero;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set(ExessBigint* num, const ExessBigint* value)
 {
   *num = *value;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_u32(ExessBigint* num, const uint32_t value)
 {
   exess_bigint_zero(num);
@@ -97,7 +97,7 @@ exess_bigint_set_u32(ExessBigint* num, const uint32_t value)
   num->n_bigits  = (bool)value;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_clamp(ExessBigint* num)
 {
   while (num->n_bigits > 0 && num->bigits[num->n_bigits - 1] == 0) {
@@ -105,7 +105,7 @@ exess_bigint_clamp(ExessBigint* num)
   }
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_u64(ExessBigint* num, const uint64_t value)
 {
   exess_bigint_zero(num);
@@ -115,17 +115,17 @@ exess_bigint_set_u64(ExessBigint* num, const uint64_t value)
   num->n_bigits  = num->bigits[1] ? 2U : num->bigits[0] ? 1U : 0U;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_pow10(ExessBigint* num, const unsigned exponent)
 {
   exess_bigint_set_u32(num, 1);
   exess_bigint_multiply_pow10(num, exponent);
 }
 
-static uint32_t
+static EXESS_I_NONBLOCKING uint32_t
 read_u32(const char* const str, uint32_t* result, uint32_t* n_digits)
 {
-  static const size_t uint32_digits10 = 9;
+  EXESS_I_CONSTEXPR size_t uint32_digits10 = 9;
 
   *result = *n_digits = 0;
 
@@ -138,7 +138,7 @@ read_u32(const char* const str, uint32_t* result, uint32_t* n_digits)
   return i;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_decimal_string(ExessBigint* num, const char* const str)
 {
   exess_bigint_zero(num);
@@ -156,7 +156,7 @@ exess_bigint_set_decimal_string(ExessBigint* num, const char* const str)
   exess_bigint_clamp(num);
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_u32(ExessBigint* num, const uint32_t factor)
 {
   switch (factor) {
@@ -185,7 +185,7 @@ exess_bigint_multiply_u32(ExessBigint* num, const uint32_t factor)
   }
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_u64(ExessBigint* num, const uint64_t factor)
 {
   switch (factor) {
@@ -217,7 +217,7 @@ exess_bigint_multiply_u64(ExessBigint* num, const uint64_t factor)
   }
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_pow10(ExessBigint* num, const unsigned exponent)
 {
   /* To reduce multiplication, we exploit 10^e = (2*5)^e = 2^e * 5^e to
@@ -225,10 +225,10 @@ exess_bigint_multiply_pow10(ExessBigint* num, const unsigned exponent)
      by 5^e (hard), then by 2^e (just a single left shift). */
 
   // 5^27, the largest power of 5 that fits in 64 bits
-  static const uint64_t pow5_27 = 7450580596923828125ULL;
+  EXESS_I_CONSTEXPR uint64_t pow5_27 = 7450580596923828125ULL;
 
   // Powers of 5 up to 5^13, the largest that fits in 32 bits
-  static const uint32_t pow5[] = {
+  EXESS_I_CONSTEXPR uint32_t pow5[] = {
     1,
     5,
     5 * 5,
@@ -269,7 +269,7 @@ exess_bigint_multiply_pow10(ExessBigint* num, const unsigned exponent)
   exess_bigint_shift_left(num, exponent);
 }
 
-int
+EXESS_I_NONBLOCKING int
 exess_bigint_compare(const ExessBigint* lhs, const ExessBigint* rhs)
 {
   if (lhs->n_bigits < rhs->n_bigits) {
@@ -334,7 +334,7 @@ exess_bigint_plus_compare_internal(const ExessBigint* const l,
   return borrow ? -1 : 0;
 }
 
-int
+EXESS_I_NONBLOCKING int
 exess_bigint_plus_compare(const ExessBigint* const l,
                           const ExessBigint* const p,
                           const ExessBigint* const c)
@@ -360,7 +360,7 @@ exess_bigint_add_carry(ExessBigint* lhs, unsigned i, bool carry)
   return i;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
 {
   if (lhs->n_bigits == 0) {
@@ -378,7 +378,7 @@ exess_bigint_add_u32(ExessBigint* lhs, const uint32_t rhs)
   assert(exess_bigint_is_clamped(lhs));
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs)
 {
   assert(MAX(lhs->n_bigits, rhs->n_bigits) + 1 <= BIGINT_MAX_BIGITS);
@@ -411,7 +411,7 @@ exess_bigint_subtract_borrow(ExessBigint* lhs, unsigned i, bool borrow)
   return i;
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs)
 {
   assert(exess_bigint_is_clamped(lhs));
@@ -467,7 +467,7 @@ exess_bigint_left_shifted_bigit_i(const ExessBigint* num,
          (num->bigits[index - amount.bigits - 1] >> right_shift);
 }
 
-Bigit
+EXESS_I_NONBLOCKING Bigit
 exess_bigint_left_shifted_bigit(const ExessBigint* num,
                                 const unsigned     amount,
                                 const unsigned     index)
@@ -475,7 +475,7 @@ exess_bigint_left_shifted_bigit(const ExessBigint* num,
   return exess_bigint_left_shifted_bigit_i(num, make_offset(amount), index);
 }
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
                                    const ExessBigint* rhs,
                                    const unsigned     amount)
@@ -507,7 +507,7 @@ exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
   exess_bigint_clamp(lhs);
 }
 
-uint32_t
+EXESS_I_NONBLOCKING uint32_t
 exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs)
 {
   assert(exess_bigint_is_clamped(lhs));

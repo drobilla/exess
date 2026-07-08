@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -17,7 +17,7 @@
 
 typedef enum { NONE, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND } Field;
 
-static ExessStatus
+static EXESS_NONBLOCKING ExessStatus
 set_field(ExessDuration* const out,
           const Field          last_field,
           const Field          field,
@@ -31,7 +31,7 @@ set_field(ExessDuration* const out,
     return EXESS_BAD_ORDER;
   }
 
-  static const uint64_t factors[7] = {
+  EXESS_CONSTEXPR uint64_t factors[7] = {
     0UL, 12UL, 1UL, 24UL * 60UL * 60UL, 60UL * 60UL, 60UL, 1UL};
 
   const uint64_t factor = factors[field];
@@ -46,7 +46,7 @@ set_field(ExessDuration* const out,
   return EXESS_SUCCESS;
 }
 
-static ExessResult
+static EXESS_NONBLOCKING ExessResult
 read_duration_date(ExessDuration* const out, const char* const str)
 {
   size_t      i          = 0U;
@@ -132,15 +132,15 @@ read_duration_time(ExessDuration* const out, const char* const str)
   return i > 0 ? RESULT(st, i) : RESULT(EXESS_EXPECTED_DIGIT, i);
 }
 
-static ExessOrder
+static EXESS_NONBLOCKING ExessOrder
 compare_duration_partial(const ExessDuration lhs, const ExessDuration rhs)
 {
   // See https://www.w3.org/TR/xmlschema11-2/#duration
 
-  static const ExessDateTime a = {1696, 9, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime b = {1697, 2, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime c = {1903, 3, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
-  static const ExessDateTime d = {1903, 7, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  const ExessDateTime a = {1696, 9, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  const ExessDateTime b = {1697, 2, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  const ExessDateTime c = {1903, 3, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
+  const ExessDateTime d = {1903, 7, 1, EXESS_TIMEZONE_LOCAL, 0, 0, 0, 0};
 
   const ExessOrder cmp = exess_compare_date_time(
     exess_add_date_time_duration(a, lhs), exess_add_date_time_duration(a, rhs));
@@ -160,7 +160,7 @@ compare_duration_partial(const ExessDuration lhs, const ExessDuration rhs)
                                        : EXESS_ORDER_MAYBE_GREATER;
 }
 
-ExessOrder
+EXESS_NONBLOCKING ExessOrder
 exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
 {
   // Exactly equal
@@ -186,7 +186,7 @@ exess_compare_duration(const ExessDuration lhs, const ExessDuration rhs)
   return compare_duration_partial(lhs, rhs);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_duration(const char* const str, ExessDuration* const out)
 {
   memset(out, 0, sizeof(*out));
@@ -264,7 +264,7 @@ write_seconds(const uint8_t  abs_seconds,
   return len + write_char('S', buf_size, buf, i + len);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_duration(const ExessDuration value,
                      const size_t        buf_size,
                      char* const         buf)

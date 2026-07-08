@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "parse_decimal.h"
@@ -37,7 +37,7 @@ skip_leading_zeros(const char* const str, ParseState* const out)
   }
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 parse_decimal(const char* const str,
               BigDecimal* const out,
               const size_t      digits_size,

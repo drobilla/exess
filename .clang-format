@@ -1,4 +1,4 @@
-# Copyright 2020-2024 David Robillard <d@drobilla.net>
+# Copyright 2020-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 ---
@@ -12,6 +12,7 @@ AttributeMacros:
   - EXESS_I_CONST_FUNC
   - EXESS_I_MALLOC_FUNC
   - EXESS_I_PURE_FUNC
+  - EXESS_NONBLOCKING
   - EXESS_NONNULL
   - EXESS_NULLABLE
   - EXESS_PURE_API

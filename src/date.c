@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "date_utils.h"
@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-ExessOrder
+EXESS_NONBLOCKING ExessOrder
 exess_compare_date(const ExessDate lhs, const ExessDate rhs)
 {
   const ExessDateTime lhs_datetime = {
@@ -25,7 +25,7 @@ exess_compare_date(const ExessDate lhs, const ExessDate rhs)
   return exess_compare_date_time(lhs_datetime, rhs_datetime);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_date(const char* const str, ExessDate* const out)
 {
   memset(out, 0, sizeof(*out));
@@ -45,7 +45,7 @@ exess_read_date(const char* const str, ExessDate* const out)
   return RESULT(r.status, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_date(const ExessDate value, const size_t buf_size, char* const buf)
 {
   if (value.month < 1 || value.month > 12 || value.day < 1 || value.day > 31) {

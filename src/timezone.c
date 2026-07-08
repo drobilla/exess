@@ -1,4 +1,4 @@
-// Copyright 2019-2024 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "timezone.h"
@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-ExessTimezone
+EXESS_NONBLOCKING ExessTimezone
 exess_timezone(const int8_t hours, const int8_t minutes)
 {
   if (hours < -14 || hours > 14) {
@@ -31,7 +31,7 @@ exess_timezone(const int8_t hours, const int8_t minutes)
   return (int8_t)((4 * hours) + (minutes / 15));
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_optional_timezone(ExessTimezone* const out, const char* const str)
 {
   *out = EXESS_TIMEZONE_LOCAL;
@@ -95,7 +95,7 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   return RESULT(EXESS_SUCCESS, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_timezone(const ExessTimezone value,
                const size_t        buf_size,
                char* const         buf,

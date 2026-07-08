@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "time_utils.h"
@@ -15,7 +15,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_nanoseconds(uint32_t* const out, const char* const str)
 {
   // Read available digits
@@ -36,7 +36,7 @@ read_nanoseconds(uint32_t* const out, const char* const str)
   return RESULT(i > 0 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 write_nanoseconds(const uint32_t nanosecond,
                   const size_t   buf_size,
                   char* const    buf,
@@ -74,7 +74,7 @@ write_nanoseconds(const uint32_t nanosecond,
   return n;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_time(ExessTime* const out, const char* const str)
 {
   // Read hour
@@ -135,7 +135,7 @@ read_time(ExessTime* const out, const char* const str)
   return RESULT(r.status, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_time(const ExessTime value,
            const size_t    buf_size,
            char* const     buf,

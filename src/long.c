@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "number_utils.h"
@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_read_long(const char* const str, int64_t* const out)
 {
   *out = 0;
@@ -54,7 +54,7 @@ exess_read_long(const char* const str, int64_t* const out)
   return RESULT(EXESS_SUCCESS, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_write_long(const int64_t value, const size_t buf_size, char* const buf)
 {
   if (value == INT64_MIN) {

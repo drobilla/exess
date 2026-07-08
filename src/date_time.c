@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "char_utils.h"
@@ -83,21 +83,21 @@ to_utc(const ExessDateTime s, const ExessDuration offset)
   return r;
 }
 
-ExessDateTime
+EXESS_NONBLOCKING ExessDateTime
 exess_date_time_to_utc(const ExessDateTime datetime)
 {
   const ExessDuration offset = {0U, -datetime.zone * 15 * 60, 0};
   return to_utc(datetime, offset);
 }
 
-static ExessOrder
+static EXESS_NONBLOCKING ExessOrder
 compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   // See https://www.w3.org/TR/xmlschema-2/#dateTime-order
   // and https://www.w3.org/TR/xmlschema11-2/#theSevenPropertyModel
 
-  static const ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
-  static const ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
+  EXESS_CONSTEXPR ExessDuration plus_14h  = {0U, 14 * 60 * 60, 0};
+  EXESS_CONSTEXPR ExessDuration minus_14h = {0U, -14 * 60 * 60, 0};
 
   ExessOrder order = EXESS_ORDER_EQUAL;
 
@@ -130,7 +130,7 @@ compare_date_time_partial(const ExessDateTime lhs, const ExessDateTime rhs)
   return EXESS_ORDER_MAYBE_LESS;
 }
 
-ExessOrder
+EXESS_NONBLOCKING ExessOrder
 exess_compare_date_time(const ExessDateTime lhs, const ExessDateTime rhs)
 {
   return ((lhs.zone == rhs.zone) || (lhs.zone != EXESS_TIMEZONE_LOCAL &&
@@ -194,14 +194,14 @@ carry_set_day(ExessDateTime e, int day)
   return e;
 }
 
-ExessDateTime
+EXESS_NONBLOCKING ExessDateTime
 exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
 {
   // See https://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes
   // and https://www.w3.org/TR/xmlschema11-2/#sec-dt-arith
   // This algorithm is modified here to support subtraction when d is negative
 
-  static const int32_t giga = 1000000000;
+  EXESS_CONSTEXPR int32_t giga = 1000000000;
 
   const int32_t d_year   = d.months / 12;
   const int32_t d_month  = d.months % 12;
@@ -249,7 +249,7 @@ exess_add_date_time_duration(const ExessDateTime s, const ExessDuration d)
   return carry_set_day(e, s.day + d_day + carry);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_date_time(const char* const str, ExessDateTime* const out)
 {
   memset(out, 0, sizeof(*out));
@@ -289,7 +289,7 @@ exess_read_date_time(const char* const str, ExessDateTime* const out)
   return RESULT(EXESS_SUCCESS, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_date_time(const ExessDateTime value,
                       const size_t        buf_size,
                       char* const         buf)

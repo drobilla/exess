@@ -1,8 +1,9 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "soft_float.h"
 
+#include "attributes.h"
 #include "ieee_float.h"
 #include "int_math.h"
 
@@ -57,7 +58,7 @@ static const ExessSoftFloat soft_pow10[] = {
   {0x9E19DB92B4E31BA9, 1013},  {0xEB96BF6EBADF77D9, 1039},
   {0xAF87023B9BF0EE6B, 1066}};
 
-ExessSoftFloat
+EXESS_I_NONBLOCKING ExessSoftFloat
 soft_float_from_double(const double d)
 {
   assert(d >= 0.0);
@@ -75,13 +76,13 @@ soft_float_from_double(const double d)
   return v;
 }
 
-double
+EXESS_I_NONBLOCKING double
 soft_float_to_double(const ExessSoftFloat v)
 {
   return ldexp((double)v.f, v.e);
 }
 
-ExessSoftFloat
+EXESS_I_NONBLOCKING ExessSoftFloat
 soft_float_normalize(ExessSoftFloat value)
 {
   const unsigned amount = exess_clz64(value.f);
@@ -92,11 +93,11 @@ soft_float_normalize(ExessSoftFloat value)
   return value;
 }
 
-ExessSoftFloat
+EXESS_I_NONBLOCKING ExessSoftFloat
 soft_float_multiply(const ExessSoftFloat lhs, const ExessSoftFloat rhs)
 {
-  static const uint64_t mask  = 0xFFFFFFFF;
-  static const uint64_t round = 1UL << 31U;
+  EXESS_I_CONSTEXPR uint64_t mask  = 0xFFFFFFFF;
+  EXESS_I_CONSTEXPR uint64_t round = 1UL << 31U;
 
   const uint64_t l0   = lhs.f >> 32U;
   const uint64_t l1   = lhs.f & mask;
@@ -114,23 +115,23 @@ soft_float_multiply(const ExessSoftFloat lhs, const ExessSoftFloat rhs)
   return r;
 }
 
-ExessSoftFloat
+EXESS_I_NONBLOCKING ExessSoftFloat
 soft_float_exact_pow10(const int expt)
 {
-  static const ExessSoftFloat table[8] = {{0xA000000000000000, -60},
-                                          {0xC800000000000000, -57},
-                                          {0xFA00000000000000, -54},
-                                          {0x9C40000000000000, -50},
-                                          {0xC350000000000000, -47},
-                                          {0xF424000000000000, -44},
-                                          {0x9896800000000000, -40}};
+  EXESS_I_CONSTEXPR ExessSoftFloat table[8] = {{0xA000000000000000, -60},
+                                               {0xC800000000000000, -57},
+                                               {0xFA00000000000000, -54},
+                                               {0x9C40000000000000, -50},
+                                               {0xC350000000000000, -47},
+                                               {0xF424000000000000, -44},
+                                               {0x9896800000000000, -40}};
 
   assert(expt > 0);
   assert(expt < dec_expt_step);
   return table[expt - 1];
 }
 
-ExessSoftFloat
+EXESS_I_NONBLOCKING ExessSoftFloat
 soft_float_pow10_under(const int max_exponent, int* pow10_exponent)
 {
   assert(max_exponent >= min_dec_expt);

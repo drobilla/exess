@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -526,7 +526,7 @@ min_value_size(const ExessDatatype datatype)
            : exess_value_sizes[datatype];
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_coerce_value(const ExessCoercions coercions,
                    const ExessDatatype  in_datatype,
                    const size_t         in_size,

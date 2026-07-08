@@ -1,8 +1,10 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_DIGITS_H
 #define EXESS_SRC_DIGITS_H
+
+#include "attributes.h"
 
 #include <stddef.h>
 
@@ -21,7 +23,7 @@ typedef struct {
    @param digits_size The maximum number of digits to write.
    @param digits The output buffer at least `digits_size` long.
 */
-ExessDigitCount
+EXESS_I_NONBLOCKING ExessDigitCount
 generate_digits(double d, size_t digits_size, char* digits);
 
 #endif // EXESS_SRC_DIGITS_H

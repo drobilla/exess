@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -21,7 +21,7 @@
 /// Number of digits always represented exactly by an unsigned 64-bit integer
 static const int uint64_digits10 = 19;
 
-static uint64_t
+static EXESS_NONBLOCKING uint64_t
 normalize(ExessSoftFloat* value, const uint64_t error)
 {
   const int original_e = value->e;
@@ -55,7 +55,7 @@ product_error(const uint64_t lerror,
    @param[out] guess Either the exact number, or its predecessor.
    @return True if `guess` is correct.
 */
-static bool
+static EXESS_I_NONBLOCKING bool
 sftod(const uint64_t        significand,
       const int             expt10,
       const int             n_digits,
@@ -73,9 +73,9 @@ sftod(const uint64_t        significand,
      tracked throughout to know if we got the precise number. */
 
   // Use a common denominator of 2^3 to avoid fractions
-  static const unsigned lg_denom = 3;
-  static const uint64_t denom    = 1U << 3U;
-  static const uint64_t half_ulp = 4U;
+  EXESS_CONSTEXPR unsigned lg_denom = 3;
+  EXESS_CONSTEXPR uint64_t denom    = 1U << 3U;
+  EXESS_CONSTEXPR uint64_t half_ulp = 4U;
 
   // Start out with just the significand, and no error
   ExessSoftFloat input = {significand, 0};
@@ -132,7 +132,7 @@ sftod(const uint64_t        significand,
   return extra_bits <= low || extra_bits >= high;
 }
 
-static int
+static EXESS_I_NONBLOCKING int
 compare_buffer(const char* buf, const int expt, const ExessSoftFloat upper)
 {
   ExessBigint buf_bigint;
@@ -169,15 +169,16 @@ read_fraction(size_t n_digits, const char* const digits)
   return frac;
 }
 
-double
+EXESS_I_NONBLOCKING double
 decimal_to_double(const BigDecimal in, const char* const digits)
 {
-  static const int      n_exact_pow10        = sizeof(POW10) / sizeof(POW10[0]);
-  static const unsigned max_exact_int_digits = 15;   // Digits that fit exactly
-  static const int      max_decimal_power    = 309;  // Max finite power
-  static const int      min_decimal_power    = -324; // Min non-zero power
+  EXESS_CONSTEXPR int n_exact_pow10 = sizeof(POW10) / sizeof(POW10[0]);
 
-  static const double special_values[] = {
+  EXESS_CONSTEXPR unsigned max_exact_int_digits = 15; // Digits that fit exactly
+  EXESS_CONSTEXPR int      max_decimal_power    = 309;  // Max finite power
+  EXESS_CONSTEXPR int      min_decimal_power    = -324; // Min non-zero power
+
+  EXESS_CONSTEXPR double special_values[] = {
     (double)NAN, (double)-INFINITY, (double)INFINITY, -0.0, 0.0};
 
   if (in.kind < EXESS_NEGATIVE) {

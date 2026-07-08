@@ -1,4 +1,4 @@
-// Copyright 2021 David Robillard <d@drobilla.net>
+// Copyright 2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_TIMEZONE_H
@@ -18,7 +18,7 @@
    @param str String input.
    @return The `count` of characters read, and a `status` code.
 */
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
                        const char* EXESS_NONNULL    str);
 
@@ -36,7 +36,7 @@ read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
    small, or #EXESS_BAD_VALUE if the value is invalid.
 */
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_timezone(ExessTimezone        value,
                size_t               buf_size,
                char* EXESS_NULLABLE buf,

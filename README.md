@@ -12,9 +12,9 @@ The supported datatypes, defined by the [XSD][] specification, are explicitly
 compatible with many standards (like XML, RDF, and ISO 8601), and most are
 incidentally compatible with many others (like C and JSON).
 
-The library is straightforward to use and doesn't depend on an allocator, the
-current locale, or any other shared mutable state, making it safe to use in
-almost any context.
+The library is straightforward to use and doesn't depend on an allocator, any
+other blocking functions, the current locale, or any other shared mutable
+state, making it safe to use in almost any context.
 
 Supported Datatypes
 -------------------

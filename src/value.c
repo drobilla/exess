@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -30,7 +30,7 @@ integer(const ExessVariableResult result,
             : result);
 }
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_read_value(const ExessDatatype datatype,
                  const char* const   str,
                  const size_t        out_size,
@@ -133,7 +133,7 @@ exess_read_value(const ExessDatatype datatype,
   return r;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_value(const ExessDatatype datatype,
                   const size_t        value_size,
                   const void* const   value,

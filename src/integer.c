@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -17,7 +17,7 @@
 // Value has a BigDecimal header, char digits, and a null byte
 static const size_t min_value_size = sizeof(BigDecimal) + 1U;
 
-ExessVariableResult
+EXESS_NONBLOCKING ExessVariableResult
 exess_read_integer(const char* const str,
                    const size_t      out_size,
                    void* const       out)
@@ -74,7 +74,7 @@ exess_read_integer(const char* const str,
   return VRESULT(EXESS_SUCCESS, i, sizeof(*d) + d->n_digits + 1U);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_integer(const size_t      value_size,
                     const void* const value,
                     const size_t      buf_size,

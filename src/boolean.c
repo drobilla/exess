@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_boolean(const char* const str, bool* const out)
 {
   size_t      i = skip_whitespace(str);
@@ -46,7 +46,7 @@ exess_read_boolean(const char* const str, bool* const out)
   return RESULT(r.status, r.count);
 }
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_write_boolean(const bool value, const size_t buf_size, char* const buf)
 {
   return end_write(EXESS_SUCCESS,

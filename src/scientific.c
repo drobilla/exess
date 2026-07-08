@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "scientific.h"
@@ -38,7 +38,7 @@ scientific_string_length(const BigDecimal value, const unsigned n_expt_digits)
           !!(value.expt < 1));               // Exponent sign
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_scientific(const BigDecimal  value,
                  const char* const digits,
                  const size_t      buf_size,

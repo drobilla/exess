@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -38,14 +38,14 @@ static const char* EXESS_NONNULL const uris[EXESS_MAX_DATATYPE + 1U] = {
   EXESS_XSD_URI "base64Binary",       //
 };
 
-const char*
+EXESS_NONBLOCKING const char*
 exess_datatype_uri(const ExessDatatype datatype)
 {
   return (datatype > EXESS_NOTHING && datatype <= EXESS_BASE64) ? uris[datatype]
                                                                 : NULL;
 }
 
-const char*
+EXESS_NONBLOCKING const char*
 exess_datatype_name(const ExessDatatype datatype)
 {
   const char* const uri = exess_datatype_uri(datatype);
@@ -53,7 +53,7 @@ exess_datatype_name(const ExessDatatype datatype)
   return uri ? uri + xsd_len : NULL;
 }
 
-ExessDatatype
+EXESS_NONBLOCKING ExessDatatype
 exess_datatype_from_name(const char* const name)
 {
   for (unsigned i = 1U; i <= EXESS_MAX_DATATYPE; ++i) {
@@ -65,7 +65,7 @@ exess_datatype_from_name(const char* const name)
   return EXESS_NOTHING;
 }
 
-ExessDatatype
+EXESS_NONBLOCKING ExessDatatype
 exess_datatype_from_uri(const char* const uri)
 {
   return !strncmp(uri, EXESS_XSD_URI, xsd_len)

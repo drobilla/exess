@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "write_utils.h"
@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-size_t
+EXESS_NONBLOCKING size_t
 write_char(const char c, const size_t buf_size, char* const buf, const size_t i)
 {
   if (buf && i < buf_size) {
@@ -20,7 +20,7 @@ write_char(const char c, const size_t buf_size, char* const buf, const size_t i)
   return 1;
 }
 
-size_t
+EXESS_NONBLOCKING size_t
 write_string(const size_t      len,
              const char* const str,
              const size_t      buf_size,
@@ -34,7 +34,7 @@ write_string(const size_t      len,
   return len;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 end_write(const ExessStatus status,
           const size_t      buf_size,
           char* const       buf,
@@ -52,7 +52,7 @@ end_write(const ExessStatus status,
   return overflow ? RESULT(EXESS_NO_SPACE, i) : RESULT(status, end);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_special(const size_t      string_length,
               const char* const string,
               const size_t      buf_size,

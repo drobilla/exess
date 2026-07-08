@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include <exess/exess.h>
@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_read_ulong(const char* const str, uint64_t* const out)
 {
   *out = 0;
@@ -36,7 +36,7 @@ exess_read_ulong(const char* const str, uint64_t* const out)
   return r;
 }
 
-ExessResult
+EXESS_NONBLOCKING EXESS_NONBLOCKING ExessResult
 exess_write_ulong(const uint64_t value, const size_t buf_size, char* const buf)
 {
   const ExessResult r = write_digits(value, buf_size, buf, 0);

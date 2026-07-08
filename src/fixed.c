@@ -1,4 +1,4 @@
-// Copyright 2025 David Robillard <d@drobilla.net>
+// Copyright 2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "fixed.h"
@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_signed(const char* const str,
             const int64_t     min,
             const int64_t     max,
@@ -21,7 +21,7 @@ read_signed(const char* const str,
            : r;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_unsigned(const char* const str, const uint64_t max, uint64_t* const out)
 {
   const ExessResult r = exess_read_ulong(str, out);

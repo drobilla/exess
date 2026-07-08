@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <string.h>
 
-static ExessOrder
+static EXESS_NONBLOCKING ExessOrder
 compare_datatypes(const ExessDatatype lhs_datatype,
                   const ExessDatatype rhs_datatype)
 {
@@ -21,17 +21,18 @@ compare_datatypes(const ExessDatatype lhs_datatype,
                                             : EXESS_ORDER_MAYBE_GREATER;
 }
 
-static ExessOrder
+static EXESS_NONBLOCKING ExessOrder
 compare_decimal(const void* const lhs_value, const void* const rhs_value)
 {
-  //                                       Na  -I  +I  -0  +0  -N  +N
-  static const int8_t kind_orders[7][7] = {{0, -1, -1, -1, -1, -1, -1},  // Na
-                                           {1, +0, -2, -2, -2, -2, -2},  // -I
-                                           {1, +2, +0, +2, +2, +2, +2},  // +I
-                                           {1, +2, -2, +0, +0, +2, -2},  // -0
-                                           {1, +2, -2, +0, +0, +2, -2},  // +0
-                                           {1, +2, -2, -2, -2, +0, -2},  // -N
-                                           {1, +2, -2, +2, +2, +2, +0}}; // +N
+  EXESS_CONSTEXPR int8_t kind_orders[7][7] = {
+    //   -I  +I  -0  +0  -N  +N
+    {+0, -1, -1, -1, -1, -1, -1},  // NaN
+    {+1, +0, -2, -2, -2, -2, -2},  // -I
+    {+1, +2, +0, +2, +2, +2, +2},  // +I
+    {+1, +2, -2, +0, +0, +2, -2},  // -0
+    {+1, +2, -2, +0, +0, +2, -2},  // +0
+    {+1, +2, -2, -2, -2, +0, -2},  // -N
+    {+1, +2, -2, +2, +2, +2, +0}}; // +N
 
   const BigDecimal lhs = *(const BigDecimal*)lhs_value;
   const BigDecimal rhs = *(const BigDecimal*)rhs_value;
@@ -74,7 +75,7 @@ compare_blob(const size_t      lhs_size,
                                   : EXESS_ORDER_MAYBE_GREATER;
 }
 
-ExessOrder
+EXESS_NONBLOCKING ExessOrder
 exess_compare_value(const ExessDatatype lhs_datatype,
                     const size_t        lhs_size,
                     const void* const   lhs_value,

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-ExessOrder
+EXESS_NONBLOCKING ExessOrder
 exess_compare_time(const ExessTime lhs, const ExessTime rhs)
 {
   const ExessDateTime lhs_datetime = {
@@ -21,7 +21,7 @@ exess_compare_time(const ExessTime lhs, const ExessTime rhs)
   return exess_compare_date_time(lhs_datetime, rhs_datetime);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_read_time(const char* const str, ExessTime* const out)
 {
   memset(out, 0, sizeof(*out));
@@ -41,7 +41,7 @@ exess_read_time(const char* const str, ExessTime* const out)
   return r;
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 exess_write_time(const ExessTime value, const size_t buf_size, char* const buf)
 {
   if (value.hour == 24) {

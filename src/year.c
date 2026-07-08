@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "year.h"
@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 read_year_number(int16_t* const out, const char* const str)
 {
   *out = 0;
@@ -57,7 +57,7 @@ read_year_number(int16_t* const out, const char* const str)
   return RESULT(r.count >= 4 ? EXESS_SUCCESS : EXESS_EXPECTED_DIGIT, i);
 }
 
-ExessResult
+EXESS_NONBLOCKING ExessResult
 write_year_number(const int16_t value, const size_t buf_size, char* const buf)
 {
   const uint32_t abs_year    = (uint32_t)abs(value);

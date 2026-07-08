@@ -1,4 +1,4 @@
-// Copyright 2019-2021 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_SRC_BIGINT_H
@@ -25,70 +25,70 @@ typedef struct {
   unsigned n_bigits;
 } ExessBigint;
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_zero(ExessBigint* num);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_clamp(ExessBigint* num);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_shift_left(ExessBigint* num, unsigned amount);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set(ExessBigint* num, const ExessBigint* value);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_u32(ExessBigint* num, uint32_t value);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_u64(ExessBigint* num, uint64_t value);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_pow10(ExessBigint* num, unsigned exponent);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_set_decimal_string(ExessBigint* num, const char* str);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_u32(ExessBigint* num, uint32_t factor);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_u64(ExessBigint* num, uint64_t factor);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_multiply_pow10(ExessBigint* num, unsigned exponent);
 
-EXESS_I_PURE_FUNC int
+EXESS_I_NONBLOCKING EXESS_I_PURE_FUNC int
 exess_bigint_compare(const ExessBigint* lhs, const ExessBigint* rhs);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_add_u32(ExessBigint* lhs, uint32_t rhs);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_add(ExessBigint* lhs, const ExessBigint* rhs);
 
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_subtract(ExessBigint* lhs, const ExessBigint* rhs);
 
-EXESS_I_PURE_FUNC Bigit
+EXESS_I_NONBLOCKING EXESS_I_PURE_FUNC Bigit
 exess_bigint_left_shifted_bigit(const ExessBigint* num,
                                 unsigned           amount,
                                 unsigned           index);
 
 /// Faster implementation of exess_bigint_subtract(lhs, rhs << amount)
-void
+EXESS_I_NONBLOCKING void
 exess_bigint_subtract_left_shifted(ExessBigint*       lhs,
                                    const ExessBigint* rhs,
                                    unsigned           amount);
 
 /// Faster implementation of exess_bigint_compare(l + p, c)
-EXESS_I_PURE_FUNC int
+EXESS_I_NONBLOCKING EXESS_I_PURE_FUNC int
 exess_bigint_plus_compare(const ExessBigint* l,
                           const ExessBigint* p,
                           const ExessBigint* c);
 
 /// Divide and set `lhs` to modulo
-uint32_t
+EXESS_I_NONBLOCKING uint32_t
 exess_bigint_divmod(ExessBigint* lhs, const ExessBigint* rhs);
 
 #endif // EXESS_SRC_BIGINT_H
