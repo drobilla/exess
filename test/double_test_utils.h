@@ -11,7 +11,6 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
 
 /// Return a somewhat evenly distributed double from a random integer
 static inline double

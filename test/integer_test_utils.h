@@ -1,4 +1,4 @@
-// Copyright 2019-2025 David Robillard <d@drobilla.net>
+// Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #ifndef EXESS_TEST_INTEGER_TEST_UTILS_H
@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdint.h>
 
 static inline size_t
 set_integer_value(const size_t  value_size,
