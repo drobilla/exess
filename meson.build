@@ -77,6 +77,7 @@ elif cc.get_id() == 'msvc'
       '/wd4464', # relative include path contains '..'
       '/wd4710', # function not inlined
       '/wd4711', # function selected for automatic inline expansion
+      '/wd4738', # storing 32-bit float result in memory
       '/wd4820', # padding added after data member
       '/wd5045', # will insert Spectre mitigation
     ]
