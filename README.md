@@ -16,10 +16,12 @@ The library is straightforward to use and doesn't depend on an allocator, any
 other blocking functions, the current locale, or any other shared mutable
 state, making it safe to use in almost any context.
 
+[XSD]: https://www.w3.org/TR/xmlschema11-2/
+
 Supported Datatypes
 -------------------
 
-Most of the [XSD][] datatypes are implemented, omitting some XML-specific and
+Most of the XSD datatypes are implemented, omitting some XML-specific and
 recurring Gregorian calendar datatypes:
 
 * `boolean`, like "false", "true", "0", or "1".
@@ -75,5 +77,3 @@ Documentation
 
 -- 
 David Robillard <d@drobilla.net>
-
-[XSD]: https://www.w3.org/TR/xmlschema11-2/

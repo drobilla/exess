@@ -1,4 +1,4 @@
-# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# Copyright 2021-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 docdir = get_option('datadir') / 'doc'
@@ -52,7 +52,12 @@ if build_docs
 
   # Copy hand-written documentation files
   c_rst_files = []
-  foreach f : files('description.rst', 'index.rst')
+  foreach f : files(
+    '../INSTALL.md',
+    '../README.md',
+    'description.rst',
+    'index.rst',
+  )
     c_rst_files += configure_file(copy: true, input: f, output: '@PLAINNAME@')
   endforeach
 

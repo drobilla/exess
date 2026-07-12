@@ -1,4 +1,4 @@
-# Copyright 2021-2025 David Robillard <d@drobilla.net>
+# Copyright 2021-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 html_dir = docdir / versioned_name / 'html'
@@ -16,6 +16,7 @@ custom_target(
   install: true,
   install_dir: html_dir,
   output: [
+    'INSTALL.html',
     '_static',
     'api',
     'description.html',

@@ -2,6 +2,12 @@
 Exess
 #####
 
+.. only:: html
+
+   .. toctree::
+
+      INSTALL
+
 .. toctree::
 
    description
