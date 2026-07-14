@@ -69,11 +69,12 @@ functions `ceil`, `ldexp`, `llrint`, `llrintf`, `memcmp`, `memcpy`, `memset`,
 Documentation
 -------------
 
-* [Installation instructions](INSTALL.md)
-* [Manual](https://drobilla.gitlab.io/exess/doc/html/)
-  * [Single page](https://drobilla.gitlab.io/exess/doc/singlehtml/)
-  * [EPub](https://drobilla.gitlab.io/exess/doc/Exess-0.0.1.epub)
+* [Manual](https://drobilla.codeberg.page/exess/doc/html/)
+  * [Single page](https://drobilla.codeberg.page/exess/doc/singlehtml/)
+  * [EPub](https://drobilla.codeberg.page/exess/doc/Exess-0.0.1.epub)
   * Installed as `man exess` and related pages
+
+* [Coverage](https://drobilla.codeberg.page/exess/coverage/)
 
 -- 
 David Robillard <d@drobilla.net>
