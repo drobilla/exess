@@ -23,6 +23,6 @@ read_time(ExessTime* out, const char* str);
 
 /// Write a complete time with timezone suffix if necessary
 EXESS_NONBLOCKING ExessResult
-write_time(ExessTime value, size_t buf_size, char* buf, size_t offset);
+write_time(ExessTime value, size_t buf_size, char* buf, ExessResult r);
 
 #endif // EXESS_SRC_TIME_UTILS_H

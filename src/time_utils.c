@@ -139,24 +139,21 @@ EXESS_NONBLOCKING ExessResult
 write_time(const ExessTime value,
            const size_t    buf_size,
            char* const     buf,
-           const size_t    offset)
+           ExessResult     r)
 {
   if (value.hour > 24 || value.minute > 59 || value.second > 59 ||
       value.nanosecond > 999999999) {
-    return RESULT(EXESS_BAD_VALUE, 0);
+    return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
   }
 
-  size_t o = offset;
-
   // Write integral hour, minute, and second
-  o += write_two_digit_number(value.hour, buf_size, buf, o);
-  o += write_char(':', buf_size, buf, o);
-  o += write_two_digit_number(value.minute, buf_size, buf, o);
-  o += write_char(':', buf_size, buf, o);
-  o += write_two_digit_number(value.second, buf_size, buf, o);
-  o += write_nanoseconds(value.nanosecond, buf_size, buf, o);
+  r.count += write_two_digit_number(value.hour, buf_size, buf, r.count);
+  r.count += write_char(':', buf_size, buf, r.count);
+  r.count += write_two_digit_number(value.minute, buf_size, buf, r.count);
+  r.count += write_char(':', buf_size, buf, r.count);
+  r.count += write_two_digit_number(value.second, buf_size, buf, r.count);
+  r.count += write_nanoseconds(value.nanosecond, buf_size, buf, r.count);
 
-  const ExessResult r = write_timezone(value.zone, buf_size, buf, o);
-
-  return RESULT(r.status, o - offset + r.count);
+  // Write timezone suffix and end write
+  return write_timezone(value.zone, buf_size, buf, r);
 }

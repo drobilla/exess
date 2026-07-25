@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 #include "read_utils.h"
+#include "result.h"
 #include "time_utils.h"
 #include "write_utils.h"
 
@@ -44,11 +45,7 @@ exess_read_time(const char* const str, ExessTime* const out)
 EXESS_NONBLOCKING ExessResult
 exess_write_time(const ExessTime value, const size_t buf_size, char* const buf)
 {
-  if (value.hour == 24) {
-    return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
-  }
-
-  const ExessResult r = write_time(value, buf_size, buf, 0);
-
-  return end_write(r.status, buf_size, buf, r.count);
+  return (value.hour == 24)
+           ? end_write(EXESS_BAD_VALUE, buf_size, buf, 0)
+           : write_time(value, buf_size, buf, RESULT(EXESS_SUCCESS, 0));
 }

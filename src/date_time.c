@@ -310,9 +310,7 @@ exess_write_date_time(const ExessDateTime value,
     return end_write(EXESS_BAD_VALUE, buf_size, buf, 0);
   }
 
-  const ExessResult dr = exess_write_date(date, buf_size, buf);
-  const size_t      o  = dr.count + write_char('T', buf_size, buf, dr.count);
-  const ExessResult tr = write_time(time, buf_size, buf, o);
-  return end_write(
-    dr.status ? dr.status : tr.status, buf_size, buf, o + tr.count);
+  ExessResult r = exess_write_date(date, buf_size, buf);
+  r.count += write_char('T', buf_size, buf, r.count);
+  return write_time(time, buf_size, buf, r);
 }

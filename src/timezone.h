@@ -23,7 +23,7 @@ read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
                        const char* EXESS_NONNULL    str);
 
 /**
-   Write a canonical timezone suffix.
+   Write a canonical timezone suffix and end the write.
 
    The output is always in canonical form, either `Z` for UTC or a signed hour
    and minute offset with leading zeros, like `-05:30` or `+14:00`.
@@ -31,15 +31,16 @@ read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
    @param value Value to write.
    @param buf_size The size of `buf` in bytes.
    @param buf Output buffer, or null to only measure.
-   @param o The current write offset in `buf`
+   @param r Current result with write offset in `buf`
 
    @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
-   small, or #EXESS_BAD_VALUE if the value is invalid.
+   small, or #EXESS_BAD_VALUE if the value is invalid.  The `count` is
+   `r.count` plus however many bytes were read.
 */
 EXESS_NONBLOCKING ExessResult
 write_timezone(ExessTimezone        value,
                size_t               buf_size,
                char* EXESS_NULLABLE buf,
-               size_t               o);
+               ExessResult          r);
 
 #endif // EXESS_SRC_TIMEZONE_H

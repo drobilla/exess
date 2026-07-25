@@ -99,30 +99,31 @@ EXESS_NONBLOCKING ExessResult
 write_timezone(const ExessTimezone value,
                const size_t        buf_size,
                char* const         buf,
-               size_t              o)
+               const ExessResult   r)
 {
+  size_t o = r.count;
+
   if (value == EXESS_TIMEZONE_LOCAL) {
-    return RESULT(EXESS_SUCCESS, 0);
+    return end_write(EXESS_SUCCESS, buf_size, buf, o);
   }
 
   if (value < -56 || value > 56) {
-    return RESULT(EXESS_BAD_VALUE, 0);
+    return end_write(EXESS_BAD_VALUE, buf_size, buf, o);
   }
 
   if (value == 0) {
     write_char('Z', buf_size, buf, o);
-    return RESULT(EXESS_SUCCESS, 1);
+    return end_write(EXESS_SUCCESS, buf_size, buf, o + 1U);
   }
 
   const uint8_t abs_quarters = (uint8_t)abs(value);
   const uint8_t abs_hour     = abs_quarters / 4;
   const uint8_t abs_minute   = (uint8_t)(15U * (abs_quarters % 4U));
 
-  size_t n = 0;
-  n += write_char(value < 0 ? '-' : '+', buf_size, buf, o + n);
-  n += write_two_digit_number(abs_hour, buf_size, buf, o + n);
-  n += write_char(':', buf_size, buf, o + n);
-  n += write_two_digit_number(abs_minute, buf_size, buf, o + n);
+  o += write_char(value < 0 ? '-' : '+', buf_size, buf, o);
+  o += write_two_digit_number(abs_hour, buf_size, buf, o);
+  o += write_char(':', buf_size, buf, o);
+  o += write_two_digit_number(abs_minute, buf_size, buf, o);
 
-  return RESULT(EXESS_SUCCESS, n);
+  return end_write(EXESS_SUCCESS, buf_size, buf, o);
 }
