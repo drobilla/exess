@@ -156,6 +156,7 @@ sources = files(
   'src/date.c',
   'src/date_time.c',
   'src/date_utils.c',
+  'src/day.c',
   'src/decimal.c',
   'src/decimal_to_double.c',
   'src/digits.c',
@@ -169,6 +170,8 @@ sources = files(
   'src/int_math.c',
   'src/integer.c',
   'src/long.c',
+  'src/month.c',
+  'src/month_day.c',
   'src/number_utils.c',
   'src/parse_decimal.c',
   'src/read_utils.c',
@@ -186,6 +189,7 @@ sources = files(
   'src/value.c',
   'src/write_utils.c',
   'src/year.c',
+  'src/year_month.c',
 )
 
 # Set appropriate arguments for building against the library type

@@ -1018,6 +1018,222 @@ exess_write_date(ExessDate value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
 
 /**
    @}
+   @defgroup exess_calendar Calendar Dates (Gregorian)
+   @{
+*/
+
+/**
+   @defgroup exess_year_month gYearMonth
+   @{
+*/
+
+/// The maximum length of a `gYearMonth` string from exess_write_year_month()
+#define EXESS_MAX_YEAR_MONTH_LENGTH 15U
+
+/// A month in a Gregorian year
+typedef struct {
+  int16_t       year;  ///< Year: any positive or negative value
+  uint8_t       month; ///< Month: [1, 12]
+  ExessTimezone zone;  ///< Timezone offset in quarter hours
+} ExessYearMonth;
+
+/**
+   Read a `gYearMonth` string after any leading whitespace.
+
+   @param str String to read.
+   @param[out] out Parsed value, or zero on error.
+   @return The `count` of characters read, and a `status`.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_read_year_month(const char* EXESS_NONNULL     str,
+                      ExessYearMonth* EXESS_NONNULL out);
+
+/**
+   Write a canonical `gYearMonth` string.
+
+   The output is always in canonical form, like `2001-04`.
+
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_write_year_month(ExessYearMonth          value,
+                       size_t                  buf_size,
+                       char* EXESS_UNSPECIFIED buf);
+
+/**
+   @}
+   @defgroup exess_year gYear
+   @{
+*/
+
+/// The maximum length of a `gYear` string from exess_write_year()
+#define EXESS_MAX_YEAR_LENGTH 12U
+
+/// A Gregorian year
+typedef struct {
+  int16_t       year; ///< Year: any positive or negative value
+  ExessTimezone zone; ///< Timezone offset in quarter hours
+} ExessYear;
+
+/**
+   Read a `gYear` string after any leading whitespace.
+
+   @param str String to read.
+   @param[out] out Parsed value, or zero on error.
+   @return The `count` of characters read, and a `status`.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_read_year(const char* EXESS_NONNULL str, ExessYear* EXESS_NONNULL out);
+
+/**
+   Write a canonical `gYear` string.
+
+   The output is always in canonical form, like `2001` or `2001+03:00`.
+
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_write_year(ExessYear value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
+
+/**
+   @}
+   @defgroup exess_month_day gMonthDay
+   @{
+*/
+
+/// The maximum length of a `gMonthDay` string from exess_write_month_day()
+#define EXESS_MAX_MONTH_DAY_LENGTH 13U
+
+/// A recurring day in a Gregorian month
+typedef struct {
+  uint8_t       month; ///< Month: [1, 12]
+  uint8_t       day;   ///< Day: [1, 31]
+  ExessTimezone zone;  ///< Timezone offset in quarter hours
+} ExessMonthDay;
+
+/**
+   Read a `gMonthDay` string after any leading whitespace.
+
+   @param str String to read.
+   @param[out] out Parsed value, or zero on error.
+   @return The `count` of characters read, and a `status`.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_read_month_day(const char* EXESS_NONNULL    str,
+                     ExessMonthDay* EXESS_NONNULL out);
+
+/**
+   Write a canonical `gMonthDay` string.
+
+   The output is always in canonical form, like `--04-12` or `--05-01+03:00`.
+
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_write_month_day(ExessMonthDay           value,
+                      size_t                  buf_size,
+                      char* EXESS_UNSPECIFIED buf);
+
+/**
+   @}
+   @defgroup exess_day gDay
+   @{
+*/
+
+/// The maximum length of a `gDay` string from exess_write_day()
+#define EXESS_MAX_DAY_LENGTH 11U
+
+/// Day in a Gregorian month
+typedef struct {
+  uint8_t       day;  ///< Day: [1, 31]
+  ExessTimezone zone; ///< Timezone offset in quarter hours
+} ExessDay;
+
+/**
+   Read a `gDay` string after any leading whitespace.
+
+   @param str String to read.
+   @param[out] out Parsed value, or zero on error.
+   @return The `count` of characters read, and a `status`.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_read_day(const char* EXESS_NONNULL str, ExessDay* EXESS_NONNULL out);
+
+/**
+   Write a canonical `gDay` string.
+
+   The output is always in canonical form, like `---12` or `---12+02:00`.
+
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_write_day(ExessDay value, size_t buf_size, char* EXESS_UNSPECIFIED buf);
+
+/**
+   @}
+   @defgroup exess_month gMonth
+   @{
+*/
+
+/// The maximum length of a `gMonth` string from exess_write_month()
+#define EXESS_MAX_MONTH_LENGTH 10U
+
+/// Month in a Gregorian year
+typedef struct {
+  uint8_t       month; ///< Month: [1, 12]
+  ExessTimezone zone;  ///< Timezone offset in quarter hours
+} ExessMonth;
+
+/**
+   Read a `gMonth` string after any leading whitespace.
+
+   @param str String to read.
+   @param[out] out Parsed value, or zero on error.
+   @return The `count` of characters read, and a `status`.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_read_month(const char* EXESS_NONNULL str, ExessMonth* EXESS_NONNULL out);
+
+/**
+   Write a canonical `gMonth` string.
+
+   The output is always in canonical form, like `--04` or `--04+03:00`.
+
+   @param value Value to write.
+   @param buf_size Size of `buf` in bytes.
+   @param[out] buf Output buffer, or null to only measure.
+
+   @return #EXESS_SUCCESS on success, #EXESS_NO_SPACE if the buffer is too
+   small, or #EXESS_BAD_VALUE if the value is invalid.
+*/
+EXESS_NONBLOCKING EXESS_API ExessResult
+exess_write_month(ExessMonth              value,
+                  size_t                  buf_size,
+                  char* EXESS_UNSPECIFIED buf);
+
+/**
+   @}
+   @}
    @defgroup exess_time time
 
    A `time` is a time of day, with an optional timezone offset.
@@ -1272,12 +1488,17 @@ typedef enum {
   EXESS_DATE_TIME_STAMP,      ///< @ref exess_date_time
   EXESS_TIME,                 ///< @ref exess_time
   EXESS_DATE,                 ///< @ref exess_date
+  EXESS_YEAR_MONTH,           ///< @ref exess_year_month
+  EXESS_YEAR,                 ///< @ref exess_year
+  EXESS_MONTH_DAY,            ///< @ref exess_month_day
+  EXESS_DAY,                  ///< @ref exess_day
+  EXESS_MONTH,                ///< @ref exess_month
   EXESS_HEX,                  ///< @ref exess_hex
   EXESS_BASE64,               ///< @ref exess_base64
 } ExessDatatype;
 
 /// The unsigned value of the largest #ExessDatatype enumerator
-#define EXESS_MAX_DATATYPE 26U
+#define EXESS_MAX_DATATYPE 31U
 
 /**
    Array of maximum string lengths, indexed by datatype.
@@ -1320,6 +1541,11 @@ static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
   32U, // dateTimeStamp
   24U, // time
   18U, // date
+  15U, // gYearMonth
+  12U,  // gYear
+  13U, // gMonthDay
+  11U, // gDay
+  10U, // gMonth
   0U,  // hexBinary
   0U,  // base64Binary
 };
@@ -1331,33 +1557,38 @@ static EXESS_CONSTEXPR uint8_t exess_max_lengths[EXESS_MAX_DATATYPE + 1U] = {
    (not a string length), or zero for values that can be arbitrarily large.
 */
 static EXESS_CONSTEXPR uint8_t exess_value_sizes[EXESS_MAX_DATATYPE + 1U] = {
-  0U,                    // Unknown
-  sizeof(bool),          // boolean
-  sizeof(double),        // double
-  sizeof(float),         // float
-  sizeof(int64_t),       // long
-  sizeof(int32_t),       // int
-  sizeof(int16_t),       // short
-  sizeof(int8_t),        // byte
-  sizeof(uint64_t),      // ulong
-  sizeof(uint32_t),      // uint
-  sizeof(uint16_t),      // ushort
-  sizeof(uint8_t),       // ubyte
-  0U,                    // decimal
-  0U,                    // integer
-  0U,                    // nonPositiveInteger
-  0U,                    // negativeInteger
-  0U,                    // nonNegativeInteger
-  0U,                    // positiveInteger
-  sizeof(ExessDuration), // duration
-  sizeof(ExessDuration), // yearMonthDuration
-  sizeof(ExessDuration), // dayTimeDuration
-  sizeof(ExessDateTime), // dateTime
-  sizeof(ExessDateTime), // dateTimeStamp
-  sizeof(ExessTime),     // time
-  sizeof(ExessDate),     // date
-  0U,                    // hexBinary
-  0U,                    // base64Binary
+  0U,                     // Unknown
+  sizeof(bool),           // boolean
+  sizeof(double),         // double
+  sizeof(float),          // float
+  sizeof(int64_t),        // long
+  sizeof(int32_t),        // int
+  sizeof(int16_t),        // short
+  sizeof(int8_t),         // byte
+  sizeof(uint64_t),       // ulong
+  sizeof(uint32_t),       // uint
+  sizeof(uint16_t),       // ushort
+  sizeof(uint8_t),        // ubyte
+  0U,                     // decimal
+  0U,                     // integer
+  0U,                     // nonPositiveInteger
+  0U,                     // negativeInteger
+  0U,                     // nonNegativeInteger
+  0U,                     // positiveInteger
+  sizeof(ExessDuration),  // duration
+  sizeof(ExessDuration),  // yearMonthDuration
+  sizeof(ExessDuration),  // dayTimeDuration
+  sizeof(ExessDateTime),  // dateTime
+  sizeof(ExessDateTime),  // dateTimeStamp
+  sizeof(ExessTime),      // time
+  sizeof(ExessDate),      // date
+  sizeof(ExessYearMonth), // gYearMonth
+  sizeof(ExessYear),      // gYear
+  sizeof(ExessMonthDay),  // gMonthDay
+  sizeof(ExessDay),       // gDay
+  sizeof(ExessMonth),     // gMonth
+  0U,                     // hexBinary
+  0U,                     // base64Binary
 };
 
 /**

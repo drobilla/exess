@@ -124,6 +124,20 @@ exess_read_value(const ExessDatatype datatype,
     return fixed(exess_read_time(str, (ExessTime*)out), sizeof(ExessTime));
   case EXESS_DATE:
     return fixed(exess_read_date(str, (ExessDate*)out), sizeof(ExessDate));
+
+  case EXESS_YEAR_MONTH:
+    return fixed(exess_read_year_month(str, (ExessYearMonth*)out),
+                 sizeof(ExessYearMonth));
+  case EXESS_YEAR:
+    return fixed(exess_read_year(str, (ExessYear*)out), sizeof(ExessYear));
+  case EXESS_MONTH_DAY:
+    return fixed(exess_read_month_day(str, (ExessMonthDay*)out),
+                 sizeof(ExessMonthDay));
+  case EXESS_DAY:
+    return fixed(exess_read_day(str, (ExessDay*)out), sizeof(ExessDay));
+  case EXESS_MONTH:
+    return fixed(exess_read_month(str, (ExessMonth*)out), sizeof(ExessMonth));
+
   case EXESS_HEX:
     return exess_read_hex(str, out_size, out);
   case EXESS_BASE64:
@@ -184,6 +198,16 @@ exess_write_value(const ExessDatatype datatype,
     return exess_write_time(*(const ExessTime*)value, buf_size, buf);
   case EXESS_DATE:
     return exess_write_date(*(const ExessDate*)value, buf_size, buf);
+  case EXESS_YEAR_MONTH:
+    return exess_write_year_month(*(const ExessYearMonth*)value, buf_size, buf);
+  case EXESS_YEAR:
+    return exess_write_year(*(const ExessYear*)value, buf_size, buf);
+  case EXESS_MONTH_DAY:
+    return exess_write_month_day(*(const ExessMonthDay*)value, buf_size, buf);
+  case EXESS_DAY:
+    return exess_write_day(*(const ExessDay*)value, buf_size, buf);
+  case EXESS_MONTH:
+    return exess_write_month(*(const ExessMonth*)value, buf_size, buf);
   case EXESS_HEX:
     return exess_write_hex(value_size, value, buf_size, buf);
   case EXESS_BASE64:

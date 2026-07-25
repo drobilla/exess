@@ -24,7 +24,19 @@ days_in_month(const int16_t year, const uint8_t month)
                      : (uint8_t)(30U + ((month + (month / 8U)) % 2U));
 }
 
-/// Read YYYY-MM-DD date numbers without a timezone
+/// Read date -MM number
+EXESS_NONBLOCKING ExessResult
+read_date_m(uint8_t* m_out, const char* str);
+
+// Read date YYYY-MM numbers
+EXESS_NONBLOCKING ExessResult
+read_date_ym(int16_t* y_out, uint8_t* m_out, const char* str);
+
+// Read date -DD number
+EXESS_NONBLOCKING ExessResult
+read_date_d(uint8_t* d_out, const char* str);
+
+/// Read date YYYY-MM-DD numbers
 EXESS_NONBLOCKING ExessResult
 read_date_numbers(ExessDate* out, const char* str);
 

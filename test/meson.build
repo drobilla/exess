@@ -1,4 +1,4 @@
-# Copyright 2021-2022 David Robillard <d@drobilla.net>
+# Copyright 2021-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 # Add extra warning suppressions for test code
@@ -51,12 +51,15 @@ public_tests = [
   'datatype',
   'date',
   'date_time',
+  'day',
   'decimal',
   'double',
   'duration',
   'hex',
   'integer',
   'long',
+  'month',
+  'month_day',
   'strerror',
   'time',
   'timezone',
@@ -64,6 +67,7 @@ public_tests = [
   'ulong',
   'ushort',
   'value',
+  'year_month',
 ]
 
 number_tests = [

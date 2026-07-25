@@ -1,4 +1,4 @@
-// Copyright 2021-2025 David Robillard <d@drobilla.net>
+// Copyright 2021-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -267,6 +267,38 @@ test_read_value(void)
     assert(a_time.nanosecond == 250000000);
   }
   {
+    ExessYearMonth a_year_month = {date.year, date.month, date.zone};
+    check_read(&a_year_month, EXESS_YEAR_MONTH, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(&a_year_month, EXESS_YEAR_MONTH, "2001-01", EXESS_SUCCESS, 7);
+    assert(a_year_month.year == 2001);
+    assert(a_year_month.month == 1);
+  }
+  {
+    ExessYear a_year = {date.year, date.zone};
+    check_read(&a_year, EXESS_YEAR, "x", EXESS_EXPECTED_DIGIT, 0);
+    check_read(&a_year, EXESS_YEAR, "2001", EXESS_SUCCESS, 4);
+    assert(a_year.year == 2001);
+  }
+  {
+    ExessMonthDay a_month_day = {date.month, date.day, date.zone};
+    check_read(&a_month_day, EXESS_MONTH_DAY, "x", EXESS_EXPECTED_DASH, 0);
+    check_read(&a_month_day, EXESS_MONTH_DAY, "--01-02", EXESS_SUCCESS, 7);
+    assert(a_month_day.month == 1);
+    assert(a_month_day.day == 2);
+  }
+  {
+    ExessDay a_day = {date.day, date.zone};
+    check_read(&a_day, EXESS_DAY, "x", EXESS_EXPECTED_DASH, 0);
+    check_read(&a_day, EXESS_DAY, "---02", EXESS_SUCCESS, 5);
+    assert(a_day.day == 2);
+  }
+  {
+    ExessMonth a_month = {date.month, date.zone};
+    check_read(&a_month, EXESS_MONTH, "x", EXESS_EXPECTED_DASH, 0);
+    check_read(&a_month, EXESS_MONTH, "--01", EXESS_SUCCESS, 4);
+    assert(a_month.month == 1);
+  }
+  {
     char a_blob[] = {1, 2, 3};
     check_read(a_blob, EXESS_HEX, "!", EXESS_EXPECTED_HEX, 0);
     check_read(a_blob, EXESS_HEX, "666F6F", EXESS_SUCCESS, 6);
@@ -383,6 +415,34 @@ test_write_value(void)
 
   check_write(EXESS_TIME, sizeof(a_time), &a_time, 10, "01:02:03Z");
   check_write(EXESS_DATE, sizeof(a_date), &a_date, 12, "2001-02-03Z");
+
+  {
+    const ExessYearMonth a_year_month = {
+      a_date.year, a_date.month, a_date.zone};
+    check_write(
+      EXESS_YEAR_MONTH, sizeof(a_year_month), &a_year_month, 9, "2001-02Z");
+  }
+
+  {
+    const ExessYear a_year = {a_date.year, a_date.zone};
+    check_write(EXESS_YEAR, sizeof(a_year), &a_year, 6, "2001Z");
+  }
+
+  {
+    const ExessMonthDay a_month_day = {a_date.month, a_date.day, a_date.zone};
+    check_write(
+      EXESS_MONTH_DAY, sizeof(a_month_day), &a_month_day, 9, "--02-03Z");
+  }
+
+  {
+    const ExessDay a_day = {a_date.day, a_date.zone};
+    check_write(EXESS_DAY, sizeof(a_day), &a_day, 7, "---03Z");
+  }
+
+  {
+    const ExessMonth a_month = {a_date.month, a_date.zone};
+    check_write(EXESS_MONTH, sizeof(a_month), &a_month, 6, "--02Z");
+  }
 
   check_write(EXESS_HEX, sizeof(a_blob), a_blob, 7, "666F6F");
   check_write(EXESS_BASE64, sizeof(a_blob), a_blob, 5, "Zm9v");

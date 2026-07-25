@@ -34,6 +34,11 @@ static const char* EXESS_NONNULL const uris[EXESS_MAX_DATATYPE + 1U] = {
   EXESS_XSD_URI "dateTimeStamp",      //
   EXESS_XSD_URI "time",               //
   EXESS_XSD_URI "date",               //
+  EXESS_XSD_URI "gYearMonth",         //
+  EXESS_XSD_URI "gYear",              //
+  EXESS_XSD_URI "gMonthDay",          //
+  EXESS_XSD_URI "gDay",               //
+  EXESS_XSD_URI "gMonth",             //
   EXESS_XSD_URI "hexBinary",          //
   EXESS_XSD_URI "base64Binary",       //
 };

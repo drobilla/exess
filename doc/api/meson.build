@@ -1,4 +1,4 @@
-# Copyright 2021-2025 David Robillard <d@drobilla.net>
+# Copyright 2021-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 c_exess_rst = custom_target(
@@ -16,6 +16,7 @@ c_exess_rst = custom_target(
     'exess_datatypes.rst',
     'exess_date.rst',
     'exess_date_time.rst',
+    'exess_day.rst',
     'exess_decimal.rst',
     'exess_double.rst',
     'exess_duration.rst',
@@ -26,6 +27,8 @@ c_exess_rst = custom_target(
     'exess_int.rst',
     'exess_integer.rst',
     'exess_long.rst',
+    'exess_month.rst',
+    'exess_month_day.rst',
     'exess_numbers.rst',
     'exess_short.rst',
     'exess_status.rst',
@@ -38,5 +41,7 @@ c_exess_rst = custom_target(
     'exess_ulong.rst',
     'exess_ushort.rst',
     'exess_value.rst',
+    'exess_year.rst',
+    'exess_year_month.rst',
   ]
 )

@@ -198,6 +198,11 @@ convert_signed(const ExessCoercions coercions,
   case EXESS_DATE_TIME_STAMP:
   case EXESS_TIME:
   case EXESS_DATE:
+  case EXESS_YEAR_MONTH:
+  case EXESS_YEAR:
+  case EXESS_MONTH_DAY:
+  case EXESS_DAY:
+  case EXESS_MONTH:
   case EXESS_HEX:
   case EXESS_BASE64:
     break;
@@ -618,6 +623,11 @@ exess_coerce_value(const ExessCoercions coercions,
   case EXESS_DATE:
     return to_date(coercions, in_datatype, in, (ExessDate*)out);
 
+  case EXESS_YEAR_MONTH:
+  case EXESS_YEAR:
+  case EXESS_MONTH_DAY:
+  case EXESS_DAY:
+  case EXESS_MONTH:
   case EXESS_HEX:
   case EXESS_BASE64:
     break;

@@ -1,4 +1,4 @@
-# Copyright 2021-2025 David Robillard <d@drobilla.net>
+# Copyright 2021-2026 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
 # Generated man pages to any links/aliases to create for that page
@@ -27,6 +27,29 @@ man_links = {
     'ExessDate.3',
     'exess_read_date.3',
     'exess_write_date.3',
+  ],
+
+  'exess_year_month.3': [
+    'ExessYearMonth.3',
+    'exess_read_year_month.3',
+    'exess_write_year_month.3',
+  ],
+
+  'exess_year.3': [
+    'ExessYear.3',
+    'exess_read_year.3',
+    'exess_write_year.3',
+  ],
+
+  'exess_month_day.3': [
+    'ExessMonthDay.3',
+    'exess_read_month_day.3',
+    'exess_write_month_day.3',
+  ],
+  'exess_month.3': [
+    'ExessMonth.3',
+    'exess_read_month.3',
+    'exess_write_month.3',
   ],
 
   'exess_date_time.3': [

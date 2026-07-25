@@ -37,7 +37,7 @@ exess_read_date(const char* const str, ExessDate* const out)
 
   // Read timezone if present
   r.count = i + r.count;
-  return r.status ? r : read_optional_timezone(&out->zone, str, r);
+  return read_optional_timezone(&out->zone, str, r);
 }
 
 EXESS_NONBLOCKING ExessResult

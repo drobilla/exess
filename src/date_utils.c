@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-static EXESS_NONBLOCKING ExessResult
+EXESS_NONBLOCKING ExessResult
 read_date_m(uint8_t* const m_out, const char* const str)
 {
   // Skip year-month delimiter
@@ -23,7 +23,7 @@ read_date_m(uint8_t* const m_out, const char* const str)
   return RESULT(r.status, 1U + r.count);
 }
 
-static EXESS_NONBLOCKING ExessResult
+EXESS_NONBLOCKING ExessResult
 read_date_ym(int16_t* const y_out, uint8_t* const m_out, const char* const str)
 {
   // Read leading year
@@ -38,7 +38,7 @@ read_date_ym(int16_t* const y_out, uint8_t* const m_out, const char* const str)
   return r;
 }
 
-static EXESS_NONBLOCKING ExessResult
+EXESS_NONBLOCKING ExessResult
 read_date_d(uint8_t* const d_out, const char* const str)
 {
   // Skip month-day delimiter

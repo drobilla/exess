@@ -35,6 +35,9 @@ Exess
    Date and Time
       :manpage:`exess_duration(3)`, :manpage:`exess_date_time(3)`, :manpage:`exess_timezone(3)`, :manpage:`exess_date(3)`, :manpage:`exess_time(3)`
 
+   Gregorian Calendar
+      :manpage:`exess_year_month(3)`, :manpage:`exess_year(3)`, :manpage:`exess_month_day(3)`, :manpage:`exess_month(3)`, :manpage:`exess_day(3)`
+
    Binary Blobs
       :manpage:`exess_base64(3)`, :manpage:`exess_hex(3)`
 

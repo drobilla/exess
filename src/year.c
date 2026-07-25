@@ -4,7 +4,9 @@
 #include "year.h"
 #include "int_math.h"
 #include "number_utils.h"
+#include "read_utils.h"
 #include "result.h"
+#include "timezone.h"
 #include "write_utils.h"
 
 #include <exess/exess.h>
@@ -12,6 +14,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 EXESS_NONBLOCKING ExessResult
 read_year_number(int16_t* const out, const char* const str)
@@ -77,4 +80,26 @@ write_year_number(const int16_t value, const size_t buf_size, char* const buf)
 
   const ExessResult yr = write_digits(abs_year, buf_size, buf, i);
   return end_write(yr.status, buf_size, buf, i + yr.count);
+}
+
+EXESS_NONBLOCKING ExessResult
+exess_read_year(const char* const str, ExessYear* const out)
+{
+  memset(out, 0, sizeof(*out));
+
+  // Read YYYY number
+  size_t      i = skip_whitespace(str);
+  ExessResult r = read_year_number(&out->year, str + i);
+
+  // Read timezone if present
+  r.count = i + r.count;
+  return read_optional_timezone(&out->zone, str, r);
+}
+
+EXESS_NONBLOCKING ExessResult
+exess_write_year(const ExessYear value, const size_t buf_size, char* const buf)
+{
+  const ExessResult r = write_year_number(value.year, buf_size, buf);
+
+  return write_timezone(value.zone, buf_size, buf, r);
 }

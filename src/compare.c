@@ -91,6 +91,12 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return compare_datatypes(lhs_datatype, rhs_datatype);
   }
 
+#ifdef __cplusplus
+#  define DATE(y, m, d, z) (ExessDate{y, m, d, z})
+#else
+#  define DATE(y, m, d, z) ((ExessDate){y, m, d, z})
+#endif
+
 #define COMPARE(lhs, rhs)                          \
   ((lhs) < (rhs))   ? EXESS_ORDER_STRICTLY_LESS    \
   : ((rhs) < (lhs)) ? EXESS_ORDER_STRICTLY_GREATER \
@@ -147,12 +153,63 @@ exess_compare_value(const ExessDatatype lhs_datatype,
     return exess_compare_date(*(const ExessDate*)lhs_value,
                               *(const ExessDate*)rhs_value);
 
+  case EXESS_YEAR_MONTH:
+    return exess_compare_date(DATE(((const ExessYearMonth*)lhs_value)->year,
+                                   ((const ExessYearMonth*)lhs_value)->month,
+                                   1U,
+                                   ((const ExessYearMonth*)lhs_value)->zone),
+                              DATE(((const ExessYearMonth*)rhs_value)->year,
+                                   ((const ExessYearMonth*)rhs_value)->month,
+                                   1U,
+                                   ((const ExessYearMonth*)rhs_value)->zone));
+
+  case EXESS_YEAR:
+    return exess_compare_date(DATE(((const ExessYear*)lhs_value)->year,
+                                   1U,
+                                   1U,
+                                   ((const ExessYear*)lhs_value)->zone),
+                              DATE(((const ExessYear*)rhs_value)->year,
+                                   1U,
+                                   1U,
+                                   ((const ExessYear*)rhs_value)->zone));
+
+  case EXESS_MONTH_DAY:
+    return exess_compare_date(DATE(0U,
+                                   ((const ExessMonthDay*)lhs_value)->month,
+                                   ((const ExessMonthDay*)lhs_value)->day,
+                                   ((const ExessMonthDay*)lhs_value)->zone),
+                              DATE(0U,
+                                   ((const ExessMonthDay*)rhs_value)->month,
+                                   ((const ExessMonthDay*)rhs_value)->day,
+                                   ((const ExessMonthDay*)rhs_value)->zone));
+
+  case EXESS_DAY:
+    return exess_compare_date(DATE(0U,
+                                   1U,
+                                   ((const ExessDay*)lhs_value)->day,
+                                   ((const ExessDay*)lhs_value)->zone),
+                              DATE(0U,
+                                   1U,
+                                   ((const ExessDay*)rhs_value)->day,
+                                   ((const ExessDay*)rhs_value)->zone));
+
+  case EXESS_MONTH:
+    return exess_compare_date(DATE(0U,
+                                   ((const ExessMonth*)lhs_value)->month,
+                                   1U,
+                                   ((const ExessMonth*)lhs_value)->zone),
+                              DATE(0U,
+                                   ((const ExessMonth*)rhs_value)->month,
+                                   1U,
+                                   ((const ExessMonth*)rhs_value)->zone));
+
   case EXESS_HEX:
   case EXESS_BASE64:
     return compare_blob(lhs_size, lhs_value, rhs_size, rhs_value);
   }
 
 #undef COMPARE
+#undef DATE
 
   return EXESS_ORDER_EQUAL;
 }

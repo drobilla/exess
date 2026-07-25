@@ -1,4 +1,4 @@
-// Copyright 2011-2025 David Robillard <d@drobilla.net>
+// Copyright 2011-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #undef NDEBUG
@@ -418,6 +418,35 @@ test_compare(void)
   check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03+01:00", greater);
   check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03-01:00", less);
   check_comparison(EXESS_DATE, "2001-02-03Z", "2001-02-03+14:00", greater);
+
+  // Gregorian calendar
+
+  // YearMonth
+  check_comparisons(EXESS_YEAR_MONTH, "2001-02", "2001-03", "2001-04");
+  check_comparisons(EXESS_YEAR_MONTH, "2001-02Z", "2001-03Z", "2001-04");
+  check_comparisons(
+    EXESS_YEAR_MONTH, "2001-02+03:00", "2001-02+02:00", "2001-02+01:00");
+
+  // Year
+  check_comparisons(EXESS_YEAR, "2001", "2002", "2003");
+  check_comparisons(EXESS_YEAR, "2001Z", "2002Z", "2003");
+  check_comparisons(EXESS_YEAR, "2001+03:00", "2001+02:00", "2001+01:00");
+
+  // MonthDay
+  check_comparisons(EXESS_MONTH_DAY, "--02-03", "--02-04", "--02-05");
+  check_comparisons(EXESS_MONTH_DAY, "--02-03Z", "--03-03Z", "--03-04");
+  check_comparisons(
+    EXESS_MONTH_DAY, "--01-02+03:00", "--01-02+02:00", "--01-02+01:00");
+
+  // Day
+  check_comparisons(EXESS_DAY, "---03", "---04", "---05");
+  check_comparisons(EXESS_DAY, "---03Z", "---04Z", "---05");
+  check_comparisons(EXESS_DAY, "---03+03:00", "---03+02:00", "---03+01:00");
+
+  // Month
+  check_comparisons(EXESS_MONTH, "--02", "--03", "--04");
+  check_comparisons(EXESS_MONTH, "--02Z", "--03Z", "--04");
+  check_comparisons(EXESS_MONTH, "--02+03:00", "--02+02:00", "--02+01:00");
 
   // Binary
 

@@ -21,8 +21,7 @@ state, making it safe to use in almost any context.
 Supported Datatypes
 -------------------
 
-Most of the XSD datatypes are implemented, omitting some XML-specific and
-recurring Gregorian calendar datatypes:
+Most of the XSD datatypes are implemented, except for a few XML-specific ones:
 
 * `boolean`, like "false", "true", "0", or "1".
 
@@ -45,6 +44,10 @@ recurring Gregorian calendar datatypes:
 * `time`, like "12:30:00.000000001".
 
 * `date`, like "2001-12-31".
+
+* The Gregorian calendar types `gYearMonth` (like "2001-12"), `gYear` (like
+  "2001"), `gMonthDay` (like "--12-31"), `gDay` (like "---31") , and `gMonth`
+  (like "---12").
 
 * `hexBinary`, like "EC5355".
 

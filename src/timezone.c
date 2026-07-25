@@ -110,7 +110,7 @@ write_timezone(const ExessTimezone value,
   size_t o = r.count;
 
   if (value == EXESS_TIMEZONE_LOCAL) {
-    return end_write(EXESS_SUCCESS, buf_size, buf, o);
+    return end_write(r.status, buf_size, buf, o);
   }
 
   if (value < -56 || value > 56) {
@@ -119,7 +119,7 @@ write_timezone(const ExessTimezone value,
 
   if (value == 0) {
     write_char('Z', buf_size, buf, o);
-    return end_write(EXESS_SUCCESS, buf_size, buf, o + 1U);
+    return end_write(r.status, buf_size, buf, o + 1U);
   }
 
   const uint8_t abs_quarters = (uint8_t)abs(value);
