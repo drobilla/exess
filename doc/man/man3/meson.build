@@ -25,14 +25,12 @@ man_links = {
 
   'exess_date.3': [
     'ExessDate.3',
-    'exess_compare_date.3',
     'exess_read_date.3',
     'exess_write_date.3',
   ],
 
   'exess_date_time.3': [
     'ExessDateTime.3',
-    'exess_compare_date_time.3',
     'exess_add_date_time_duration.3',
     'exess_read_date_time.3',
     'exess_write_date_time.3',
@@ -43,7 +41,6 @@ man_links = {
 
   'exess_duration.3': [
     'ExessDuration.3',
-    'exess_compare_duration.3',
     'exess_read_duration.3',
     'exess_write_duration.3',
   ],
@@ -71,7 +68,6 @@ man_links = {
 
   'exess_time.3': [
     'ExessTime.3',
-    'exess_compare_time.3',
     'exess_read_time.3',
     'exess_write_time.3',
   ],

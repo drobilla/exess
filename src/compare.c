@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: ISC
 
 #include "big_decimal.h"
+#include "date.h"
+#include "date_time.h"
+#include "duration.h"
+#include "time.h"
 
 #include <exess/exess.h>
 

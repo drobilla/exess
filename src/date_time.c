@@ -1,6 +1,7 @@
 // Copyright 2019-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
+#include "date_time.h"
 #include "char_utils.h"
 #include "date_utils.h"
 #include "read_utils.h"
