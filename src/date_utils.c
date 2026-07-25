@@ -10,47 +10,65 @@
 
 #include <stddef.h>
 
-EXESS_NONBLOCKING ExessResult
-read_date_numbers(ExessDate* const out, const char* const str)
+static EXESS_NONBLOCKING ExessResult
+read_date_m(uint8_t* const m_out, const char* const str)
 {
-  // Read year at the beginning
-  size_t      i = 0U;
-  ExessResult r = read_year_number(&out->year, str + i);
-  if (r.status) {
-    return RESULT(r.status, i + r.count);
-  }
-
-  // Read year-month delimiter
-  i += r.count;
-  if (str[i] != '-') {
-    return RESULT(EXESS_EXPECTED_DASH, i);
+  // Skip year-month delimiter
+  if (str[0] != '-') {
+    return RESULT(EXESS_EXPECTED_DASH, 0);
   }
 
   // Read month
-  ++i;
-  r = read_two_digit_number(&out->month, 1, 12, str + i);
+  const ExessResult r = read_two_digit_number(m_out, 1, 12, str + 1U);
+  return RESULT(r.status, 1U + r.count);
+}
+
+static EXESS_NONBLOCKING ExessResult
+read_date_ym(int16_t* const y_out, uint8_t* const m_out, const char* const str)
+{
+  // Read leading year
+  ExessResult r = read_year_number(y_out, str);
   if (r.status) {
-    return RESULT(r.status, i + r.count);
+    return r;
   }
 
-  // Read month-day delimiter
-  i += r.count;
-  if (str[i] != '-') {
-    return RESULT(EXESS_EXPECTED_DASH, i);
+  size_t i = r.count;
+  r        = read_date_m(m_out, str + i);
+  r.count  = i + r.count;
+  return r;
+}
+
+static EXESS_NONBLOCKING ExessResult
+read_date_d(uint8_t* const d_out, const char* const str)
+{
+  // Skip month-day delimiter
+  if (str[0] != '-') {
+    return RESULT(EXESS_EXPECTED_DASH, 0);
   }
 
   // Read day
-  ++i;
-  r = read_two_digit_number(&out->day, 1, 31, str + i);
-  if (r.status) {
-    return RESULT(r.status, i + r.count);
+  ExessResult r = read_two_digit_number(d_out, 1, 31, str + 1U);
+  r.count       = 1U + r.count;
+  return r;
+}
+
+EXESS_NONBLOCKING ExessResult
+read_date_numbers(ExessDate* const out, const char* const str)
+{
+  // Read year and month
+  ExessResult r = read_date_ym(&out->year, &out->month, str);
+
+  if (!r.status) {
+    // Read (month-day delimiter and) day
+    size_t i = r.count;
+    r        = read_date_d(&out->day, str + i);
+    r.count  = i + r.count;
   }
 
   // Check that day is in range
-  i += r.count;
-  if (out->day > days_in_month(out->year, out->month)) {
-    return RESULT(EXESS_OUT_OF_RANGE, i);
+  if (!r.status && out->day > days_in_month(out->year, out->month)) {
+    r.status = EXESS_OUT_OF_RANGE;
   }
 
-  return RESULT(EXESS_SUCCESS, i);
+  return r;
 }
