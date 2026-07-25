@@ -3,6 +3,7 @@
 
 #include "char_utils.h"
 #include "date_utils.h"
+#include "read_utils.h"
 #include "result.h"
 #include "time_utils.h"
 #include "write_utils.h"
@@ -256,7 +257,8 @@ exess_read_date_time(const char* const str, ExessDateTime* const out)
 
   // Read date
   ExessDate         date = {0, 0U, 0U, EXESS_TIMEZONE_LOCAL};
-  const ExessResult dr   = read_date_numbers(&date, str);
+  size_t            i    = skip_whitespace(str);
+  const ExessResult dr   = read_date_numbers(&date, str + i);
 
   out->year  = date.year;
   out->month = date.month;
@@ -265,7 +267,7 @@ exess_read_date_time(const char* const str, ExessDateTime* const out)
     return dr;
   }
 
-  size_t i = dr.count;
+  i += dr.count;
   if (str[i] != 'T') {
     return RESULT(EXESS_EXPECTED_TIME_SEP, i);
   }

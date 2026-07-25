@@ -3,7 +3,6 @@
 
 #include "date_utils.h"
 #include "number_utils.h"
-#include "read_utils.h"
 #include "result.h"
 #include "year.h"
 
@@ -15,7 +14,7 @@ EXESS_NONBLOCKING ExessResult
 read_date_numbers(ExessDate* const out, const char* const str)
 {
   // Read year at the beginning
-  size_t      i = skip_whitespace(str);
+  size_t      i = 0U;
   ExessResult r = read_year_number(&out->year, str + i);
   if (r.status) {
     return RESULT(r.status, i + r.count);
