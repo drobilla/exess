@@ -16,11 +16,13 @@
 
    @param out Set to the parsed value, or false on error.
    @param str String input.
+   @param r Current result with read offset in `str`
    @return The `count` of characters read, and a `status` code.
 */
 EXESS_NONBLOCKING ExessResult
 read_optional_timezone(ExessTimezone* EXESS_NONNULL out,
-                       const char* EXESS_NONNULL    str);
+                       const char* EXESS_NONNULL    str,
+                       ExessResult                  r);
 
 /**
    Write a canonical timezone suffix and end the write.

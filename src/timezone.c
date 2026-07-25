@@ -32,12 +32,18 @@ exess_timezone(const int8_t hours, const int8_t minutes)
 }
 
 EXESS_NONBLOCKING ExessResult
-read_optional_timezone(ExessTimezone* const out, const char* const str)
+read_optional_timezone(ExessTimezone* const out,
+                       const char* const    str,
+                       ExessResult          r)
 {
   *out = EXESS_TIMEZONE_LOCAL;
 
+  if (r.status) {
+    return r;
+  }
+
   // Handle UTC special case
-  size_t i = 0;
+  size_t i = r.count;
   if (str[i] == 'Z') {
     *out = 0;
     return RESULT(EXESS_SUCCESS, i + 1);
@@ -54,8 +60,8 @@ read_optional_timezone(ExessTimezone* const out, const char* const str)
   ++i;
 
   // Read hour digits
-  uint8_t     hh = 0U;
-  ExessResult r  = read_two_digit_number(&hh, 0U, 14U, str + i);
+  uint8_t hh = 0U;
+  r          = read_two_digit_number(&hh, 0U, 14U, str + i);
   if (r.status) {
     return RESULT(r.status, i + r.count);
   }

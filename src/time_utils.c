@@ -129,10 +129,8 @@ read_time(ExessTime* const out, const char* const str)
   }
 
   // Read timezone offset if present
-  r = read_optional_timezone(&out->zone, str + i);
-  i += r.count;
-
-  return RESULT(r.status, i);
+  r.count = i;
+  return read_optional_timezone(&out->zone, str, r);
 }
 
 EXESS_NONBLOCKING ExessResult

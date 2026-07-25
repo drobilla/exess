@@ -4,7 +4,6 @@
 #include "date_utils.h"
 #include "number_utils.h"
 #include "read_utils.h"
-#include "result.h"
 #include "timezone.h"
 #include "write_utils.h"
 #include "year.h"
@@ -34,15 +33,9 @@ exess_read_date(const char* const str, ExessDate* const out)
   size_t      i = skip_whitespace(str);
   ExessResult r = read_date_numbers(out, str + i);
 
-  i += r.count;
-
   // Read timezone if present
-  if (!r.status) {
-    r = read_optional_timezone(&out->zone, str + i);
-    i += r.count;
-  }
-
-  return RESULT(r.status, i);
+  r.count = i + r.count;
+  return r.status ? r : read_optional_timezone(&out->zone, str, r);
 }
 
 EXESS_NONBLOCKING ExessResult
