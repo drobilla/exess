@@ -21,6 +21,7 @@ option('man', type: 'feature',
 
 option('man_links', type: 'combo',
        choices: ['disabled', 'auto', 'alias', 'symbolic'],
+       value: 'auto',
        description: 'Create man page aliases/symlinks for symbols')
 
 option('singlehtml', type: 'feature',
